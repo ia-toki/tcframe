@@ -18,76 +18,76 @@ namespace org { namespace iatoki { namespace cptest {
 template<typename TProblem>
 class BaseGenerator : protected TProblem {
 private:
-	vector<TestSet> sampleTestData;
-	vector<TestSet> testData;
+    vector<TestSet> sampleTestData;
+    vector<TestSet> testData;
 
-	TestSet currentTestSet;
+    TestSet currentTestSet;
 
-	vector<void(BaseGenerator::*)()> testSetBlocks = {
-		&BaseGenerator::testSet1,
-		&BaseGenerator::testSet2,
-		&BaseGenerator::testSet3,
-		&BaseGenerator::testSet4,
-		&BaseGenerator::testSet5
-	};
+    vector<void(BaseGenerator::*)()> testSetBlocks = {
+        &BaseGenerator::testSet1,
+        &BaseGenerator::testSet2,
+        &BaseGenerator::testSet3,
+        &BaseGenerator::testSet4,
+        &BaseGenerator::testSet5
+    };
 
 
 protected:
-	void addSampleTestCase(TestCase testCase, initializer_list<int> subtasksNumbers) {
-		TestSet testSet;
-		
-		testSet.addTestCase(testCase);
-		for (int subtaskNumber : subtasksNumbers) {
-			testSet.assignToSubtask(subtaskNumber);
-		}
+    void addSampleTestCase(TestCase testCase, initializer_list<int> subtasksNumbers) {
+        TestSet testSet;
+        
+        testSet.addTestCase(testCase);
+        for (int subtaskNumber : subtasksNumbers) {
+            testSet.assignToSubtask(subtaskNumber);
+        }
 
-		sampleTestData.push_back(testSet);
-	}
+        sampleTestData.push_back(testSet);
+    }
 
-	void addTestCase(TestCase testCase) {
-		currentTestSet.addTestCase(testCase);
-	}
+    void addTestCase(TestCase testCase) {
+        currentTestSet.addTestCase(testCase);
+    }
 
-	void assignToSubtasks(initializer_list<int> subtasksNumbers) {
-		for (int subtaskNumber : subtasksNumbers) {
-			currentTestSet.assignToSubtask(subtaskNumber);
-		}
-	}
+    void assignToSubtasks(initializer_list<int> subtasksNumbers) {
+        for (int subtaskNumber : subtasksNumbers) {
+            currentTestSet.assignToSubtask(subtaskNumber);
+        }
+    }
 
 public:
-	virtual void testSet1() { throw NotImplementedException(); }
-	virtual void testSet2() { throw NotImplementedException(); }
-	virtual void testSet3() { throw NotImplementedException(); }
-	virtual void testSet4() { throw NotImplementedException(); }
-	virtual void testSet5() { throw NotImplementedException(); }
+    virtual void testSet1() { throw NotImplementedException(); }
+    virtual void testSet2() { throw NotImplementedException(); }
+    virtual void testSet3() { throw NotImplementedException(); }
+    virtual void testSet4() { throw NotImplementedException(); }
+    virtual void testSet5() { throw NotImplementedException(); }
 
-	void generate() {
-		TProblem::setCurrentFormatAsInputFormat();
-		TProblem::inputFormat();
+    void generate() {
+        TProblem::setCurrentFormatAsInputFormat();
+        TProblem::inputFormat();
 
-		for (auto testSetBlock : testSetBlocks) {
-			try {
-				(this->*testSetBlock)();
-				testData.push_back(currentTestSet);
-				currentTestSet = TestSet();
-			} catch (NotImplementedException e) {
-				break;
-			}
-		}
+        for (auto testSetBlock : testSetBlocks) {
+            try {
+                (this->*testSetBlock)();
+                testData.push_back(currentTestSet);
+                currentTestSet = TestSet();
+            } catch (NotImplementedException e) {
+                break;
+            }
+        }
 
-		int i = 0;
-		for (auto testSet : testData) {
-			printf("Test set %d\n", i++);
+        int i = 0;
+        for (auto testSet : testData) {
+            printf("Test set %d\n", i++);
 
-			int j = 0;
-			for (auto testCase : testSet.getTestCases()) {
-				printf("    Test case %d\n", j++);
+            int j = 0;
+            for (auto testCase : testSet.getTestCases()) {
+                printf("    Test case %d\n", j++);
 
-				testCase.execute();
-				TProblem::printInputTo(cout);
-			}
-		}
-	}
+                testCase.execute();
+                TProblem::printInputTo(cout);
+            }
+        }
+    }
 };
 
 }}}

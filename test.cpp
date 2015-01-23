@@ -6,28 +6,28 @@ using namespace org::iatoki::cptest;
 using std::string;
 
 struct Problem : BaseProblem {
-	int A, B;
+    int A, B;
 
-	void inputFormat() {
-		line() % A % B;
-	}
+    void inputFormat() {
+        line() % A % B;
+    }
 };
 
 struct Generator : BaseGenerator<Problem> {
 
-	void testSet1() {
-		addTestCase(TestCase([this] { A = 3; B = 4;}, ""));
-		addTestCase(TestCase([this] { A = 7; B = 4;}, ""));
-	}
+    void testSet1() {
+        addTestCase(TestCase([this] { A = 3; B = 4;}, ""));
+        addTestCase(TestCase([this] { A = 7; B = 4;}, ""));
+    }
 
-	void testSet2() {
-		addTestCase(TestCase([this] { A = 1; B = 1;}, ""));
-		addTestCase(TestCase([this] { A = 2; B = 2;}, ""));
-	}
+    void testSet2() {
+        addTestCase(TestCase([this] { A = 1; B = 1;}, ""));
+        addTestCase(TestCase([this] { A = 2; B = 2;}, ""));
+    }
 };
 
 int main() {
 
-	Generator gen;
-	gen.generate();
+    Generator gen;
+    gen.generate();
 }

@@ -15,46 +15,46 @@ namespace org { namespace iatoki { namespace cptest {
 
 class TestCase {
 private:
-	function<void()> callback;
-	string description;
+    function<void()> callback;
+    string description;
 
 public:
-	TestCase(function<void()> callback, string description) {
-		this->callback = callback;
-		this->description = description;
-	}
+    TestCase(function<void()> callback, string description) {
+        this->callback = callback;
+        this->description = description;
+    }
 
-	void execute() {
-		callback();
-	}
+    void execute() {
+        callback();
+    }
 
-	string getDescription() {
-		return description;
-	}
+    string getDescription() {
+        return description;
+    }
 };
 
 
 class TestSet {
 private:
-	vector<TestCase> testCases;
-	set<int> subtaskNumbers;
+    vector<TestCase> testCases;
+    set<int> subtaskNumbers;
 
 public:
-	void addTestCase(TestCase testCase) {
-		testCases.push_back(testCase);
-	}
+    void addTestCase(TestCase testCase) {
+        testCases.push_back(testCase);
+    }
 
-	void assignToSubtask(int subtaskNo) {
-		subtaskNumbers.insert(subtaskNo);
-	}
+    void assignToSubtask(int subtaskNo) {
+        subtaskNumbers.insert(subtaskNo);
+    }
 
-	vector<TestCase> getTestCases() {
-		return testCases;
-	}
+    vector<TestCase> getTestCases() {
+        return testCases;
+    }
 
-	set<int> getSubtaskNumbers() {
-		return subtaskNumbers;
-	}
+    set<int> getSubtaskNumbers() {
+        return subtaskNumbers;
+    }
 };
 
 }}}

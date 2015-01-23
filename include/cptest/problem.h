@@ -12,40 +12,40 @@ namespace org { namespace iatoki { namespace cptest {
 
 class BaseProblem {
 private:
-	vector<Subtask> subtasks;
+    vector<Subtask> subtasks;
 
-	IOFormat* inFormat;
-	IOFormat* outFormat;
+    IOFormat* inFormat;
+    IOFormat* outFormat;
 
-	IOFormat* curFormat;
+    IOFormat* curFormat;
 protected:
 
-	BaseProblem() {
-		inFormat = new IOFormat();
-		outFormat = new IOFormat();
-		curFormat = nullptr;
-	}
+    BaseProblem() {
+        inFormat = new IOFormat();
+        outFormat = new IOFormat();
+        curFormat = nullptr;
+    }
 
-	void addPredicate(Predicate pred) {
-		subtasks.back().addPredicate(pred);
-	}
+    void addPredicate(Predicate pred) {
+        subtasks.back().addPredicate(pred);
+    }
 
-	void setCurrentFormatAsInputFormat() {
-		curFormat = inFormat;
-	}
+    void setCurrentFormatAsInputFormat() {
+        curFormat = inFormat;
+    }
 
-	LineIOSegment& line() {
-		LineIOSegment* segment = new LineIOSegment();
-		curFormat->addSegment(segment);
-		return *segment;
-	}
+    LineIOSegment& line() {
+        LineIOSegment* segment = new LineIOSegment();
+        curFormat->addSegment(segment);
+        return *segment;
+    }
 
-public:	
-	virtual void inputFormat() = 0;
+public: 
+    virtual void inputFormat() = 0;
 
-	void printInputTo(ostream& out) {
-		inFormat->printTo(out);
-	}
+    void printInputTo(ostream& out) {
+        inFormat->printTo(out);
+    }
 
 };
 

@@ -13,36 +13,36 @@ namespace org { namespace iatoki { namespace cptest {
 
 class Predicate {
 private:
-	function<bool()> callback;
-	string description;
+    function<bool()> callback;
+    string description;
 
 public:
-	Predicate(function<bool()> callback, string description) {
-		this->callback = callback;
-		this->description = description;
-	}
+    Predicate(function<bool()> callback, string description) {
+        this->callback = callback;
+        this->description = description;
+    }
 
-	function<bool()> getCallback() {
-		return callback;
-	}
+    function<bool()> getCallback() {
+        return callback;
+    }
 
-	string getDescription() {
-		return description;
-	}
+    string getDescription() {
+        return description;
+    }
 };
 
 class Subtask {
 private:
-	vector<Predicate> predicates;
+    vector<Predicate> predicates;
 
 public:
-	void addPredicate(Predicate predicate) {
-		predicates.push_back(predicate);
-	}
+    void addPredicate(Predicate predicate) {
+        predicates.push_back(predicate);
+    }
 
-	vector<Predicate> getPredicates() {
-		return predicates;
-	}
+    vector<Predicate> getPredicates() {
+        return predicates;
+    }
 };
 
 }}}
