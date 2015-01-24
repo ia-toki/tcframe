@@ -64,6 +64,7 @@ public:
     void generate() {
         TProblem::setCurrentFormatAsInputFormat();
         TProblem::inputFormat();
+        TProblem::collectSubtasks();
 
         for (auto testSetBlock : testSetBlocks) {
             try {
@@ -85,6 +86,12 @@ public:
 
                 testCase.execute();
                 TProblem::printInputTo(cout);
+
+                for (int subtaskNumber : testSet.getSubtaskNumbers()) {
+                    for (auto predicate : TProblem::getFailedPredicates(subtaskNumber)) {
+                        printf("    failed on predicate %s\n", predicate.getDescription().c_str());
+                    }
+                }
             }
         }
     }

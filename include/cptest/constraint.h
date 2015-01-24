@@ -22,8 +22,8 @@ public:
         this->description = description;
     }
 
-    function<bool()> getCallback() {
-        return callback;
+    bool apply() {
+        return callback();
     }
 
     string getDescription() {
@@ -40,8 +40,14 @@ public:
         predicates.push_back(predicate);
     }
 
-    vector<Predicate> getPredicates() {
-        return predicates;
+    vector<Predicate> getFailedPredicates() {
+        vector<Predicate> res;
+        for (auto predicate : predicates) {
+            if (!predicate.apply()) {
+                res.push_back(predicate);
+            }
+        }
+        return res;
     }
 };
 
