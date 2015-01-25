@@ -3,4 +3,7 @@
 
 #include "generator.h"
 
+#define CASE(closure) addTestCase([this] {closure}, #closure)
+#define CONS(predicate) addConstraint([this] {return predicate;}, #predicate)
+
 #endif

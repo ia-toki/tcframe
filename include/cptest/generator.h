@@ -2,14 +2,16 @@
 #define CPTEST_GENERATOR_H
 
 #include "exception.h"
+#include "os.h"
 #include "problem.h"
-#include "testdata.h"
+#include "testcase.h"
 
 #include <vector>
 #include <cstdio>
 #include <iostream>
 
 using std::cout;
+using std::endl;
 using std::initializer_list;
 using std::vector;
 
@@ -18,80 +20,81 @@ namespace org { namespace iatoki { namespace cptest {
 template<typename TProblem>
 class BaseGenerator : protected TProblem {
 private:
-    vector<TestSet> sampleTestData;
-    vector<TestSet> testData;
+    OperatingSystem* os;
+    TestCasesCollector* testCasesCollector;
 
-    TestSet currentTestSet;
-
-    vector<void(BaseGenerator::*)()> testSetBlocks = {
-        &BaseGenerator::testSet1,
-        &BaseGenerator::testSet2,
-        &BaseGenerator::testSet3,
-        &BaseGenerator::testSet4,
-        &BaseGenerator::testSet5
+    vector<void(BaseGenerator::*)()> testGroupBlocks = {
+        &BaseGenerator::TestGroup1,
+        &BaseGenerator::TestGroup2,
+        &BaseGenerator::TestGroup3,
+        &BaseGenerator::TestGroup4,
+        &BaseGenerator::TestGroup5
     };
 
+    vector<TestGroup*> collectTestCases() {
+        try {
+            TestCases();
+            return testCasesCollector->collectTestCases();
+        } catch (NotImplementedException e1){
+            for (auto testGroupBlock : testGroupBlocks) {
+                try {
+                    testCasesCollector->newTestGroup();
+                    (this->*testGroupBlock)();
+                } catch (NotImplementedException e2) {
+                    vector<TestGroup*> testCases = testCasesCollector->collectTestCases();
+                    testCases.pop_back();
+                    return testCases;
+                }
+            }
+        }
+    }
 
 protected:
-    void addSampleTestCase(TestCase testCase, initializer_list<int> subtasksNumbers) {
-        TestSet testSet;
-        
-        testSet.addTestCase(testCase);
-        for (int subtaskNumber : subtasksNumbers) {
-            testSet.assignToSubtask(subtaskNumber);
-        }
+    BaseGenerator() :
+        os(new Unix()),
+        testCasesCollector(new TestCasesCollector())
+    { }
 
-        sampleTestData.push_back(testSet);
+    BaseGenerator(OperatingSystem* os) :
+        os(os),
+        testCasesCollector(new TestCasesCollector())
+    { }
+
+    virtual ~BaseGenerator() { }
+
+    virtual void TestCases() { throw NotImplementedException(); }
+
+    virtual void TestGroup1() { throw NotImplementedException(); }
+    virtual void TestGroup2() { throw NotImplementedException(); }
+    virtual void TestGroup3() { throw NotImplementedException(); }
+    virtual void TestGroup4() { throw NotImplementedException(); }
+    virtual void TestGroup5() { throw NotImplementedException(); }
+
+
+    void addTestCase(function<void()> closure, string description) {
+        testCasesCollector->addTestCase(closure, description);
     }
 
-    void addTestCase(TestCase testCase) {
-        currentTestSet.addTestCase(testCase);
-    }
-
-    void assignToSubtasks(initializer_list<int> subtasksNumbers) {
-        for (int subtaskNumber : subtasksNumbers) {
-            currentTestSet.assignToSubtask(subtaskNumber);
-        }
+    void assignToSubtasks(initializer_list<int> subtaskNos) {
+        testCasesCollector->assignToSubtasks(subtaskNos);
     }
 
 public:
-    virtual void testSet1() { throw NotImplementedException(); }
-    virtual void testSet2() { throw NotImplementedException(); }
-    virtual void testSet3() { throw NotImplementedException(); }
-    virtual void testSet4() { throw NotImplementedException(); }
-    virtual void testSet5() { throw NotImplementedException(); }
-
     void generate() {
         TProblem::setCurrentFormatAsInputFormat();
-        TProblem::inputFormat();
-        TProblem::collectSubtasks();
+        TProblem::InputFormat();
 
-        for (auto testSetBlock : testSetBlocks) {
-            try {
-                (this->*testSetBlock)();
-                testData.push_back(currentTestSet);
-                currentTestSet = TestSet();
-            } catch (NotImplementedException e) {
-                break;
+        vector<Subtask*> subtasks = TProblem::collectConstraints();
+        vector<TestGroup*> testGroups = collectTestCases();
+        
+        for (TestGroup* testGroup : testGroups) {
+            if (testGroup->id) {
+                cout << "[Test Group " << testGroup->id << "]" << endl;
             }
-        }
 
-        int i = 0;
-        for (auto testSet : testData) {
-            printf("Test set %d\n", i++);
-
-            int j = 0;
-            for (auto testCase : testSet.getTestCases()) {
-                printf("    Test case %d\n", j++);
-
-                testCase.execute();
-                TProblem::printInputTo(cout);
-
-                for (int subtaskNumber : testSet.getSubtaskNumbers()) {
-                    for (auto predicate : TProblem::getFailedPredicates(subtaskNumber)) {
-                        printf("    failed on predicate %s\n", predicate.getDescription().c_str());
-                    }
-                }
+            for (TestCase* testCase : testGroup->testCases) {
+                cout << "Test Case " << testCase->id << endl;
+                TProblem::printTestCaseInput(testCase, cout);
             }
         }
     }

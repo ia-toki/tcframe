@@ -11,43 +11,47 @@ using std::vector;
 
 namespace org { namespace iatoki { namespace cptest {
 
-class Predicate {
-private:
-    function<bool()> callback;
+struct Constraint {
+    int id;
+    function<bool()> predicate;
     string description;
-
-public:
-    Predicate(function<bool()> callback, string description) {
-        this->callback = callback;
-        this->description = description;
-    }
-
-    bool apply() {
-        return callback();
-    }
-
-    string getDescription() {
-        return description;
-    }
 };
 
-class Subtask {
+struct Subtask {
+    int id;
+    vector<Constraint*> constraints;
+};
+
+class ConstraintsCollector {
 private:
-    vector<Predicate> predicates;
+    int curSubtaskNo;
+    int curConstraintNo;
+
+    vector<Subtask*> subtasks;
 
 public:
-    void addPredicate(Predicate predicate) {
-        predicates.push_back(predicate);
+    ConstraintsCollector() :
+        curSubtaskNo(0),
+        curConstraintNo(0)
+    { }
+
+    void newSubtask() {
+        curSubtaskNo++;
+        curConstraintNo = 0;
+        subtasks.push_back(new Subtask{curSubtaskNo});
     }
 
-    vector<Predicate> getFailedPredicates() {
-        vector<Predicate> res;
-        for (auto predicate : predicates) {
-            if (!predicate.apply()) {
-                res.push_back(predicate);
-            }
+    void addConstraint(function<bool()> predicate, string description) {
+        if (!curSubtaskNo) {
+            subtasks.push_back(new Subtask{0});
         }
-        return res;
+
+        curConstraintNo++;
+        subtasks.back()->constraints.push_back(new Constraint{curConstraintNo, predicate, description});
+    }
+
+    vector<Subtask*> collectConstraints() {
+        return subtasks;
     }
 };
 

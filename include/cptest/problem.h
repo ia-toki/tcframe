@@ -4,6 +4,7 @@
 #include "constraint.h"
 #include "exception.h"
 #include "io.h"
+#include "testcase.h"
 
 #include <vector>
 
@@ -13,43 +14,53 @@ namespace org { namespace iatoki { namespace cptest {
 
 class BaseProblem {
 private:
-    vector<Subtask> subtasks;
-
-    IOFormat* inFormat;
-    IOFormat* outFormat;
-
+    string slug;
+    IOFormat* inputFormat;
     IOFormat* curFormat;
 
-    Subtask currentSubtask;
+    ConstraintsCollector* constraintsCollector;
 
     vector<void(BaseProblem::*)()> subtaskBlocks = {
-        &BaseProblem::subtask1,
-        &BaseProblem::subtask2,
-        &BaseProblem::subtask3,
-        &BaseProblem::subtask4,
-        &BaseProblem::subtask5
+        &BaseProblem::Subtask1,
+        &BaseProblem::Subtask2,
+        &BaseProblem::Subtask3,
+        &BaseProblem::Subtask4,
+        &BaseProblem::Subtask5
     };
 
 protected:
+    BaseProblem() :
+        slug("problem"),
+        inputFormat(new IOFormat()),
+        curFormat(nullptr),
+        constraintsCollector(new ConstraintsCollector())
+    { }
 
-    BaseProblem() {
-        inFormat = new IOFormat();
-        outFormat = new IOFormat();
-        curFormat = nullptr;
+    virtual ~BaseProblem() { }
+
+    virtual void Config() = 0;
+    virtual void InputFormat() = 0;
+    virtual void Constraints() { throw NotImplementedException(); }
+    virtual void Subtask1() { throw NotImplementedException(); }
+    virtual void Subtask2() { throw NotImplementedException(); }
+    virtual void Subtask3() { throw NotImplementedException(); }
+    virtual void Subtask4() { throw NotImplementedException(); }
+    virtual void Subtask5() { throw NotImplementedException(); }
+
+    void setSlug(string slug) {
+        this->slug = slug;
     }
 
-    virtual void subtask1() { throw NotImplementedException(); }
-    virtual void subtask2() { throw NotImplementedException(); }
-    virtual void subtask3() { throw NotImplementedException(); }
-    virtual void subtask4() { throw NotImplementedException(); }
-    virtual void subtask5() { throw NotImplementedException(); }
+    string getSlug() {
+        return slug;
+    }
 
-    void addPredicate(Predicate pred) {
-        currentSubtask.addPredicate(pred);
+    void addConstraint(function<bool()> predicate, string description) {
+        constraintsCollector->addConstraint(predicate, description);
     }
 
     void setCurrentFormatAsInputFormat() {
-        curFormat = inFormat;
+        curFormat = this->inputFormat;
     }
 
     LineIOSegment& line() {
@@ -58,29 +69,28 @@ protected:
         return *segment;
     }
 
-    void collectSubtasks() {
-        for (auto subtaskBlock : subtaskBlocks) {
-            try {
-                (this->*subtaskBlock)();
-                subtasks.push_back(currentSubtask);
-                currentSubtask = Subtask();
-            } catch (NotImplementedException e) {
-                break;
+    vector<Subtask*> collectConstraints() {
+        try {
+            Constraints();
+            return constraintsCollector->collectConstraints();
+        } catch (NotImplementedException e1){
+            for (auto subtaskBlock : subtaskBlocks) {
+                try {
+                    constraintsCollector->newSubtask();
+                    (this->*subtaskBlock)();
+                } catch (NotImplementedException e2) {
+                    vector<Subtask*> subtasks = constraintsCollector->collectConstraints();
+                    subtasks.pop_back();
+                    return subtasks;
+                }
             }
         }
     }
 
-    vector<Predicate> getFailedPredicates(int subtaskNumber) {
-        return subtasks[subtaskNumber].getFailedPredicates();
+    void printTestCaseInput(TestCase* testCase, ostream& out) {
+        testCase->closure();
+        inputFormat->printTo(out);
     }
-
-public: 
-    virtual void inputFormat() = 0;
-
-    void printInputTo(ostream& out) {
-        inFormat->printTo(out);
-    }
-
 };
 
 }}}
