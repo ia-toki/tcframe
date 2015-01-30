@@ -50,7 +50,7 @@ public:
         subtasks.back()->constraints.push_back(new Constraint{curConstraintNo, predicate, description});
     }
 
-    vector<Subtask*> collectConstraints() {
+    vector<Subtask*> collectSubtasks() {
         return subtasks;
     }
 };

@@ -31,17 +31,17 @@ private:
         &BaseGenerator::TestGroup5
     };
 
-    vector<TestGroup*> collectTestCases() {
+    vector<TestGroup*> collectTestData() {
         try {
             TestCases();
-            return testCasesCollector->collectTestCases();
+            return testCasesCollector->collectTestData();
         } catch (NotImplementedException e1){
             for (auto testGroupBlock : testGroupBlocks) {
                 try {
                     testCasesCollector->newTestGroup();
                     (this->*testGroupBlock)();
                 } catch (NotImplementedException e2) {
-                    vector<TestGroup*> testCases = testCasesCollector->collectTestCases();
+                    vector<TestGroup*> testCases = testCasesCollector->collectTestData();
                     testCases.pop_back();
                     return testCases;
                 }
@@ -84,10 +84,10 @@ public:
         TProblem::setCurrentFormatAsInputFormat();
         TProblem::InputFormat();
 
-        vector<Subtask*> subtasks = TProblem::collectConstraints();
-        vector<TestGroup*> testGroups = collectTestCases();
+        vector<Subtask*> subtasks = TProblem::collectSubtasks();
+        vector<TestGroup*> testData = collectTestData();
         
-        for (TestGroup* testGroup : testGroups) {
+        for (TestGroup* testGroup : testData) {
             if (testGroup->id) {
                 cout << "[Test Group " << testGroup->id << "]" << endl;
             }

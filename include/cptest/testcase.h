@@ -77,11 +77,11 @@ public:
         }
     }
 
-    vector<TestGroup*> collectTestCases() {
+    vector<TestGroup*> collectTestData() {
         return testGroups;
     }
 
-    vector<SampleTestCase*> collectSampleTestCases() {
+    vector<SampleTestCase*> collectSampleTestData() {
         return sampleTestCases;
     }
 };

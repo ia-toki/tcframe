@@ -69,17 +69,17 @@ protected:
         return *segment;
     }
 
-    vector<Subtask*> collectConstraints() {
+    vector<Subtask*> collectSubtasks() {
         try {
             Constraints();
-            return constraintsCollector->collectConstraints();
+            return constraintsCollector->collectSubtasks();
         } catch (NotImplementedException e1){
             for (auto subtaskBlock : subtaskBlocks) {
                 try {
                     constraintsCollector->newSubtask();
                     (this->*subtaskBlock)();
                 } catch (NotImplementedException e2) {
-                    vector<Subtask*> subtasks = constraintsCollector->collectConstraints();
+                    vector<Subtask*> subtasks = constraintsCollector->collectSubtasks();
                     subtasks.pop_back();
                     return subtasks;
                 }
