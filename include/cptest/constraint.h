@@ -30,10 +30,7 @@ private:
     vector<Subtask*> subtasks;
 
 public:
-    ConstraintsCollector() :
-        curSubtaskNo(0),
-        curConstraintNo(0)
-    { }
+    ConstraintsCollector() :curSubtaskNo(0), curConstraintNo(0) { }
 
     void newSubtask() {
         curSubtaskNo++;

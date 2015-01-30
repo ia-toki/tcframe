@@ -12,13 +12,11 @@ using std::vector;
 
 namespace org { namespace iatoki { namespace cptest {
 
-class BaseProblem {
+class BaseProblem : protected ConstraintsCollector {
 private:
     string slug;
     IOFormat* inputFormat;
     IOFormat* curFormat;
-
-    ConstraintsCollector* constraintsCollector;
 
     vector<void(BaseProblem::*)()> subtaskBlocks = {
         &BaseProblem::Subtask1,
@@ -32,8 +30,7 @@ protected:
     BaseProblem() :
         slug("problem"),
         inputFormat(new IOFormat()),
-        curFormat(nullptr),
-        constraintsCollector(new ConstraintsCollector())
+        curFormat(nullptr)
     { }
 
     virtual ~BaseProblem() { }
@@ -55,10 +52,6 @@ protected:
         return slug;
     }
 
-    void addConstraint(function<bool()> predicate, string description) {
-        constraintsCollector->addConstraint(predicate, description);
-    }
-
     void setCurrentFormatAsInputFormat() {
         curFormat = this->inputFormat;
     }
@@ -72,14 +65,14 @@ protected:
     vector<Subtask*> collectSubtasks() {
         try {
             Constraints();
-            return constraintsCollector->collectSubtasks();
+            return ConstraintsCollector::collectSubtasks();
         } catch (NotImplementedException e1){
             for (auto subtaskBlock : subtaskBlocks) {
                 try {
-                    constraintsCollector->newSubtask();
+                    ConstraintsCollector::newSubtask();
                     (this->*subtaskBlock)();
                 } catch (NotImplementedException e2) {
-                    vector<Subtask*> subtasks = constraintsCollector->collectSubtasks();
+                    vector<Subtask*> subtasks = ConstraintsCollector::collectSubtasks();
                     subtasks.pop_back();
                     return subtasks;
                 }

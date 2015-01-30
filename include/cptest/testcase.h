@@ -42,11 +42,8 @@ private:
     vector<TestGroup*> testGroups;
     vector<SampleTestCase*> sampleTestCases;
 
-public:
-    TestCasesCollector() :
-        curTestGroupNo(0),
-        curTestCaseNo(0)
-    { }
+protected:
+    TestCasesCollector() : curTestGroupNo(0), curTestCaseNo(0) { }
 
     void newTestGroup() {
         curTestGroupNo++;

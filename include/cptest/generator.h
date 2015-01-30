@@ -18,10 +18,9 @@ using std::vector;
 namespace org { namespace iatoki { namespace cptest {
 
 template<typename TProblem>
-class BaseGenerator : protected TProblem {
+class BaseGenerator : protected TProblem, protected TestCasesCollector {
 private:
     OperatingSystem* os;
-    TestCasesCollector* testCasesCollector;
 
     vector<void(BaseGenerator::*)()> testGroupBlocks = {
         &BaseGenerator::TestGroup1,
@@ -34,14 +33,14 @@ private:
     vector<TestGroup*> collectTestData() {
         try {
             TestCases();
-            return testCasesCollector->collectTestData();
+            return TestCasesCollector::collectTestData();
         } catch (NotImplementedException e1){
             for (auto testGroupBlock : testGroupBlocks) {
                 try {
-                    testCasesCollector->newTestGroup();
+                    TestCasesCollector::newTestGroup();
                     (this->*testGroupBlock)();
                 } catch (NotImplementedException e2) {
-                    vector<TestGroup*> testCases = testCasesCollector->collectTestData();
+                    vector<TestGroup*> testCases = TestCasesCollector::collectTestData();
                     testCases.pop_back();
                     return testCases;
                 }
@@ -50,15 +49,9 @@ private:
     }
 
 protected:
-    BaseGenerator() :
-        os(new Unix()),
-        testCasesCollector(new TestCasesCollector())
-    { }
+    BaseGenerator() : os(new Unix()) { }
 
-    BaseGenerator(OperatingSystem* os) :
-        os(os),
-        testCasesCollector(new TestCasesCollector())
-    { }
+    BaseGenerator(OperatingSystem* os) : os(os) { }
 
     virtual ~BaseGenerator() { }
 
@@ -69,15 +62,6 @@ protected:
     virtual void TestGroup3() { throw NotImplementedException(); }
     virtual void TestGroup4() { throw NotImplementedException(); }
     virtual void TestGroup5() { throw NotImplementedException(); }
-
-
-    void addTestCase(function<void()> closure, string description) {
-        testCasesCollector->addTestCase(closure, description);
-    }
-
-    void assignToSubtasks(initializer_list<int> subtaskNos) {
-        testCasesCollector->assignToSubtasks(subtaskNos);
-    }
 
 public:
     void generate() {
