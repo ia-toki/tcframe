@@ -46,7 +46,7 @@ protected:
         return slug;
     }
 
-    vector<Subtask*> collectSubtasks() {
+    vector<Subtask*> getSubtasks() {
         try {
             Constraints();
             return ConstraintsCollector::collectSubtasks();
@@ -64,9 +64,9 @@ protected:
         }
     }
 
-    void printTestCaseInput(TestCase* testCase, ostream& out) {
-        testCase->closure();
-        IOFormatsCollector::printFormatTo(IOMode::INPUT, out);
+    IOFormat* getInputFormat() {
+        InputFormat();
+        return IOFormatsCollector::collectFormat(IOMode::INPUT);
     }
 };
 

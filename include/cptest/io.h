@@ -80,8 +80,8 @@ protected:
         return *segment;
     }
 
-    void printFormatTo(IOMode mode, ostream& out) {
-        formats[mode]->printTo(out);
+    IOFormat* collectFormat(IOMode mode) {
+        return formats[mode];
     }
 };
 

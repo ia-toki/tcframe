@@ -21,6 +21,10 @@ template<typename TProblem>
 class BaseGenerator : protected TProblem, protected TestCasesCollector {
 private:
     OperatingSystem* os;
+    vector<TestGroup*> testData;
+    vector<Subtask*> subtasks;
+    
+    IOFormat* inputFormat;
 
     vector<void(BaseGenerator::*)()> testGroupBlocks = {
         &BaseGenerator::TestGroup1,
@@ -30,7 +34,7 @@ private:
         &BaseGenerator::TestGroup5
     };
 
-    vector<TestGroup*> collectTestData() {
+    vector<TestGroup*> getTestData() {
         try {
             TestCases();
             return TestCasesCollector::collectTestData();
@@ -46,6 +50,11 @@ private:
                 }
             }
         }
+    }
+
+    void printTestCase(TestCase* testCase) {
+        testCase->closure();
+        inputFormat->printTo(cout);
     }
 
 protected:
@@ -65,10 +74,9 @@ protected:
 
 public:
     void generate() {
-        TProblem::InputFormat();
-
-        vector<Subtask*> subtasks = TProblem::collectSubtasks();
-        vector<TestGroup*> testData = collectTestData();
+        subtasks = TProblem::getSubtasks();
+        testData = getTestData();
+        inputFormat = TProblem::getInputFormat();
         
         for (TestGroup* testGroup : testData) {
             if (testGroup->id) {
@@ -77,7 +85,7 @@ public:
 
             for (TestCase* testCase : testGroup->testCases) {
                 cout << "Test Case " << testCase->id << endl;
-                TProblem::printTestCaseInput(testCase, cout);
+                printTestCase(testCase);
             }
         }
     }
