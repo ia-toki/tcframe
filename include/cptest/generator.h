@@ -65,7 +65,6 @@ protected:
 
 public:
     void generate() {
-        TProblem::setCurrentFormatAsInputFormat();
         TProblem::InputFormat();
 
         vector<Subtask*> subtasks = TProblem::collectSubtasks();

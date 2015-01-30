@@ -12,11 +12,9 @@ using std::vector;
 
 namespace org { namespace iatoki { namespace cptest {
 
-class BaseProblem : protected ConstraintsCollector {
+class BaseProblem : protected ConstraintsCollector, protected IOFormatsCollector {
 private:
     string slug;
-    IOFormat* inputFormat;
-    IOFormat* curFormat;
 
     vector<void(BaseProblem::*)()> subtaskBlocks = {
         &BaseProblem::Subtask1,
@@ -27,11 +25,7 @@ private:
     };
 
 protected:
-    BaseProblem() :
-        slug("problem"),
-        inputFormat(new IOFormat()),
-        curFormat(nullptr)
-    { }
+    BaseProblem() : slug("problem") { }
 
     virtual ~BaseProblem() { }
 
@@ -50,16 +44,6 @@ protected:
 
     string getSlug() {
         return slug;
-    }
-
-    void setCurrentFormatAsInputFormat() {
-        curFormat = this->inputFormat;
-    }
-
-    LineIOSegment& line() {
-        LineIOSegment* segment = new LineIOSegment();
-        curFormat->addSegment(segment);
-        return *segment;
     }
 
     vector<Subtask*> collectSubtasks() {
@@ -82,7 +66,7 @@ protected:
 
     void printTestCaseInput(TestCase* testCase, ostream& out) {
         testCase->closure();
-        inputFormat->printTo(out);
+        IOFormatsCollector::printFormatTo(IOMode::INPUT, out);
     }
 };
 

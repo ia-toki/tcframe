@@ -54,6 +54,37 @@ public:
     }
 };
 
+enum IOMode {
+    INPUT,
+    OUTPUT
+};
+
+class IOFormatsCollector {
+private:
+    IOFormat* formats[2];
+    IOMode mode;
+
+protected:
+    IOFormatsCollector() : mode(IOMode::INPUT) {
+        this->formats[IOMode::INPUT] = new IOFormat();
+        this->formats[IOMode::OUTPUT] = new IOFormat();
+    }
+
+    void setMode(IOMode mode) {
+        this->mode = mode;
+    }
+
+    LineIOSegment& line() {
+        LineIOSegment* segment = new LineIOSegment();
+        formats[mode]->addSegment(segment);
+        return *segment;
+    }
+
+    void printFormatTo(IOMode mode, ostream& out) {
+        formats[mode]->printTo(out);
+    }
+};
+
 }}}
 
 #endif
