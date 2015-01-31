@@ -9,7 +9,7 @@ struct Problem : BaseProblem {
     int A, B;
 
     void Config() {
-        setSlug("problem");
+        setSlug("example");
     }
 
     void InputFormat() {
@@ -17,24 +17,29 @@ struct Problem : BaseProblem {
     }
 
     void Subtask1() {
-        CONS(A % 2 == 0);
-        CONS(B == 4);
+        CONS(1 <= A && A <= 1000);
+        CONS(1 <= B && B <= 1000);
+    }
+
+    void Subtask2() {
+        CONS(1 <= A && A <= 2000000000);
+        CONS(1 <= B && B <= 2000000000);
     }
 };
 
 struct Generator : BaseGenerator<Problem> {
     void TestGroup1() {
-        assignToSubtasks({1});
+        assignToSubtasks({1, 2});
 
-        CASE(A = 3; B = 4;);
-        CASE(A = 7; B = 4;);
+        CASE(A = 1; B = 2;);
+        CASE(A = 100; B = 200;);
     }
 
     void TestGroup2() {
-        assignToSubtasks({1});
+        assignToSubtasks({2});
 
-        CASE(A = 1; B = 1;);
-        CASE(A = 2; B = 2;);
+        CASE(A = 1001; B = 10000;);
+        CASE(A = 2000000000; B = 2000000000;);
     }
 };
 
