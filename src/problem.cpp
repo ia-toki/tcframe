@@ -1,4 +1,4 @@
-#include "include/tcframe/tcframe.h"
+#include "../include/tcframe/tcframe.h"
 
 #include <string>
 
@@ -9,7 +9,7 @@ struct Problem : BaseProblem {
     int A, B;
 
     void Config() {
-        setSlug("test-problem");
+        setSlug("problem");
     }
 
     void InputFormat() {

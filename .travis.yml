@@ -1,0 +1,12 @@
+language: cpp
+compiler:
+  - gcc
+install:
+ - sudo apt-get update
+ - sudo apt-get install libgtest-dev
+ - "cd /usr/src/gtest && sudo cmake . && sudo cmake --build . && sudo mv libg* /usr/local/lib/ ; cd -"
+script: "make && ./tcframe_test"
+after_success: "rm tcframe_test"
+notifications:
+  recipients:
+    - fushar@gmail.com
