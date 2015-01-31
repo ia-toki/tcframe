@@ -1,5 +1,5 @@
-#ifndef CPTEST_OS_H
-#define CPTEST_OS_H
+#ifndef TCFRAME_OS_H
+#define TCFRAME_OS_H
 
 #include <cstdlib>
 #include <fstream>
@@ -11,7 +11,7 @@ using std::ostream;
 using std::ostringstream;
 using std::string;
 
-namespace org { namespace iatoki { namespace cptest {
+namespace tcframe {
 
 class OperatingSystem {
 public:
@@ -50,6 +50,6 @@ public:
     }
 };
 
-}}}
+}
 
 #endif

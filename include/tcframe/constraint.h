@@ -1,5 +1,5 @@
-#ifndef CPTEST_CONSTRAINT_H
-#define CPTEST_CONSTRAINT_H
+#ifndef TCFRAME_CONSTRAINT_H
+#define TCFRAME_CONSTRAINT_H
 
 #include <functional>
 #include <string>
@@ -9,7 +9,7 @@ using std::function;
 using std::string;
 using std::vector;
 
-namespace org { namespace iatoki { namespace cptest {
+namespace tcframe {
 
 struct Constraint {
     int id;
@@ -52,6 +52,6 @@ public:
     }
 };
 
-}}}
+}
 
 #endif

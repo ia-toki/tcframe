@@ -1,5 +1,5 @@
-#ifndef CPTEST_UTIL_H
-#define CPTEST_UTIL_H
+#ifndef TCFRAME_UTIL_H
+#define TCFRAME_UTIL_H
 
 #include <sstream>
 #include <string>
@@ -7,7 +7,7 @@
 using std::ostringstream;
 using std::string;
 
-namespace org { namespace iatoki { namespace cptest {
+namespace tcframe {
 
 template<typename T>
 string toString(T obj) {
@@ -16,6 +16,6 @@ string toString(T obj) {
     return sout.str();
 }
 
-}}}
+}
 
 #endif

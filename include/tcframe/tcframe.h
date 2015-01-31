@@ -1,5 +1,5 @@
-#ifndef CPTEST_CPTEST_H
-#define CPTEST_CPTEST_H
+#ifndef TCFRAME_TCFRAME_H
+#define TCFRAME_TCFRAME_H
 
 #include "generator.h"
 

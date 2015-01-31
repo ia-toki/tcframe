@@ -1,5 +1,5 @@
-#ifndef CPTEST_PROBLEM_H
-#define CPTEST_PROBLEM_H
+#ifndef TCFRAME_PROBLEM_H
+#define TCFRAME_PROBLEM_H
 
 #include "constraint.h"
 #include "exception.h"
@@ -10,7 +10,7 @@
 
 using std::vector;
 
-namespace org { namespace iatoki { namespace cptest {
+namespace tcframe {
 
 class BaseProblem : protected ConstraintsCollector, protected IOFormatsCollector {
 private:
@@ -70,6 +70,6 @@ protected:
     }
 };
 
-}}}
+}
 
 #endif

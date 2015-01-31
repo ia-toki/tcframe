@@ -1,5 +1,5 @@
-#ifndef CPTEST_IO_H
-#define CPTEST_IO_H
+#ifndef TCFRAME_IO_H
+#define TCFRAME_IO_H
 
 #include "type.h"
 
@@ -9,7 +9,7 @@
 using std::ostream;
 using std::vector;
 
-namespace org { namespace iatoki { namespace cptest {
+namespace tcframe {
 
 class IOSegment {
 public:
@@ -85,6 +85,6 @@ protected:
     }
 };
 
-}}}
+}
 
 #endif

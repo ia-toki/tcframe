@@ -1,5 +1,5 @@
-#ifndef CPTEST_GENERATOR_H
-#define CPTEST_GENERATOR_H
+#ifndef TCFRAME_GENERATOR_H
+#define TCFRAME_GENERATOR_H
 
 #include "exception.h"
 #include "os.h"
@@ -15,7 +15,7 @@ using std::endl;
 using std::initializer_list;
 using std::vector;
 
-namespace org { namespace iatoki { namespace cptest {
+namespace tcframe {
 
 template<typename TProblem>
 class BaseGenerator : protected TProblem, protected TestCasesCollector {
@@ -91,6 +91,6 @@ public:
     }
 };
 
-}}}
+}
 
 #endif

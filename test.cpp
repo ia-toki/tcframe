@@ -1,8 +1,8 @@
-#include "include/cptest/cptest.h"
+#include "include/tcframe/tcframe.h"
 
 #include <string>
 
-using namespace org::iatoki::cptest;
+using namespace tcframe;
 using std::string;
 
 struct Problem : BaseProblem {

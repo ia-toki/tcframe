@@ -1,5 +1,5 @@
-#ifndef CPTEST_TESTCASE_H
-#define CPTEST_TESTCASE_H
+#ifndef TCFRAME_TESTCASE_H
+#define TCFRAME_TESTCASE_H
 
 #include <functional>
 #include <set>
@@ -13,7 +13,7 @@ using std::set;
 using std::string;
 using std::vector;
 
-namespace org { namespace iatoki { namespace cptest {
+namespace tcframe {
 
 struct TestCase {
     int id;
@@ -83,6 +83,6 @@ protected:
     }
 };
 
-}}}
+}
 
 #endif

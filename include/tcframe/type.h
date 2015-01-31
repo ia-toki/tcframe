@@ -1,11 +1,11 @@
-#ifndef CPTEST_TYPE_H
-#define CPTEST_TYPE_H
+#ifndef TCFRAME_TYPE_H
+#define TCFRAME_TYPE_H
 
 #include <ostream>
 
 using std::ostream;
 
-namespace org { namespace iatoki { namespace cptest {
+namespace tcframe {
 
 class Variable {
 public:
@@ -28,6 +28,6 @@ public:
     }
 };
 
-}}}
+}
 
 #endif
