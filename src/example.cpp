@@ -1,9 +1,6 @@
 #include "../include/tcframe/tcframe.h"
 
-#include <string>
-
 using namespace tcframe;
-using std::string;
 
 struct Problem : BaseProblem {
     int A, B;
@@ -31,15 +28,15 @@ struct Generator : BaseGenerator<Problem> {
     void TestGroup1() {
         assignToSubtasks({1, 2});
 
-        CASE(A = 1; B = 2;);
-        CASE(A = 100; B = 200;);
+        CASE(A = 1, B = 2);
+        CASE(A = 100, B = 200);
     }
 
     void TestGroup2() {
         assignToSubtasks({2});
 
-        CASE(A = 1001; B = 10000;);
-        CASE(A = 2000000000; B = 2000000000;);
+        CASE(A = 1001, B = 10000);
+        CASE(A = 2000000000, B = 2000000000);
     }
 };
 
