@@ -3,10 +3,12 @@
 
 #include "type.h"
 
+#include <exception>
 #include <ostream>
 #include <vector>
 
 using std::ostream;
+using std::runtime_error;
 using std::vector;
 
 namespace tcframe {
@@ -22,6 +24,19 @@ private:
 
 public:
     LineIOSegment& operator%(int& x) {
+        if (!variables.empty()) {
+            throw runtime_error("Invalid syntax: use ',` here");
+        }
+
+        variables.push_back(new Scalar<int>(x));
+        return *this;
+    }
+
+    LineIOSegment& operator,(int& x) {
+        if (variables.empty()) {
+            throw runtime_error("Invalid syntax: use '\%` here");
+        }
+
         variables.push_back(new Scalar<int>(x));
         return *this;
     }

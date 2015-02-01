@@ -10,7 +10,7 @@ struct Problem : BaseProblem {
     }
 
     void InputFormat() {
-        line() % A % B;
+        line() % A, B;
     }
 
     void Subtask1() {
