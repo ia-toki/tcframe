@@ -57,7 +57,7 @@ private:
     }
 
     void generateTestCase(int testGroupId, int testCaseId) {
-        string inputFilename = util::constructTestCaseFilename(TProblem::getSlug(), testGroupId, testCaseId);
+        string inputFilename = Util::constructTestCaseFilename(TProblem::getSlug(), testGroupId, testCaseId);
         Logger::logTestCaseHeader(inputFilename);
 
         TestCase* testCase = getTestCase(testGroupId, testCaseId);
@@ -73,6 +73,7 @@ private:
 
         ostream* inputFile = os->createFile(TEST_CASES_DIR_NAME, inputFilename);
         inputFormat->printTo(*inputFile);
+
         delete inputFile;
 
         Logger::logTestCaseSatisfiedResult();

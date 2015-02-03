@@ -1,8 +1,6 @@
 #ifndef TCFRAME_TESTCASE_H
 #define TCFRAME_TESTCASE_H
 
-#include "util.h"
-
 #include <functional>
 #include <set>
 #include <string>

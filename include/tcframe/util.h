@@ -7,23 +7,26 @@
 using std::ostringstream;
 using std::string;
 
-namespace tcframe { namespace util {
+namespace tcframe {
 
-template<typename T>
-string toString(T obj) {
-    ostringstream sout;
-    sout << obj;
-    return sout.str();
-}
-
-string constructTestCaseFilename(string slug, int testGroupId, int testCaseId) {
-    if (testCaseId) {
-        return slug + "_" + toString(testGroupId) + "_" + toString(testCaseId);
-    } else {
-        return slug + "_" + toString(testCaseId);
+class Util {
+public:
+    template<typename T>
+    static string toString(T obj) {
+        ostringstream sout;
+        sout << obj;
+        return sout.str();
     }
-}
 
-} }
+    static string constructTestCaseFilename(string slug, int testGroupId, int testCaseId) {
+        if (testCaseId) {
+            return slug + "_" + toString(testGroupId) + "_" + toString(testCaseId);
+        } else {
+            return slug + "_" + toString(testCaseId);
+        }
+    }
+};
+
+}
 
 #endif

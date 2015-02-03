@@ -1,8 +1,6 @@
 #ifndef TCFRAME_CONSTRAINT_H
 #define TCFRAME_CONSTRAINT_H
 
-#include "util.h"
-
 #include <functional>
 #include <string>
 #include <vector>
