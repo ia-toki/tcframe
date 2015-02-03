@@ -1,6 +1,8 @@
 #ifndef TCFRAME_CONSTRAINT_H
 #define TCFRAME_CONSTRAINT_H
 
+#include "util.h"
+
 #include <functional>
 #include <string>
 #include <vector>
@@ -11,40 +13,66 @@ using std::vector;
 
 namespace tcframe {
 
-struct Constraint {
-    int id;
+class Constraint {
+private:
     function<bool()> predicate;
     string description;
+
+public:
+    Constraint(function<bool()> predicate, string description) :
+        predicate(predicate), description(description) { }
+
+    bool isSatisfied() {
+        return predicate();
+    }
+
+    string getDescription() {
+        return description;
+    }
 };
 
-struct Subtask {
+class Subtask {
+private:
     int id;
     vector<Constraint*> constraints;
+
+public:
+    Subtask(int id) :
+        id(id) { }
+
+    void addConstraint(Constraint* constraint) {
+        constraints.push_back(constraint);
+    }
+
+    int getId() {
+        return id;
+    }
+
+    vector<Constraint*> getConstraints() {
+        return constraints;
+    }
 };
 
 class ConstraintsCollector {
 private:
-    int curSubtaskNo;
-    int curConstraintNo;
-
+    int curSubtaskId;
     vector<Subtask*> subtasks;
 
 public:
-    ConstraintsCollector() :curSubtaskNo(0), curConstraintNo(0) { }
+    ConstraintsCollector()
+        : curSubtaskId(0) { }
 
     void newSubtask() {
-        curSubtaskNo++;
-        curConstraintNo = 0;
-        subtasks.push_back(new Subtask{curSubtaskNo});
+        curSubtaskId++;
+        subtasks.push_back(new Subtask(curSubtaskId));
     }
 
     void addConstraint(function<bool()> predicate, string description) {
-        if (!curSubtaskNo) {
-            subtasks.push_back(new Subtask{0});
+        if (subtasks.empty()) {
+            subtasks.push_back(new Subtask(-1));
         }
 
-        curConstraintNo++;
-        subtasks.back()->constraints.push_back(new Constraint{curConstraintNo, predicate, description});
+        subtasks.back()->addConstraint(new Constraint(predicate, description));
     }
 
     vector<Subtask*> collectSubtasks() {

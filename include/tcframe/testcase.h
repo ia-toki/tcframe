@@ -1,6 +1,8 @@
 #ifndef TCFRAME_TESTCASE_H
 #define TCFRAME_TESTCASE_H
 
+#include "util.h"
+
 #include <functional>
 #include <set>
 #include <string>
@@ -15,71 +17,135 @@ using std::vector;
 
 namespace tcframe {
 
-struct TestCase {
-    int id;
+enum TestCaseType {
+    SAMPLE,
+    OFFICIAL
+};
+
+class TestCase {
+public:
+    virtual TestCaseType getType() = 0;
+    virtual string getDescription() = 0;
+    virtual set<int> getSubtaskIds() = 0;
+
+    virtual ~TestCase() { }
+};
+
+class OfficialTestCase : public TestCase {
+private:
     function<void()> closure;
     string description;
+    set<int> subtaskIds;
+
+public:
+    OfficialTestCase(function<void()> closure, string description, set<int> subtaskIds) :
+        closure(closure), description(description), subtaskIds(subtaskIds) { }
+
+    TestCaseType getType() override {
+        return TestCaseType::OFFICIAL;
+    }
+
+    string getDescription() override {
+        return description;
+    }
+
+    set<int> getSubtaskIds() override {
+        return subtaskIds;
+    }
+
+    void apply() {
+        closure();
+    }
 };
 
-struct SampleTestCase {
-    int id;
+class SampleTestCase : public TestCase {
+private:
     string content;
-    set<int> subtaskNos;
+    string description;
+    set<int> subtaskIds;
+
+public:
+    SampleTestCase(string content, string description, set<int> subtaskIds) :
+        content(content), description(description), subtaskIds(subtaskIds) { }
+
+    TestCaseType getType() override {
+        return TestCaseType::SAMPLE;
+    }
+
+    string getDescription() override {
+        return description;
+    }
+
+    set<int> getSubtaskIds() override {
+        return subtaskIds;
+    }
+
+    string getContent() {
+        return content;
+    }
 };
 
-struct TestGroup {
+class TestGroup {
+private:
     int id;
     vector<TestCase*> testCases;
-    set<int> subtaskNos;
+
+public:
+    TestGroup(int id) :
+        id(id) { }
+
+    void addTestCase(TestCase* testCase) {
+        testCases.push_back(testCase);
+    }
+
+    int getId() {
+        return id;
+    }
+
+    int getTestCasesCount() {
+        return testCases.size();
+    }
+
+    TestCase* getTestCase(int index) {
+        return testCases[index];
+    }
 };
 
 class TestCasesCollector {
 private:
-    int curTestGroupNo;
-    int curTestCaseNo;
-    int curSampleTestCaseNo;
+    int curTestGroupId;
+    set<int> curSubtaskIds;
 
     vector<TestGroup*> testGroups;
-    vector<SampleTestCase*> sampleTestCases;
 
 protected:
-    TestCasesCollector() : curTestGroupNo(0), curTestCaseNo(0) { }
+    TestCasesCollector()
+        : curTestGroupId(0) {
+        testGroups.push_back(new TestGroup(0));
+    }
 
     void newTestGroup() {
-        curTestGroupNo++;
-        curTestCaseNo = 0;
-        testGroups.push_back(new TestGroup{curTestGroupNo});
+        curTestGroupId++;
+        curSubtaskIds.clear();
+        testGroups.push_back(new TestGroup(curTestGroupId));
     }
-
-    void addSampleTestCase(string content) {
-        curSampleTestCaseNo++;
-        sampleTestCases.push_back(new SampleTestCase{curSampleTestCaseNo, content});
-    }
-
 
     void addTestCase(function<void()> closure, string description) {
-        if (!curTestGroupNo) {
-            testGroups.push_back(new TestGroup{0});
+        if (testGroups.size() == 1) {
+            testGroups.push_back(new TestGroup(-1));
         }
 
-        curTestCaseNo++;
-        testGroups.back()->testCases.push_back(new TestCase{curTestCaseNo, closure, description});
+        testGroups.back()->addTestCase(new OfficialTestCase(closure, description, curSubtaskIds));
     }
 
-    void assignToSubtasks(initializer_list<int> subtaskNos) {
-        set<int>& curSubtaskNos = testGroups.back()->subtaskNos;
-
-        for (int subtaskNo : subtaskNos) {
-            curSubtaskNos.insert(subtaskNo - 1);
+    void assignToSubtasks(initializer_list<int> subtaskIds) {
+        for (int subtaskId : subtaskIds) {
+            curSubtaskIds.insert(subtaskId);
         }
     }
 
     vector<TestGroup*> collectTestData() {
         return testGroups;
-    }
-
-    vector<SampleTestCase*> collectSampleTestData() {
-        return sampleTestCases;
     }
 };
 

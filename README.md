@@ -4,10 +4,10 @@
 
 **tcframe** is a framework for generating test cases, designed especially for problems in competitive programming contests.
 
-Currently it is in very early stage of development. Here is an example of a planned syntax of a generator written using tcframe:
+Currently it is in very early stage of development. Here is an example of the current planned syntax of a generator written using tcframe:
 
 ```
-#include "../include/tcframe/tcframe.h"
+#include "tcframe/tcframe.h"
 
 using namespace tcframe;
 

@@ -7,7 +7,7 @@
 using std::ostringstream;
 using std::string;
 
-namespace tcframe {
+namespace tcframe { namespace util {
 
 template<typename T>
 string toString(T obj) {
@@ -16,6 +16,14 @@ string toString(T obj) {
     return sout.str();
 }
 
+string constructTestCaseFilename(string slug, int testGroupId, int testCaseId) {
+    if (testCaseId) {
+        return slug + "_" + toString(testGroupId) + "_" + toString(testCaseId);
+    } else {
+        return slug + "_" + toString(testCaseId);
+    }
 }
+
+} }
 
 #endif

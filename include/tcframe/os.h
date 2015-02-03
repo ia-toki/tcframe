@@ -18,8 +18,7 @@ public:
     virtual ~OperatingSystem() { }
 
     virtual void createDirectory(string directoryName) = 0;
-    virtual void removeDirectory(string directoryName) = 0;
-    virtual ostream* openFile(string filename) = 0;
+    virtual ostream* createFile(string baseDirectoryName, string filename) = 0;
     virtual void execute(string command, string input, string output) = 0;
 };
 
@@ -27,19 +26,17 @@ class Unix : public OperatingSystem {
 public:
     void createDirectory(string directoryName) {
         ostringstream ss;
-        ss << "mkdir -p " << directoryName;
-        system(ss.str().c_str());
-    }
-
-    void removeDirectory(string directoryName) {
-        ostringstream ss;
         ss << "rm -rf " << directoryName;
         system(ss.str().c_str());
+
+        ostringstream ss2;
+        ss2 << "mkdir -p " << directoryName;
+        system(ss2.str().c_str());
     }
 
-    ostream* openFile(string filename) {
+    ostream* createFile(string baseDirectoryName, string filename) {
         ofstream* file = new ofstream();
-        file->open(filename);
+        file->open(baseDirectoryName + "/" + filename);
         return file;
     }
 

@@ -7,6 +7,8 @@
 #include <ostream>
 #include <vector>
 
+#include <iostream>
+
 using std::ostream;
 using std::runtime_error;
 using std::vector;
