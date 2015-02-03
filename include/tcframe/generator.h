@@ -1,19 +1,23 @@
 #ifndef TCFRAME_GENERATOR_H
 #define TCFRAME_GENERATOR_H
 
+#include "constraint.h"
 #include "exception.h"
 #include "logger.h"
 #include "os.h"
 #include "problem.h"
 #include "testcase.h"
-#include "unsatisfiability.h"
 #include "util.h"
 
 #include <vector>
 #include <cstdio>
+#include <ostream>
+#include <set>
 #include <string>
 
 using std::initializer_list;
+using std::ostream;
+using std::set;
 using std::string;
 using std::vector;
 
@@ -61,22 +65,25 @@ private:
         Logger::logTestCaseHeader(inputFilename);
 
         TestCase* testCase = getTestCase(testGroupId, testCaseId);
-        UnsatisfiabilitiesCollector* unsatisfiabilitiesCollector = new UnsatisfiabilitiesCollector();
+        ostream* inputFile = nullptr;
 
-        applyTestCase(testCase, unsatisfiabilitiesCollector);
-        applyConstraints(testCase, unsatisfiabilitiesCollector);
+        try {
+            applyTestCase(testCase);
+            checkConstraints(testCase);
 
-        if (unsatisfiabilitiesCollector->hasUnsatisfiabilities()) {
-            Logger::logTestCaseUnsatisfiedResult(testCase->getDescription(), unsatisfiabilitiesCollector->collectUnsatisfiabilities());
-            return;
+            inputFile = os->createFile(TEST_CASES_DIR_NAME, inputFilename + ".in");
+            inputFormat->printTo(*inputFile);
+
+            Logger::logTestCaseSatisfiedResult();
+
+        } catch (ConstraintsUnsatisfiedException e1) {
+            Logger::logTestCaseFailedResult(testCase->getDescription());
+            Logger::logConstraintsUnsatisfiedException(e1);
         }
 
-        ostream* inputFile = os->createFile(TEST_CASES_DIR_NAME, inputFilename);
-        inputFormat->printTo(*inputFile);
-
-        delete inputFile;
-
-        Logger::logTestCaseSatisfiedResult();
+        if (inputFile != nullptr) {
+            delete inputFile;
+        }
     }
 
     TestCase* getTestCase(int testGroupId, int testCaseId) {
@@ -87,7 +94,7 @@ private:
         }
     }
 
-    void applyTestCase(TestCase* testCase, UnsatisfiabilitiesCollector* unsatisfiabilitiesCollector) {
+    void applyTestCase(TestCase* testCase) {
         if (testCase->getType() == TestCaseType::OFFICIAL) {
             static_cast<OfficialTestCase*>(testCase)->apply();
         } else {
@@ -95,12 +102,9 @@ private:
         }
     }
 
-    void applyConstraints(TestCase* testCase, UnsatisfiabilitiesCollector* unsatisfiabilitiesCollector) {
-        if (unsatisfiabilitiesCollector->hasUnsatisfiabilities()) {
-            return;
-        }
-
+    void checkConstraints(TestCase* testCase) {
         set<int> subtaskIds = testCase->getSubtaskIds();
+        vector<SubtaskFailure*> subtaskFailures;
 
         for (Subtask* subtask : subtasks) {
             vector<Constraint*> unsatisfiedConstraints;
@@ -112,13 +116,17 @@ private:
 
             if (subtaskIds.count(subtask->getId())) {
                 if (!unsatisfiedConstraints.empty()) {
-                    unsatisfiabilitiesCollector->addUnsatisfiability(new UnsatisfiedSubtaskUnsatisfiability(subtask->getId(), unsatisfiedConstraints));
+                    subtaskFailures.push_back(new UnsatisfiedSubtaskFailure(subtask->getId(), unsatisfiedConstraints));
                 }
             } else {
                 if (unsatisfiedConstraints.empty()) {
-                    unsatisfiabilitiesCollector->addUnsatisfiability(new SatisfiedSubtaskButNotAssignedUnsatisfiability(subtask->getId()));
+                    subtaskFailures.push_back(new SatisfiedSubtaskFailure(subtask->getId()));
                 }
             }
+        }
+
+        if (!subtaskFailures.empty()) {
+            throw ConstraintsUnsatisfiedException(subtaskFailures);
         }
     }
 

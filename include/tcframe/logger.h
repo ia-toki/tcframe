@@ -1,7 +1,7 @@
 #ifndef TCFRAME_LOGGER_H
 #define TCFRAME_LOGGER_H
 
-#include "unsatisfiability.h"
+#include "exception.h"
 
 #include <iostream>
 #include <string>
@@ -37,18 +37,21 @@ public:
         cout << "OK" << endl;
     }
 
-    static void logTestCaseUnsatisfiedResult(string description, vector<Unsatisfiability*> unsatisfiabilities) {
+    static void logTestCaseFailedResult(string testCaseDescription) {
         cout << "FAILED" << endl;
-        cout << "    Description: " << description << endl;
+        cout << "    Description: " << testCaseDescription << endl;
         cout << "    Reasons:" << endl;
+    }
 
-        for (Unsatisfiability* unsatisfiability : unsatisfiabilities) {
-            switch (unsatisfiability->getType()) {
-                case UnsatisfiabilityType::UNSATISFIED_SUBTASK:
-                    logUnsatisfiedSubtaskUnsatisfiability(static_cast<UnsatisfiedSubtaskUnsatisfiability*>(unsatisfiability));
+    static void logConstraintsUnsatisfiedException(ConstraintsUnsatisfiedException e) {
+
+        for (SubtaskFailure* subtaskFailure : e.getSubtaskFailures()) {
+            switch (subtaskFailure->getType()) {
+                case SubtaskFailureType::UNSATISFIED_BUT_ASSIGNED:
+                    logUnsatisfiedSubtaskFailure(static_cast<UnsatisfiedSubtaskFailure*>(subtaskFailure));
                     break;
-                case UnsatisfiabilityType::SATISFIED_SUBTASK_BUT_NOT_ASSIGNED:
-                    logSatisfiedSubtaskButNotAssignedUnsatisfiability(static_cast<SatisfiedSubtaskButNotAssignedUnsatisfiability*>(unsatisfiability));
+                case SubtaskFailureType::SATISFIED_BUT_NOT_ASSIGNED:
+                    logSatisfiedSubtaskFailure(static_cast<SatisfiedSubtaskFailure*>(subtaskFailure));
                     break;
             }
         }
@@ -57,9 +60,9 @@ public:
     }
 
 private:
-    static void logUnsatisfiedSubtaskUnsatisfiability(UnsatisfiedSubtaskUnsatisfiability* unsatisfiability) {
-        int subtaskId = unsatisfiability->getSubtaskId();
-        vector<Constraint*> unsatisfiedConstraints = unsatisfiability->getUnsatisfiedConstraints();
+    static void logUnsatisfiedSubtaskFailure(UnsatisfiedSubtaskFailure* subtaskFailure) {
+        int subtaskId = subtaskFailure->getSubtaskId();
+        vector<Constraint*> unsatisfiedConstraints = subtaskFailure->getUnsatisfiedConstraints();
 
         if (subtaskId == -1) {
             cout << "    * Does not satisfy constraints, on:" << endl;
@@ -72,8 +75,8 @@ private:
         }
     }
 
-    static void logSatisfiedSubtaskButNotAssignedUnsatisfiability(SatisfiedSubtaskButNotAssignedUnsatisfiability* unsatisfiability) {
-        int subtaskId = unsatisfiability->getSubtaskId();
+    static void logSatisfiedSubtaskFailure(SatisfiedSubtaskFailure* subtaskFailure) {
+        int subtaskId = subtaskFailure->getSubtaskId();
 
         cout << "    * Satisfies subtask " << subtaskId << " but is not assigned to it" << endl;
     }
