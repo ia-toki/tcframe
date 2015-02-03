@@ -19,7 +19,7 @@ public:
         cout << "Generating test cases..." << endl;
     }
 
-    static void logTestGroupHeader(int testGroupId) {
+    static void logTestGroupIntroduction(int testGroupId) {
         cout << endl;
 
         if (testGroupId == 0) {
@@ -29,11 +29,11 @@ public:
         }
     }
 
-    static void logTestCaseHeader(string name) {
+    static void logTestCaseIntroduction(string name) {
         cout << "  " << name << ": " << flush;
     }
 
-    static void logTestCaseSatisfiedResult() {
+    static void logTestCaseOkResult() {
         cout << "OK" << endl;
     }
 

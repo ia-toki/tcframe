@@ -62,7 +62,7 @@ private:
 
     void generateTestCase(int testGroupId, int testCaseId) {
         string inputFilename = Util::constructTestCaseFilename(TProblem::getSlug(), testGroupId, testCaseId);
-        Logger::logTestCaseHeader(inputFilename);
+        Logger::logTestCaseIntroduction(inputFilename);
 
         TestCase* testCase = getTestCase(testGroupId, testCaseId);
         ostream* inputFile = nullptr;
@@ -74,7 +74,7 @@ private:
             inputFile = os->createFile(TEST_CASES_DIR_NAME, inputFilename + ".in");
             inputFormat->printTo(*inputFile);
 
-            Logger::logTestCaseSatisfiedResult();
+            Logger::logTestCaseOkResult();
 
         } catch (ConstraintsUnsatisfiedException e1) {
             Logger::logTestCaseFailedResult(testCase->getDescription());
@@ -159,7 +159,7 @@ public:
 
         for (TestGroup* testGroup : testData) {
             int testGroupId = testGroup->getId();
-            Logger::logTestGroupHeader(testGroupId);
+            Logger::logTestGroupIntroduction(testGroupId);
 
             for (int testCaseId = 1; testCaseId <= testGroup->getTestCasesCount(); testCaseId++) {
                 generateTestCase(testGroupId, testCaseId);
