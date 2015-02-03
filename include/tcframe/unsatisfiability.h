@@ -1,6 +1,8 @@
 #ifndef TCFRAME_UNSATISFIABILITY_H
 #define TCFRAME_UNSATISFIABILITY_H
 
+#include "constraint.h"
+
 #include <string>
 #include <vector>
 

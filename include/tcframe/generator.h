@@ -58,7 +58,7 @@ private:
 
     void generateTestCase(int testGroupId, int testCaseId) {
         string inputFilename = util::constructTestCaseFilename(TProblem::getSlug(), testGroupId, testCaseId);
-        logger::logTestCaseHeader(inputFilename);
+        Logger::logTestCaseHeader(inputFilename);
 
         TestCase* testCase = getTestCase(testGroupId, testCaseId);
         UnsatisfiabilitiesCollector* unsatisfiabilitiesCollector = new UnsatisfiabilitiesCollector();
@@ -67,7 +67,7 @@ private:
         applyConstraints(testCase, unsatisfiabilitiesCollector);
 
         if (unsatisfiabilitiesCollector->hasUnsatisfiabilities()) {
-            logger::logTestCaseUnsatisfiedResult();
+            Logger::logTestCaseUnsatisfiedResult(testCase->getDescription(), unsatisfiabilitiesCollector->collectUnsatisfiabilities());
             return;
         }
 
@@ -75,7 +75,7 @@ private:
         inputFormat->printTo(*inputFile);
         delete inputFile;
 
-        logger::logTestCaseSatisfiedResult();
+        Logger::logTestCaseSatisfiedResult();
     }
 
     TestCase* getTestCase(int testGroupId, int testCaseId) {
@@ -99,7 +99,26 @@ private:
             return;
         }
 
-        // TODO: check constraint satisfiabilities
+        set<int> subtaskIds = testCase->getSubtaskIds();
+
+        for (Subtask* subtask : subtasks) {
+            vector<Constraint*> unsatisfiedConstraints;
+            for (Constraint* constraint : subtask->getConstraints()) {
+                if (!constraint->isSatisfied()) {
+                    unsatisfiedConstraints.push_back(constraint);
+                }
+            }
+
+            if (subtaskIds.count(subtask->getId())) {
+                if (!unsatisfiedConstraints.empty()) {
+                    unsatisfiabilitiesCollector->addUnsatisfiability(new UnsatisfiedSubtaskUnsatisfiability(subtask->getId(), unsatisfiedConstraints));
+                }
+            } else {
+                if (unsatisfiedConstraints.empty()) {
+                    unsatisfiabilitiesCollector->addUnsatisfiability(new SatisfiedSubtaskButNotAssignedUnsatisfiability(subtask->getId()));
+                }
+            }
+        }
     }
 
 protected:
@@ -125,13 +144,13 @@ public:
         testData = getTestData();
         inputFormat = TProblem::getInputFormat();
 
-        logger::logIntroduction();
+        Logger::logIntroduction();
 
         os->createDirectory(TEST_CASES_DIR_NAME);
 
         for (TestGroup* testGroup : testData) {
             int testGroupId = testGroup->getId();
-            logger::logTestGroupHeader(testGroupId);
+            Logger::logTestGroupHeader(testGroupId);
 
             for (int testCaseId = 1; testCaseId <= testGroup->getTestCasesCount(); testCaseId++) {
                 generateTestCase(testGroupId, testCaseId);
