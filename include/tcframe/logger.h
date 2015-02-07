@@ -1,7 +1,7 @@
 #ifndef TCFRAME_LOGGER_H
 #define TCFRAME_LOGGER_H
 
-#include "exception.h"
+#include "failure.h"
 
 #include <iostream>
 #include <string>
@@ -15,11 +15,20 @@ namespace tcframe {
 
 class Logger {
 public:
-    static void logIntroduction() {
+    virtual void logIntroduction() = 0;
+    virtual void logTestGroupIntroduction(int testGroupId) = 0;
+    virtual void logTestCaseIntroduction(string testCaseName) = 0;
+    virtual void logTestCaseOkResult() = 0;
+    virtual void logTestCaseFailedResult(string testCaseDescription, vector<Failure*> failures) = 0;
+};
+
+class StandardLogger : public Logger {
+public:
+    void logIntroduction() override {
         cout << "Generating test cases..." << endl;
     }
 
-    static void logTestGroupIntroduction(int testGroupId) {
+    void logTestGroupIntroduction(int testGroupId) override {
         cout << endl;
 
         if (testGroupId == 0) {
@@ -29,29 +38,27 @@ public:
         }
     }
 
-    static void logTestCaseIntroduction(string name) {
-        cout << "  " << name << ": " << flush;
+    void logTestCaseIntroduction(string testCaseName) override {
+        cout << "  " << testCaseName << ": " << flush;
     }
 
-    static void logTestCaseOkResult() {
+    void logTestCaseOkResult() override {
         cout << "OK" << endl;
     }
 
-    static void logTestCaseFailedResult(string testCaseDescription) {
+    void logTestCaseFailedResult(string testCaseDescription, vector<Failure*> failures) override {
         cout << "FAILED" << endl;
         cout << "    Description: " << testCaseDescription << endl;
         cout << "    Reasons:" << endl;
-    }
 
-    static void logConstraintsUnsatisfiedException(ConstraintsUnsatisfiedException e) {
 
-        for (SubtaskFailure* subtaskFailure : e.getSubtaskFailures()) {
-            switch (subtaskFailure->getType()) {
-                case SubtaskFailureType::UNSATISFIED_BUT_ASSIGNED:
-                    logUnsatisfiedSubtaskFailure(static_cast<UnsatisfiedSubtaskFailure*>(subtaskFailure));
+        for (Failure* failure : failures) {
+            switch (failure->getType()) {
+                case FailureType::SUBTASK_SATISFIED_BUT_NOT_ASSIGNED:
+                    logFailure(static_cast<SubtaskSatisfiedButNotAssignedFailure*>(failure));
                     break;
-                case SubtaskFailureType::SATISFIED_BUT_NOT_ASSIGNED:
-                    logSatisfiedSubtaskFailure(static_cast<SatisfiedSubtaskFailure*>(subtaskFailure));
+                case FailureType::SUBTASK_UNSATISFIED_BUT_ASSIGNED:
+                    logFailure(static_cast<SubtaskUnsatisfiedButAssignedFailure*>(failure));
                     break;
             }
         }
@@ -60,9 +67,15 @@ public:
     }
 
 private:
-    static void logUnsatisfiedSubtaskFailure(UnsatisfiedSubtaskFailure* subtaskFailure) {
-        int subtaskId = subtaskFailure->getSubtaskId();
-        vector<Constraint*> unsatisfiedConstraints = subtaskFailure->getUnsatisfiedConstraints();
+    void logFailure(SubtaskSatisfiedButNotAssignedFailure* failure) {
+        int subtaskId = failure->getSubtaskId();
+
+        cout << "    * Satisfies subtask " << subtaskId << " but is not assigned to it" << endl;
+    }
+
+    void logFailure(SubtaskUnsatisfiedButAssignedFailure* failure) {
+        int subtaskId = failure->getSubtaskId();
+        vector<Constraint*> unsatisfiedConstraints = failure->getUnsatisfiedConstraints();
 
         if (subtaskId == -1) {
             cout << "    * Does not satisfy constraints, on:" << endl;
@@ -73,12 +86,6 @@ private:
         for (Constraint* unsatisfiedConstraint : unsatisfiedConstraints) {
             cout << "      - " << unsatisfiedConstraint->getDescription() << endl;
         }
-    }
-
-    static void logSatisfiedSubtaskFailure(SatisfiedSubtaskFailure* subtaskFailure) {
-        int subtaskId = subtaskFailure->getSubtaskId();
-
-        cout << "    * Satisfies subtask " << subtaskId << " but is not assigned to it" << endl;
     }
 };
 

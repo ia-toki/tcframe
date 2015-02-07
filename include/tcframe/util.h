@@ -18,7 +18,7 @@ public:
         return sout.str();
     }
 
-    static string constructTestCaseFilename(string slug, int testGroupId, int testCaseId) {
+    static string constructTestCaseName(string slug, int testGroupId, int testCaseId) {
         if (testCaseId) {
             return slug + "_" + toString(testGroupId) + "_" + toString(testCaseId);
         } else {

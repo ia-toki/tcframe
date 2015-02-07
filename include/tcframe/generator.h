@@ -9,13 +9,15 @@
 #include "testcase.h"
 #include "util.h"
 
-#include <vector>
 #include <cstdio>
+#include <map>
 #include <ostream>
 #include <set>
 #include <string>
+#include <vector>
 
 using std::initializer_list;
+using std::map;
 using std::ostream;
 using std::set;
 using std::string;
@@ -26,13 +28,17 @@ namespace tcframe {
 template<typename TProblem>
 class BaseGenerator : protected TProblem, protected TestCasesCollector {
 private:
-    static const string TEST_CASES_DIR_NAME;
+    Logger* logger;
 
     OperatingSystem* os;
+    string solutionExecutionCommand;
+
     vector<TestGroup*> testData;
     vector<Subtask*> subtasks;
 
     IOFormat* inputFormat;
+
+    map<string, vector<Failure*>> testCaseFailures;
 
     vector<void(BaseGenerator::*)()> testGroupBlocks = {
         &BaseGenerator::TestGroup1,
@@ -61,28 +67,25 @@ private:
     }
 
     void generateTestCase(int testGroupId, int testCaseId) {
-        string inputFilename = Util::constructTestCaseFilename(TProblem::getSlug(), testGroupId, testCaseId);
-        Logger::logTestCaseIntroduction(inputFilename);
+        string testCaseName = Util::constructTestCaseName(TProblem::getSlug(), testGroupId, testCaseId);
+        logger->logTestCaseIntroduction(testCaseName);
+
+        string testCaseInputName = testCaseName + ".in";
+        string testCaseOutputName = testCaseName + ".out";
 
         TestCase* testCase = getTestCase(testGroupId, testCaseId);
-        ostream* inputFile = nullptr;
 
         try {
             applyTestCase(testCase);
             checkConstraints(testCase);
+            generateTestCaseInput(testCaseInputName);
+            generateTestCaseOutput(testCaseInputName, testCaseOutputName);
 
-            inputFile = os->createFile(TEST_CASES_DIR_NAME, inputFilename + ".in");
-            inputFormat->printTo(*inputFile);
-
-            Logger::logTestCaseOkResult();
-
-        } catch (ConstraintsUnsatisfiedException e1) {
-            Logger::logTestCaseFailedResult(testCase->getDescription());
-            Logger::logConstraintsUnsatisfiedException(e1);
-        }
-
-        if (inputFile != nullptr) {
-            delete inputFile;
+            logger->logTestCaseOkResult();
+            testCaseFailures[testCaseName] = vector<Failure*>();
+        } catch (TestCaseException e) {
+            logger->logTestCaseFailedResult(testCase->getDescription(), e.getFailures());
+            testCaseFailures[testCaseName] = e.getFailures();
         }
     }
 
@@ -103,8 +106,9 @@ private:
     }
 
     void checkConstraints(TestCase* testCase) {
+        vector<Failure*> failures;
+
         set<int> subtaskIds = testCase->getSubtaskIds();
-        vector<SubtaskFailure*> subtaskFailures;
 
         for (Subtask* subtask : subtasks) {
             vector<Constraint*> unsatisfiedConstraints;
@@ -116,26 +120,40 @@ private:
 
             if (subtaskIds.count(subtask->getId())) {
                 if (!unsatisfiedConstraints.empty()) {
-                    subtaskFailures.push_back(new UnsatisfiedSubtaskFailure(subtask->getId(), unsatisfiedConstraints));
+                    failures.push_back(new SubtaskUnsatisfiedButAssignedFailure(subtask->getId(), unsatisfiedConstraints));
                 }
             } else {
                 if (unsatisfiedConstraints.empty()) {
-                    subtaskFailures.push_back(new SatisfiedSubtaskFailure(subtask->getId()));
+                    failures.push_back(new SubtaskSatisfiedButNotAssignedFailure(subtask->getId()));
                 }
             }
         }
 
-        if (!subtaskFailures.empty()) {
-            throw ConstraintsUnsatisfiedException(subtaskFailures);
+        if (!failures.empty()) {
+            throw TestCaseException(failures);
         }
     }
 
-protected:
-    BaseGenerator()
-        : os(new Unix()) { }
+    void generateTestCaseInput(string testCaseInputName) {
+        ostream* testCaseInput = os->openForWriting(testCaseInputName);
+        inputFormat->printTo(*testCaseInput);
+        delete testCaseInput;
+    }
 
-    BaseGenerator(OperatingSystem* os)
-        : os(os) { }
+    void generateTestCaseOutput(string testCaseInputName, string testCaseOutputName) {
+        os->execute(solutionExecutionCommand, testCaseInputName, testCaseOutputName);
+    }
+
+protected:
+    BaseGenerator() :
+        logger(new StandardLogger()),
+        os(new UnixOperatingSystem("tc")),
+        solutionExecutionCommand("./solution") { }
+
+    BaseGenerator(Logger* logger, OperatingSystem* os, string solutionExecutionCommand) :
+        logger(logger),
+        os(os),
+        solutionExecutionCommand(solutionExecutionCommand) { }
 
     virtual ~BaseGenerator() { }
 
@@ -148,28 +166,25 @@ protected:
     virtual void TestGroup5() { throw NotImplementedException(); }
 
 public:
-    void generate() {
+    map<string, vector<Failure*>> generate() {
         subtasks = TProblem::getSubtasks();
         testData = getTestData();
         inputFormat = TProblem::getInputFormat();
 
-        Logger::logIntroduction();
-
-        os->createDirectory(TEST_CASES_DIR_NAME);
+        logger->logIntroduction();
 
         for (TestGroup* testGroup : testData) {
             int testGroupId = testGroup->getId();
-            Logger::logTestGroupIntroduction(testGroupId);
+            logger->logTestGroupIntroduction(testGroupId);
 
             for (int testCaseId = 1; testCaseId <= testGroup->getTestCasesCount(); testCaseId++) {
                 generateTestCase(testGroupId, testCaseId);
             }
         }
+
+        return testCaseFailures;
     }
 };
-
-template<typename TProblem>
-const string BaseGenerator<TProblem>::TEST_CASES_DIR_NAME = "tc";
 
 }
 

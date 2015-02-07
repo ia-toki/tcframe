@@ -6,6 +6,9 @@
 #include <sstream>
 #include <string>
 
+using std::ifstream;
+using std::istream;
+using std::istringstream;
 using std::ofstream;
 using std::ostream;
 using std::ostringstream;
@@ -13,37 +16,78 @@ using std::string;
 
 namespace tcframe {
 
+struct ExecutionResult {
+    int exitCode;
+    istream* outputStream;
+    istream* errorStream;
+};
+
 class OperatingSystem {
 public:
     virtual ~OperatingSystem() { }
 
-    virtual void createDirectory(string directoryName) = 0;
-    virtual ostream* createFile(string baseDirectoryName, string filename) = 0;
-    virtual void execute(string command, string input, string output) = 0;
+    virtual istream* openForReading(string name) = 0;
+    virtual ostream* openForWriting(string name) = 0;
+    virtual void remove(string name) = 0;
+    virtual ExecutionResult execute(string command, string inputName, string outputName) = 0;
 };
 
-class Unix : public OperatingSystem {
-public:
-    void createDirectory(string directoryName) {
-        ostringstream ss;
-        ss << "rm -rf " << directoryName;
-        system(ss.str().c_str());
+class UnixOperatingSystem : public OperatingSystem {
+private:
+    string baseDirectoryName;
 
-        ostringstream ss2;
-        ss2 << "mkdir -p " << directoryName;
-        system(ss2.str().c_str());
+    void removeFile(string filename) {
+        system(("rm -f " + filename).c_str());
     }
 
-    ostream* createFile(string baseDirectoryName, string filename) {
-        ofstream* file = new ofstream();
-        file->open(baseDirectoryName + "/" + filename);
+    istringstream* openForReadingAsStringStream(string filename) {
+        ifstream file(filename);
+
+        ostringstream buffer;
+        buffer << file.rdbuf();
+
+        removeFile(filename);
+
+        return new istringstream(buffer.str());
+    }
+
+public:
+    UnixOperatingSystem(string baseDirectoryName)
+        : baseDirectoryName(baseDirectoryName) {
+        system(("rm -rf " + baseDirectoryName).c_str());
+        system(("mkdir -p " + baseDirectoryName).c_str());
+    }
+
+    istream* openForReading(string name) override {
+        string filename = baseDirectoryName + "/" + name;
+        ifstream* file = new ifstream();
+        file->open(filename);
         return file;
     }
 
-    void execute(string program, string in, string out) {
-        ostringstream ss;
-        ss << program << " < " << in << " > " << out << " 2>&1";
-        pclose(popen(ss.str().c_str(), "r"));
+    ostream* openForWriting(string name) override {
+        string filename = baseDirectoryName + "/" + name;
+        ofstream* file = new ofstream();
+        file->open(filename);
+        return file;
+    }
+
+    ExecutionResult execute(string command, string inputName, string outputName) override {
+        string inputFilename = baseDirectoryName + "/" + inputName;
+        string outputFilename = baseDirectoryName + "/" + outputName;
+        string errorFilename = baseDirectoryName + "/_error.out";
+
+        ExecutionResult result;
+        result.exitCode = system((command + " < " + inputFilename + " > " + outputFilename + " 2> " + errorFilename).c_str());
+        result.outputStream = openForReading(outputFilename);
+        result.errorStream = openForReadingAsStringStream(errorFilename);
+
+        return result;
+    }
+
+    void remove(string name) override {
+        string filename = baseDirectoryName + "/" + name;
+        removeFile(filename);
     }
 };
 

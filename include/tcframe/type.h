@@ -10,7 +10,7 @@ namespace tcframe {
 class Variable {
 public:
     virtual void printTo(ostream& out) = 0;
-    virtual ~Variable() {};
+    virtual ~Variable() { };
 };
 
 template<typename T>
