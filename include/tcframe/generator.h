@@ -171,6 +171,8 @@ public:
         testData = getTestData();
         inputFormat = TProblem::getInputFormat();
 
+        TProblem::Config();
+
         logger->logIntroduction();
 
         for (TestGroup* testGroup : testData) {
