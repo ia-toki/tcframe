@@ -33,7 +33,9 @@ public:
 
         if (testGroupId == 0) {
             cout << "[ SAMPLE TEST CASES ]" << endl;
-        } else if (testGroupId != -1) {
+        } else if (testGroupId == -1) {
+            cout << "[ OFFICIAL TEST CASES ]" << endl;
+        } else {
             cout << "[ TEST GROUP " << testGroupId << " ]" << endl;
         }
     }

@@ -124,6 +124,41 @@ public:
         BaseGenerator(new FakeLogger(), new FakeOperatingSystem()) { }
 };
 
+class ProblemWithoutSubtasks : public BaseProblem {
+protected:
+    int A, B;
+    int K;
+
+    void Config() {
+        setSlug("problem");
+    }
+
+    void InputFormat() {
+        line() % A, B;
+        line() % K;
+    }
+
+    void Constraints() {
+        addConstraint([this] { return 1 <= A && A <= 1000; }, "1 <= A && A <= 1000");
+        addConstraint([this] { return 1 <= B && B <= 1000; }, "1 <= B && B <= 1000");
+        addConstraint([this] { return 0 <= K && K <= 100; }, "0 <= K <= 100");
+    }
+};
+
+class GeneratorWithoutTestGroups : public BaseGenerator<ProblemWithoutSubtasks> {
+protected:
+    void Config() { }
+
+    void TestCases() {
+        addTestCase([this] { A = 1, B = 100, K = 7; }, "A = 1, B = 100, K = 7");
+        addTestCase([this] { A = 100, B = 2000, K = 0; }, "A = 100, B = 2000, K = 0");
+    }
+
+public:
+    GeneratorWithoutTestGroups() :
+        BaseGenerator(new FakeLogger(), new FakeOperatingSystem()) { }
+};
+
 TEST(TcframeTest, GenerationWithSubtasksAndTestGroups) {
     GeneratorWithTestGroups gen;
     map<string, vector<Failure*>> failures = gen.generate();
@@ -160,3 +195,19 @@ TEST(TcframeTest, GenerationWithSubtasksAndTestGroups) {
     EXPECT_EQ(3, failure_2_2_1->getSubtaskId());
 }
 
+TEST(TcframeTest, GenerationWithoutSubtasksAndWithoutTestGroups) {
+    GeneratorWithoutTestGroups gen;
+    map<string, vector<Failure*>> failures = gen.generate();
+
+    ASSERT_EQ(0, failures["problem_1"].size());
+
+    ASSERT_EQ(1, failures["problem_2"].size());
+
+    ASSERT_EQ(FailureType::SUBTASK_UNSATISFIED_BUT_ASSIGNED, failures["problem_2"][0]->getType());
+
+    SubtaskUnsatisfiedButAssignedFailure* failure_2_0 = static_cast<SubtaskUnsatisfiedButAssignedFailure*>(failures["problem_2"][0]);
+    EXPECT_EQ(-1, failure_2_0->getSubtaskId());
+    ASSERT_EQ(1, failure_2_0->getUnsatisfiedConstraints().size());
+    EXPECT_EQ("1 <= B && B <= 1000", failure_2_0->getUnsatisfiedConstraints()[0]->getDescription());
+
+}

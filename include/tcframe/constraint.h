@@ -57,8 +57,8 @@ private:
     vector<Subtask*> subtasks;
 
 public:
-    ConstraintsCollector()
-        : curSubtaskId(0) { }
+    ConstraintsCollector() :
+        curSubtaskId(0) { }
 
     void newSubtask() {
         curSubtaskId++;

@@ -5,10 +5,8 @@
 #include <set>
 #include <string>
 #include <vector>
-#include <cstdio>
 
 using std::function;
-using std::initializer_list;
 using std::set;
 using std::string;
 using std::vector;
@@ -117,8 +115,9 @@ private:
     vector<TestGroup*> testGroups;
 
 public:
-    TestCasesCollector()
-        : curTestGroupId(0) {
+    TestCasesCollector() :
+        curTestGroupId(0),
+        curSubtaskIds({-1}) {
         testGroups.push_back(new TestGroup(0));
     }
 
@@ -136,10 +135,8 @@ public:
         testGroups.back()->addTestCase(new OfficialTestCase(closure, description, curSubtaskIds));
     }
 
-    void assignToSubtasks(initializer_list<int> subtaskIds) {
-        for (int subtaskId : subtaskIds) {
-            curSubtaskIds.insert(subtaskId);
-        }
+    void assignToSubtasks(set<int> subtaskIds) {
+        this->curSubtaskIds = subtaskIds;
     }
 
     vector<TestGroup*> collectTestData() {
