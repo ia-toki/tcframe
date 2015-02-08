@@ -116,7 +116,7 @@ private:
 
     vector<TestGroup*> testGroups;
 
-protected:
+public:
     TestCasesCollector()
         : curTestGroupId(0) {
         testGroups.push_back(new TestGroup(0));

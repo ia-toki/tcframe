@@ -81,7 +81,7 @@ private:
     IOFormat* formats[2];
     IOMode mode;
 
-protected:
+public:
     IOFormatsCollector() : mode(IOMode::INPUT) {
         this->formats[IOMode::INPUT] = new IOFormat();
         this->formats[IOMode::OUTPUT] = new IOFormat();

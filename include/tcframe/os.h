@@ -26,6 +26,7 @@ class OperatingSystem {
 public:
     virtual ~OperatingSystem() { }
 
+    virtual void setBaseDirectory(string baseDirectoryName) = 0;
     virtual istream* openForReading(string name) = 0;
     virtual ostream* openForWriting(string name) = 0;
     virtual void remove(string name) = 0;
@@ -52,8 +53,13 @@ private:
     }
 
 public:
-    UnixOperatingSystem(string baseDirectoryName)
-        : baseDirectoryName(baseDirectoryName) {
+    UnixOperatingSystem()
+        : baseDirectoryName(".") {
+    }
+
+    void setBaseDirectory(string baseDirectoryName) override {
+        this->baseDirectoryName = baseDirectoryName;
+
         system(("rm -rf " + baseDirectoryName).c_str());
         system(("mkdir -p " + baseDirectoryName).c_str());
     }

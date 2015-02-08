@@ -29,9 +29,10 @@ template<typename TProblem>
 class BaseGenerator : protected TProblem, protected TestCasesCollector {
 private:
     Logger* logger;
-
     OperatingSystem* os;
+
     string solutionExecutionCommand;
+    string testCasesBaseDirectoryName;
 
     vector<TestGroup*> testData;
     vector<Subtask*> subtasks;
@@ -63,6 +64,8 @@ private:
                     return localTestData;
                 }
             }
+
+            return TestCasesCollector::collectTestData();
         }
     }
 
@@ -147,15 +150,27 @@ private:
 protected:
     BaseGenerator() :
         logger(new StandardLogger()),
-        os(new UnixOperatingSystem("tc")),
-        solutionExecutionCommand("./solution") { }
+        os(new UnixOperatingSystem()),
+        solutionExecutionCommand("./solution"),
+        testCasesBaseDirectoryName("tc") { }
 
-    BaseGenerator(Logger* logger, OperatingSystem* os, string solutionExecutionCommand) :
+    BaseGenerator(Logger* logger, OperatingSystem* os) :
         logger(logger),
         os(os),
-        solutionExecutionCommand(solutionExecutionCommand) { }
+        solutionExecutionCommand("./solution"),
+        testCasesBaseDirectoryName("tc") { }
 
     virtual ~BaseGenerator() { }
+
+    virtual void Config() = 0;
+
+    void setBaseDir(string testCasesBaseDirectoryName) {
+        this->testCasesBaseDirectoryName = testCasesBaseDirectoryName;
+    }
+
+    void setSolution(string solutionExecutionCommand) {
+        this->solutionExecutionCommand = solutionExecutionCommand;
+    }
 
     virtual void TestCases() { throw NotImplementedException(); }
 
@@ -172,6 +187,9 @@ public:
         inputFormat = TProblem::getInputFormat();
 
         TProblem::Config();
+        Config();
+
+        os->setBaseDirectory(testCasesBaseDirectoryName);
 
         logger->logIntroduction();
 

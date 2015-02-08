@@ -25,18 +25,12 @@ private:
     };
 
 protected:
-    BaseProblem() : slug("problem") { }
+    BaseProblem() :
+        slug("problem") { }
 
     virtual ~BaseProblem() { }
 
     virtual void Config() = 0;
-    virtual void InputFormat() = 0;
-    virtual void Constraints() { throw NotImplementedException(); }
-    virtual void Subtask1() { throw NotImplementedException(); }
-    virtual void Subtask2() { throw NotImplementedException(); }
-    virtual void Subtask3() { throw NotImplementedException(); }
-    virtual void Subtask4() { throw NotImplementedException(); }
-    virtual void Subtask5() { throw NotImplementedException(); }
 
     void setSlug(string slug) {
         this->slug = slug;
@@ -45,6 +39,15 @@ protected:
     string getSlug() {
         return slug;
     }
+
+    virtual void InputFormat() = 0;
+
+    virtual void Constraints() { throw NotImplementedException(); }
+    virtual void Subtask1() { throw NotImplementedException(); }
+    virtual void Subtask2() { throw NotImplementedException(); }
+    virtual void Subtask3() { throw NotImplementedException(); }
+    virtual void Subtask4() { throw NotImplementedException(); }
+    virtual void Subtask5() { throw NotImplementedException(); }
 
     vector<Subtask*> getSubtasks() {
         try {
@@ -61,6 +64,8 @@ protected:
                     return subtasks;
                 }
             }
+
+            return ConstraintsCollector::collectSubtasks();
         }
     }
 

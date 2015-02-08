@@ -19,7 +19,7 @@ public:
     }
 
     static string constructTestCaseName(string slug, int testGroupId, int testCaseId) {
-        if (testCaseId) {
+        if (testGroupId != -1) {
             return slug + "_" + toString(testGroupId) + "_" + toString(testCaseId);
         } else {
             return slug + "_" + toString(testCaseId);
