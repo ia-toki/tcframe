@@ -1,5 +1,5 @@
 CPPFLAGS += -Iinclude
-CXXFLAGS += -std=c++0x -Wall -Wextra
+CXXFLAGS += -std=c++11 -Wall -Wextra
 LDLIBS += -lgtest -lpthread
 
 INCLUDE_DIR = include/tcframe
