@@ -5,10 +5,14 @@ LDLIBS += -lgtest -lpthread
 INCLUDE_DIR = include/tcframe
 TEST_DIR = test
 TEST_SRCS = $(TEST_DIR)/*.cpp $(INCLUDE_DIR)/*.h
-TEST_MAIN_SRC = $(TEST_DIR)/tests.cpp
+TEST_MAIN_SRC = $(TEST_DIR)/main_test.cpp
 
-tests: $(TEST_SRCS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(TEST_MAIN_SRC) -o $@ $(LDLIBS)
+.PHONY: test clean
+
+test: main_test
+
+main_test: $(TEST_SRCS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(TEST_MAIN_SRC) -o $@ $(LDLIBS) && ./main_test
 
 clean:
-	rm -f tests
+	rm -f main_test
