@@ -4,48 +4,50 @@
 
 **tcframe** is a framework for generating test cases, designed especially for problems in competitive programming contests.
 
-Currently it is in very early stage of development. Here is an example of the current planned syntax of a generator written using tcframe:
+The current latest version is **0.1**.
+
+This project is under heavy development. No sufficient documentations are available at the moment. However, here are some previews of generator programs that should be self-explanatory.
+
+### Generating test cases for problems without subtasks
+
+(This is also available as https://github.com/tcframe/tcframe/blob/master/src/example/problem_without_subtasks.cpp.)
 
 ```
 #include "tcframe/tcframe.h"
 
 using namespace tcframe;
 
-struct Problem : BaseProblem {
+class Problem : public BaseProblem {
+protected:
     int A, B;
+    int K;
 
     void Config() {
-        setSlug("example");
+        setSlug("problem");
     }
 
     void InputFormat() {
         line() % A, B;
+        line() % K;
     }
 
-    void Subtask1() {
+    void Constraints() {
         CONS(1 <= A && A <= 1000);
         CONS(1 <= B && B <= 1000);
-    }
-
-    void Subtask2() {
-        CONS(1 <= A && A <= 2000000000);
-        CONS(1 <= B && B <= 2000000000);
+        CONS(0 <= K && K <= 100);
     }
 };
 
-struct Generator : BaseGenerator<Problem> {
-    void TestGroup1() {
-        assignToSubtasks({1, 2});
-
-        CASE(A = 1, B = 2);
-        CASE(A = 100, B = 200);
+class Generator : public BaseGenerator<Problem> {
+protected:
+    void Config() {
+        setBaseDir("tc");
+        setSolution("./solution");
     }
 
-    void TestGroup2() {
-        assignToSubtasks({2});
-
-        CASE(A = 1001, B = 10000);
-        CASE(A = 2000000000, B = 2000000000);
+    void TestCases() {
+        CASE(A = 1, B = 100, K = 7);
+        CASE(A = 100, B = 2000, K = 0);
     }
 };
 
@@ -55,51 +57,83 @@ int main() {
 }
 ```
 
-The above program will generate valid test cases.
+The above program, when run, will output:
 
-Here is an example of a program that generate some invalid test cases:
+```
+Generating test cases...
+
+[ SAMPLE TEST CASES ]
+
+[ OFFICIAL TEST CASES ]
+  problem_1: OK
+  problem_2: FAILED
+    Description: (A = 100, B = 2000, K = 0)
+    Reasons:
+    * Does not satisfy constraints, on:
+      - 1 <= B && B <= 1000
+```
+
+### Generating test cases for problems with subtasks
+
+(This is also available as https://github.com/tcframe/tcframe/blob/master/src/example/problem_with_subtasks.cpp.)
 
 ```
 #include "tcframe/tcframe.h"
 
 using namespace tcframe;
 
-struct Problem : BaseProblem {
+class Problem : public BaseProblem {
+protected:
     int A, B;
+    int K;
 
     void Config() {
-        setSlug("example");
+        setSlug("problem");
     }
 
     void InputFormat() {
         line() % A, B;
+        line() % K;
     }
 
     void Subtask1() {
         CONS(1 <= A && A <= 1000);
         CONS(1 <= B && B <= 1000);
+        CONS(0 <= K && K <= 100);
     }
 
     void Subtask2() {
         CONS(1 <= A && A <= 2000000000);
         CONS(1 <= B && B <= 2000000000);
+        CONS(0 <= K && K <= 10000);
+    }
+
+    void Subtask3() {
+        CONS(A == 0);
+        CONS(B == 0);
+        CONS(0 <= K && K <= 100);
     }
 };
 
-struct Generator : BaseGenerator<Problem> {
+class Generator : public BaseGenerator<Problem> {
+protected:
+    void Config() {
+        setBaseDir("tc");
+        setSolution("./solution");
+    }
+
     void TestGroup1() {
         assignToSubtasks({1, 2});
 
-        CASE(A = 1, B = 2000);
-        CASE(A = 100, B = 200);
+        CASE(A = 1, B = 100, K = 7);
+        CASE(A = 100, B = 2000, K = 0);
     }
 
     void TestGroup2() {
         assignToSubtasks({2});
 
-        CASE(A = 1001, B = 10000);
-        CASE(A = 1, B = 2);
-        CASE(A = 2000000000, B = 2000000000);
+        CASE(A = 1, B = 2, K = 1);
+        CASE(A = 0, B = 0, K = 100);
     }
 };
 
@@ -109,7 +143,7 @@ int main() {
 }
 ```
 
-The above program will output:
+The above program, when run, will output:
 
 ```
 Generating test cases...
@@ -117,22 +151,29 @@ Generating test cases...
 [ SAMPLE TEST CASES ]
 
 [ TEST GROUP 1 ]
-  example_1_1: FAILED
-    Description: (A = 1, B = 2000)
+  problem_1_1: OK
+  problem_1_2: FAILED
+    Description: (A = 100, B = 2000, K = 0)
     Reasons:
     * Does not satisfy subtask 1, on constraints:
       - 1 <= B && B <= 1000
 
-  example_1_2: OK
 
 [ TEST GROUP 2 ]
-  example_2_1: OK
-  example_2_2: FAILED
-    Description: (A = 1, B = 2)
+  problem_2_1: FAILED
+    Description: (A = 1, B = 2, K = 1)
     Reasons:
     * Satisfies subtask 1 but is not assigned to it
 
-  example_2_3: OK
+  problem_2_2: FAILED
+    Description: (A = 0, B = 0, K = 100)
+    Reasons:
+    * Does not satisfy subtask 2, on constraints:
+      - 1 <= A && A <= 2000000000
+      - 1 <= B && B <= 2000000000
+    * Satisfies subtask 3 but is not assigned to it
 ```
 
-The API documentation will be available soon, stay tuned!
+### Maintainers
+
+**tcframe** is being developed and maintained by **Ashar Fuadi**. Contact me at fushar [at] gmail [dot] com if you have any question.
