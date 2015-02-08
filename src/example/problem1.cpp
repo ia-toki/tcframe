@@ -2,11 +2,13 @@
 
 using namespace tcframe;
 
-struct Problem : BaseProblem {
-    int A, B, K;
+class Problem : public BaseProblem {
+protected:
+    int A, B;
+    int K;
 
     void Config() {
-        setSlug("example");
+        setSlug("problem");
     }
 
     void InputFormat() {
@@ -17,17 +19,24 @@ struct Problem : BaseProblem {
     void Subtask1() {
         CONS(1 <= A && A <= 1000);
         CONS(1 <= B && B <= 1000);
-        CONS(0 <= K && K <= 1);
+        CONS(0 <= K && K <= 100);
     }
 
     void Subtask2() {
         CONS(1 <= A && A <= 2000000000);
         CONS(1 <= B && B <= 2000000000);
-        CONS(0 <= K && K <= 1000);
+        CONS(0 <= K && K <= 10000);
+    }
+
+    void Subtask3() {
+        CONS(A == 0);
+        CONS(B == 0);
+        CONS(0 <= K && K <= 100);
     }
 };
 
-struct Generator : BaseGenerator<Problem> {
+class Generator : public BaseGenerator<Problem> {
+protected:
     void Config() {
         setBaseDir("tc");
         setSolution("./solution");
@@ -36,16 +45,15 @@ struct Generator : BaseGenerator<Problem> {
     void TestGroup1() {
         assignToSubtasks({1, 2});
 
-        CASE(A = 1, B = 2000, K = 2);
-        CASE(A = 100, B = 200, K = 1);
+        CASE(A = 1, B = 100, K = 7);
+        CASE(A = 100, B = 2000, K = 0);
     }
 
     void TestGroup2() {
         assignToSubtasks({2});
 
-        CASE(A = 1001, B = 10000, K = 42);
-        CASE(A = 1, B = 2, K = 0);
-        CASE(A = 2000000000, B = 2000000000, K = 0);
+        CASE(A = 1, B = 2, K = 1);
+        CASE(A = 0, B = 0, K = 100);
     }
 };
 
