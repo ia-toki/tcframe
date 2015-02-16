@@ -20,7 +20,7 @@ public:
 };
 
 template<typename T>
-using RequiresScalar = typename enable_if<integral_constant<bool, is_arithmetic<T>::value || is_same<string, T>::value>::value>::type;
+using RequiresScalar = typename enable_if<is_arithmetic<T>::value || is_same<string, T>::value>::type;
 
 template<typename T>
 class Scalar : public Variable {
