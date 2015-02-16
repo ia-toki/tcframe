@@ -19,16 +19,21 @@ public:
 
 class LineIOSegment : public IOSegment {
 private:
-    vector<Variable*> variables;
+    vector<HorizontalVariable*> variables;
 
     template<typename T, typename = RequiresScalar<T>>
     void addVariable(T& x) {
         variables.push_back(new Scalar<T>(x));
     }
 
+    template<typename T, typename = RequiresScalar<T>>
+    void addVariable(vector<T>& x) {
+        variables.push_back(new HorizontalVector<T>(x));
+    }
+
     template<typename... T>
     void addVariable(T...) {
-        throw TypeException("Line segment is only supported for basic scalar types");
+        throw TypeException("Line segment is only supported for basic scalar and vector of basic scalars types");
     }
 
 public:
@@ -55,8 +60,9 @@ public:
     void printTo(ostream& out) {
         bool first = true;
         for (auto variable : variables) {
-            if (!first)
+            if (!first) {
                 out << " ";
+            }
             first = false;
             variable->printTo(out);
         }
