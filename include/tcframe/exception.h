@@ -5,9 +5,13 @@
 #include "failure.h"
 
 #include <exception>
+#include <stdexcept>
+#include <string>
 #include <vector>
 
 using std::exception;
+using std::runtime_error;
+using std::string;
 using std::vector;
 
 namespace tcframe {
@@ -25,6 +29,18 @@ public:
     vector<Failure*> getFailures() {
         return failures;
     }
+};
+
+class SyntaxException : public runtime_error {
+public:
+    SyntaxException(const string& message) :
+        runtime_error(message) { }
+};
+
+class TypeException : public runtime_error {
+public:
+    TypeException(const string& message) :
+        runtime_error(message) { }
 };
 
 }

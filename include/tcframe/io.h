@@ -1,16 +1,13 @@
 #ifndef TCFRAME_IO_H
 #define TCFRAME_IO_H
 
+#include "exception.h"
 #include "type.h"
 
-#include <exception>
 #include <ostream>
 #include <vector>
 
-#include <iostream>
-
 using std::ostream;
-using std::runtime_error;
 using std::vector;
 
 namespace tcframe {
@@ -24,22 +21,34 @@ class LineIOSegment : public IOSegment {
 private:
     vector<Variable*> variables;
 
+    template<typename T, typename = RequiresScalar<T>>
+    void addVariable(T& x) {
+        variables.push_back(new Scalar<T>(x));
+    }
+
+    template<typename... T>
+    void addVariable(T...) {
+        throw TypeException("Line segment is only supported for basic scalar types");
+    }
+
 public:
-    LineIOSegment& operator%(int& x) {
+    template<typename T>
+    LineIOSegment& operator%(T& x) {
         if (!variables.empty()) {
-            throw runtime_error("Invalid syntax: use ',` here");
+            throw SyntaxException("Invalid syntax: use ',` here");
         }
 
-        variables.push_back(new Scalar<int>(x));
+        addVariable(x);
         return *this;
     }
 
-    LineIOSegment& operator,(int& x) {
+    template<typename T>
+    LineIOSegment& operator,(T& x) {
         if (variables.empty()) {
-            throw runtime_error("Invalid syntax: use '\%` here");
+            throw SyntaxException("Invalid syntax: use '\%` here");
         }
 
-        variables.push_back(new Scalar<int>(x));
+        addVariable(x);
         return *this;
     }
 

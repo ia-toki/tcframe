@@ -2,13 +2,32 @@
 
 #include "tcframe/io.h"
 
+#include <set>
 #include <sstream>
+#include <string>
+#include <vector>
 
 using std::ostringstream;
+using std::set;
+using std::string;
 using tcframe::IOFormat;
 using tcframe::IOFormatsCollector;
 using tcframe::IOMode;
 using tcframe::LineIOSegment;
+using tcframe::TypeException;
+
+TEST(LineIOSegmentTest, UnsupportedTypes) {
+    set<int> s;
+
+    LineIOSegment segment;
+
+    try {
+        segment % s;
+        FAIL();
+    } catch (TypeException e) {
+        EXPECT_TRUE(string(e.what()).find("is only supported") != string::npos);
+    }
+}
 
 TEST(LineIOSegmentTest, EmptyLinePrinting) {
     LineIOSegment segment;
