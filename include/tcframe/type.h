@@ -61,6 +61,32 @@ public:
     }
 };
 
+
+class VerticalVariable {
+public:
+    virtual unsigned int size() = 0;
+    virtual void printElementTo(int index, ostream& out) = 0;
+};
+
+template<typename T>
+class VerticalVector : public VerticalVariable {
+private:
+    vector<T>* value;
+
+public:
+    explicit VerticalVector(vector<T>& value) {
+        this->value = &value;
+    }
+
+    unsigned int size() override {
+        return value->size();
+    }
+
+    void printElementTo(int index, ostream& out) override {
+        out << (*value)[index];
+    }
+};
+
 }
 
 #endif

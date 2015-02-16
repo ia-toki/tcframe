@@ -57,7 +57,7 @@ public:
         return *this;
     }
 
-    void printTo(ostream& out) {
+    void printTo(ostream& out) override {
         bool first = true;
         for (auto variable : variables) {
             if (!first) {
@@ -67,6 +67,68 @@ public:
             variable->printTo(out);
         }
         out << "\n";
+    }
+};
+
+class LinesIOSegment : public IOSegment {
+private:
+    vector<VerticalVariable*> variables;
+
+    template<typename T, typename = RequiresScalar<T>>
+    void addVariable(vector<T>& x) {
+        variables.push_back(new VerticalVector<T>(x));
+    }
+
+    template<typename... T>
+    void addVariable(T...) {
+        throw IOFormatException("Lines segment is only supported for vector of basic scalars types");
+    }
+
+public:
+    template<typename T>
+    LinesIOSegment& operator%(T& x) {
+        if (!variables.empty()) {
+            throw IOFormatException("Invalid syntax: use ',` here");
+        }
+
+        addVariable(x);
+        return *this;
+    }
+
+    template<typename T>
+    LinesIOSegment& operator,(T& x) {
+        if (variables.empty()) {
+            throw IOFormatException("Invalid syntax: use '%` here");
+        }
+
+        addVariable(x);
+        return *this;
+    }
+
+    void printTo(ostream& out) override {
+        if (variables.empty()) {
+            throw IOFormatException("Lines segment must have at least one variable");
+        }
+
+        unsigned int linesCount = variables[0]->size();
+
+        for (unsigned int i = 1; i < variables.size(); i++) {
+            if (variables[i]->size() != linesCount) {
+                throw IOFormatException("All vectors participating in a lines segment must have equal sizes");
+            }
+        }
+
+        for (unsigned int i = 0; i < linesCount; i++) {
+            bool first = true;
+            for (auto variable : variables) {
+                if (!first) {
+                    out << " ";
+                }
+                first = false;
+                variable->printElementTo(i, out);
+            }
+            out << "\n";
+        }
     }
 };
 
@@ -108,6 +170,12 @@ public:
 
     LineIOSegment& line() {
         LineIOSegment* segment = new LineIOSegment();
+        formats[mode]->addSegment(segment);
+        return *segment;
+    }
+
+    LinesIOSegment& lines() {
+        LinesIOSegment* segment = new LinesIOSegment();
         formats[mode]->addSegment(segment);
         return *segment;
     }
