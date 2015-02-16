@@ -26,7 +26,7 @@ TEST(LineIOSegmentTest, UnsupportedTypes) {
     try {
         segment % s;
         FAIL();
-    } catch (IOFormatException e) {
+    } catch (IOFormatException& e) {
         EXPECT_TRUE(string(e.what()).find("is only supported") != string::npos);
     }
 }
@@ -39,14 +39,14 @@ TEST(LineIOSegmentTest, InvalidSyntaxes) {
     try {
         segment, A;
         FAIL();
-    } catch (IOFormatException e) {
+    } catch (IOFormatException& e) {
         EXPECT_TRUE(string(e.what()).find("'%`") != string::npos);
     }
 
     try {
         segment % A % B;
         FAIL();
-    } catch (IOFormatException e) {
+    } catch (IOFormatException& e) {
         EXPECT_TRUE(string(e.what()).find("',`") != string::npos);
     }
 }
@@ -146,7 +146,7 @@ TEST(LinesIOSegmentTest, UnsupportedTypes) {
     try {
         segment % X;
         FAIL();
-    } catch (IOFormatException e) {
+    } catch (IOFormatException& e) {
         EXPECT_TRUE(string(e.what()).find("is only supported for vector") != string::npos);
     }
 
@@ -155,7 +155,7 @@ TEST(LinesIOSegmentTest, UnsupportedTypes) {
     try {
         segment % V;
         FAIL();
-    } catch (IOFormatException e) {
+    } catch (IOFormatException& e) {
         EXPECT_TRUE(string(e.what()).find("is only supported for vector of basic scalars") != string::npos);
     }
 }
@@ -174,7 +174,7 @@ TEST(LinesIOSegmentTest, IncompatibleVectorSizes) {
     try {
         segment.printTo(sout);
         FAIL();
-    } catch (IOFormatException e) {
+    } catch (IOFormatException& e) {
         EXPECT_TRUE(string(e.what()).find("must have equal sizes") != string::npos);
     }
 }
@@ -187,14 +187,14 @@ TEST(LinesIOSegmentTest, InvalidSyntaxes) {
     try {
         segment, V;
         FAIL();
-    } catch (IOFormatException e) {
+    } catch (IOFormatException& e) {
         EXPECT_TRUE(string(e.what()).find("'%`") != string::npos);
     }
 
     try {
         segment % V % W;
         FAIL();
-    } catch (IOFormatException e) {
+    } catch (IOFormatException& e) {
         EXPECT_TRUE(string(e.what()).find("',`") != string::npos);
     }
 }
@@ -207,7 +207,7 @@ TEST(LinesIOSegmentTest, NoVariables) {
     try {
         segment.printTo(sout);
         FAIL();
-    } catch (IOFormatException e) {
+    } catch (IOFormatException& e) {
         EXPECT_TRUE(string(e.what()).find("must have at least one variable"));
     }
 }

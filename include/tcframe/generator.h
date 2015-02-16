@@ -53,12 +53,12 @@ private:
         try {
             TestCases();
             return TestCasesCollector::collectTestData();
-        } catch (NotImplementedException e1){
+        } catch (NotImplementedException& e1){
             for (auto testGroupBlock : testGroupBlocks) {
                 try {
                     TestCasesCollector::newTestGroup();
                     (this->*testGroupBlock)();
-                } catch (NotImplementedException e2) {
+                } catch (NotImplementedException& e2) {
                     vector<TestGroup*> localTestData = TestCasesCollector::collectTestData();
                     localTestData.pop_back();
                     return localTestData;
@@ -86,7 +86,7 @@ private:
 
             logger->logTestCaseOkResult();
             testCaseFailures[testCaseName] = vector<Failure*>();
-        } catch (TestCaseException e) {
+        } catch (TestCaseException& e) {
             logger->logTestCaseFailedResult(testCase->getDescription(), e.getFailures());
             testCaseFailures[testCaseName] = e.getFailures();
         }

@@ -53,12 +53,12 @@ protected:
         try {
             Constraints();
             return ConstraintsCollector::collectSubtasks();
-        } catch (NotImplementedException e1){
+        } catch (NotImplementedException& e1) {
             for (auto subtaskBlock : subtaskBlocks) {
                 try {
                     ConstraintsCollector::newSubtask();
                     (this->*subtaskBlock)();
-                } catch (NotImplementedException e2) {
+                } catch (NotImplementedException& e2) {
                     vector<Subtask*> subtasks = ConstraintsCollector::collectSubtasks();
                     subtasks.pop_back();
                     return subtasks;
