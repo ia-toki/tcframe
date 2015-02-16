@@ -1,6 +1,6 @@
 # tcframe
 
-[![Build Status](https://travis-ci.org/tcframe/tcframe.svg?branch=master)](https://travis-ci.org/tcframe/tcframe)
+[![Build Status](https://travis-ci.org/ia-toki/tcframe.svg?branch=master)](https://travis-ci.org/ia-toki/tcframe)
 
 **tcframe** is a framework for generating test cases, designed especially for problems in competitive programming contests.
 
