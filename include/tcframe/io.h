@@ -45,7 +45,7 @@ public:
     template<typename T>
     LineIOSegment& operator,(T& x) {
         if (variables.empty()) {
-            throw SyntaxException("Invalid syntax: use '\%` here");
+            throw SyntaxException("Invalid syntax: use '%` here");
         }
 
         addVariable(x);
