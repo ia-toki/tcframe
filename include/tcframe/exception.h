@@ -31,15 +31,9 @@ public:
     }
 };
 
-class SyntaxException : public runtime_error {
+class IOFormatException : public runtime_error {
 public:
-    SyntaxException(const string& message) :
-        runtime_error(message) { }
-};
-
-class TypeException : public runtime_error {
-public:
-    TypeException(const string& message) :
+    IOFormatException(const string& message) :
         runtime_error(message) { }
 };
 

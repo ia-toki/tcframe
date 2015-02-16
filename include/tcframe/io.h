@@ -33,14 +33,14 @@ private:
 
     template<typename... T>
     void addVariable(T...) {
-        throw TypeException("Line segment is only supported for basic scalar and vector of basic scalars types");
+        throw IOFormatException("Line segment is only supported for basic scalar and vector of basic scalars types");
     }
 
 public:
     template<typename T>
     LineIOSegment& operator%(T& x) {
         if (!variables.empty()) {
-            throw SyntaxException("Invalid syntax: use ',` here");
+            throw IOFormatException("Invalid syntax: use ',` here");
         }
 
         addVariable(x);
@@ -50,7 +50,7 @@ public:
     template<typename T>
     LineIOSegment& operator,(T& x) {
         if (variables.empty()) {
-            throw SyntaxException("Invalid syntax: use '%` here");
+            throw IOFormatException("Invalid syntax: use '%` here");
         }
 
         addVariable(x);

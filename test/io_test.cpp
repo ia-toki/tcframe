@@ -15,8 +15,7 @@ using tcframe::IOFormat;
 using tcframe::IOFormatsCollector;
 using tcframe::IOMode;
 using tcframe::LineIOSegment;
-using tcframe::SyntaxException;
-using tcframe::TypeException;
+using tcframe::IOFormatException;
 
 TEST(LineIOSegmentTest, UnsupportedTypes) {
     set<int> s;
@@ -26,7 +25,7 @@ TEST(LineIOSegmentTest, UnsupportedTypes) {
     try {
         segment % s;
         FAIL();
-    } catch (TypeException e) {
+    } catch (IOFormatException e) {
         EXPECT_TRUE(string(e.what()).find("is only supported") != string::npos);
     }
 }
@@ -39,14 +38,14 @@ TEST(LineIOSegmentTest, InvalidSyntaxes) {
     try {
         segment, A;
         FAIL();
-    } catch (SyntaxException e) {
+    } catch (IOFormatException e) {
         EXPECT_TRUE(string(e.what()).find("'%`") != string::npos);
     }
 
     try {
         segment % A % B;
         FAIL();
-    } catch (SyntaxException e) {
+    } catch (IOFormatException e) {
         EXPECT_TRUE(string(e.what()).find("',`") != string::npos);
     }
 }
