@@ -132,6 +132,43 @@ public:
     }
 };
 
+class GridIOSegment : public IOSegment {
+private:
+    MatrixVariable* variable;
+
+    template<typename T, typename = RequiresScalar<T>>
+    void setVariable(vector<vector<T>>& x) {
+        variable = new Matrix<T>(x);
+    }
+
+    template<typename... T>
+    void setVariable(T...) {
+        throw IOFormatException("Grid segment is only supported for matrix of basic scalars types");
+    }
+
+public:
+    GridIOSegment() :
+        variable(nullptr) { }
+
+    template<typename T>
+    GridIOSegment& operator%(T& x) {
+        if (variable != nullptr) {
+            throw IOFormatException("Grid segment must have exactly one variable");
+        }
+
+        setVariable(x);
+        return *this;
+    }
+
+    void printTo(ostream& out) override {
+        if (variable == nullptr) {
+            throw IOFormatException("Grid segment must have exactly one variable");
+        }
+
+        variable->printTo(out);
+    }
+};
+
 class IOFormat {
 private:
     vector<IOSegment*> segments;
@@ -176,6 +213,12 @@ public:
 
     LinesIOSegment& lines() {
         LinesIOSegment* segment = new LinesIOSegment();
+        formats[mode]->addSegment(segment);
+        return *segment;
+    }
+
+    GridIOSegment& grid() {
+        GridIOSegment* segment = new GridIOSegment();
         formats[mode]->addSegment(segment);
         return *segment;
     }

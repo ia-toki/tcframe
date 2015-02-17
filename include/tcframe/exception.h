@@ -31,6 +31,12 @@ public:
     }
 };
 
+class TypeException : public runtime_error {
+public:
+    TypeException(const string& message) :
+        runtime_error(message) { }
+};
+
 class IOFormatException : public runtime_error {
 public:
     IOFormatException(const string& message) :

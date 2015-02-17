@@ -12,11 +12,13 @@ using std::set;
 using std::string;
 using std::vector;
 using tcframe::IOFormat;
+using tcframe::IOFormatException;
 using tcframe::IOFormatsCollector;
 using tcframe::IOMode;
+using tcframe::GridIOSegment;
 using tcframe::LineIOSegment;
 using tcframe::LinesIOSegment;
-using tcframe::IOFormatException;
+using tcframe::TypeException;
 
 TEST(LineIOSegmentTest, UnsupportedTypes) {
     set<int> s;
@@ -242,12 +244,105 @@ TEST(LinesIOSegmentTest, MultipleVectorsPrinting) {
     EXPECT_EQ("1 a\n2 bb\n3 ccc\n", sout.str());
 }
 
+TEST(GridIOSegmentTest, UnsupportedTypes) {
+    int X;
+
+    GridIOSegment segment;
+
+    try {
+        segment % X;
+        FAIL();
+    } catch (IOFormatException& e) {
+        EXPECT_TRUE(string(e.what()).find("is only supported for matrix") != string::npos);
+    }
+
+    vector<vector<vector<int>>> V;
+
+    try {
+        segment % V;
+        FAIL();
+    } catch (IOFormatException& e) {
+        EXPECT_TRUE(string(e.what()).find("is only supported for matrix of basic scalars") != string::npos);
+    }
+}
+
+TEST(GridIOSegmentTest, IncompatibleDimensionSizes) {
+    vector<vector<int>> V;
+
+    GridIOSegment segment;
+    segment % V;
+
+    V = vector<vector<int>>{ {1, 2}, {3, 4, 5} };
+
+    ostringstream sout;
+
+    try {
+        segment.printTo(sout);
+        FAIL();
+    } catch (TypeException& e) {
+        EXPECT_TRUE(string(e.what()).find("must have equal number of columns") != string::npos);
+    }
+}
+
+TEST(GridIOSegmentTest, NonSingularVariables) {
+    GridIOSegment segment;
+
+    ostringstream sout;
+
+    try {
+        segment.printTo(sout);
+        FAIL();
+    } catch (IOFormatException& e) {
+        EXPECT_TRUE(string(e.what()).find("must have exactly one variable") != string::npos);
+    }
+
+    vector<vector<int>> V, W;
+
+
+    try {
+        segment % V % W;
+        FAIL();
+    } catch (IOFormatException& e) {
+        EXPECT_TRUE(string(e.what()).find("must have exactly one variable") != string::npos);
+    }
+}
+
+TEST(GridIOSegmentTest, CharPrinting) {
+    vector<vector<char>> C;
+
+    GridIOSegment segment;
+    segment % C;
+
+    C = vector<vector<char>>{ {'a', 'b'}, {'c', 'd'} };
+
+    ostringstream sout;
+    segment.printTo(sout);
+
+    EXPECT_EQ("ab\ncd\n", sout.str());
+}
+
+TEST(GridIOSegmentTest, NonCharPrinting) {
+    vector<vector<int>> C;
+
+    GridIOSegment segment;
+    segment % C;
+
+    C = vector<vector<int>>{ {1, 2}, {3, 4} };
+
+    ostringstream sout;
+    segment.printTo(sout);
+
+    EXPECT_EQ("1 2\n3 4\n", sout.str());
+}
+
 TEST(IOFormatTest, MultipleLinesPrinting) {
     int A, B;
     int K;
     vector<int> V;
     vector<int> W;
     vector<string> Z;
+    vector<vector<char>> C;
+    vector<vector<int>> P;
 
     IOFormat format;
 
@@ -255,6 +350,8 @@ TEST(IOFormatTest, MultipleLinesPrinting) {
     format.addSegment(&((*(new LineIOSegment())) % K));
     format.addSegment(&((*(new LineIOSegment())) % V));
     format.addSegment(&((*(new LinesIOSegment())) % W, Z));
+    format.addSegment(&((*(new GridIOSegment())) % C));
+    format.addSegment(&((*(new GridIOSegment())) % P));
 
     A = 1;
     B = 2;
@@ -265,10 +362,13 @@ TEST(IOFormatTest, MultipleLinesPrinting) {
     W = vector<int>{10, 20};
     Z = vector<string>{"x", "y"};
 
+    C = vector<vector<char>>{ {'a', 'b'}, {'c', 'd'} };
+    P = vector<vector<int>>{ {1, 2}, {3, 4} };
+
     ostringstream sout;
     format.printTo(sout);
 
-    EXPECT_EQ("1 2\n77\n11 22 33\n10 x\n20 y\n", sout.str());
+    EXPECT_EQ("1 2\n77\n11 22 33\n10 x\n20 y\nab\ncd\n1 2\n3 4\n", sout.str());
 }
 
 TEST(IOFormatsCollectorTest, InputFormatCollection) {
@@ -277,6 +377,8 @@ TEST(IOFormatsCollectorTest, InputFormatCollection) {
     vector<int> V;
     vector<int> W;
     vector<string> Z;
+    vector<vector<char>> C;
+    vector<vector<int>> P;
 
     IOFormatsCollector collector;
 
@@ -284,6 +386,8 @@ TEST(IOFormatsCollectorTest, InputFormatCollection) {
     collector.line() % K;
     collector.line() % V;
     collector.lines() % W, Z;
+    collector.grid() % C;
+    collector.grid() % P;
 
     A = 1;
     B = 2;
@@ -294,10 +398,13 @@ TEST(IOFormatsCollectorTest, InputFormatCollection) {
     W = vector<int>{10, 20};
     Z = vector<string>{"x", "y"};
 
+    C = vector<vector<char>>{ {'a', 'b'}, {'c', 'd'} };
+    P = vector<vector<int>>{ {1, 2}, {3, 4} };
+
     IOFormat* format = collector.collectFormat(IOMode::INPUT);
 
     ostringstream sout;
     format->printTo(sout);
 
-    EXPECT_EQ("1 2\n77\n11 22 33\n10 x\n20 y\n", sout.str());
+    EXPECT_EQ("1 2\n77\n11 22 33\n10 x\n20 y\nab\ncd\n1 2\n3 4\n", sout.str());
 }

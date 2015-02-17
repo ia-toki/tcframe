@@ -2,6 +2,7 @@
 #define TCFRAME_TYPE_H
 
 #include <ostream>
+#include <sstream>
 #include <type_traits>
 #include <vector>
 
@@ -84,6 +85,77 @@ public:
 
     void printElementTo(int index, ostream& out) override {
         out << (*value)[index];
+    }
+};
+
+class MatrixVariable {
+public:
+    virtual void printTo(ostream& out) = 0;
+    virtual ~MatrixVariable() { }
+};
+
+template<typename T>
+class Matrix : public MatrixVariable {
+private:
+    vector<vector<T>>* value;
+
+    bool isValidMatrix() {
+        if (value->empty()) {
+            return true;
+        }
+
+        unsigned int columnsCount = (*value)[0].size();
+
+        for (auto row : *value) {
+            if (row.size() != columnsCount) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+public:
+    explicit Matrix(vector<vector<T>>& value) {
+        this->value = &value;
+    }
+
+    void printTo(ostream& out) override {
+        if (!isValidMatrix()) {
+            throw TypeException("Each row of the matrix must have equal number of columns");
+        }
+
+        for (auto row : *value) {
+            bool first = true;
+            for (auto c : row) {
+                if (!first) {
+                    out << " ";
+                }
+                first = false;
+                out << c;
+            }
+            out << "\n";
+        }
+    }
+};
+
+template<>
+class Matrix<char> : public MatrixVariable {
+private:
+    vector<vector<char>>* value;
+
+public:
+    explicit Matrix(vector<vector<char>>& value) {
+        this->value = &value;
+    }
+
+    void printTo(ostream& out) override {
+        for (auto line : *value) {
+            for (auto c : line) {
+                out << c;
+            }
+            out << "\n";
+        }
     }
 };
 
