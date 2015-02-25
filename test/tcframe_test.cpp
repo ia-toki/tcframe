@@ -78,8 +78,8 @@ public:
     }
 
     void InputFormat() {
-        line() % A, B;
-        line() % K;
+        addLineSegment("A, B"), A, B;
+        addLineSegment("K"), K;
     }
 
     void Subtask1() {
@@ -134,8 +134,8 @@ protected:
     }
 
     void InputFormat() {
-        line() % A, B;
-        line() % K;
+        addLineSegment("A, B"), A, B;
+        addLineSegment("K"), K;
     }
 
     void Constraints() {

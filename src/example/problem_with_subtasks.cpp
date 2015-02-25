@@ -12,8 +12,8 @@ protected:
     }
 
     void InputFormat() {
-        line() % A, B;
-        line() % K;
+        LINE(A, B);
+        LINE(K);
     }
 
     void Subtask1() {

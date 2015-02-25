@@ -5,9 +5,11 @@
 #include "type.h"
 
 #include <ostream>
+#include <string>
 #include <vector>
 
 using std::ostream;
+using std::string;
 using std::vector;
 
 namespace tcframe {
@@ -19,6 +21,7 @@ public:
 
 class LineIOSegment : public IOSegment {
 private:
+    string description;
     vector<HorizontalVariable*> variables;
 
     template<typename T, typename = RequiresScalar<T>>
@@ -37,22 +40,11 @@ private:
     }
 
 public:
-    template<typename T>
-    LineIOSegment& operator%(T& x) {
-        if (!variables.empty()) {
-            throw IOFormatException("Invalid syntax: use ',` here");
-        }
-
-        addVariable(x);
-        return *this;
-    }
+    LineIOSegment(string description) :
+        description(description) { }
 
     template<typename T>
     LineIOSegment& operator,(T& x) {
-        if (variables.empty()) {
-            throw IOFormatException("Invalid syntax: use '%` here");
-        }
-
         addVariable(x);
         return *this;
     }
@@ -72,6 +64,7 @@ public:
 
 class LinesIOSegment : public IOSegment {
 private:
+    string description;
     vector<VerticalVariable*> variables;
 
     template<typename T, typename = RequiresScalar<T>>
@@ -85,22 +78,11 @@ private:
     }
 
 public:
-    template<typename T>
-    LinesIOSegment& operator%(T& x) {
-        if (!variables.empty()) {
-            throw IOFormatException("Invalid syntax: use ',` here");
-        }
-
-        addVariable(x);
-        return *this;
-    }
+    LinesIOSegment(string description) :
+        description(description) { }
 
     template<typename T>
     LinesIOSegment& operator,(T& x) {
-        if (variables.empty()) {
-            throw IOFormatException("Invalid syntax: use '%` here");
-        }
-
         addVariable(x);
         return *this;
     }
@@ -134,6 +116,7 @@ public:
 
 class GridIOSegment : public IOSegment {
 private:
+    string description;
     MatrixVariable* variable;
 
     template<typename T, typename = RequiresScalar<T>>
@@ -147,11 +130,11 @@ private:
     }
 
 public:
-    GridIOSegment() :
-        variable(nullptr) { }
+    GridIOSegment(string description) :
+        description(description), variable(nullptr) { }
 
     template<typename T>
-    GridIOSegment& operator%(T& x) {
+    GridIOSegment& operator,(T& x) {
         if (variable != nullptr) {
             throw IOFormatException("Grid segment must have exactly one variable");
         }
@@ -205,20 +188,20 @@ public:
         this->mode = mode;
     }
 
-    LineIOSegment& line() {
-        LineIOSegment* segment = new LineIOSegment();
+    LineIOSegment& addLineSegment(string description) {
+        LineIOSegment* segment = new LineIOSegment(description);
         formats[mode]->addSegment(segment);
         return *segment;
     }
 
-    LinesIOSegment& lines() {
-        LinesIOSegment* segment = new LinesIOSegment();
+    LinesIOSegment& addLinesSegment(string description) {
+        LinesIOSegment* segment = new LinesIOSegment(description);
         formats[mode]->addSegment(segment);
         return *segment;
     }
 
-    GridIOSegment& grid() {
-        GridIOSegment* segment = new GridIOSegment();
+    GridIOSegment& addGridSegment(string description) {
+        GridIOSegment* segment = new GridIOSegment(description);
         formats[mode]->addSegment(segment);
         return *segment;
     }

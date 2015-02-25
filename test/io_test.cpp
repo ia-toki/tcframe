@@ -23,38 +23,18 @@ using tcframe::TypeException;
 TEST(LineIOSegmentTest, UnsupportedTypes) {
     set<int> s;
 
-    LineIOSegment segment;
+    LineIOSegment segment("s");
 
     try {
-        segment % s;
+        segment, s;
         FAIL();
     } catch (IOFormatException& e) {
         EXPECT_TRUE(string(e.what()).find("is only supported") != string::npos);
     }
 }
 
-TEST(LineIOSegmentTest, InvalidSyntaxes) {
-    int A, B;
-
-    LineIOSegment segment;
-
-    try {
-        segment, A;
-        FAIL();
-    } catch (IOFormatException& e) {
-        EXPECT_TRUE(string(e.what()).find("'%`") != string::npos);
-    }
-
-    try {
-        segment % A % B;
-        FAIL();
-    } catch (IOFormatException& e) {
-        EXPECT_TRUE(string(e.what()).find("',`") != string::npos);
-    }
-}
-
 TEST(LineIOSegmentTest, EmptyLinePrinting) {
-    LineIOSegment segment;
+    LineIOSegment segment("");
 
     ostringstream sout;
     segment.printTo(sout);
@@ -65,8 +45,8 @@ TEST(LineIOSegmentTest, EmptyLinePrinting) {
 TEST(LineIOSegmentTest, SingleScalarPrinting) {
     int X;
 
-    LineIOSegment segment;
-    segment % X;
+    LineIOSegment segment("X");
+    segment, X;
 
     X = 42;
 
@@ -79,8 +59,8 @@ TEST(LineIOSegmentTest, SingleScalarPrinting) {
 TEST(LineIOSegmentTest, MultipleScalarsPrinting) {
     int A, B, C;
 
-    LineIOSegment segment;
-    segment % A, B, C;
+    LineIOSegment segment("A, B, C");
+    segment, A, B, C;
 
     A = 42;
     B = 7;
@@ -95,8 +75,8 @@ TEST(LineIOSegmentTest, MultipleScalarsPrinting) {
 TEST(LineIOSegmentTest, SingleVectorPrinting) {
     vector<int> V;
 
-    LineIOSegment segment;
-    segment % V;
+    LineIOSegment segment("V");
+    segment, V;
 
     V = vector<int>{1, 2, 3};
 
@@ -109,8 +89,8 @@ TEST(LineIOSegmentTest, SingleVectorPrinting) {
 TEST(LineIOSegmentTest, MultipleVectorsPrinting) {
     vector<int> V, W;
 
-    LineIOSegment segment;
-    segment % V, W;
+    LineIOSegment segment("V, W");
+    segment, V, W;
 
     V = vector<int>{1, 2, 3};
     W = vector<int>{4, 5, 6};
@@ -125,8 +105,8 @@ TEST(LineIOSegmentTest, MixedVariablesPrinting) {
     vector<int> V, W;
     int A, B;
 
-    LineIOSegment segment;
-    segment % A, V, B, W;
+    LineIOSegment segment("A, V, B, W");
+    segment, A, V, B, W;
 
     V = vector<int>{1, 2, 3};
     W = vector<int>{4, 5, 6, 7};
@@ -143,10 +123,10 @@ TEST(LineIOSegmentTest, MixedVariablesPrinting) {
 TEST(LinesIOSegmentTest, UnsupportedTypes) {
     int X;
 
-    LinesIOSegment segment;
+    LinesIOSegment segment("X");
 
     try {
-        segment % X;
+        segment, X;
         FAIL();
     } catch (IOFormatException& e) {
         EXPECT_TRUE(string(e.what()).find("is only supported for vector") != string::npos);
@@ -154,8 +134,10 @@ TEST(LinesIOSegmentTest, UnsupportedTypes) {
 
     vector<vector<int>> V;
 
+    segment = LinesIOSegment("V");
+
     try {
-        segment % V;
+        segment, V;
         FAIL();
     } catch (IOFormatException& e) {
         EXPECT_TRUE(string(e.what()).find("is only supported for vector of basic scalars") != string::npos);
@@ -165,8 +147,8 @@ TEST(LinesIOSegmentTest, UnsupportedTypes) {
 TEST(LinesIOSegmentTest, IncompatibleVectorSizes) {
     vector<int> V, W;
 
-    LinesIOSegment segment;
-    segment % V, W;
+    LinesIOSegment segment("V, W");
+    segment, V, W;
 
     V = vector<int>{1, 2, 3};
     W = vector<int>{4, 5, 6, 7};
@@ -181,28 +163,8 @@ TEST(LinesIOSegmentTest, IncompatibleVectorSizes) {
     }
 }
 
-TEST(LinesIOSegmentTest, InvalidSyntaxes) {
-    vector<int> V, W;
-
-    LinesIOSegment segment;
-
-    try {
-        segment, V;
-        FAIL();
-    } catch (IOFormatException& e) {
-        EXPECT_TRUE(string(e.what()).find("'%`") != string::npos);
-    }
-
-    try {
-        segment % V % W;
-        FAIL();
-    } catch (IOFormatException& e) {
-        EXPECT_TRUE(string(e.what()).find("',`") != string::npos);
-    }
-}
-
 TEST(LinesIOSegmentTest, NoVariables) {
-    LinesIOSegment segment;
+    LinesIOSegment segment("");
 
     ostringstream sout;
 
@@ -217,8 +179,8 @@ TEST(LinesIOSegmentTest, NoVariables) {
 TEST(LinesIOSegmentTest, SingleVectorPrinting) {
     vector<int> V;
 
-    LinesIOSegment segment;
-    segment % V;
+    LinesIOSegment segment("V");
+    segment, V;
 
     V = vector<int>{1, 2, 3};
 
@@ -232,8 +194,8 @@ TEST(LinesIOSegmentTest, MultipleVectorsPrinting) {
     vector<int> V;
     vector<string> W;
 
-    LinesIOSegment segment;
-    segment % V, W;
+    LinesIOSegment segment("V, W");
+    segment, V, W;
 
     V = vector<int>{1, 2, 3};
     W = vector<string>{"a", "bb", "ccc"};
@@ -247,10 +209,10 @@ TEST(LinesIOSegmentTest, MultipleVectorsPrinting) {
 TEST(GridIOSegmentTest, UnsupportedTypes) {
     int X;
 
-    GridIOSegment segment;
+    GridIOSegment segment("X");
 
     try {
-        segment % X;
+        segment, X;
         FAIL();
     } catch (IOFormatException& e) {
         EXPECT_TRUE(string(e.what()).find("is only supported for matrix") != string::npos);
@@ -258,8 +220,10 @@ TEST(GridIOSegmentTest, UnsupportedTypes) {
 
     vector<vector<vector<int>>> V;
 
+    segment = GridIOSegment("V");
+
     try {
-        segment % V;
+        segment, V;
         FAIL();
     } catch (IOFormatException& e) {
         EXPECT_TRUE(string(e.what()).find("is only supported for matrix of basic scalars") != string::npos);
@@ -269,8 +233,8 @@ TEST(GridIOSegmentTest, UnsupportedTypes) {
 TEST(GridIOSegmentTest, IncompatibleDimensionSizes) {
     vector<vector<int>> V;
 
-    GridIOSegment segment;
-    segment % V;
+    GridIOSegment segment("V");
+    segment, V;
 
     V = vector<vector<int>>{ {1, 2}, {3, 4, 5} };
 
@@ -285,7 +249,7 @@ TEST(GridIOSegmentTest, IncompatibleDimensionSizes) {
 }
 
 TEST(GridIOSegmentTest, NonSingularVariables) {
-    GridIOSegment segment;
+    GridIOSegment segment("");
 
     ostringstream sout;
 
@@ -298,9 +262,10 @@ TEST(GridIOSegmentTest, NonSingularVariables) {
 
     vector<vector<int>> V, W;
 
+    segment = GridIOSegment("V, W");
 
     try {
-        segment % V % W;
+        segment, V, W;
         FAIL();
     } catch (IOFormatException& e) {
         EXPECT_TRUE(string(e.what()).find("must have exactly one variable") != string::npos);
@@ -310,8 +275,8 @@ TEST(GridIOSegmentTest, NonSingularVariables) {
 TEST(GridIOSegmentTest, CharPrinting) {
     vector<vector<char>> C;
 
-    GridIOSegment segment;
-    segment % C;
+    GridIOSegment segment("C");
+    segment, C;
 
     C = vector<vector<char>>{ {'a', 'b'}, {'c', 'd'} };
 
@@ -324,8 +289,8 @@ TEST(GridIOSegmentTest, CharPrinting) {
 TEST(GridIOSegmentTest, NonCharPrinting) {
     vector<vector<int>> C;
 
-    GridIOSegment segment;
-    segment % C;
+    GridIOSegment segment("C");
+    segment, C;
 
     C = vector<vector<int>>{ {1, 2}, {3, 4} };
 
@@ -346,12 +311,12 @@ TEST(IOFormatTest, MultipleLinesPrinting) {
 
     IOFormat format;
 
-    format.addSegment(&((*(new LineIOSegment())) % A, B));
-    format.addSegment(&((*(new LineIOSegment())) % K));
-    format.addSegment(&((*(new LineIOSegment())) % V));
-    format.addSegment(&((*(new LinesIOSegment())) % W, Z));
-    format.addSegment(&((*(new GridIOSegment())) % C));
-    format.addSegment(&((*(new GridIOSegment())) % P));
+    format.addSegment(&((*(new LineIOSegment("A, B"))), A, B));
+    format.addSegment(&((*(new LineIOSegment("K"))), K));
+    format.addSegment(&((*(new LineIOSegment("V"))), V));
+    format.addSegment(&((*(new LinesIOSegment("W, Z"))), W, Z));
+    format.addSegment(&((*(new GridIOSegment("C"))), C));
+    format.addSegment(&((*(new GridIOSegment("P"))), P));
 
     A = 1;
     B = 2;
@@ -382,12 +347,12 @@ TEST(IOFormatsCollectorTest, InputFormatCollection) {
 
     IOFormatsCollector collector;
 
-    collector.line() % A, B;
-    collector.line() % K;
-    collector.line() % V;
-    collector.lines() % W, Z;
-    collector.grid() % C;
-    collector.grid() % P;
+    collector.addLineSegment("A, B"), A, B;
+    collector.addLineSegment("K"), K;
+    collector.addLineSegment("V"), V;
+    collector.addLinesSegment("W, Z"), W, Z;
+    collector.addGridSegment("C"), C;
+    collector.addGridSegment("P"), P;
 
     A = 1;
     B = 2;
