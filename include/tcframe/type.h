@@ -1,6 +1,8 @@
 #ifndef TCFRAME_TYPE_H
 #define TCFRAME_TYPE_H
 
+#include "exception.h"
+
 #include <ostream>
 #include <sstream>
 #include <type_traits>

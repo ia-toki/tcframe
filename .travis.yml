@@ -7,8 +7,7 @@ install:
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
   - sudo apt-get install libgtest-dev
   - "cd /usr/src/gtest && sudo cmake . && sudo cmake --build . && sudo mv libg* /usr/local/lib/ ; cd -"
-script: "make test"
-after_success: "make clean"
+script: "cmake . && cmake --build . && ctest"
 notifications:
   recipients:
     - fushar@gmail.com

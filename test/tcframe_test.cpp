@@ -20,6 +20,7 @@ using tcframe::Failure;
 using tcframe::FailureType;
 using tcframe::Logger;
 using tcframe::OperatingSystem;
+using tcframe::SubtaskSatisfiedButNotAssignedFailure;
 using tcframe::SubtaskUnsatisfiedButAssignedFailure;
 using tcframe::Util;
 

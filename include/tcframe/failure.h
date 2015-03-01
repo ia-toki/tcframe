@@ -1,5 +1,7 @@
-#ifndef TCFRAME_STREAM_H
-#define TCFRAME_STREAM_H
+#ifndef TCFRAME_FAILURE_H
+#define TCFRAME_FAILURE_H
+
+#include "constraint.h"
 
 #include <vector>
 
