@@ -1,7 +1,7 @@
 #ifndef TCFRAME_TCFRAME_H
 #define TCFRAME_TCFRAME_H
 
-#include "generator.h"
+#include "generator.hpp"
 
 #define EMPTY_LINE() addLineSegment("")
 #define LINE(...) addLineSegment(#__VA_ARGS__), __VA_ARGS__

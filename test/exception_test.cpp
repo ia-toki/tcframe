@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "tcframe/exception.h"
+#include "tcframe/exception.hpp"
 
 using tcframe::TestCaseException;
 

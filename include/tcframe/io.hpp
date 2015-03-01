@@ -1,8 +1,8 @@
 #ifndef TCFRAME_IO_H
 #define TCFRAME_IO_H
 
-#include "exception.h"
-#include "type.h"
+#include "exception.hpp"
+#include "type.hpp"
 
 #include <ostream>
 #include <string>

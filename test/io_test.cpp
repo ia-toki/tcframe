@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "tcframe/io.h"
+#include "tcframe/io.hpp"
 
 #include <set>
 #include <sstream>

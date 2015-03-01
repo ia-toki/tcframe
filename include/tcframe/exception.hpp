@@ -1,8 +1,8 @@
 #ifndef TCFRAME_EXCEPTION_H
 #define TCFRAME_EXCEPTION_H
 
-#include "constraint.h"
-#include "failure.h"
+#include "constraint.hpp"
+#include "failure.hpp"
 
 #include <exception>
 #include <stdexcept>

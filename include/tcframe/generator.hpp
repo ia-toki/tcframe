@@ -1,13 +1,13 @@
 #ifndef TCFRAME_GENERATOR_H
 #define TCFRAME_GENERATOR_H
 
-#include "constraint.h"
-#include "exception.h"
-#include "logger.h"
-#include "os.h"
-#include "problem.h"
-#include "testcase.h"
-#include "util.h"
+#include "constraint.hpp"
+#include "exception.hpp"
+#include "logger.hpp"
+#include "os.hpp"
+#include "problem.hpp"
+#include "testcase.hpp"
+#include "util.hpp"
 
 #include <cstdio>
 #include <map>

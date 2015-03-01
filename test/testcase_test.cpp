@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "tcframe/testcase.h"
+#include "tcframe/testcase.hpp"
 
 #include <vector>
 

@@ -1,7 +1,7 @@
 #ifndef TCFRAME_FAILURE_H
 #define TCFRAME_FAILURE_H
 
-#include "constraint.h"
+#include "constraint.hpp"
 
 #include <vector>
 

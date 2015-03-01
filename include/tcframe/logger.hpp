@@ -1,7 +1,7 @@
 #ifndef TCFRAME_LOGGER_H
 #define TCFRAME_LOGGER_H
 
-#include "failure.h"
+#include "failure.hpp"
 
 #include <iostream>
 #include <string>

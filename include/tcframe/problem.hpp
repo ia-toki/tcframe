@@ -1,10 +1,10 @@
 #ifndef TCFRAME_PROBLEM_H
 #define TCFRAME_PROBLEM_H
 
-#include "constraint.h"
-#include "exception.h"
-#include "io.h"
-#include "testcase.h"
+#include "constraint.hpp"
+#include "exception.hpp"
+#include "io.hpp"
+#include "testcase.hpp"
 
 #include <vector>
 

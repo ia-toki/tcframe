@@ -1,7 +1,7 @@
 #ifndef TCFRAME_TYPE_H
 #define TCFRAME_TYPE_H
 
-#include "exception.h"
+#include "exception.hpp"
 
 #include <ostream>
 #include <sstream>

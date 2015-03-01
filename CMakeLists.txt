@@ -13,18 +13,18 @@ find_package(Threads REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 
 set(SOURCE_FILES
-    include/tcframe/constraint.h
-    include/tcframe/exception.h
-    include/tcframe/failure.h
-    include/tcframe/generator.h
-    include/tcframe/io.h
-    include/tcframe/logger.h
-    include/tcframe/os.h
-    include/tcframe/problem.h
-    include/tcframe/tcframe.h
-    include/tcframe/testcase.h
-    include/tcframe/type.h
-    include/tcframe/util.h
+    include/tcframe/constraint.hpp
+    include/tcframe/exception.hpp
+    include/tcframe/failure.hpp
+    include/tcframe/generator.hpp
+    include/tcframe/io.hpp
+    include/tcframe/logger.hpp
+    include/tcframe/os.hpp
+    include/tcframe/problem.hpp
+    include/tcframe/tcframe.hpp
+    include/tcframe/testcase.hpp
+    include/tcframe/type.hpp
+    include/tcframe/util.hpp
     test/constraint_test.cpp
     test/exception_test.cpp
     test/failure_test.cpp

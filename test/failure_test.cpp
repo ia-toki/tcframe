@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "tcframe/failure.h"
+#include "tcframe/failure.hpp"
 
 using tcframe::Constraint;
 using tcframe::FailureType;

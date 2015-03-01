@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
-#include "tcframe/tcframe.h"
-#include "tcframe/util.h"
+#include "tcframe/tcframe.hpp"
+#include "tcframe/util.hpp"
 
 #include <map>
 #include <sstream>

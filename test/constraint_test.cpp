@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "tcframe/constraint.h"
+#include "tcframe/constraint.hpp"
 
 #include <vector>
 
