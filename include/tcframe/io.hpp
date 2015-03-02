@@ -80,15 +80,12 @@ public:
             throw IOFormatException("Lines segment must have at least one variable");
         }
 
-        int linesCount = variables[0]->size();
-
-        for (int i = 1; i < variables.size(); i++) {
-            if (variables[i]->size() != linesCount) {
-                throw IOFormatException("All vectors participating in a lines segment must have equal sizes");
-            }
+        if (!isValidSegment()) {
+            throw IOFormatException("All vectors participating in a lines segment must have equal sizes");
         }
 
-        for (int i = 0; i < linesCount; i++) {
+        int linesSize = variables[0]->size();
+        for (int i = 0; i < linesSize; i++) {
             bool first = true;
             for (auto variable : variables) {
                 if (!first) {
@@ -114,12 +111,23 @@ private:
     void addVariable(T...) {
         throw IOFormatException("Lines segment is only supported for vector of basic scalars types");
     }
+
+    bool isValidSegment() {
+        int linesSize = variables[0]->size();
+        for (int i = 1; i < variables.size(); i++) {
+            if (variables[i]->size() != linesSize) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 };
 
 class GridIOSegment : public IOSegment {
 public:
     GridIOSegment(string description)
-            : description(description), variable(nullptr) { }
+            : description(description), variable(nullptr), hasSpaces(false) { }
 
     template<typename T>
     GridIOSegment& operator,(T& x) {
@@ -136,21 +144,54 @@ public:
             throw IOFormatException("Grid segment must have exactly one variable");
         }
 
-        variable->printTo(out);
+        if (!isValidSegment()) {
+            throw IOFormatException("Each row of the matrix in a grid segment must have equal number of columns");
+        }
+
+        for (int i = 0; i < variable->rowsSize(); i++) {
+            for (int j = 0; j < variable->columnsSize(i); j++) {
+                if (j > 0 && hasSpaces) {
+                    out << " ";
+                }
+                variable->printElementTo(i, j, out);
+            }
+            out << "\n";
+        }
     }
 
 private:
     string description;
     MatrixVariable* variable;
+    bool hasSpaces;
 
     template<typename T, typename = RequiresScalar<T>>
     void setVariable(vector<vector<T>>& x) {
         variable = new Matrix<T>(x);
+        hasSpaces = true;
+    }
+
+    void setVariable(vector<vector<char>>& x) {
+        variable = new Matrix<char>(x);
     }
 
     template<typename... T>
     void setVariable(T...) {
         throw IOFormatException("Grid segment is only supported for matrix of basic scalars types");
+    }
+
+    bool isValidSegment() {
+        if (variable->rowsSize() == 0) {
+            return true;
+        }
+
+        int columnsSize = variable->columnsSize(0);
+        for (int i = 0; i < variable->rowsSize(); i++) {
+            if (variable->columnsSize(i) != columnsSize) {
+                return false;
+            }
+        }
+
+        return true;
     }
 };
 

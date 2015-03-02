@@ -48,26 +48,21 @@ TEST(VerticalVectorTest, Printing) {
     EXPECT_EQ("1\n2\n3\n", sout.str());
 }
 
-TEST(MatrixTest, CharPrinting) {
-    vector<vector<char>> C;
-    Matrix<char> wrappedC(C);
-
-    C = vector<vector<char>>{ {'a', 'b'}, {'c', 'd'} };
-
-    ostringstream sout;
-    wrappedC.printTo(sout);
-
-    EXPECT_EQ("ab\ncd\n", sout.str());
-}
-
-TEST(MatrixTest, NonCharPrinting) {
+TEST(MatrixTest, Printing) {
     vector<vector<int>> V;
     Matrix<int> wrappedV(V);
 
     V = vector<vector<int>>{ {1, 2}, {3, 4} };
 
     ostringstream sout;
-    wrappedV.printTo(sout);
+    wrappedV.printElementTo(0, 0, sout);
+    sout << " ";
+    wrappedV.printElementTo(0, 1, sout);
+    sout << "\n";
+    wrappedV.printElementTo(1, 0, sout);
+    sout << " ";
+    wrappedV.printElementTo(1, 1, sout);
+    sout << "\n";
 
     EXPECT_EQ("1 2\n3 4\n", sout.str());
 }

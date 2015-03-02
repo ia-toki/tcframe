@@ -18,7 +18,6 @@ using tcframe::IOMode;
 using tcframe::GridIOSegment;
 using tcframe::LineIOSegment;
 using tcframe::LinesIOSegment;
-using tcframe::TypeException;
 
 TEST(LineIOSegmentTest, UnsupportedTypes) {
     set<int> s;
@@ -243,7 +242,7 @@ TEST(GridIOSegmentTest, IncompatibleDimensionSizes) {
     try {
         segment.printTo(sout);
         FAIL();
-    } catch (TypeException& e) {
+    } catch (IOFormatException& e) {
         EXPECT_TRUE(string(e.what()).find("must have equal number of columns") != string::npos);
     }
 }

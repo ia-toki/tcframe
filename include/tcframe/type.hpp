@@ -96,7 +96,9 @@ class MatrixVariable {
 public:
     virtual ~MatrixVariable() { }
 
-    virtual void printTo(ostream& out) = 0;
+    virtual int rowsSize() = 0;
+    virtual int columnsSize(int rowIndex) = 0;
+    virtual void printElementTo(int rowIndex, int columnIndex, ostream& out) = 0;
 };
 
 template<typename T>
@@ -106,62 +108,20 @@ public:
         this->value = &value;
     }
 
-    void printTo(ostream& out) override {
-        if (!isValidMatrix()) {
-            throw TypeException("Each row of the matrix must have equal number of columns");
-        }
+    int rowsSize() override {
+        return (int)value->size();
+    }
 
-        for (auto row : *value) {
-            bool first = true;
-            for (auto c : row) {
-                if (!first) {
-                    out << " ";
-                }
-                first = false;
-                out << c;
-            }
-            out << "\n";
-        }
+    int columnsSize(int rowIndex) override {
+        return (int)(*value)[rowIndex].size();
+    }
+
+    void printElementTo(int rowIndex, int columnIndex, ostream& out) override {
+        out << (*value)[rowIndex][columnIndex];
     }
 
 private:
     vector<vector<T>>* value;
-
-    bool isValidMatrix() {
-        if (value->empty()) {
-            return true;
-        }
-
-        unsigned int columnsCount = (*value)[0].size();
-
-        for (auto row : *value) {
-            if (row.size() != columnsCount) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-};
-
-template<>
-class Matrix<char> : public MatrixVariable {
-public:
-    Matrix(vector<vector<char>>& value) {
-        this->value = &value;
-    }
-
-    void printTo(ostream& out) override {
-        for (auto line : *value) {
-            for (auto c : line) {
-                out << c;
-            }
-            out << "\n";
-        }
-    }
-
-private:
-    vector<vector<char>>* value;
 };
 
 }
