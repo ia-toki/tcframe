@@ -69,7 +69,7 @@ class VerticalVariable {
 public:
     virtual ~VerticalVariable() { }
 
-    virtual unsigned int size() = 0;
+    virtual int size() = 0;
     virtual void printElementTo(int index, ostream& out) = 0;
 };
 
@@ -80,8 +80,8 @@ public:
         this->value = &value;
     }
 
-    unsigned int size() override {
-        return value->size();
+    int size() override {
+        return (int)value->size();
     }
 
     void printElementTo(int index, ostream& out) override {
