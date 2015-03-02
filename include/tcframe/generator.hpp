@@ -27,6 +27,64 @@ namespace tcframe {
 
 template<typename TProblem>
 class BaseGenerator : protected TProblem, protected TestCasesCollector {
+public:
+    map<string, vector<Failure*>> generate() {
+        subtasks = TProblem::getSubtasks();
+        testData = getTestData();
+        inputFormat = TProblem::getInputFormat();
+
+        TProblem::Config();
+        Config();
+
+        os->setBaseDirectory(testCasesBaseDirectoryName);
+
+        logger->logIntroduction();
+
+        for (TestGroup* testGroup : testData) {
+            int testGroupId = testGroup->getId();
+            logger->logTestGroupIntroduction(testGroupId);
+
+            for (int testCaseId = 1; testCaseId <= testGroup->getTestCasesCount(); testCaseId++) {
+                generateTestCase(testGroupId, testCaseId);
+            }
+        }
+
+        return testCaseFailures;
+    }
+
+protected:
+    BaseGenerator()
+            : logger(new StandardLogger()),
+              os(new UnixOperatingSystem()),
+              solutionExecutionCommand("./solution"),
+              testCasesBaseDirectoryName("tc") { }
+
+    BaseGenerator(Logger* logger, OperatingSystem* os)
+            : logger(logger),
+              os(os),
+              solutionExecutionCommand("./solution"),
+              testCasesBaseDirectoryName("tc") { }
+
+    virtual ~BaseGenerator() { }
+
+    virtual void Config() = 0;
+
+    void setBaseDir(string testCasesBaseDirectoryName) {
+        this->testCasesBaseDirectoryName = testCasesBaseDirectoryName;
+    }
+
+    void setSolution(string solutionExecutionCommand) {
+        this->solutionExecutionCommand = solutionExecutionCommand;
+    }
+
+    virtual void TestCases() { throw NotImplementedException(); }
+
+    virtual void TestGroup1() { throw NotImplementedException(); }
+    virtual void TestGroup2() { throw NotImplementedException(); }
+    virtual void TestGroup3() { throw NotImplementedException(); }
+    virtual void TestGroup4() { throw NotImplementedException(); }
+    virtual void TestGroup5() { throw NotImplementedException(); }
+
 private:
     Logger* logger;
     OperatingSystem* os;
@@ -42,11 +100,11 @@ private:
     map<string, vector<Failure*>> testCaseFailures;
 
     vector<void(BaseGenerator::*)()> testGroupBlocks = {
-        &BaseGenerator::TestGroup1,
-        &BaseGenerator::TestGroup2,
-        &BaseGenerator::TestGroup3,
-        &BaseGenerator::TestGroup4,
-        &BaseGenerator::TestGroup5
+            &BaseGenerator::TestGroup1,
+            &BaseGenerator::TestGroup2,
+            &BaseGenerator::TestGroup3,
+            &BaseGenerator::TestGroup4,
+            &BaseGenerator::TestGroup5
     };
 
     vector<TestGroup*> getTestData() {
@@ -145,64 +203,6 @@ private:
 
     void generateTestCaseOutput(string testCaseInputName, string testCaseOutputName) {
         os->execute(solutionExecutionCommand, testCaseInputName, testCaseOutputName);
-    }
-
-protected:
-    BaseGenerator() :
-        logger(new StandardLogger()),
-        os(new UnixOperatingSystem()),
-        solutionExecutionCommand("./solution"),
-        testCasesBaseDirectoryName("tc") { }
-
-    BaseGenerator(Logger* logger, OperatingSystem* os) :
-        logger(logger),
-        os(os),
-        solutionExecutionCommand("./solution"),
-        testCasesBaseDirectoryName("tc") { }
-
-    virtual ~BaseGenerator() { }
-
-    virtual void Config() = 0;
-
-    void setBaseDir(string testCasesBaseDirectoryName) {
-        this->testCasesBaseDirectoryName = testCasesBaseDirectoryName;
-    }
-
-    void setSolution(string solutionExecutionCommand) {
-        this->solutionExecutionCommand = solutionExecutionCommand;
-    }
-
-    virtual void TestCases() { throw NotImplementedException(); }
-
-    virtual void TestGroup1() { throw NotImplementedException(); }
-    virtual void TestGroup2() { throw NotImplementedException(); }
-    virtual void TestGroup3() { throw NotImplementedException(); }
-    virtual void TestGroup4() { throw NotImplementedException(); }
-    virtual void TestGroup5() { throw NotImplementedException(); }
-
-public:
-    map<string, vector<Failure*>> generate() {
-        subtasks = TProblem::getSubtasks();
-        testData = getTestData();
-        inputFormat = TProblem::getInputFormat();
-
-        TProblem::Config();
-        Config();
-
-        os->setBaseDirectory(testCasesBaseDirectoryName);
-
-        logger->logIntroduction();
-
-        for (TestGroup* testGroup : testData) {
-            int testGroupId = testGroup->getId();
-            logger->logTestGroupIntroduction(testGroupId);
-
-            for (int testCaseId = 1; testCaseId <= testGroup->getTestCasesCount(); testCaseId++) {
-                generateTestCase(testGroupId, testCaseId);
-            }
-        }
-
-        return testCaseFailures;
     }
 };
 

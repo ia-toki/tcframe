@@ -13,20 +13,9 @@ using std::vector;
 namespace tcframe {
 
 class BaseProblem : protected ConstraintsCollector, protected IOFormatsCollector {
-private:
-    string slug;
-
-    vector<void(BaseProblem::*)()> subtaskBlocks = {
-        &BaseProblem::Subtask1,
-        &BaseProblem::Subtask2,
-        &BaseProblem::Subtask3,
-        &BaseProblem::Subtask4,
-        &BaseProblem::Subtask5
-    };
-
 protected:
-    BaseProblem() :
-        slug("problem") { }
+    BaseProblem()
+            : slug("problem") { }
 
     virtual ~BaseProblem() { }
 
@@ -73,6 +62,17 @@ protected:
         InputFormat();
         return IOFormatsCollector::collectFormat(IOMode::INPUT);
     }
+
+private:
+    string slug;
+
+    vector<void(BaseProblem::*)()> subtaskBlocks = {
+            &BaseProblem::Subtask1,
+            &BaseProblem::Subtask2,
+            &BaseProblem::Subtask3,
+            &BaseProblem::Subtask4,
+            &BaseProblem::Subtask5
+    };
 };
 
 }

@@ -16,32 +16,15 @@ namespace tcframe {
 
 class IOSegment {
 public:
+    virtual ~IOSegment() { }
+
     virtual void printTo(ostream& out) = 0;
 };
 
 class LineIOSegment : public IOSegment {
-private:
-    string description;
-    vector<HorizontalVariable*> variables;
-
-    template<typename T, typename = RequiresScalar<T>>
-    void addVariable(T& x) {
-        variables.push_back(new Scalar<T>(x));
-    }
-
-    template<typename T, typename = RequiresScalar<T>>
-    void addVariable(vector<T>& x) {
-        variables.push_back(new HorizontalVector<T>(x));
-    }
-
-    template<typename... T>
-    void addVariable(T...) {
-        throw IOFormatException("Line segment is only supported for basic scalar and vector of basic scalars types");
-    }
-
 public:
-    LineIOSegment(string description) :
-        description(description) { }
+    LineIOSegment(string description)
+            : description(description) { }
 
     template<typename T>
     LineIOSegment& operator,(T& x) {
@@ -60,26 +43,31 @@ public:
         }
         out << "\n";
     }
-};
 
-class LinesIOSegment : public IOSegment {
 private:
     string description;
-    vector<VerticalVariable*> variables;
+    vector<HorizontalVariable*> variables;
+
+    template<typename T, typename = RequiresScalar<T>>
+    void addVariable(T& x) {
+        variables.push_back(new Scalar<T>(x));
+    }
 
     template<typename T, typename = RequiresScalar<T>>
     void addVariable(vector<T>& x) {
-        variables.push_back(new VerticalVector<T>(x));
+        variables.push_back(new HorizontalVector<T>(x));
     }
 
     template<typename... T>
     void addVariable(T...) {
-        throw IOFormatException("Lines segment is only supported for vector of basic scalars types");
+        throw IOFormatException("Line segment is only supported for basic scalar and vector of basic scalars types");
     }
+};
 
+class LinesIOSegment : public IOSegment {
 public:
-    LinesIOSegment(string description) :
-        description(description) { }
+    LinesIOSegment(string description)
+            : description(description) { }
 
     template<typename T>
     LinesIOSegment& operator,(T& x) {
@@ -112,26 +100,26 @@ public:
             out << "\n";
         }
     }
-};
 
-class GridIOSegment : public IOSegment {
 private:
     string description;
-    MatrixVariable* variable;
+    vector<VerticalVariable*> variables;
 
     template<typename T, typename = RequiresScalar<T>>
-    void setVariable(vector<vector<T>>& x) {
-        variable = new Matrix<T>(x);
+    void addVariable(vector<T>& x) {
+        variables.push_back(new VerticalVector<T>(x));
     }
 
     template<typename... T>
-    void setVariable(T...) {
-        throw IOFormatException("Grid segment is only supported for matrix of basic scalars types");
+    void addVariable(T...) {
+        throw IOFormatException("Lines segment is only supported for vector of basic scalars types");
     }
+};
 
+class GridIOSegment : public IOSegment {
 public:
-    GridIOSegment(string description) :
-        description(description), variable(nullptr) { }
+    GridIOSegment(string description)
+            : description(description), variable(nullptr) { }
 
     template<typename T>
     GridIOSegment& operator,(T& x) {
@@ -150,12 +138,23 @@ public:
 
         variable->printTo(out);
     }
+
+private:
+    string description;
+    MatrixVariable* variable;
+
+    template<typename T, typename = RequiresScalar<T>>
+    void setVariable(vector<vector<T>>& x) {
+        variable = new Matrix<T>(x);
+    }
+
+    template<typename... T>
+    void setVariable(T...) {
+        throw IOFormatException("Grid segment is only supported for matrix of basic scalars types");
+    }
 };
 
 class IOFormat {
-private:
-    vector<IOSegment*> segments;
-
 public:
     void addSegment(IOSegment* segment) {
         segments.push_back(segment);
@@ -166,6 +165,9 @@ public:
             segment->printTo(out);
         }
     }
+
+private:
+    vector<IOSegment*> segments;
 };
 
 enum IOMode {
@@ -174,10 +176,6 @@ enum IOMode {
 };
 
 class IOFormatsCollector {
-private:
-    IOFormat* formats[2];
-    IOMode mode;
-
 public:
     IOFormatsCollector() : mode(IOMode::INPUT) {
         this->formats[IOMode::INPUT] = new IOFormat();
@@ -209,6 +207,10 @@ public:
     IOFormat* collectFormat(IOMode mode) {
         return formats[mode];
     }
+
+private:
+    IOFormat* formats[2];
+    IOMode mode;
 };
 
 }

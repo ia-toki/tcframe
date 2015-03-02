@@ -28,14 +28,9 @@ public:
 };
 
 class OfficialTestCase : public TestCase {
-private:
-    function<void()> closure;
-    string description;
-    set<int> subtaskIds;
-
 public:
-    OfficialTestCase(function<void()> closure, string description, set<int> subtaskIds) :
-        closure(closure), description(description), subtaskIds(subtaskIds) { }
+    OfficialTestCase(function<void()> closure, string description, set<int> subtaskIds)
+            : closure(closure), description(description), subtaskIds(subtaskIds) { }
 
     TestCaseType getType() override {
         return TestCaseType::OFFICIAL;
@@ -52,14 +47,15 @@ public:
     void apply() {
         closure();
     }
-};
 
-class SampleTestCase : public TestCase {
 private:
-    string content;
+    function<void()> closure;
     string description;
     set<int> subtaskIds;
 
+};
+
+class SampleTestCase : public TestCase {
 public:
     SampleTestCase(string content, string description, set<int> subtaskIds) :
         content(content), description(description), subtaskIds(subtaskIds) { }
@@ -79,16 +75,17 @@ public:
     string getContent() {
         return content;
     }
+
+private:
+    string content;
+    string description;
+    set<int> subtaskIds;
 };
 
 class TestGroup {
-private:
-    int id;
-    vector<TestCase*> testCases;
-
 public:
-    TestGroup(int id) :
-        id(id) { }
+    TestGroup(int id)
+            : id(id) { }
 
     void addTestCase(TestCase* testCase) {
         testCases.push_back(testCase);
@@ -99,25 +96,22 @@ public:
     }
 
     int getTestCasesCount() {
-        return testCases.size();
+        return (int)testCases.size();
     }
 
     TestCase* getTestCase(int index) {
         return testCases[index];
     }
+
+private:
+    int id;
+    vector<TestCase*> testCases;
 };
 
 class TestCasesCollector {
-private:
-    int curTestGroupId;
-    set<int> curSubtaskIds;
-
-    vector<TestGroup*> testGroups;
-
 public:
-    TestCasesCollector() :
-        curTestGroupId(0),
-        curSubtaskIds({-1}) {
+    TestCasesCollector()
+            : curTestGroupId(0), curSubtaskIds({-1}) {
         testGroups.push_back(new TestGroup(0));
     }
 
@@ -142,6 +136,12 @@ public:
     vector<TestGroup*> collectTestData() {
         return testGroups;
     }
+
+private:
+    int curTestGroupId;
+    set<int> curSubtaskIds;
+
+    vector<TestGroup*> testGroups;
 };
 
 }

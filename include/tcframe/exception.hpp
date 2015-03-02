@@ -19,16 +19,16 @@ namespace tcframe {
 class NotImplementedException : public exception { };
 
 class TestCaseException : public exception {
-private:
-    vector<Failure*> failures;
-
 public:
-    TestCaseException(vector<Failure*> failures) :
-        failures(failures) { }
+    TestCaseException(vector<Failure*> failures)
+            : failures(failures) { }
 
     vector<Failure*> getFailures() {
         return failures;
     }
+
+private:
+    vector<Failure*> failures;
 };
 
 class TypeException : public runtime_error {
@@ -39,8 +39,8 @@ public:
 
 class IOFormatException : public runtime_error {
 public:
-    IOFormatException(const string& message) :
-        runtime_error(message) { }
+    IOFormatException(const string& message)
+            : runtime_error(message) { }
 };
 
 }

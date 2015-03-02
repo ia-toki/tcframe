@@ -16,19 +16,16 @@ enum FailureType {
 
 class Failure {
 public:
-    virtual FailureType getType() = 0;
-
     virtual ~Failure() { }
+    
+    virtual FailureType getType() = 0;
 };
 
 
 class SubtaskSatisfiedButNotAssignedFailure : public Failure {
-private:
-    int subtaskId;
-
 public:
-    SubtaskSatisfiedButNotAssignedFailure(int subtaskId) :
-        subtaskId(subtaskId) { }
+    SubtaskSatisfiedButNotAssignedFailure(int subtaskId)
+            : subtaskId(subtaskId) { }
 
     FailureType getType() override {
         return FailureType::SUBTASK_SATISFIED_BUT_NOT_ASSIGNED;
@@ -37,16 +34,15 @@ public:
     int getSubtaskId() {
         return subtaskId;
     }
+
+private:
+    int subtaskId;
 };
 
 class SubtaskUnsatisfiedButAssignedFailure : public Failure {
-private:
-    int subtaskId;
-    vector<Constraint*> unsatisfiedConstraints;
-
 public:
-    SubtaskUnsatisfiedButAssignedFailure(int subtaskId, vector<Constraint*> unsatisfiedConstraints) :
-        subtaskId(subtaskId), unsatisfiedConstraints(unsatisfiedConstraints) { }
+    SubtaskUnsatisfiedButAssignedFailure(int subtaskId, vector<Constraint*> unsatisfiedConstraints)
+            : subtaskId(subtaskId), unsatisfiedConstraints(unsatisfiedConstraints) { }
 
     FailureType getType() override {
         return FailureType::SUBTASK_UNSATISFIED_BUT_ASSIGNED;
@@ -59,6 +55,10 @@ public:
     vector<Constraint*> getUnsatisfiedConstraints() {
         return unsatisfiedConstraints;
     }
+
+private:
+    int subtaskId;
+    vector<Constraint*> unsatisfiedConstraints;
 };
 
 }

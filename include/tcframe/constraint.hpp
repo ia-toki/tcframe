@@ -12,13 +12,9 @@ using std::vector;
 namespace tcframe {
 
 class Constraint {
-private:
-    function<bool()> predicate;
-    string description;
-
 public:
-    Constraint(function<bool()> predicate, string description) :
-        predicate(predicate), description(description) { }
+    Constraint(function<bool()> predicate, string description)
+            : predicate(predicate), description(description) { }
 
     bool isSatisfied() {
         return predicate();
@@ -27,16 +23,16 @@ public:
     string getDescription() {
         return description;
     }
+
+private:
+    function<bool()> predicate;
+    string description;
 };
 
 class Subtask {
-private:
-    int id;
-    vector<Constraint*> constraints;
-
 public:
-    Subtask(int id) :
-        id(id) { }
+    Subtask(int id)
+            : id(id) { }
 
     void addConstraint(Constraint* constraint) {
         constraints.push_back(constraint);
@@ -49,16 +45,16 @@ public:
     vector<Constraint*> getConstraints() {
         return constraints;
     }
+
+private:
+    int id;
+    vector<Constraint*> constraints;
 };
 
 class ConstraintsCollector {
-private:
-    int curSubtaskId;
-    vector<Subtask*> subtasks;
-
 public:
-    ConstraintsCollector() :
-        curSubtaskId(0) { }
+    ConstraintsCollector()
+            : curSubtaskId(0) { }
 
     void newSubtask() {
         curSubtaskId++;
@@ -76,6 +72,10 @@ public:
     vector<Subtask*> collectSubtasks() {
         return subtasks;
     }
+
+private:
+    int curSubtaskId;
+    vector<Subtask*> subtasks;
 };
 
 }

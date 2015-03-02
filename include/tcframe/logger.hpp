@@ -15,6 +15,8 @@ namespace tcframe {
 
 class Logger {
 public:
+    virtual ~Logger() { }
+
     virtual void logIntroduction() = 0;
     virtual void logTestGroupIntroduction(int testGroupId) = 0;
     virtual void logTestCaseIntroduction(string testCaseName) = 0;

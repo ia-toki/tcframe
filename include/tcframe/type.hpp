@@ -20,8 +20,9 @@ namespace tcframe {
 
 class HorizontalVariable {
 public:
+    virtual ~HorizontalVariable() { }
+
     virtual void printTo(ostream& out) = 0;
-    virtual ~HorizontalVariable() { };
 };
 
 template<typename T>
@@ -29,26 +30,23 @@ using RequiresScalar = typename enable_if<is_arithmetic<T>::value || is_same<str
 
 template<typename T>
 class Scalar : public HorizontalVariable {
-private:
-    T* value;
-
 public:
-    explicit Scalar(T& value) {
+    Scalar(T& value) {
         this->value = &value;
     }
 
     void printTo(ostream& out) override {
         out << *value;
     }
+
+private:
+    T* value;
 };
 
 template<typename T>
 class HorizontalVector : public HorizontalVariable {
-private:
-    vector<T>* value;
-
 public:
-    explicit HorizontalVector(vector<T>& value) {
+    HorizontalVector(vector<T>& value) {
         this->value = &value;
     }
 
@@ -62,22 +60,23 @@ public:
             out << element;
         }
     }
-};
 
+private:
+    vector<T>* value;
+};
 
 class VerticalVariable {
 public:
+    virtual ~VerticalVariable() { }
+
     virtual unsigned int size() = 0;
     virtual void printElementTo(int index, ostream& out) = 0;
 };
 
 template<typename T>
 class VerticalVector : public VerticalVariable {
-private:
-    vector<T>* value;
-
 public:
-    explicit VerticalVector(vector<T>& value) {
+    VerticalVector(vector<T>& value) {
         this->value = &value;
     }
 
@@ -88,37 +87,22 @@ public:
     void printElementTo(int index, ostream& out) override {
         out << (*value)[index];
     }
+
+private:
+    vector<T>* value;
 };
 
 class MatrixVariable {
 public:
-    virtual void printTo(ostream& out) = 0;
     virtual ~MatrixVariable() { }
+
+    virtual void printTo(ostream& out) = 0;
 };
 
 template<typename T>
 class Matrix : public MatrixVariable {
-private:
-    vector<vector<T>>* value;
-
-    bool isValidMatrix() {
-        if (value->empty()) {
-            return true;
-        }
-
-        unsigned int columnsCount = (*value)[0].size();
-
-        for (auto row : *value) {
-            if (row.size() != columnsCount) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
 public:
-    explicit Matrix(vector<vector<T>>& value) {
+    Matrix(vector<vector<T>>& value) {
         this->value = &value;
     }
 
@@ -139,15 +123,31 @@ public:
             out << "\n";
         }
     }
+
+private:
+    vector<vector<T>>* value;
+
+    bool isValidMatrix() {
+        if (value->empty()) {
+            return true;
+        }
+
+        unsigned int columnsCount = (*value)[0].size();
+
+        for (auto row : *value) {
+            if (row.size() != columnsCount) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 };
 
 template<>
 class Matrix<char> : public MatrixVariable {
-private:
-    vector<vector<char>>* value;
-
 public:
-    explicit Matrix(vector<vector<char>>& value) {
+    Matrix(vector<vector<char>>& value) {
         this->value = &value;
     }
 
@@ -159,6 +159,9 @@ public:
             out << "\n";
         }
     }
+
+private:
+    vector<vector<char>>* value;
 };
 
 }

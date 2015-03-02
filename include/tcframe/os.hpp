@@ -34,28 +34,9 @@ public:
 };
 
 class UnixOperatingSystem : public OperatingSystem {
-private:
-    string baseDirectoryName;
-
-    void removeFile(string filename) {
-        system(("rm -f " + filename).c_str());
-    }
-
-    istringstream* openForReadingAsStringStream(string filename) {
-        ifstream file(filename);
-
-        ostringstream buffer;
-        buffer << file.rdbuf();
-
-        removeFile(filename);
-
-        return new istringstream(buffer.str());
-    }
-
 public:
     UnixOperatingSystem()
-        : baseDirectoryName(".") {
-    }
+            : baseDirectoryName(".") { }
 
     void setBaseDirectory(string baseDirectoryName) override {
         this->baseDirectoryName = baseDirectoryName;
@@ -94,6 +75,24 @@ public:
     void remove(string name) override {
         string filename = baseDirectoryName + "/" + name;
         removeFile(filename);
+    }
+
+private:
+    string baseDirectoryName;
+
+    void removeFile(string filename) {
+        system(("rm -f " + filename).c_str());
+    }
+
+    istringstream* openForReadingAsStringStream(string filename) {
+        ifstream file(filename);
+
+        ostringstream buffer;
+        buffer << file.rdbuf();
+
+        removeFile(filename);
+
+        return new istringstream(buffer.str());
     }
 };
 
