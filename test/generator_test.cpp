@@ -1,7 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "tcframe/tcframe.hpp"
-#include "tcframe/util.hpp"
+#include "tcframe/generator.hpp"
 
 #include <map>
 #include <sstream>
@@ -16,12 +15,13 @@ using std::vector;
 using tcframe::BaseGenerator;
 using tcframe::BaseProblem;
 using tcframe::ExecutionResult;
-using tcframe::Failure;
-using tcframe::FailureType;
 using tcframe::Logger;
 using tcframe::OperatingSystem;
-using tcframe::SubtaskSatisfiedButNotAssignedFailure;
-using tcframe::SubtaskUnsatisfiedButAssignedFailure;
+using tcframe::SubtaskFailure;
+using tcframe::SubtaskSatisfiedButNotAssigned;
+using tcframe::SubtaskUnsatisfiability;
+using tcframe::SubtaskUnsatisfiedButAssigned;
+using tcframe::TestCaseFailure;
 using tcframe::Util;
 
 class FakeLogger : public Logger {
@@ -30,7 +30,8 @@ public:
     void logTestGroupIntroduction(int) override { }
     void logTestCaseIntroduction(string) override { }
     void logTestCaseOkResult() override { }
-    void logTestCaseFailedResult(string, vector<Failure*>) override { }
+    void logTestCaseFailedResult(string) override { }
+    void logTestCaseFailure(TestCaseFailure*) override { }
 };
 
 class FakeOperatingSystem : public OperatingSystem {
@@ -121,8 +122,8 @@ protected:
     }
 
 public:
-    GeneratorWithTestGroups() :
-        BaseGenerator(new FakeLogger(), new FakeOperatingSystem()) { }
+    GeneratorWithTestGroups()
+            : BaseGenerator(new FakeLogger(), new FakeOperatingSystem()) { }
 };
 
 class ProblemWithoutSubtasks : public BaseProblem {
@@ -156,59 +157,72 @@ protected:
     }
 
 public:
-    GeneratorWithoutTestGroups() :
-        BaseGenerator(new FakeLogger(), new FakeOperatingSystem()) { }
+    GeneratorWithoutTestGroups()
+            : BaseGenerator(new FakeLogger(), new FakeOperatingSystem()) { }
 };
 
-TEST(TcframeTest, GenerationWithSubtasksAndTestGroups) {
+TEST(GeneratorTest, GenerationWithSubtasksAndTestGroups) {
     GeneratorWithTestGroups gen;
-    map<string, vector<Failure*>> failures = gen.generate();
+    map<string, TestCaseFailure*> failures = gen.generate();
 
-    ASSERT_EQ(0, failures["problem_1_1"].size());
+    EXPECT_EQ(failures["problem_1_1"], nullptr);
 
-    ASSERT_EQ(1, failures["problem_1_2"].size());
-    ASSERT_EQ(FailureType::SUBTASK_UNSATISFIED_BUT_ASSIGNED, failures["problem_1_2"][0]->getType());
+    SubtaskFailure* failure_1_2 = dynamic_cast<SubtaskFailure*>(failures["problem_1_2"]);
+    ASSERT_NE(failure_1_2, nullptr);
 
-    SubtaskUnsatisfiedButAssignedFailure* failure_1_2_0 = static_cast<SubtaskUnsatisfiedButAssignedFailure*>(failures["problem_1_2"][0]);
+    ASSERT_EQ(1, failure_1_2->getUnsatisfiabilities().size());
+
+    SubtaskUnsatisfiedButAssigned* failure_1_2_0 = dynamic_cast<SubtaskUnsatisfiedButAssigned*>(failure_1_2->getUnsatisfiabilities()[0]);
+    ASSERT_NE(failure_1_2_0, nullptr);
+
     EXPECT_EQ(1, failure_1_2_0->getSubtaskId());
     ASSERT_EQ(1, failure_1_2_0->getUnsatisfiedConstraints().size());
     EXPECT_EQ("1 <= B && B <= 1000", failure_1_2_0->getUnsatisfiedConstraints()[0]->getDescription());
 
-    ASSERT_EQ(1, failures["problem_2_1"].size());
-    ASSERT_EQ(FailureType::SUBTASK_SATISFIED_BUT_NOT_ASSIGNED, failures["problem_2_1"][0]->getType());
+    SubtaskFailure* failure_2_1 = dynamic_cast<SubtaskFailure*>(failures["problem_2_1"]);
+    ASSERT_NE(failure_2_1, nullptr);
 
-    SubtaskSatisfiedButNotAssignedFailure* failure_2_1_0 = static_cast<SubtaskSatisfiedButNotAssignedFailure*>(failures["problem_2_1"][0]);
+    ASSERT_EQ(1, failure_2_1->getUnsatisfiabilities().size());
+
+    SubtaskSatisfiedButNotAssigned* failure_2_1_0 = dynamic_cast<SubtaskSatisfiedButNotAssigned*>(failure_2_1->getUnsatisfiabilities()[0]);
+    ASSERT_NE(failure_2_1_0, nullptr);
+
     EXPECT_EQ(1, failure_2_1_0->getSubtaskId());
 
-    ASSERT_EQ(2, failures["problem_2_2"].size());
+    SubtaskFailure* failure_2_2 = dynamic_cast<SubtaskFailure*>(failures["problem_2_2"]);
+    ASSERT_NE(failure_2_2, nullptr);
 
-    ASSERT_EQ(FailureType::SUBTASK_UNSATISFIED_BUT_ASSIGNED, failures["problem_2_2"][0]->getType());
+    ASSERT_EQ(2, failure_2_2->getUnsatisfiabilities().size());
 
-    SubtaskUnsatisfiedButAssignedFailure* failure_2_2_0 = static_cast<SubtaskUnsatisfiedButAssignedFailure*>(failures["problem_2_2"][0]);
+    SubtaskUnsatisfiedButAssigned* failure_2_2_0 = dynamic_cast<SubtaskUnsatisfiedButAssigned*>(failure_2_2->getUnsatisfiabilities()[0]);
+    ASSERT_NE(failure_2_2_0, nullptr);
+
     EXPECT_EQ(2, failure_2_2_0->getSubtaskId());
     ASSERT_EQ(2, failure_2_2_0->getUnsatisfiedConstraints().size());
     EXPECT_EQ("1 <= A && A <= 2000000000", failure_2_2_0->getUnsatisfiedConstraints()[0]->getDescription());
     EXPECT_EQ("1 <= B && B <= 2000000000", failure_2_2_0->getUnsatisfiedConstraints()[1]->getDescription());
 
-    ASSERT_EQ(FailureType::SUBTASK_SATISFIED_BUT_NOT_ASSIGNED, failures["problem_2_2"][1]->getType());
+    SubtaskSatisfiedButNotAssigned* failure_2_2_1 = dynamic_cast<SubtaskSatisfiedButNotAssigned*>(failure_2_2->getUnsatisfiabilities()[1]);
+    ASSERT_NE(failure_2_2_1, nullptr);
 
-    SubtaskSatisfiedButNotAssignedFailure* failure_2_2_1 = static_cast<SubtaskSatisfiedButNotAssignedFailure*>(failures["problem_2_2"][1]);
     EXPECT_EQ(3, failure_2_2_1->getSubtaskId());
 }
 
-TEST(TcframeTest, GenerationWithoutSubtasksAndWithoutTestGroups) {
+TEST(GeneratorTest, GenerationWithoutSubtasksAndWithoutTestGroups) {
     GeneratorWithoutTestGroups gen;
-    map<string, vector<Failure*>> failures = gen.generate();
+    map<string, TestCaseFailure*> failures = gen.generate();
 
-    ASSERT_EQ(0, failures["problem_1"].size());
+    EXPECT_EQ(failures["problem_1"], nullptr);
 
-    ASSERT_EQ(1, failures["problem_2"].size());
+    SubtaskFailure* failure_2 = dynamic_cast<SubtaskFailure*>(failures["problem_2"]);
+    ASSERT_NE(failure_2, nullptr);
 
-    ASSERT_EQ(FailureType::SUBTASK_UNSATISFIED_BUT_ASSIGNED, failures["problem_2"][0]->getType());
+    ASSERT_EQ(1, failure_2->getUnsatisfiabilities().size());
 
-    SubtaskUnsatisfiedButAssignedFailure* failure_2_0 = static_cast<SubtaskUnsatisfiedButAssignedFailure*>(failures["problem_2"][0]);
+    SubtaskUnsatisfiedButAssigned* failure_2_0 = dynamic_cast<SubtaskUnsatisfiedButAssigned*>(failure_2->getUnsatisfiabilities()[0]);
+    ASSERT_NE(failure_2_0, nullptr);
+
     EXPECT_EQ(-1, failure_2_0->getSubtaskId());
     ASSERT_EQ(1, failure_2_0->getUnsatisfiedConstraints().size());
     EXPECT_EQ("1 <= B && B <= 1000", failure_2_0->getUnsatisfiedConstraints()[0]->getDescription());
-
 }

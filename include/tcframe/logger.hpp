@@ -21,7 +21,8 @@ public:
     virtual void logTestGroupIntroduction(int testGroupId) = 0;
     virtual void logTestCaseIntroduction(string testCaseName) = 0;
     virtual void logTestCaseOkResult() = 0;
-    virtual void logTestCaseFailedResult(string testCaseDescription, vector<Failure*> failures) = 0;
+    virtual void logTestCaseFailedResult(string testCaseDescription) = 0;
+    virtual void logTestCaseFailure(TestCaseFailure* testCaseFailure) = 0;
 };
 
 class StandardLogger : public Logger {
@@ -50,46 +51,14 @@ public:
         cout << "OK" << endl;
     }
 
-    void logTestCaseFailedResult(string testCaseDescription, vector<Failure*> failures) override {
+    void logTestCaseFailedResult(string testCaseDescription) override {
         cout << "FAILED" << endl;
         cout << "    Description: " << testCaseDescription << endl;
         cout << "    Reasons:" << endl;
-
-
-        for (Failure* failure : failures) {
-            switch (failure->getType()) {
-                case FailureType::SUBTASK_SATISFIED_BUT_NOT_ASSIGNED:
-                    logFailure(static_cast<SubtaskSatisfiedButNotAssignedFailure*>(failure));
-                    break;
-                case FailureType::SUBTASK_UNSATISFIED_BUT_ASSIGNED:
-                    logFailure(static_cast<SubtaskUnsatisfiedButAssignedFailure*>(failure));
-                    break;
-            }
-        }
-
-        cout << endl;
     }
 
-private:
-    void logFailure(SubtaskSatisfiedButNotAssignedFailure* failure) {
-        int subtaskId = failure->getSubtaskId();
-
-        cout << "    * Satisfies subtask " << subtaskId << " but is not assigned to it" << endl;
-    }
-
-    void logFailure(SubtaskUnsatisfiedButAssignedFailure* failure) {
-        int subtaskId = failure->getSubtaskId();
-        vector<Constraint*> unsatisfiedConstraints = failure->getUnsatisfiedConstraints();
-
-        if (subtaskId == -1) {
-            cout << "    * Does not satisfy constraints, on:" << endl;
-        } else {
-            cout << "    * Does not satisfy subtask " << subtaskId << ", on constraints:" << endl;
-        }
-
-        for (Constraint* unsatisfiedConstraint : unsatisfiedConstraints) {
-            cout << "      - " << unsatisfiedConstraint->getDescription() << endl;
-        }
+    void logTestCaseFailure(TestCaseFailure* testCaseFailure) override {
+        cout << testCaseFailure->toString();
     }
 };
 

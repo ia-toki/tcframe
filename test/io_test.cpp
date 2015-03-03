@@ -28,7 +28,7 @@ TEST(LineIOSegmentTest, UnsupportedTypes) {
         segment, s;
         FAIL();
     } catch (IOFormatException& e) {
-        EXPECT_TRUE(string(e.what()).find("is only supported") != string::npos);
+        EXPECT_TRUE(string(e.getMessage()).find("is only supported") != string::npos);
     }
 }
 
@@ -128,7 +128,7 @@ TEST(LinesIOSegmentTest, UnsupportedTypes) {
         segment, X;
         FAIL();
     } catch (IOFormatException& e) {
-        EXPECT_TRUE(string(e.what()).find("is only supported for vector") != string::npos);
+        EXPECT_TRUE(string(e.getMessage()).find("is only supported for vector") != string::npos);
     }
 
     vector<vector<int>> V;
@@ -139,7 +139,7 @@ TEST(LinesIOSegmentTest, UnsupportedTypes) {
         segment, V;
         FAIL();
     } catch (IOFormatException& e) {
-        EXPECT_TRUE(string(e.what()).find("is only supported for vector of basic scalars") != string::npos);
+        EXPECT_TRUE(string(e.getMessage()).find("is only supported for vector of basic scalars") != string::npos);
     }
 }
 
@@ -158,7 +158,7 @@ TEST(LinesIOSegmentTest, IncompatibleVectorSizes) {
         segment.printTo(sout);
         FAIL();
     } catch (IOFormatException& e) {
-        EXPECT_TRUE(string(e.what()).find("must have equal sizes") != string::npos);
+        EXPECT_TRUE(string(e.getMessage()).find("must have equal sizes") != string::npos);
     }
 }
 
@@ -171,7 +171,7 @@ TEST(LinesIOSegmentTest, NoVariables) {
         segment.printTo(sout);
         FAIL();
     } catch (IOFormatException& e) {
-        EXPECT_TRUE(string(e.what()).find("must have at least one variable"));
+        EXPECT_TRUE(string(e.getMessage()).find("must have at least one variable"));
     }
 }
 
@@ -214,7 +214,7 @@ TEST(GridIOSegmentTest, UnsupportedTypes) {
         segment, X;
         FAIL();
     } catch (IOFormatException& e) {
-        EXPECT_TRUE(string(e.what()).find("is only supported for matrix") != string::npos);
+        EXPECT_TRUE(string(e.getMessage()).find("is only supported for matrix") != string::npos);
     }
 
     vector<vector<vector<int>>> V;
@@ -225,7 +225,7 @@ TEST(GridIOSegmentTest, UnsupportedTypes) {
         segment, V;
         FAIL();
     } catch (IOFormatException& e) {
-        EXPECT_TRUE(string(e.what()).find("is only supported for matrix of basic scalars") != string::npos);
+        EXPECT_TRUE(string(e.getMessage()).find("is only supported for matrix of basic scalars") != string::npos);
     }
 }
 
@@ -243,7 +243,7 @@ TEST(GridIOSegmentTest, IncompatibleDimensionSizes) {
         segment.printTo(sout);
         FAIL();
     } catch (IOFormatException& e) {
-        EXPECT_TRUE(string(e.what()).find("must have equal number of columns") != string::npos);
+        EXPECT_TRUE(string(e.getMessage()).find("must have equal number of columns") != string::npos);
     }
 }
 
@@ -256,7 +256,7 @@ TEST(GridIOSegmentTest, NonSingularVariables) {
         segment.printTo(sout);
         FAIL();
     } catch (IOFormatException& e) {
-        EXPECT_TRUE(string(e.what()).find("must have exactly one variable") != string::npos);
+        EXPECT_TRUE(string(e.getMessage()).find("must have exactly one variable") != string::npos);
     }
 
     vector<vector<int>> V, W;
@@ -267,7 +267,7 @@ TEST(GridIOSegmentTest, NonSingularVariables) {
         segment, V, W;
         FAIL();
     } catch (IOFormatException& e) {
-        EXPECT_TRUE(string(e.what()).find("must have exactly one variable") != string::npos);
+        EXPECT_TRUE(string(e.getMessage()).find("must have exactly one variable") != string::npos);
     }
 }
 

@@ -26,10 +26,9 @@ set(SOURCE_FILES
     include/tcframe/type.hpp
     include/tcframe/util.hpp
     test/constraint_test.cpp
-    test/exception_test.cpp
     test/failure_test.cpp
+    test/generator_test.cpp
     test/io_test.cpp
-    test/tcframe_test.cpp
     test/testcase_test.cpp
     test/type_test.cpp
     test/util_test.cpp)

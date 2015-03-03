@@ -1,16 +1,14 @@
 #ifndef TCFRAME_EXCEPTION_H
 #define TCFRAME_EXCEPTION_H
 
-#include "constraint.hpp"
 #include "failure.hpp"
+#include "util.hpp"
 
 #include <exception>
-#include <stdexcept>
 #include <string>
 #include <vector>
 
 using std::exception;
-using std::runtime_error;
 using std::string;
 using std::vector;
 
@@ -20,21 +18,36 @@ class NotImplementedException : public exception { };
 
 class TestCaseException : public exception {
 public:
-    TestCaseException(vector<Failure*> failures)
-            : failures(failures) { }
+    virtual ~TestCaseException() { }
 
-    vector<Failure*> getFailures() {
-        return failures;
+    TestCaseException(TestCaseFailure* failure)
+            : failure(failure) { }
+
+    string getMessage() {
+        return failure->toString();
+    }
+
+    TestCaseFailure* getFailure() {
+        return failure;
     }
 
 private:
-    vector<Failure*> failures;
+    TestCaseFailure* failure;
 };
 
-class IOFormatException : public runtime_error {
+class SubtaskException : public TestCaseException {
 public:
-    IOFormatException(const string& message)
-            : runtime_error(message) { }
+    SubtaskException(SubtaskFailure* failure)
+            : TestCaseException(failure) { }
+};
+
+class IOFormatException : public TestCaseException {
+public:
+    IOFormatException(IOFormatFailure* failure)
+            : TestCaseException(failure) { }
+
+    IOFormatException(string message)
+            : TestCaseException(new IOFormatFailure(message)) { }
 };
 
 }

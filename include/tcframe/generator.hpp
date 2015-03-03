@@ -3,6 +3,7 @@
 
 #include "constraint.hpp"
 #include "exception.hpp"
+#include "failure.hpp"
 #include "logger.hpp"
 #include "os.hpp"
 #include "problem.hpp"
@@ -28,7 +29,7 @@ namespace tcframe {
 template<typename TProblem>
 class BaseGenerator : protected TProblem, protected TestCasesCollector {
 public:
-    map<string, vector<Failure*>> generate() {
+    map<string, TestCaseFailure*> generate() {
         subtasks = TProblem::getSubtasks();
         testData = getTestData();
         inputFormat = TProblem::getInputFormat();
@@ -97,7 +98,7 @@ private:
 
     IOFormat* inputFormat;
 
-    map<string, vector<Failure*>> testCaseFailures;
+    map<string, TestCaseFailure*> testCaseFailures;
 
     vector<void(BaseGenerator::*)()> testGroupBlocks = {
             &BaseGenerator::TestGroup1,
@@ -143,10 +144,11 @@ private:
             generateTestCaseOutput(testCaseInputName, testCaseOutputName);
 
             logger->logTestCaseOkResult();
-            testCaseFailures[testCaseName] = vector<Failure*>();
+            testCaseFailures[testCaseName] = nullptr;
         } catch (TestCaseException& e) {
-            logger->logTestCaseFailedResult(testCase->getDescription(), e.getFailures());
-            testCaseFailures[testCaseName] = e.getFailures();
+            logger->logTestCaseFailedResult(testCase->getDescription());
+            testCaseFailures[testCaseName] = e.getFailure();
+            logger->logTestCaseFailure(e.getFailure());
         }
     }
 
@@ -167,7 +169,7 @@ private:
     }
 
     void checkConstraints(TestCase* testCase) {
-        vector<Failure*> failures;
+        vector<SubtaskUnsatisfiability*> unsatisfiabilities;
 
         set<int> subtaskIds = testCase->getSubtaskIds();
 
@@ -181,17 +183,17 @@ private:
 
             if (subtaskIds.count(subtask->getId())) {
                 if (!unsatisfiedConstraints.empty()) {
-                    failures.push_back(new SubtaskUnsatisfiedButAssignedFailure(subtask->getId(), unsatisfiedConstraints));
+                    unsatisfiabilities.push_back(new SubtaskUnsatisfiedButAssigned(subtask->getId(), unsatisfiedConstraints));
                 }
             } else {
                 if (unsatisfiedConstraints.empty()) {
-                    failures.push_back(new SubtaskSatisfiedButNotAssignedFailure(subtask->getId()));
+                    unsatisfiabilities.push_back(new SubtaskSatisfiedButNotAssigned(subtask->getId()));
                 }
             }
         }
 
-        if (!failures.empty()) {
-            throw TestCaseException(failures);
+        if (!unsatisfiabilities.empty()) {
+            throw SubtaskException(new SubtaskFailure(unsatisfiabilities));
         }
     }
 

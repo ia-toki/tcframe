@@ -2,23 +2,24 @@
 
 #include "tcframe/failure.hpp"
 
+#include <vector>
+
+using std::vector;
 using tcframe::Constraint;
-using tcframe::FailureType;
-using tcframe::SubtaskSatisfiedButNotAssignedFailure;
-using tcframe::SubtaskUnsatisfiedButAssignedFailure;
+using tcframe::SubtaskSatisfiedButNotAssigned;
+using tcframe::SubtaskUnsatisfiedButAssigned;
 
-TEST(SubtaskSatisfiedButNotAssignedFailureTest, Construction) {
-    SubtaskSatisfiedButNotAssignedFailure failure(1);
+TEST(SubtaskFailureTest, SubtaskSatisfiedButNotAssignedConstruction) {
+    SubtaskSatisfiedButNotAssigned unsatisfiability(1);
 
-    EXPECT_EQ(FailureType::SUBTASK_SATISFIED_BUT_NOT_ASSIGNED, failure.getType());
-    EXPECT_EQ(1, failure.getSubtaskId());
+    EXPECT_EQ(1, unsatisfiability.getSubtaskId());
 }
 
-TEST(SubtaskUnsatisfiedButAssignedFailureTest, Construction) {
+TEST(SubtaskFailureTest, SubtaskUnsatisfiedButAssignedConstruction) {
     vector<Constraint*> unsatisfiedConstraints = {new Constraint([] { return true; }, "true")};
-    SubtaskUnsatisfiedButAssignedFailure failure(1, unsatisfiedConstraints);
+    SubtaskUnsatisfiedButAssigned unsatisfiability(1, unsatisfiedConstraints);
 
-    EXPECT_EQ(FailureType::SUBTASK_UNSATISFIED_BUT_ASSIGNED, failure.getType());
-    EXPECT_EQ(1, failure.getSubtaskId());
-    EXPECT_EQ(unsatisfiedConstraints, failure.getUnsatisfiedConstraints());
+    EXPECT_EQ(1, unsatisfiability.getSubtaskId());
+    EXPECT_EQ(unsatisfiedConstraints, unsatisfiability.getUnsatisfiedConstraints());
 }
+

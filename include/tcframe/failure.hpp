@@ -2,51 +2,49 @@
 #define TCFRAME_FAILURE_H
 
 #include "constraint.hpp"
+#include "util.hpp"
 
-#include <vector>
+#include <string>
 
-using std::vector;
+using std::string;
 
 namespace tcframe {
 
-enum FailureType {
-    SUBTASK_SATISFIED_BUT_NOT_ASSIGNED,
-    SUBTASK_UNSATISFIED_BUT_ASSIGNED
+class TestCaseFailure {
+public:
+    virtual ~TestCaseFailure() { }
+
+    virtual string toString() = 0;
 };
 
-class Failure {
+class SubtaskUnsatisfiability {
 public:
-    virtual ~Failure() { }
-    
-    virtual FailureType getType() = 0;
+    virtual ~SubtaskUnsatisfiability() { }
+
+    virtual string getUnsatisfiability() = 0;
 };
 
-
-class SubtaskSatisfiedButNotAssignedFailure : public Failure {
+class SubtaskSatisfiedButNotAssigned : public SubtaskUnsatisfiability {
 public:
-    SubtaskSatisfiedButNotAssignedFailure(int subtaskId)
+    SubtaskSatisfiedButNotAssigned(int subtaskId)
             : subtaskId(subtaskId) { }
-
-    FailureType getType() override {
-        return FailureType::SUBTASK_SATISFIED_BUT_NOT_ASSIGNED;
-    }
 
     int getSubtaskId() {
         return subtaskId;
+    }
+
+    string getUnsatisfiability() override {
+        return "* Satisfies subtask " + Util::toString(subtaskId) + " but is not assigned to it";
     }
 
 private:
     int subtaskId;
 };
 
-class SubtaskUnsatisfiedButAssignedFailure : public Failure {
+class SubtaskUnsatisfiedButAssigned : public SubtaskUnsatisfiability {
 public:
-    SubtaskUnsatisfiedButAssignedFailure(int subtaskId, vector<Constraint*> unsatisfiedConstraints)
+    SubtaskUnsatisfiedButAssigned(int subtaskId, vector<Constraint*> unsatisfiedConstraints)
             : subtaskId(subtaskId), unsatisfiedConstraints(unsatisfiedConstraints) { }
-
-    FailureType getType() override {
-        return FailureType::SUBTASK_UNSATISFIED_BUT_ASSIGNED;
-    }
 
     int getSubtaskId() {
         return subtaskId;
@@ -56,9 +54,60 @@ public:
         return unsatisfiedConstraints;
     }
 
+    string getUnsatisfiability() override {
+        string res;
+
+        if (subtaskId == -1) {
+            res += "    * Does not satisfy constraints, on:\n";
+        } else {
+            res += "    * Does not satisfy subtask " + Util::toString(subtaskId) + ", on constraints:\n";
+        }
+
+        for (Constraint* constraint : unsatisfiedConstraints) {
+            res += "      -" + constraint->getDescription() + "\n";
+        }
+
+        return res;
+    }
+
 private:
     int subtaskId;
     vector<Constraint*> unsatisfiedConstraints;
+};
+
+class SubtaskFailure : public TestCaseFailure {
+public:
+    SubtaskFailure(vector<SubtaskUnsatisfiability*> unsatisfiabilities)
+            : unsatisfiabilities(unsatisfiabilities) { }
+
+    vector<SubtaskUnsatisfiability*> getUnsatisfiabilities() {
+        return unsatisfiabilities;
+    }
+
+    string toString() override {
+        string res;
+        for (SubtaskUnsatisfiability* unsatisfiability : unsatisfiabilities) {
+            res += unsatisfiability->getUnsatisfiability();
+        }
+
+        return res;
+    }
+
+private:
+    vector<SubtaskUnsatisfiability*> unsatisfiabilities;
+};
+
+class IOFormatFailure : public TestCaseFailure {
+public:
+    IOFormatFailure(string message)
+            : message(message) { }
+
+    string toString() override {
+        return message;
+    }
+
+private:
+    string message;
 };
 
 }
