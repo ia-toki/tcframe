@@ -302,73 +302,45 @@ TEST(GridIOSegmentTest, NonCharPrinting) {
 TEST(IOFormatTest, MultipleLinesPrinting) {
     int A, B;
     int K;
-    vector<int> V;
-    vector<int> W;
-    vector<string> Z;
-    vector<vector<char>> C;
-    vector<vector<int>> P;
 
     IOFormat format;
 
-    format.addSegment(&((*(new LineIOSegment("A, B"))), A, B));
-    format.addSegment(&((*(new LineIOSegment("K"))), K));
-    format.addSegment(&((*(new LineIOSegment("V"))), V));
-    format.addSegment(&((*(new LinesIOSegment("W, Z"))), W, Z));
-    format.addSegment(&((*(new GridIOSegment("C"))), C));
-    format.addSegment(&((*(new GridIOSegment("P"))), P));
+    LineIOSegment segment1("A, B");
+    segment1, A, B;
+
+    LineIOSegment segment2("K");
+    segment2, K;
+
+    format.addSegment(&segment1);
+    format.addSegment(&segment2);
 
     A = 1;
     B = 2;
     K = 77;
 
-    V = vector<int>{11, 22, 33};
-
-    W = vector<int>{10, 20};
-    Z = vector<string>{"x", "y"};
-
-    C = vector<vector<char>>{ {'a', 'b'}, {'c', 'd'} };
-    P = vector<vector<int>>{ {1, 2}, {3, 4} };
-
     ostringstream sout;
     format.printTo(sout);
 
-    EXPECT_EQ("1 2\n77\n11 22 33\n10 x\n20 y\nab\ncd\n1 2\n3 4\n", sout.str());
+    EXPECT_EQ("1 2\n77\n", sout.str());
 }
 
 TEST(IOFormatsCollectorTest, InputFormatCollection) {
     int A, B;
     int K;
-    vector<int> V;
-    vector<int> W;
-    vector<string> Z;
-    vector<vector<char>> C;
-    vector<vector<int>> P;
 
     IOFormatsCollector collector;
 
     collector.addLineSegment("A, B"), A, B;
     collector.addLineSegment("K"), K;
-    collector.addLineSegment("V"), V;
-    collector.addLinesSegment("W, Z"), W, Z;
-    collector.addGridSegment("C"), C;
-    collector.addGridSegment("P"), P;
 
     A = 1;
     B = 2;
     K = 77;
-
-    V = vector<int>{11, 22, 33};
-
-    W = vector<int>{10, 20};
-    Z = vector<string>{"x", "y"};
-
-    C = vector<vector<char>>{ {'a', 'b'}, {'c', 'd'} };
-    P = vector<vector<int>>{ {1, 2}, {3, 4} };
 
     IOFormat* format = collector.collectFormat(IOMode::INPUT);
 
     ostringstream sout;
     format->printTo(sout);
 
-    EXPECT_EQ("1 2\n77\n11 22 33\n10 x\n20 y\nab\ncd\n1 2\n3 4\n", sout.str());
+    EXPECT_EQ("1 2\n77\n", sout.str());
 }
