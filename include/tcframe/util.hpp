@@ -3,9 +3,12 @@
 
 #include <sstream>
 #include <string>
+#include <vector>
 
+using std::istringstream;
 using std::ostringstream;
 using std::string;
+using std::vector;
 
 namespace tcframe {
 
@@ -16,6 +19,25 @@ public:
         ostringstream sout;
         sout << obj;
         return sout.str();
+    }
+
+    static vector<string> split(string s) {
+        for (int i = 0; i < s.size(); i++) {
+            if (s[i] == ',') {
+                s[i] = ' ';
+            }
+        }
+
+        istringstream sin(s);
+        string t;
+
+        vector<string> result;
+
+        while (sin >> t) {
+            result.push_back(t);
+        }
+
+        return result;
     }
 
     static string constructTestCaseName(string slug, int testGroupId, int testCaseId) {

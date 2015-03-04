@@ -5,8 +5,10 @@
 #include <set>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
+using std::make_pair;
 using std::ostringstream;
 using std::set;
 using std::string;

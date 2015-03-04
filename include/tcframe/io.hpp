@@ -6,9 +6,12 @@
 
 #include <ostream>
 #include <string>
+#include <utility>
 #include <vector>
 
+using std::make_pair;
 using std::ostream;
+using std::pair;
 using std::string;
 using std::vector;
 
@@ -23,12 +26,13 @@ public:
 
 class LineIOSegment : public IOSegment {
 public:
-    LineIOSegment(string description)
-            : description(description) { }
+    LineIOSegment(string names) {
+        this->names = Util::split(names);
+    }
 
     template<typename T>
-    LineIOSegment& operator,(T& x) {
-        addVariable(x);
+    LineIOSegment& operator,(T& variable) {
+        addVariable(variable);
         return *this;
     }
 
@@ -45,17 +49,17 @@ public:
     }
 
 private:
-    string description;
+    vector<string> names;
     vector<HorizontalVariable*> variables;
 
     template<typename T, typename = RequiresScalar<T>>
     void addVariable(T& x) {
-        variables.push_back(new Scalar<T>(x));
+        variables.push_back(new Scalar<T>(x, names[variables.size()]));
     }
 
     template<typename T, typename = RequiresScalar<T>>
     void addVariable(vector<T>& x) {
-        variables.push_back(new HorizontalVector<T>(x));
+        variables.push_back(new HorizontalVector<T>(x, names[variables.size()]));
     }
 
     template<typename... T>
@@ -66,12 +70,13 @@ private:
 
 class LinesIOSegment : public IOSegment {
 public:
-    LinesIOSegment(string description)
-            : description(description) { }
+    LinesIOSegment(string names) {
+        this->names = Util::split(names);
+    }
 
     template<typename T>
-    LinesIOSegment& operator,(T& x) {
-        addVariable(x);
+    LinesIOSegment& operator,(T& variable) {
+        addVariable(variable);
         return *this;
     }
 
@@ -99,12 +104,12 @@ public:
     }
 
 private:
-    string description;
+    vector<string> names;
     vector<VerticalVariable*> variables;
 
     template<typename T, typename = RequiresScalar<T>>
     void addVariable(vector<T>& x) {
-        variables.push_back(new VerticalVector<T>(x));
+        variables.push_back(new VerticalVector<T>(x, names[variables.size()]));
     }
 
     template<typename... T>
@@ -126,8 +131,8 @@ private:
 
 class GridIOSegment : public IOSegment {
 public:
-    GridIOSegment(string description)
-            : description(description), variable(nullptr), hasSpaces(false) { }
+    GridIOSegment(string name)
+            : name(name), variable(nullptr), hasSpaces(false) { }
 
     template<typename T>
     GridIOSegment& operator,(T& x) {
@@ -135,7 +140,7 @@ public:
             throw IOFormatException("Grid segment must have exactly one variable");
         }
 
-        setVariable(x);
+        setVariable(x, name);
         return *this;
     }
 
@@ -160,18 +165,18 @@ public:
     }
 
 private:
-    string description;
+    string name;
     MatrixVariable* variable;
     bool hasSpaces;
 
     template<typename T, typename = RequiresScalar<T>>
-    void setVariable(vector<vector<T>>& x) {
-        variable = new Matrix<T>(x);
+    void setVariable(vector<vector<T>>& x, string name) {
+        variable = new Matrix<T>(x, name);
         hasSpaces = true;
     }
 
-    void setVariable(vector<vector<char>>& x) {
-        variable = new Matrix<char>(x);
+    void setVariable(vector<vector<char>>& x, string name) {
+        variable = new Matrix<char>(x, name);
     }
 
     template<typename... T>
@@ -227,20 +232,20 @@ public:
         this->mode = mode;
     }
 
-    LineIOSegment& addLineSegment(string description) {
-        LineIOSegment* segment = new LineIOSegment(description);
+    LineIOSegment& addLineSegment(string names) {
+        LineIOSegment* segment = new LineIOSegment(names);
         formats[mode]->addSegment(segment);
         return *segment;
     }
 
-    LinesIOSegment& addLinesSegment(string description) {
-        LinesIOSegment* segment = new LinesIOSegment(description);
+    LinesIOSegment& addLinesSegment(string names) {
+        LinesIOSegment* segment = new LinesIOSegment(names);
         formats[mode]->addSegment(segment);
         return *segment;
     }
 
-    GridIOSegment& addGridSegment(string description) {
-        GridIOSegment* segment = new GridIOSegment(description);
+    GridIOSegment& addGridSegment(string name) {
+        GridIOSegment* segment = new GridIOSegment(name);
         formats[mode]->addSegment(segment);
         return *segment;
     }

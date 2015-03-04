@@ -18,11 +18,31 @@ using std::vector;
 
 namespace tcframe {
 
-class HorizontalVariable {
+class Variable {
+public:
+    virtual ~Variable() { }
+
+    string getName() {
+        return name;
+    }
+
+protected:
+    Variable(string name)
+            : name(name) { }
+
+private:
+    string name;
+};
+
+class HorizontalVariable : public Variable {
 public:
     virtual ~HorizontalVariable() { }
 
     virtual void printTo(ostream& out) = 0;
+
+protected:
+    HorizontalVariable(string name)
+            : Variable(name) { }
 };
 
 template<typename T>
@@ -31,7 +51,8 @@ using RequiresScalar = typename enable_if<is_arithmetic<T>::value || is_same<str
 template<typename T>
 class Scalar : public HorizontalVariable {
 public:
-    Scalar(T& value) {
+    Scalar(T& value, string name)
+            : HorizontalVariable(name) {
         this->value = &value;
     }
 
@@ -46,7 +67,8 @@ private:
 template<typename T>
 class HorizontalVector : public HorizontalVariable {
 public:
-    HorizontalVector(vector<T>& value) {
+    HorizontalVector(vector<T>& value, string name)
+            : HorizontalVariable(name) {
         this->value = &value;
     }
 
@@ -65,18 +87,23 @@ private:
     vector<T>* value;
 };
 
-class VerticalVariable {
+class VerticalVariable : public Variable {
 public:
     virtual ~VerticalVariable() { }
 
     virtual int size() = 0;
     virtual void printElementTo(int index, ostream& out) = 0;
+
+protected:
+    VerticalVariable(string name)
+            : Variable(name) { }
 };
 
 template<typename T>
 class VerticalVector : public VerticalVariable {
 public:
-    VerticalVector(vector<T>& value) {
+    VerticalVector(vector<T>& value, string name)
+            : VerticalVariable(name) {
         this->value = &value;
     }
 
@@ -92,19 +119,24 @@ private:
     vector<T>* value;
 };
 
-class MatrixVariable {
+class MatrixVariable : public Variable {
 public:
     virtual ~MatrixVariable() { }
 
     virtual int rowsSize() = 0;
     virtual int columnsSize(int rowIndex) = 0;
     virtual void printElementTo(int rowIndex, int columnIndex, ostream& out) = 0;
+
+protected:
+    MatrixVariable(string name)
+            : Variable(name) { }
 };
 
 template<typename T>
 class Matrix : public MatrixVariable {
 public:
-    Matrix(vector<vector<T>>& value) {
+    Matrix(vector<vector<T>>& value, string name)
+            : MatrixVariable(name) {
         this->value = &value;
     }
 

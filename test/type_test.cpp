@@ -12,7 +12,7 @@ using tcframe::VerticalVector;
 
 TEST(ScalarTest, Printing) {
     int x;
-    Scalar<int> wrappedX(x);
+    Scalar<int> wrappedX(x, "x");
 
     x = 42;
     ostringstream sout;
@@ -23,7 +23,7 @@ TEST(ScalarTest, Printing) {
 
 TEST(HorizontalVectorTest, Printing) {
     vector<int> V;
-    HorizontalVector<int> wrappedV(V);
+    HorizontalVector<int> wrappedV(V, "V");
 
     V = vector<int>{1, 2, 3};
     ostringstream sout;
@@ -34,7 +34,7 @@ TEST(HorizontalVectorTest, Printing) {
 
 TEST(VerticalVectorTest, Printing) {
     vector<int> V;
-    VerticalVector<int> wrappedV(V);
+    VerticalVector<int> wrappedV(V, "V");
 
     V = vector<int>{1, 2, 3};
     ostringstream sout;
@@ -50,7 +50,7 @@ TEST(VerticalVectorTest, Printing) {
 
 TEST(MatrixTest, Printing) {
     vector<vector<int>> V;
-    Matrix<int> wrappedV(V);
+    Matrix<int> wrappedV(V, "V");
 
     V = vector<vector<int>>{ {1, 2}, {3, 4} };
 
