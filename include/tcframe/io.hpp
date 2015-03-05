@@ -43,7 +43,12 @@ public:
                 out << " ";
             }
             first = false;
-            variable->printTo(out);
+
+            if (dynamic_cast<ScalarHorizontalVariable*>(variable) != nullptr) {
+                printScalarTo((ScalarHorizontalVariable*)variable, out);
+            } else {
+                printVectorTo((VectorHorizontalVariable*)variable, out);
+            }
         }
         out << "\n";
     }
@@ -65,6 +70,22 @@ private:
     template<typename... T>
     void addVariable(T...) {
         throw IOFormatException("Line segment is only supported for basic scalar and vector of basic scalars types");
+    }
+
+    void printScalarTo(ScalarHorizontalVariable* variable, ostream& out) {
+        variable->printTo(out);
+    }
+
+    void printVectorTo(VectorHorizontalVariable* variable, ostream& out) {
+        bool first = true;
+        for (int i = 0; i < variable->size(); i++) {
+            if (!first) {
+                out << " ";
+            }
+            first = false;
+
+            variable->printElementTo(i, out);
+        }
     }
 };
 

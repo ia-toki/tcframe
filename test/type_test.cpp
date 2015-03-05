@@ -27,7 +27,11 @@ TEST(HorizontalVectorTest, Printing) {
 
     V = vector<int>{1, 2, 3};
     ostringstream sout;
-    wrappedV.printTo(sout);
+    wrappedV.printElementTo(0, sout);
+    sout << " ";
+    wrappedV.printElementTo(1, sout);
+    sout << " ";
+    wrappedV.printElementTo(2, sout);
 
     EXPECT_EQ("1 2 3", sout.str());
 }
