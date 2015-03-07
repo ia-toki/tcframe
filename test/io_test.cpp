@@ -5,10 +5,8 @@
 #include <set>
 #include <sstream>
 #include <string>
-#include <utility>
 #include <vector>
 
-using std::make_pair;
 using std::ostringstream;
 using std::set;
 using std::string;
@@ -20,19 +18,42 @@ using tcframe::IOMode;
 using tcframe::GridIOSegment;
 using tcframe::LineIOSegment;
 using tcframe::LinesIOSegment;
+using tcframe::MatrixSizes;
+using tcframe::VectorSize;
+using tcframe::VectorWithSize;
 
-TEST(LineIOSegmentTest, UnsupportedTypes) {
-    set<int> s;
+TEST(LineIOSegmentTest, UnsupportedType) {
+    set<int> S;
 
-    LineIOSegment segment("s");
+    LineIOSegment segment("S");
 
     try {
-        segment, s;
+        segment, S;
         FAIL();
     } catch (IOFormatException& e) {
-        EXPECT_TRUE(string(e.getMessage()).find("is only supported") != string::npos);
+        EXPECT_EQ("Variable type of `S` unsatisfied. Expected: basic scalar or string type", e.getMessage());
     }
 }
+
+TEST(LineIOSegmentTest, VectorSizeMismatch) {
+    int N;
+    vector<int> V;
+
+    LineIOSegment segment("V");
+    segment, V % VectorSize(N);
+
+    N = 4;
+    V = vector<int>{1, 2, 3};
+
+    ostringstream sout;
+
+    try {
+        segment.printTo(sout);
+        FAIL();
+    } catch (IOFormatException& e) {
+        EXPECT_EQ("Number of elements of vector `V` unsatisfied. Expected: 4, actual: 3", e.getMessage());
+    }
+};
 
 TEST(LineIOSegmentTest, EmptyLinePrinting) {
     LineIOSegment segment("");
@@ -77,7 +98,7 @@ TEST(LineIOSegmentTest, SingleVectorPrinting) {
     vector<int> V;
 
     LineIOSegment segment("V");
-    segment, V;
+    segment, V % VectorSize(3);
 
     V = vector<int>{1, 2, 3};
 
@@ -85,21 +106,21 @@ TEST(LineIOSegmentTest, SingleVectorPrinting) {
     segment.printTo(sout);
 
     EXPECT_EQ("1 2 3\n", sout.str());
-}
+};
 
 TEST(LineIOSegmentTest, MultipleVectorsPrinting) {
     vector<int> V, W;
 
     LineIOSegment segment("V, W");
-    segment, V, W;
+    segment, V % VectorSize(3), W % VectorSize(4);
 
     V = vector<int>{1, 2, 3};
-    W = vector<int>{4, 5, 6};
+    W = vector<int>{4, 5, 6, 7};
 
     ostringstream sout;
     segment.printTo(sout);
 
-    EXPECT_EQ("1 2 3 4 5 6\n", sout.str());
+    EXPECT_EQ("1 2 3 4 5 6 7\n", sout.str());
 }
 
 TEST(LineIOSegmentTest, MixedVariablesPrinting) {
@@ -107,7 +128,7 @@ TEST(LineIOSegmentTest, MixedVariablesPrinting) {
     int A, B;
 
     LineIOSegment segment("A, V, B, W");
-    segment, A, V, B, W;
+    segment, A, V % VectorSize(3), B, W % VectorSize(4);
 
     V = vector<int>{1, 2, 3};
     W = vector<int>{4, 5, 6, 7};
@@ -121,7 +142,7 @@ TEST(LineIOSegmentTest, MixedVariablesPrinting) {
     EXPECT_EQ("3 1 2 3 4 4 5 6 7\n", sout.str());
 }
 
-TEST(LinesIOSegmentTest, UnsupportedTypes) {
+TEST(LinesIOSegmentTest, UnsupportedType) {
     int X;
 
     LinesIOSegment segment("X");
@@ -130,7 +151,7 @@ TEST(LinesIOSegmentTest, UnsupportedTypes) {
         segment, X;
         FAIL();
     } catch (IOFormatException& e) {
-        EXPECT_TRUE(string(e.getMessage()).find("is only supported for vector") != string::npos);
+        EXPECT_EQ("Variable type of `X` unsatisfied. Expected: vector of basic scalar or string type", e.getMessage());
     }
 
     vector<vector<int>> V;
@@ -141,26 +162,7 @@ TEST(LinesIOSegmentTest, UnsupportedTypes) {
         segment, V;
         FAIL();
     } catch (IOFormatException& e) {
-        EXPECT_TRUE(string(e.getMessage()).find("is only supported for vector of basic scalars") != string::npos);
-    }
-}
-
-TEST(LinesIOSegmentTest, IncompatibleVectorSizes) {
-    vector<int> V, W;
-
-    LinesIOSegment segment("V, W");
-    segment, V, W;
-
-    V = vector<int>{1, 2, 3};
-    W = vector<int>{4, 5, 6, 7};
-
-    ostringstream sout;
-
-    try {
-        segment.printTo(sout);
-        FAIL();
-    } catch (IOFormatException& e) {
-        EXPECT_TRUE(string(e.getMessage()).find("must have equal sizes") != string::npos);
+        EXPECT_EQ("Variable type of `V` unsatisfied. Expected: vector of basic scalar or string type", e.getMessage());
     }
 }
 
@@ -172,8 +174,45 @@ TEST(LinesIOSegmentTest, NoVariables) {
     try {
         segment.printTo(sout);
         FAIL();
+    } catch(IOFormatException& e) {
+        EXPECT_EQ("Lines segment must have at least one variable", e.getMessage());
+    }
+}
+
+TEST(LineIOSegmentTest, NoVectorSizes) {
+    vector<int> V;
+
+    LinesIOSegment segment("V");
+    segment, V;
+
+    ostringstream sout;
+
+    try {
+        segment.printTo(sout);
+        FAIL();
+    } catch(IOFormatException& e) {
+        EXPECT_EQ("Lines segment must define vector sizes", e.getMessage());
+    }
+}
+
+TEST(LinesIOSegmentTest, VectorSizesMismatch) {
+    int N;
+    vector<int> V, W;
+
+    LinesIOSegment segment("V, W");
+    (segment, V, W) % VectorSize(N);
+
+    N = 3;
+    V = vector<int>{1, 2, 3};
+    W = vector<int>{4, 5, 6, 7};
+
+    ostringstream sout;
+
+    try {
+        segment.printTo(sout);
+        FAIL();
     } catch (IOFormatException& e) {
-        EXPECT_TRUE(string(e.getMessage()).find("must have at least one variable"));
+        EXPECT_EQ("Number of elements of vector `W` unsatisfied. Expected: 3, actual: 4", e.getMessage());
     }
 }
 
@@ -181,7 +220,7 @@ TEST(LinesIOSegmentTest, SingleVectorPrinting) {
     vector<int> V;
 
     LinesIOSegment segment("V");
-    segment, V;
+    (segment, V) % VectorSize(3);
 
     V = vector<int>{1, 2, 3};
 
@@ -196,7 +235,7 @@ TEST(LinesIOSegmentTest, MultipleVectorsPrinting) {
     vector<string> W;
 
     LinesIOSegment segment("V, W");
-    segment, V, W;
+    (segment, V, W) % VectorSize(3);
 
     V = vector<int>{1, 2, 3};
     W = vector<string>{"a", "bb", "ccc"};
@@ -216,7 +255,7 @@ TEST(GridIOSegmentTest, UnsupportedTypes) {
         segment, X;
         FAIL();
     } catch (IOFormatException& e) {
-        EXPECT_TRUE(string(e.getMessage()).find("is only supported for matrix") != string::npos);
+        EXPECT_EQ("Variable type of `X` unsatisfied. Expected: matrix of basic scalar or string type", e.getMessage());
     }
 
     vector<vector<vector<int>>> V;
@@ -227,25 +266,7 @@ TEST(GridIOSegmentTest, UnsupportedTypes) {
         segment, V;
         FAIL();
     } catch (IOFormatException& e) {
-        EXPECT_TRUE(string(e.getMessage()).find("is only supported for matrix of basic scalars") != string::npos);
-    }
-}
-
-TEST(GridIOSegmentTest, IncompatibleDimensionSizes) {
-    vector<vector<int>> V;
-
-    GridIOSegment segment("V");
-    segment, V;
-
-    V = vector<vector<int>>{ {1, 2}, {3, 4, 5} };
-
-    ostringstream sout;
-
-    try {
-        segment.printTo(sout);
-        FAIL();
-    } catch (IOFormatException& e) {
-        EXPECT_TRUE(string(e.getMessage()).find("must have equal number of columns") != string::npos);
+        EXPECT_EQ("Variable type of `V` unsatisfied. Expected: matrix of basic scalar or string type", e.getMessage());
     }
 }
 
@@ -258,7 +279,7 @@ TEST(GridIOSegmentTest, NonSingularVariables) {
         segment.printTo(sout);
         FAIL();
     } catch (IOFormatException& e) {
-        EXPECT_TRUE(string(e.getMessage()).find("must have exactly one variable") != string::npos);
+        EXPECT_EQ("Grid segment must have exactly one variable", e.getMessage());
     }
 
     vector<vector<int>> V, W;
@@ -269,7 +290,65 @@ TEST(GridIOSegmentTest, NonSingularVariables) {
         segment, V, W;
         FAIL();
     } catch (IOFormatException& e) {
-        EXPECT_TRUE(string(e.getMessage()).find("must have exactly one variable") != string::npos);
+        EXPECT_EQ("Grid segment must have exactly one variable", e.getMessage());
+    }
+}
+
+TEST(GridIOSegmentTest, NoMatrixSizes) {
+    vector<vector<int>> G;
+
+    GridIOSegment segment("G");
+    segment, G;
+
+    ostringstream sout;
+
+    try {
+        segment.printTo(sout);
+        FAIL();
+    } catch (IOFormatException& e) {
+        EXPECT_EQ("Grid segment must define matrix sizes", e.getMessage());
+    }
+}
+
+TEST(GridIOSegmentTest, RowSizesMismatch) {
+    int N, M;
+    vector<vector<int>> G;
+
+    GridIOSegment segment("G");
+    (segment, G) % MatrixSizes(N, M);
+
+    N = 3;
+    M = 3;
+    G = vector<vector<int>>{ {1, 2}, {3, 4, 5} };
+
+    ostringstream sout;
+
+    try {
+        segment.printTo(sout);
+        FAIL();
+    } catch (IOFormatException& e) {
+        EXPECT_EQ("Number of rows of matrix `G` unsatisfied. Expected: 3, actual: 2", e.getMessage());
+    }
+}
+
+TEST(GridIOSegmentTest, ColumnSizesMismatch) {
+    int N, M;
+    vector<vector<int>> G;
+
+    GridIOSegment segment("G");
+    (segment, G) % MatrixSizes(N, M);
+
+    N = 2;
+    M = 3;
+    G = vector<vector<int>>{ {1, 2, 3}, {4, 5} };
+
+    ostringstream sout;
+
+    try {
+        segment.printTo(sout);
+        FAIL();
+    } catch (IOFormatException& e) {
+        EXPECT_EQ("Number of columns row 1 of matrix `G` (0-based) unsatisfied. Expected: 3, actual: 2", e.getMessage());
     }
 }
 
@@ -277,7 +356,7 @@ TEST(GridIOSegmentTest, CharPrinting) {
     vector<vector<char>> C;
 
     GridIOSegment segment("C");
-    segment, C;
+    (segment, C) % MatrixSizes(2, 2);
 
     C = vector<vector<char>>{ {'a', 'b'}, {'c', 'd'} };
 
@@ -291,7 +370,7 @@ TEST(GridIOSegmentTest, NonCharPrinting) {
     vector<vector<int>> C;
 
     GridIOSegment segment("C");
-    segment, C;
+    (segment, C) % MatrixSizes(2, 2);
 
     C = vector<vector<int>>{ {1, 2}, {3, 4} };
 

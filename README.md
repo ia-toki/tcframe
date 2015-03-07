@@ -10,10 +10,8 @@ This project is under heavy development. No sufficient documentations are availa
 
 ### Generating test cases for problems without subtasks
 
-(This is also available as https://github.com/tcframe/tcframe/blob/master/src/example/problem_without_subtasks.cpp.)
-
 ```
-#include "tcframe/tcframe.h"
+#include "tcframe/tcframe.hpp"
 
 using namespace tcframe;
 
@@ -27,8 +25,8 @@ protected:
     }
 
     void InputFormat() {
-        line() % A, B;
-        line() % K;
+        LINE(A, B);
+        LINE(K);
     }
 
     void Constraints() {
@@ -75,10 +73,8 @@ Generating test cases...
 
 ### Generating test cases for problems with subtasks
 
-(This is also available as https://github.com/tcframe/tcframe/blob/master/src/example/problem_with_subtasks.cpp.)
-
 ```
-#include "tcframe/tcframe.h"
+#include "tcframe/tcframe.hpp"
 
 using namespace tcframe;
 
@@ -92,8 +88,8 @@ protected:
     }
 
     void InputFormat() {
-        line() % A, B;
-        line() % K;
+        LINE(A, B);
+        LINE(K);
     }
 
     void Subtask1() {
@@ -158,13 +154,11 @@ Generating test cases...
     * Does not satisfy subtask 1, on constraints:
       - 1 <= B && B <= 1000
 
-
 [ TEST GROUP 2 ]
   problem_2_1: FAILED
     Description: (A = 1, B = 2, K = 1)
     Reasons:
     * Satisfies subtask 1 but is not assigned to it
-
   problem_2_2: FAILED
     Description: (A = 0, B = 0, K = 100)
     Reasons:

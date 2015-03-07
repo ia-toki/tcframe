@@ -4,7 +4,6 @@
 #include "exception.hpp"
 
 #include <ostream>
-#include <sstream>
 #include <type_traits>
 #include <vector>
 
@@ -72,9 +71,7 @@ template<typename T>
 class Scalar : public ScalarHorizontalVariable {
 public:
     Scalar(T& value, string name)
-            : ScalarHorizontalVariable(name) {
-        this->value = &value;
-    }
+            : ScalarHorizontalVariable(name), value(&value) { }
 
     void printTo(ostream& out) override {
         out << *value;
@@ -88,12 +85,10 @@ template<typename T>
 class HorizontalVector : public VectorHorizontalVariable {
 public:
     HorizontalVector(vector<T>& value, string name)
-            : VectorHorizontalVariable(name) {
-        this->value = &value;
-    }
+            : VectorHorizontalVariable(name), value(&value) { }
 
     int size() override {
-        return (int)value->size();
+        return (int)(value->size());
     }
 
     void printElementTo(int index, ostream& out) override {
@@ -120,12 +115,10 @@ template<typename T>
 class VerticalVector : public VerticalVariable {
 public:
     VerticalVector(vector<T>& value, string name)
-            : VerticalVariable(name) {
-        this->value = &value;
-    }
+            : VerticalVariable(name), value(&value) { }
 
     int size() override {
-        return (int)value->size();
+        return (int)(value->size());
     }
 
     void printElementTo(int index, ostream& out) override {
@@ -153,16 +146,14 @@ template<typename T>
 class Matrix : public MatrixVariable {
 public:
     Matrix(vector<vector<T>>& value, string name)
-            : MatrixVariable(name) {
-        this->value = &value;
-    }
+            : MatrixVariable(name), value(&value) { }
 
     int rowsSize() override {
-        return (int)value->size();
+        return (int)(value->size());
     }
 
     int columnsSize(int rowIndex) override {
-        return (int)(*value)[rowIndex].size();
+        return (int)((*value)[rowIndex].size());
     }
 
     void printElementTo(int rowIndex, int columnIndex, ostream& out) override {

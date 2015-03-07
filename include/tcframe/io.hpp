@@ -6,12 +6,10 @@
 
 #include <ostream>
 #include <string>
-#include <utility>
 #include <vector>
 
-using std::make_pair;
+using std::is_same;
 using std::ostream;
-using std::pair;
 using std::string;
 using std::vector;
 
@@ -23,6 +21,34 @@ public:
 
     virtual void printTo(ostream& out) = 0;
 };
+
+class VectorSize {
+public:
+    VectorSize(int& size)
+            : size(&size) { }
+
+    VectorSize(int&& size)
+            : size(new int(size)) { }
+
+    int* getSize() {
+        return size;
+    }
+
+private:
+    int* size;
+};
+
+template<typename T>
+struct VectorWithSize {
+public:
+    vector<T>* vektor;
+    VectorSize size;
+};
+
+template<typename T>
+VectorWithSize<T> operator%(vector<T>& v, VectorSize size) {
+    return VectorWithSize<T>{&v, size};
+}
 
 class LineIOSegment : public IOSegment {
 public:
@@ -36,9 +62,17 @@ public:
         return *this;
     }
 
+    template<typename T>
+    LineIOSegment& operator,(T&& variable) {
+        addVariable(variable);
+        return *this;
+    }
+
     void printTo(ostream& out) override {
         bool first = true;
-        for (auto variable : variables) {
+        for (int i = 0; i < variables.size(); i++) {
+            HorizontalVariable* variable = variables[i];
+
             if (!first) {
                 out << " ";
             }
@@ -47,7 +81,7 @@ public:
             if (dynamic_cast<ScalarHorizontalVariable*>(variable) != nullptr) {
                 printScalarTo((ScalarHorizontalVariable*)variable, out);
             } else {
-                printVectorTo((VectorHorizontalVariable*)variable, out);
+                printVectorTo((VectorHorizontalVariable*)variable, *vectorSizes[i], out);
             }
         }
         out << "\n";
@@ -56,42 +90,61 @@ public:
 private:
     vector<string> names;
     vector<HorizontalVariable*> variables;
+    vector<int*> vectorSizes;
 
     template<typename T, typename = RequiresScalar<T>>
-    void addVariable(T& x) {
-        variables.push_back(new Scalar<T>(x, names[variables.size()]));
+    void addVariable(T& scalar) {
+        variables.push_back(new Scalar<T>(scalar, names[variables.size()]));
+        vectorSizes.push_back(nullptr);
     }
 
     template<typename T, typename = RequiresScalar<T>>
-    void addVariable(vector<T>& x) {
-        variables.push_back(new HorizontalVector<T>(x, names[variables.size()]));
+    void addVariable(T&& scalar) {
+        T* newScalar = new T(scalar);
+        variables.push_back(new Scalar<T>(*newScalar, names[variables.size()]));
+        vectorSizes.push_back(nullptr);
+    }
+
+    template<typename T, typename = RequiresScalar<T>>
+    void addVariable(VectorWithSize<T> vektorWithSize) {
+        variables.push_back(new HorizontalVector<T>(*vektorWithSize.vektor, names[variables.size()]));
+        vectorSizes.push_back(vektorWithSize.size.getSize());
     }
 
     template<typename... T>
     void addVariable(T...) {
-        throw IOFormatException("Line segment is only supported for basic scalar and vector of basic scalars types");
+        throw IOFormatException("Variable type of `" + names[variables.size()] + "` unsatisfied. Expected: basic scalar or string type");
     }
 
-    void printScalarTo(ScalarHorizontalVariable* variable, ostream& out) {
-        variable->printTo(out);
+    void printScalarTo(ScalarHorizontalVariable* scalar, ostream& out) {
+        scalar->printTo(out);
     }
 
-    void printVectorTo(VectorHorizontalVariable* variable, ostream& out) {
+    void checkVectorSize(VectorHorizontalVariable* vektor, int size) {
+        if (vektor->size() != size) {
+            throw IOFormatException("Number of elements of vector `" + vektor->getName() + "` unsatisfied. Expected: " + Util::toString(size) + ", actual: " + Util::toString(vektor->size()));
+        }
+    }
+
+    void printVectorTo(VectorHorizontalVariable* vektor, int size, ostream& out) {
+        checkVectorSize(vektor, size);
+
         bool first = true;
-        for (int i = 0; i < variable->size(); i++) {
+        for (int i = 0; i < size; i++) {
             if (!first) {
                 out << " ";
             }
             first = false;
 
-            variable->printElementTo(i, out);
+            vektor->printElementTo(i, out);
         }
     }
 };
 
 class LinesIOSegment : public IOSegment {
 public:
-    LinesIOSegment(string names) {
+    LinesIOSegment(string names)
+            : size(nullptr) {
         this->names = Util::split(names);
     }
 
@@ -101,19 +154,23 @@ public:
         return *this;
     }
 
+    template<typename T>
+    LinesIOSegment& operator,(T&& variable) {
+        addVariable(variable);
+        return *this;
+    }
+
+    LinesIOSegment& operator%(VectorSize vektorSize) {
+        setSize(vektorSize.getSize());
+        return *this;
+    }
+
     void printTo(ostream& out) override {
-        if (variables.empty()) {
-            throw IOFormatException("Lines segment must have at least one variable");
-        }
+        checkVectorSizes();
 
-        if (!isValidSegment()) {
-            throw IOFormatException("All vectors participating in a lines segment must have equal sizes");
-        }
-
-        int linesSize = variables[0]->size();
-        for (int i = 0; i < linesSize; i++) {
+        for (int i = 0; i < *size; i++) {
             bool first = true;
-            for (auto variable : variables) {
+            for (VerticalVariable* variable : variables) {
                 if (!first) {
                     out << " ";
                 }
@@ -127,52 +184,97 @@ public:
 private:
     vector<string> names;
     vector<VerticalVariable*> variables;
+    int* size;
 
     template<typename T, typename = RequiresScalar<T>>
-    void addVariable(vector<T>& x) {
-        variables.push_back(new VerticalVector<T>(x, names[variables.size()]));
+    void addVariable(vector<T>& vektor) {
+        variables.push_back(new VerticalVector<T>(vektor, names[variables.size()]));
+    }
+
+    template<typename T, typename = RequiresScalar<T>>
+    void addVariable(vector<T>&& vektor) {
+        vector<T>* newVektor = new vector<T>(vektor);
+        variables.push_back(new VerticalVector<T>(*newVektor, names[variables.size()]));
     }
 
     template<typename... T>
     void addVariable(T...) {
-        throw IOFormatException("Lines segment is only supported for vector of basic scalars types");
+        throw IOFormatException("Variable type of `" + names[variables.size()] + "` unsatisfied. Expected: vector of basic scalar or string type");
     }
 
-    bool isValidSegment() {
-        int linesSize = variables[0]->size();
-        for (int i = 1; i < variables.size(); i++) {
-            if (variables[i]->size() != linesSize) {
-                return false;
-            }
+    void setSize(int* size) {
+        this->size = size;
+    }
+
+    void checkVectorSizes() {
+        if (variables.empty()) {
+            throw IOFormatException("Lines segment must have at least one variable");
         }
 
-        return true;
+        if (size == nullptr) {
+            throw IOFormatException("Lines segment must define vector sizes");
+        }
+
+        for (VerticalVariable* variable : variables) {
+            if (variable->size() != *size) {
+                throw IOFormatException("Number of elements of vector `" + variable->getName() + "` unsatisfied. Expected: " + Util::toString(*size) + ", actual: " + Util::toString(variable->size()));
+            }
+        }
     }
+};
+
+class MatrixSizes {
+public:
+    MatrixSizes(int& rowsSize, int& columnsSize)
+            : rowsSize(&rowsSize), columnsSize(&columnsSize) { }
+
+    MatrixSizes(int&& rowsSize, int& columnsSize)
+            : rowsSize(new int(rowsSize)), columnsSize(&columnsSize) { }
+
+    MatrixSizes(int& rowsSize, int&& columnsSize)
+            : rowsSize(&rowsSize), columnsSize(new int(columnsSize)) { }
+
+    MatrixSizes(int&& rowsSize, int&& columnsSize)
+            : rowsSize(new int(rowsSize)), columnsSize(new int(columnsSize)) { }
+
+    int* getRowsSize() {
+        return rowsSize;
+    }
+
+    int* getColumnsize() {
+        return columnsSize;
+    }
+
+private:
+    int* rowsSize;
+    int* columnsSize;
 };
 
 class GridIOSegment : public IOSegment {
 public:
     GridIOSegment(string name)
-            : name(name), variable(nullptr), hasSpaces(false) { }
+            : name(name), variable(nullptr), hasSpaces(false), rowsSize(nullptr), columnsSize(nullptr) { }
 
     template<typename T>
-    GridIOSegment& operator,(T& x) {
-        if (variable != nullptr) {
-            throw IOFormatException("Grid segment must have exactly one variable");
-        }
+    GridIOSegment& operator,(T& variable) {
+        setVariable(variable, name);
+        return *this;
+    }
 
-        setVariable(x, name);
+    template<typename T>
+    GridIOSegment& operator,(T&& variable) {
+        setVariable(variable, name);
+        return *this;
+    }
+
+    GridIOSegment& operator%(MatrixSizes sizes) {
+        rowsSize = sizes.getRowsSize();
+        columnsSize = sizes.getColumnsize();
         return *this;
     }
 
     void printTo(ostream& out) override {
-        if (variable == nullptr) {
-            throw IOFormatException("Grid segment must have exactly one variable");
-        }
-
-        if (!isValidSegment()) {
-            throw IOFormatException("Each row of the matrix in a grid segment must have equal number of columns");
-        }
+        checkMatrixSizes();
 
         for (int i = 0; i < variable->rowsSize(); i++) {
             for (int j = 0; j < variable->columnsSize(i); j++) {
@@ -189,35 +291,54 @@ private:
     string name;
     MatrixVariable* variable;
     bool hasSpaces;
+    int* rowsSize;
+    int* columnsSize;
 
     template<typename T, typename = RequiresScalar<T>>
-    void setVariable(vector<vector<T>>& x, string name) {
-        variable = new Matrix<T>(x, name);
-        hasSpaces = true;
+    void setVariable(vector<vector<T>>& matrix, string name) {
+        if (variable != nullptr) {
+            throw IOFormatException("Grid segment must have exactly one variable");
+        }
+
+        variable = new Matrix<T>(matrix, name);
+        hasSpaces = !is_same<T, char>::value;
     }
 
-    void setVariable(vector<vector<char>>& x, string name) {
-        variable = new Matrix<char>(x, name);
+    template<typename T, typename = RequiresScalar<T>>
+    void setVariable(vector<vector<T>>&& matrix, string name) {
+        if (variable != nullptr) {
+            throw IOFormatException("Grid segment must have exactly one variable");
+        }
+
+        vector<vector<T>>* newMatrix = new vector<vector<T>>(matrix);
+
+        variable = new Matrix<T>(*newMatrix, name);
+        hasSpaces = !is_same<T, char>::value;
     }
 
     template<typename... T>
     void setVariable(T...) {
-        throw IOFormatException("Grid segment is only supported for matrix of basic scalars types");
+        throw IOFormatException("Variable type of `" + name + "` unsatisfied. Expected: matrix of basic scalar or string type");
     }
 
-    bool isValidSegment() {
-        if (variable->rowsSize() == 0) {
-            return true;
+    void checkMatrixSizes() {
+        if (variable == nullptr) {
+            throw IOFormatException("Grid segment must have exactly one variable");
         }
 
-        int columnsSize = variable->columnsSize(0);
-        for (int i = 0; i < variable->rowsSize(); i++) {
-            if (variable->columnsSize(i) != columnsSize) {
-                return false;
+        if (rowsSize == nullptr || columnsSize == nullptr) {
+            throw IOFormatException("Grid segment must define matrix sizes");
+        }
+
+        if (variable->rowsSize() != *rowsSize) {
+            throw IOFormatException("Number of rows of matrix `" + variable->getName() + "` unsatisfied. Expected: " + Util::toString(*rowsSize) + ", actual: " + Util::toString(variable->rowsSize()));
+        }
+
+        for (int i = 0; i < *rowsSize; i++) {
+            if (variable->columnsSize(i) != *columnsSize) {
+                throw IOFormatException("Number of columns row " + Util::toString(i) + " of matrix `" + variable->getName() + "` (0-based) unsatisfied. Expected: " + Util::toString(*columnsSize) + ", actual: " + Util::toString(variable->columnsSize(i)));
             }
         }
-
-        return true;
     }
 };
 
@@ -225,6 +346,10 @@ class IOFormat {
 public:
     void addSegment(IOSegment* segment) {
         segments.push_back(segment);
+    }
+
+    vector<IOSegment*> getSegments() {
+        return segments;
     }
 
     void printTo(ostream& out) {

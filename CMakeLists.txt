@@ -19,6 +19,7 @@ set(SOURCE_FILES
     include/tcframe/generator.hpp
     include/tcframe/io.hpp
     include/tcframe/logger.hpp
+    include/tcframe/macro.hpp
     include/tcframe/os.hpp
     include/tcframe/problem.hpp
     include/tcframe/tcframe.hpp
@@ -26,14 +27,16 @@ set(SOURCE_FILES
     include/tcframe/type.hpp
     include/tcframe/util.hpp
     test/constraint_test.cpp
+    test/exception_test.cpp
     test/failure_test.cpp
     test/generator_test.cpp
     test/io_test.cpp
+    test/macro_test.cpp
     test/testcase_test.cpp
     test/type_test.cpp
     test/util_test.cpp)
 
-add_executable(main_test ${SOURCE_FILES})
-target_link_libraries(main_test ${GTEST_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+add_executable(all_tests ${SOURCE_FILES})
+target_link_libraries(all_tests ${GTEST_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
-GTEST_ADD_TESTS(main_test "" ${SOURCE_FILES})
+GTEST_ADD_TESTS(all_tests "" ${SOURCE_FILES})

@@ -58,7 +58,16 @@ public:
     }
 
     void logTestCaseFailure(TestCaseFailure* testCaseFailure) override {
-        cout << testCaseFailure->toString();
+        for (FailureDescriptionItem item : testCaseFailure->getDescription()) {
+            string prefix;
+            if (item.getLevel() == 0) {
+                prefix = "    * ";
+            } else {
+                prefix = "      - ";
+            }
+
+            cout << prefix << item.getMessage() << endl;
+        }
     }
 };
 

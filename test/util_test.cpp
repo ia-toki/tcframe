@@ -8,6 +8,10 @@ TEST(UtilTest, ToString) {
     EXPECT_EQ("42", Util::toString(42));
 }
 
+TEST(UtilTest, Split) {
+    EXPECT_EQ((vector<string>{"A", "B", "C"}), Util::split("A, B, C"));
+}
+
 TEST(UtilTest, TestCaseNameConstructionWithoutTestGroups) {
     EXPECT_EQ("cool_42", Util::constructTestCaseName("cool", -1, 42));
 }

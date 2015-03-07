@@ -10,18 +10,36 @@ using std::string;
 
 namespace tcframe {
 
+class FailureDescriptionItem {
+public:
+    FailureDescriptionItem(string message, int level)
+            : message(message), level(level) { }
+
+    string getMessage() {
+        return message;
+    }
+
+    int getLevel() {
+        return level;
+    }
+
+private:
+    string message;
+    int level;
+};
+
 class TestCaseFailure {
 public:
     virtual ~TestCaseFailure() { }
 
-    virtual string toString() = 0;
+    virtual vector<FailureDescriptionItem> getDescription() = 0;
 };
 
 class SubtaskUnsatisfiability {
 public:
     virtual ~SubtaskUnsatisfiability() { }
 
-    virtual string getUnsatisfiability() = 0;
+    virtual vector<FailureDescriptionItem> getDescription() = 0;
 };
 
 class SubtaskSatisfiedButNotAssigned : public SubtaskUnsatisfiability {
@@ -33,9 +51,11 @@ public:
         return subtaskId;
     }
 
-    string getUnsatisfiability() override {
-        return "* Satisfies subtask " + Util::toString(subtaskId) + " but is not assigned to it";
-    }
+    vector<FailureDescriptionItem> getDescription() override {
+        return vector<FailureDescriptionItem>{
+                FailureDescriptionItem("Satisfies subtask " + Util::toString(subtaskId) + " but is not assigned to it", 0)
+        };
+    };
 
 private:
     int subtaskId;
@@ -54,20 +74,20 @@ public:
         return unsatisfiedConstraints;
     }
 
-    string getUnsatisfiability() override {
-        string res;
+    vector<FailureDescriptionItem> getDescription() override {
+        vector<FailureDescriptionItem> unsatisfiabilities;
 
         if (subtaskId == -1) {
-            res += "    * Does not satisfy constraints, on:\n";
+            unsatisfiabilities.push_back(FailureDescriptionItem("Does not satisfy constraints, on:", 0));
         } else {
-            res += "    * Does not satisfy subtask " + Util::toString(subtaskId) + ", on constraints:\n";
+            unsatisfiabilities.push_back(FailureDescriptionItem("Does not satisfy subtask " + Util::toString(subtaskId) + ", on constraints:", 0));
         }
 
         for (Constraint* constraint : unsatisfiedConstraints) {
-            res += "      -" + constraint->getDescription() + "\n";
+            unsatisfiabilities.push_back(FailureDescriptionItem(constraint->getDescription(), 1));
         }
 
-        return res;
+        return unsatisfiabilities;
     }
 
 private:
@@ -84,13 +104,14 @@ public:
         return unsatisfiabilities;
     }
 
-    string toString() override {
-        string res;
+    vector<FailureDescriptionItem> getDescription() override {
+        vector<FailureDescriptionItem> description;
         for (SubtaskUnsatisfiability* unsatisfiability : unsatisfiabilities) {
-            res += unsatisfiability->getUnsatisfiability();
+            vector<FailureDescriptionItem> description2 = unsatisfiability->getDescription();
+            description.insert(description.begin(), description2.begin(), description2.end());
         }
 
-        return res;
+        return description;
     }
 
 private:
@@ -102,7 +123,13 @@ public:
     IOFormatFailure(string message)
             : message(message) { }
 
-    string toString() override {
+    vector<FailureDescriptionItem> getDescription() override {
+        return vector<FailureDescriptionItem>{
+                FailureDescriptionItem(message, 0)
+        };
+    };
+
+    string getMessage() {
         return message;
     }
 

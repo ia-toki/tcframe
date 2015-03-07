@@ -23,10 +23,6 @@ public:
     TestCaseException(TestCaseFailure* failure)
             : failure(failure) { }
 
-    string getMessage() {
-        return failure->toString();
-    }
-
     TestCaseFailure* getFailure() {
         return failure;
     }
@@ -48,6 +44,10 @@ public:
 
     IOFormatException(string message)
             : TestCaseException(new IOFormatFailure(message)) { }
+
+    string getMessage() {
+        return static_cast<IOFormatFailure*>(getFailure())->getMessage();
+    }
 };
 
 }
