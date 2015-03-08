@@ -3,12 +3,17 @@ language: cpp
 before_install:
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
   - sudo apt-get -qq update
+  - sudo pip install cpp-coveralls
 
 install:
   - sudo apt-get -qq install g++-4.9
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 90
+  - sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-4.9 90
   - sudo apt-get install libgtest-dev
   - cd /usr/src/gtest && sudo cmake . && sudo cmake --build . && sudo mv libg* /usr/local/lib/ ; cd -
 
 script:
   - cmake . && cmake --build . && ctest
+
+after_success:
+  - coveralls --include include --gcov-options '\-lp'

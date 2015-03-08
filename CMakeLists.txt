@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 2.6)
 project(tcframe)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 --coverage")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+set(CMAKE_CXX_COMPILER g++)
 
 enable_testing()
 
@@ -37,6 +39,6 @@ set(SOURCE_FILES
     test/util_test.cpp)
 
 add_executable(all_tests ${SOURCE_FILES})
-target_link_libraries(all_tests ${GTEST_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(all_tests ${GTEST_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} gcov)
 
 GTEST_ADD_TESTS(all_tests "" ${SOURCE_FILES})
