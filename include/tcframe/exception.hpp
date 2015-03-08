@@ -50,6 +50,18 @@ public:
     }
 };
 
+class TypeException : public TestCaseException {
+public:
+    TypeException(TypeFailure* failure)
+            : TestCaseException(failure) { }
+
+    TypeException(string message)
+            : TestCaseException(new TypeFailure(message)) { }
+
+    string getMessage() {
+        return static_cast<TypeFailure*>(getFailure())->getMessage();
+    }
+};
 }
 
 #endif
