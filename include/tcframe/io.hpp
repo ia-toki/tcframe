@@ -42,16 +42,6 @@ protected:
             }
         }
     }
-
-    static void parseEofFrom(istream& in, string lastRealName) {
-        if (in.get() != char_traits<char>::eof()) {
-            if (lastRealName == "") {
-                throw IOFormatException("Expected: <EOF> after empty line");
-            } else {
-                throw IOFormatException("Expected: <EOF> after variable `" + lastRealName + "`");
-            }
-        }
-    }
 };
 
 class VectorSize {
@@ -459,8 +449,21 @@ public:
         }
     }
 
+    void parseFrom(istream& in) {
+        for (IOSegment* segment : segments) {
+            segment->parseFrom(in);
+        }
+        parseEofFrom(in);
+    }
+
 private:
     vector<IOSegment*> segments;
+
+    static void parseEofFrom(istream& in) {
+        if (in.get() != char_traits<char>::eof()) {
+            throw IOFormatException("Expected: <EOF>");
+        }
+    }
 };
 
 enum IOMode {

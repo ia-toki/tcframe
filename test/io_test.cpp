@@ -605,6 +605,26 @@ TEST(GridIOSegmentTest, NonCharParsing) {
     EXPECT_EQ((vector<vector<int>>{ {1, 2}, {3, 4} }), C);
 }
 
+TEST(IOFormatTest, FailedParsingBecauseNoEof) {
+    int A, B;
+
+    IOFormat format;
+
+    LineIOSegment segment("A, B");
+    segment, A, B;
+
+    format.addSegment(&segment);
+
+    istringstream sin("1 2\n ");
+
+    try {
+        format.parseFrom(sin);
+        FAIL();
+    } catch (IOFormatException& e) {
+        EXPECT_EQ("Expected: <EOF>", e.getMessage());
+    }
+}
+
 TEST(IOFormatTest, MultipleLinesPrinting) {
     int A, B;
     int K;
@@ -628,6 +648,29 @@ TEST(IOFormatTest, MultipleLinesPrinting) {
     format.printTo(sout);
 
     EXPECT_EQ("1 2\n77\n", sout.str());
+}
+
+TEST(IOFormatTest, MultipleLinesParsing) {
+    int A, B;
+    int K;
+
+    IOFormat format;
+
+    LineIOSegment segment1("A, B");
+    segment1, A, B;
+
+    LineIOSegment segment2("K");
+    segment2, K;
+
+    format.addSegment(&segment1);
+    format.addSegment(&segment2);
+
+    istringstream sin("1 2\n77\n");
+    format.parseFrom(sin);
+
+    EXPECT_EQ(1, A);
+    EXPECT_EQ(2, B);
+    EXPECT_EQ(77, K);
 }
 
 TEST(IOFormatsCollectorTest, InputFormatCollection) {
