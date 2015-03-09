@@ -59,7 +59,7 @@ protected:
 
 int main() {
     Generator gen;
-    gen.generate();
+    return gen.generate();
 }
 ```
 
@@ -151,7 +151,7 @@ protected:
 
 int main() {
     Generator gen;
-    gen.generate();
+    return gen.generate();
 }
 ```
 

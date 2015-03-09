@@ -28,16 +28,32 @@ class FakeLogger : public Logger {
 public:
     void logIntroduction() override { }
     void logTestGroupIntroduction(int) override { }
-    void logTestCaseIntroduction(string) override { }
+
+    void logTestCaseIntroduction(string testCaseName) override {
+        currentTestCaseName = testCaseName;
+    }
+
     void logTestCaseOkResult() override { }
     void logTestCaseFailedResult(string) override { }
-    void logTestCaseFailure(TestCaseFailure*) override { }
+
+    void logTestCaseFailure(TestCaseFailure* testCaseFailure) override {
+        testCaseFailures[currentTestCaseName] = testCaseFailure;
+    }
+
+    bool hasFailure(string testCaseName) {
+        return testCaseFailures.count(testCaseName) > 0;
+    }
+
+    TestCaseFailure* getFailure(string testCaseName) {
+        return testCaseFailures[testCaseName];
+    }
+
+private:
+    string currentTestCaseName;
+    map<string, TestCaseFailure*> testCaseFailures;
 };
 
 class FakeOperatingSystem : public OperatingSystem {
-private:
-    map<string, ostringstream*> testCaseInputs;
-
 public:
     void setBaseDirectory(string) override { }
 
@@ -68,6 +84,9 @@ public:
 
         return result;
     }
+
+private:
+    map<string, ostringstream*> testCaseInputs;
 };
 
 class ProblemWithSubtasks : public BaseProblem {
@@ -126,8 +145,8 @@ protected:
     }
 
 public:
-    GeneratorWithTestGroups()
-            : BaseGenerator(new FakeLogger(), new FakeOperatingSystem()) { }
+    GeneratorWithTestGroups(FakeLogger* logger)
+            : BaseGenerator(logger, new FakeOperatingSystem()) { }
 };
 
 class ProblemWithoutSubtasks : public BaseProblem {
@@ -166,15 +185,18 @@ protected:
     }
 
 public:
-    GeneratorWithoutTestGroups()
-            : BaseGenerator(new FakeLogger(), new FakeOperatingSystem()) { }
+    GeneratorWithoutTestGroups(FakeLogger* logger)
+            : BaseGenerator(logger, new FakeOperatingSystem()) { }
 };
 
 TEST(GeneratorTest, GenerationWithSubtasksAndTestGroups) {
-    GeneratorWithTestGroups gen;
-    map<string, TestCaseFailure*> failures = gen.generate();
+    FakeLogger logger;
+    GeneratorWithTestGroups gen(&logger);
+    int exitCode = gen.generate();
 
-    SubtaskFailure* failure_sample_1 = dynamic_cast<SubtaskFailure*>(failures["problem_sample_1"]);
+    EXPECT_NE(0, exitCode);
+
+    SubtaskFailure* failure_sample_1 = dynamic_cast<SubtaskFailure*>(logger.getFailure("problem_sample_1"));
     ASSERT_NE(nullptr, failure_sample_1);
 
     ASSERT_EQ(1, failure_sample_1->getUnsatisfiabilities().size());
@@ -186,9 +208,9 @@ TEST(GeneratorTest, GenerationWithSubtasksAndTestGroups) {
     ASSERT_EQ(1, failure_sample_1_0->getUnsatisfiedConstraints().size());
     EXPECT_EQ("1 <= B && B <= 1000", failure_sample_1_0->getUnsatisfiedConstraints()[0]->getDescription());
 
-    EXPECT_EQ(nullptr, failures["problem_1_1"]);
+    EXPECT_FALSE(logger.hasFailure("problem_1_1"));
 
-    SubtaskFailure* failure_1_2 = dynamic_cast<SubtaskFailure*>(failures["problem_1_2"]);
+    SubtaskFailure* failure_1_2 = dynamic_cast<SubtaskFailure*>(logger.getFailure("problem_1_2"));
     ASSERT_NE(nullptr, failure_1_2);
 
     ASSERT_EQ(1, failure_1_2->getUnsatisfiabilities().size());
@@ -200,7 +222,7 @@ TEST(GeneratorTest, GenerationWithSubtasksAndTestGroups) {
     ASSERT_EQ(1, failure_1_2_0->getUnsatisfiedConstraints().size());
     EXPECT_EQ("1 <= B && B <= 1000", failure_1_2_0->getUnsatisfiedConstraints()[0]->getDescription());
 
-    SubtaskFailure* failure_2_1 = dynamic_cast<SubtaskFailure*>(failures["problem_2_1"]);
+    SubtaskFailure* failure_2_1 = dynamic_cast<SubtaskFailure*>(logger.getFailure("problem_2_1"));
     ASSERT_NE(nullptr, failure_2_1);
 
     ASSERT_EQ(1, failure_2_1->getUnsatisfiabilities().size());
@@ -210,7 +232,7 @@ TEST(GeneratorTest, GenerationWithSubtasksAndTestGroups) {
 
     EXPECT_EQ(1, failure_2_1_0->getSubtaskId());
 
-    SubtaskFailure* failure_2_2 = dynamic_cast<SubtaskFailure*>(failures["problem_2_2"]);
+    SubtaskFailure* failure_2_2 = dynamic_cast<SubtaskFailure*>(logger.getFailure("problem_2_2"));
     ASSERT_NE(nullptr, failure_2_2);
 
     ASSERT_EQ(2, failure_2_2->getUnsatisfiabilities().size());
@@ -230,12 +252,15 @@ TEST(GeneratorTest, GenerationWithSubtasksAndTestGroups) {
 }
 
 TEST(GeneratorTest, GenerationWithoutSubtasksAndWithoutTestGroups) {
-    GeneratorWithoutTestGroups gen;
-    map<string, TestCaseFailure*> failures = gen.generate();
+    FakeLogger logger;
+    GeneratorWithoutTestGroups gen(&logger);
+    int exitCode = gen.generate();
 
-    EXPECT_EQ(nullptr, failures["problem_sample_1"]);
+    EXPECT_NE(0, exitCode);
 
-    SubtaskFailure* failure_sample_2 = dynamic_cast<SubtaskFailure*>(failures["problem_sample_2"]);
+    EXPECT_FALSE(logger.hasFailure("problem_sample_1"));
+
+    SubtaskFailure* failure_sample_2 = dynamic_cast<SubtaskFailure*>(logger.getFailure("problem_sample_2"));
     ASSERT_NE(nullptr, failure_sample_2);
 
     ASSERT_EQ(1, failure_sample_2->getUnsatisfiabilities().size());
@@ -247,9 +272,9 @@ TEST(GeneratorTest, GenerationWithoutSubtasksAndWithoutTestGroups) {
     ASSERT_EQ(1, failure_sample_2_0->getUnsatisfiedConstraints().size());
     EXPECT_EQ("0 <= K <= 100", failure_sample_2_0->getUnsatisfiedConstraints()[0]->getDescription());
 
-    EXPECT_EQ(nullptr, failures["problem_1"]);
+    EXPECT_EQ(nullptr, logger.getFailure("problem_1"));
 
-    SubtaskFailure* failure_2 = dynamic_cast<SubtaskFailure*>(failures["problem_2"]);
+    SubtaskFailure* failure_2 = dynamic_cast<SubtaskFailure*>(logger.getFailure("problem_2"));
     ASSERT_NE(nullptr, failure_2);
 
     ASSERT_EQ(1, failure_2->getUnsatisfiabilities().size());

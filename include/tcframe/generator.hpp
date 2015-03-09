@@ -11,7 +11,6 @@
 #include "util.hpp"
 
 #include <cstdio>
-#include <map>
 #include <ostream>
 #include <set>
 #include <sstream>
@@ -20,7 +19,6 @@
 
 using std::initializer_list;
 using std::istringstream;
-using std::map;
 using std::ostream;
 using std::set;
 using std::string;
@@ -31,7 +29,7 @@ namespace tcframe {
 template<typename TProblem>
 class BaseGenerator : protected TProblem, protected TestCasesCollector {
 public:
-    map<string, TestCaseFailure*> generate() {
+    int generate() {
         subtasks = TProblem::getSubtasks();
         testData = getTestData();
         inputFormat = TProblem::getInputFormat();
@@ -43,16 +41,19 @@ public:
 
         logger->logIntroduction();
 
+        bool succesful = true;
         for (TestGroup* testGroup : testData) {
             int testGroupId = testGroup->getId();
             logger->logTestGroupIntroduction(testGroupId);
 
             for (int testCaseId = 1; testCaseId <= testGroup->getTestCasesCount(); testCaseId++) {
-                generateTestCase(testGroupId, testCaseId);
+                if (!generateTestCase(testGroupId, testCaseId)) {
+                    succesful = false;
+                }
             }
         }
 
-        return testCaseFailures;
+        return succesful ? 0 : 1;
     }
 
 protected:
@@ -101,8 +102,6 @@ private:
 
     IOFormat* inputFormat;
 
-    map<string, TestCaseFailure*> testCaseFailures;
-
     vector<void(BaseGenerator::*)()> testGroupBlocks = {
             &BaseGenerator::TestGroup1,
             &BaseGenerator::TestGroup2,
@@ -133,7 +132,7 @@ private:
         }
     }
 
-    void generateTestCase(int testGroupId, int testCaseId) {
+    bool generateTestCase(int testGroupId, int testCaseId) {
         string testCaseName = Util::constructTestCaseName(TProblem::getSlug(), testGroupId, testCaseId);
         logger->logTestCaseIntroduction(testCaseName);
 
@@ -149,12 +148,14 @@ private:
             generateTestCaseOutput(testCaseInputName, testCaseOutputName);
 
             logger->logTestCaseOkResult();
-            testCaseFailures[testCaseName] = nullptr;
         } catch (TestCaseException& e) {
             logger->logTestCaseFailedResult(testCase->getDescription());
-            testCaseFailures[testCaseName] = e.getFailure();
             logger->logTestCaseFailure(e.getFailure());
+
+            return false;
         }
+
+        return true;
     }
 
     TestCase* getTestCase(int testGroupId, int testCaseId) {
