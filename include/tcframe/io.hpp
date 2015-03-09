@@ -4,11 +4,15 @@
 #include "exception.hpp"
 #include "type.hpp"
 
+#include <cctype>
+#include <istream>
 #include <ostream>
 #include <string>
 #include <vector>
 
+using std::char_traits;
 using std::is_same;
+using std::istream;
 using std::ostream;
 using std::string;
 using std::vector;
@@ -20,6 +24,34 @@ public:
     virtual ~IOSegment() { }
 
     virtual void printTo(ostream& out) = 0;
+    virtual void parseFrom(istream& in) = 0;
+
+protected:
+    static void parseSpaceFrom(istream& in, string lastRealName) {
+        if (in.get() != ' ') {
+            throw IOFormatException("Expected: <space> after variable `" + lastRealName + "`");
+        }
+    }
+
+    static void parseNewLineFrom(istream& in, string lastRealName) {
+        if (in.get() != '\n') {
+            if (lastRealName == "") {
+                throw IOFormatException("Expected: <space> after empty line");
+            } else {
+                throw IOFormatException("Expected: <new line> after variable `" + lastRealName + "`");
+            }
+        }
+    }
+
+    static void parseEofFrom(istream& in, string lastRealName) {
+        if (in.get() != char_traits<char>::eof()) {
+            if (lastRealName == "") {
+                throw IOFormatException("Expected: <EOF> after empty line");
+            } else {
+                throw IOFormatException("Expected: <EOF> after variable `" + lastRealName + "`");
+            }
+        }
+    }
 };
 
 class VectorSize {
@@ -87,6 +119,28 @@ public:
         out << "\n";
     }
 
+    void parseFrom(istream& in) override {
+        for (int i = 0; i < variables.size(); i++) {
+            HorizontalVariable* variable = variables[i];
+
+            if (i > 0) {
+                parseSpaceFrom(in, variables[i - 1]->getName());
+            }
+
+            if (dynamic_cast<ScalarHorizontalVariable*>(variable) != nullptr) {
+                parseScalarFrom((ScalarHorizontalVariable*)variable, in);
+            } else {
+                parseVectorFrom((VectorHorizontalVariable*)variable, *vectorSizes[i], in);
+            }
+        }
+
+        if (variables.empty()) {
+            parseNewLineFrom(in, "");
+        } else {
+            parseNewLineFrom(in, variables.back()->getName());
+        }
+    }
+
 private:
     vector<string> names;
     vector<HorizontalVariable*> variables;
@@ -139,6 +193,21 @@ private:
             vektor->printElementTo(i, out);
         }
     }
+
+    void parseScalarFrom(ScalarHorizontalVariable* scalar, istream& in) {
+        scalar->parseFrom(in);
+    }
+
+    void parseVectorFrom(VectorHorizontalVariable* vektor, int size, istream& in) {
+        vektor->clear();
+
+        for (int i = 0; i < size; i++) {
+            if (i > 0) {
+                parseSpaceFrom(in, vektor->getName() + "[" + Util::toString(i - 1) + "]");
+            }
+            vektor->parseAndAddElementFrom(in);
+        }
+    }
 };
 
 class LinesIOSegment : public IOSegment {
@@ -178,6 +247,23 @@ public:
                 variable->printElementTo(i, out);
             }
             out << "\n";
+        }
+    }
+
+    void parseFrom(istream& in) override {
+        for (VerticalVariable* variable : variables) {
+            variable->clear();
+        }
+
+        for (int i = 0; i < *size; i++) {
+            for (int j = 0; j < variables.size(); j++) {
+                VerticalVariable* variable = variables[j];
+                if (j > 0) {
+                    parseSpaceFrom(in, variables[j - 1]->getName() + "[" + Util::toString(i) + "]");
+                }
+                variable->parseAndAddElementFrom(in);
+            }
+            parseNewLineFrom(in, variables.back()->getName() + "[" + Util::toString(i) + "]");
         }
     }
 
@@ -284,6 +370,21 @@ public:
                 variable->printElementTo(i, j, out);
             }
             out << "\n";
+        }
+    }
+
+    void parseFrom(istream& in) override {
+        variable->clear();
+
+        for (int i = 0; i < *rowsSize; i++) {
+            variable->addRow();
+            for (int j = 0; j < *columnsSize; j++) {
+                if (j > 0 && hasSpaces) {
+                    parseSpaceFrom(in, variable->getName() + "[" + Util::toString(i) + "][" + Util::toString(j - 1) + "]");
+                }
+                variable->parseAndAddColumnElementFrom(in);
+            }
+            parseNewLineFrom(in, variable->getName() + "[" + Util::toString(i) + "][" + Util::toString(*rowsSize - 1) + "]");
         }
     }
 
