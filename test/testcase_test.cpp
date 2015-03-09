@@ -6,8 +6,16 @@
 
 using std::vector;
 using tcframe::OfficialTestCase;
+using tcframe::SampleTestCase;
 using tcframe::TestCasesCollector;
 using tcframe::TestGroup;
+
+TEST(SampleTestCaseTest, Construction) {
+    SampleTestCase testCase("7 42\n", {1});
+
+    EXPECT_EQ("7 42\n", testCase.getContent());
+    EXPECT_EQ(set<int>{1}, testCase.getSubtaskIds());
+}
 
 TEST(OfficialTestCaseTest, Construction) {
     int X;
@@ -30,11 +38,11 @@ TEST(TestCasesCollectorTest, WithTestGroups) {
     int X;
 
     collector.newTestGroup();
-    collector.addTestCase([&] { X = 1; }, "X = 1");
+    collector.addOfficialTestCase([&] { X = 1; }, "X = 1");
 
     collector.newTestGroup();
-    collector.addTestCase([&] { X = 2; }, "X = 2");
-    collector.addTestCase([&] { X = 3; }, "X = 3");
+    collector.addOfficialTestCase([&] { X = 2; }, "X = 2");
+    collector.addOfficialTestCase([&] { X = 3; }, "X = 3");
 
     vector<TestGroup*> testGroups = collector.collectTestData();
 
@@ -55,9 +63,9 @@ TEST(TestCasesCollectorTest, WithoutTestGroups) {
 
     int X;
 
-    collector.addTestCase([&] { X = 1; }, "X = 1");
-    collector.addTestCase([&] { X = 2; }, "X = 2");
-    collector.addTestCase([&] { X = 3; }, "X = 3");
+    collector.addOfficialTestCase([&] { X = 1; }, "X = 1");
+    collector.addOfficialTestCase([&] { X = 2; }, "X = 2");
+    collector.addOfficialTestCase([&] { X = 3; }, "X = 3");
 
     vector<TestGroup*> testGroups = collector.collectTestData();
 

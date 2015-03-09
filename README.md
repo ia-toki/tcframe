@@ -44,6 +44,13 @@ protected:
         setSolution("./solution");
     }
 
+    void SampleTestCases() {
+        SAMPLE_CASE({
+            "1 1",
+            "100"
+        });
+    }
+
     void TestCases() {
         CASE(A = 1, B = 100, K = 7);
         CASE(A = 100, B = 2000, K = 0);
@@ -62,6 +69,7 @@ The above program, when run, will output:
 Generating test cases...
 
 [ SAMPLE TEST CASES ]
+  problem_sample_1: OK
 
 [ OFFICIAL TEST CASES ]
   problem_1: OK
@@ -119,6 +127,13 @@ protected:
         setSolution("./solution");
     }
 
+    void SampleTestCases() {
+        SAMPLE_CASE({
+            "1  1",
+            "100"
+        }, {1, 2});
+    }
+
     void TestGroup1() {
         assignToSubtasks({1, 2});
 
@@ -146,6 +161,9 @@ The above program, when run, will output:
 Generating test cases...
 
 [ SAMPLE TEST CASES ]
+  problem_sample_1: FAILED
+    Reasons:
+    * Cannot parse for variable `B`. Found: <whitespace>
 
 [ TEST GROUP 1 ]
   problem_1_1: OK

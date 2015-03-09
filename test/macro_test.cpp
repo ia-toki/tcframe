@@ -63,6 +63,10 @@ TEST(MacroTest, CONS) {
 class TestCasesCollectorTester : public TestCasesCollector {
 public:
     void test() {
+        SAMPLE_CASE({
+            "123"
+        });
+
         CASE(A = 7);
         CASE(A = 42);
     }
@@ -78,6 +82,9 @@ TEST(MacroTest, CASE) {
     vector<TestGroup*> testGroups = tester.collectTestData();
 
     ASSERT_EQ(2, testGroups.size());
+
+    ASSERT_EQ(1, testGroups[0]->getTestCasesCount());
+    EXPECT_EQ("", testGroups[0]->getTestCase(0)->getDescription());
 
     ASSERT_EQ(2, testGroups[1]->getTestCasesCount());
     EXPECT_EQ("(A = 7)", testGroups[1]->getTestCase(0)->getDescription());

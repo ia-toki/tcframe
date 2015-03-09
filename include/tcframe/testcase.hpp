@@ -2,39 +2,31 @@
 #define TCFRAME_TESTCASE_H
 
 #include <functional>
+#include <initializer_list>
 #include <set>
 #include <string>
 #include <vector>
 
 using std::function;
+using std::initializer_list;
 using std::set;
 using std::string;
 using std::vector;
 
 namespace tcframe {
 
-enum TestCaseType {
-    SAMPLE,
-    OFFICIAL
-};
-
 class TestCase {
 public:
-    virtual TestCaseType getType() = 0;
-    virtual string getDescription() = 0;
-    virtual set<int> getSubtaskIds() = 0;
-
     virtual ~TestCase() { }
+
+    virtual string getDescription()  = 0;
+    virtual set<int> getSubtaskIds() = 0;
 };
 
 class OfficialTestCase : public TestCase {
 public:
     OfficialTestCase(function<void()> closure, string description, set<int> subtaskIds)
             : closure(closure), description(description), subtaskIds(subtaskIds) { }
-
-    TestCaseType getType() override {
-        return TestCaseType::OFFICIAL;
-    }
 
     string getDescription() override {
         return description;
@@ -57,15 +49,11 @@ private:
 
 class SampleTestCase : public TestCase {
 public:
-    SampleTestCase(string content, string description, set<int> subtaskIds) :
-        content(content), description(description), subtaskIds(subtaskIds) { }
-
-    TestCaseType getType() override {
-        return TestCaseType::SAMPLE;
-    }
+    SampleTestCase(string content, set<int> subtaskIds) :
+        content(content), subtaskIds(subtaskIds) { }
 
     string getDescription() override {
-        return description;
+        return "";
     }
 
     set<int> getSubtaskIds() override {
@@ -78,7 +66,6 @@ public:
 
 private:
     string content;
-    string description;
     set<int> subtaskIds;
 };
 
@@ -121,7 +108,20 @@ public:
         testGroups.push_back(new TestGroup(curTestGroupId));
     }
 
-    void addTestCase(function<void()> closure, string description) {
+    void addSampleTestCase(initializer_list<string> lines, set<int> subtaskIds) {
+        string content;
+        for (string line : lines) {
+            content += line + "\n";
+        }
+
+        testGroups.back()->addTestCase(new SampleTestCase(content, subtaskIds));
+    }
+
+    void addSampleTestCase(initializer_list<string> lines) {
+        addSampleTestCase(lines, {-1});
+    }
+
+    void addOfficialTestCase(function<void()> closure, string description) {
         if (testGroups.size() == 1) {
             testGroups.push_back(new TestGroup(-1));
         }

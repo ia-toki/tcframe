@@ -53,7 +53,11 @@ public:
 
     void logTestCaseFailedResult(string testCaseDescription) override {
         cout << "FAILED" << endl;
-        cout << "    Description: " << testCaseDescription << endl;
+
+        if (testCaseDescription != "") {
+            cout << "    Description: " << testCaseDescription << endl;
+        }
+
         cout << "    Reasons:" << endl;
     }
 

@@ -14,10 +14,12 @@
 #include <map>
 #include <ostream>
 #include <set>
+#include <sstream>
 #include <string>
 #include <vector>
 
 using std::initializer_list;
+using std::istringstream;
 using std::map;
 using std::ostream;
 using std::set;
@@ -78,6 +80,7 @@ protected:
         this->solutionExecutionCommand = solutionExecutionCommand;
     }
 
+    virtual void SampleTestCases() { }
     virtual void TestCases() { throw NotImplementedException(); }
 
     virtual void TestGroup1() { throw NotImplementedException(); }
@@ -109,6 +112,8 @@ private:
     };
 
     vector<TestGroup*> getTestData() {
+        SampleTestCases();
+
         try {
             TestCases();
             return TestCasesCollector::collectTestData();
@@ -161,11 +166,20 @@ private:
     }
 
     void applyTestCase(TestCase* testCase) {
-        if (testCase->getType() == TestCaseType::OFFICIAL) {
-            static_cast<OfficialTestCase*>(testCase)->apply();
+        if (dynamic_cast<OfficialTestCase*>(testCase) != nullptr) {
+            applyOfficialTestCase(dynamic_cast<OfficialTestCase*>(testCase));
         } else {
-            // TODO: sample test cases
+            applySampleTestCase(dynamic_cast<SampleTestCase*>(testCase));
         }
+    }
+
+    void applyOfficialTestCase(OfficialTestCase* testCase) {
+        testCase->apply();
+    }
+
+    void applySampleTestCase(SampleTestCase* testCase) {
+        istringstream sin(testCase->getContent());
+        inputFormat->parseFrom(sin);
     }
 
     void checkConstraints(TestCase* testCase) {
