@@ -29,16 +29,16 @@ public:
 protected:
     static void parseSpaceFrom(istream& in, string lastRealName) {
         if (in.get() != ' ') {
-            throw IOFormatException("Expected: <space> after variable `" + lastRealName + "`");
+            throw IOSegmentException("Expected: <space> after variable `" + lastRealName + "`");
         }
     }
 
     static void parseNewLineFrom(istream& in, string lastRealName) {
         if (in.get() != '\n') {
             if (lastRealName == "") {
-                throw IOFormatException("Expected: <space> after empty line");
+                throw IOSegmentException("Expected: <space> after empty line");
             } else {
-                throw IOFormatException("Expected: <new line> after variable `" + lastRealName + "`");
+                throw IOSegmentException("Expected: <new line> after variable `" + lastRealName + "`");
             }
         }
     }
@@ -166,7 +166,7 @@ private:
 
     void checkVectorSize(VectorHorizontalVariable* vektor, int size) {
         if (vektor->size() != size) {
-            throw IOFormatException("Number of elements of vector `" + vektor->getName() + "` unsatisfied. Expected: " + Util::toString(size) + ", actual: " + Util::toString(vektor->size()));
+            throw IOSegmentException("Number of elements of vector `" + vektor->getName() + "` unsatisfied. Expected: " + Util::toString(size) + ", actual: " + Util::toString(vektor->size()));
         }
     }
 
@@ -293,7 +293,7 @@ private:
 
         for (VerticalVariable* variable : variables) {
             if (variable->size() != *size) {
-                throw IOFormatException("Number of elements of vector `" + variable->getName() + "` unsatisfied. Expected: " + Util::toString(*size) + ", actual: " + Util::toString(variable->size()));
+                throw IOSegmentException("Number of elements of vector `" + variable->getName() + "` unsatisfied. Expected: " + Util::toString(*size) + ", actual: " + Util::toString(variable->size()));
             }
         }
     }
@@ -422,12 +422,12 @@ private:
         }
 
         if (variable->rowsSize() != *rowsSize) {
-            throw IOFormatException("Number of rows of matrix `" + variable->getName() + "` unsatisfied. Expected: " + Util::toString(*rowsSize) + ", actual: " + Util::toString(variable->rowsSize()));
+            throw IOSegmentException("Number of rows of matrix `" + variable->getName() + "` unsatisfied. Expected: " + Util::toString(*rowsSize) + ", actual: " + Util::toString(variable->rowsSize()));
         }
 
         for (int i = 0; i < *rowsSize; i++) {
             if (variable->columnsSize(i) != *columnsSize) {
-                throw IOFormatException("Number of columns row " + Util::toString(i) + " of matrix `" + variable->getName() + "` (0-based) unsatisfied. Expected: " + Util::toString(*columnsSize) + ", actual: " + Util::toString(variable->columnsSize(i)));
+                throw IOSegmentException("Number of columns row " + Util::toString(i) + " of matrix `" + variable->getName() + "` (0-based) unsatisfied. Expected: " + Util::toString(*columnsSize) + ", actual: " + Util::toString(variable->columnsSize(i)));
             }
         }
     }

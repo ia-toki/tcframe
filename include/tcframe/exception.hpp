@@ -50,6 +50,19 @@ public:
     }
 };
 
+class IOSegmentException : public TestCaseException {
+public:
+    IOSegmentException(IOSegmentFailure* failure)
+            : TestCaseException(failure) { }
+
+    IOSegmentException(string message)
+            : TestCaseException(new IOSegmentFailure(message)) { }
+
+    string getMessage() {
+        return static_cast<TypeFailure*>(getFailure())->getMessage();
+    }
+};
+
 class TypeException : public TestCaseException {
 public:
     TypeException(TypeFailure* failure)
@@ -62,6 +75,7 @@ public:
         return static_cast<TypeFailure*>(getFailure())->getMessage();
     }
 };
+
 }
 
 #endif

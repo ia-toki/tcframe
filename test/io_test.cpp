@@ -15,6 +15,7 @@ using tcframe::IOFormat;
 using tcframe::IOFormatException;
 using tcframe::IOFormatsCollector;
 using tcframe::IOMode;
+using tcframe::IOSegmentException;
 using tcframe::GridIOSegment;
 using tcframe::LineIOSegment;
 using tcframe::LinesIOSegment;
@@ -50,7 +51,7 @@ TEST(LineIOSegmentTest, VectorSizeMismatch) {
     try {
         segment.printTo(sout);
         FAIL();
-    } catch (IOFormatException& e) {
+    } catch (IOSegmentException& e) {
         EXPECT_EQ("Number of elements of vector `V` unsatisfied. Expected: 4, actual: 3", e.getMessage());
     }
 };
@@ -66,7 +67,7 @@ TEST(LineIOSegmentTest, FailedParsingBecauseNoSpace) {
     try {
         segment.parseFrom(sin);
         FAIL();
-    } catch (IOFormatException& e) {
+    } catch (IOSegmentException& e) {
         EXPECT_EQ("Expected: <space> after variable `A`", e.getMessage());
     }
 }
@@ -82,7 +83,7 @@ TEST(LineIOSegmentTest, FailedParsingBecauseNoNewLine) {
     try {
         segment.parseFrom(sin);
         FAIL();
-    } catch (IOFormatException& e) {
+    } catch (IOSegmentException& e) {
         EXPECT_EQ("Expected: <new line> after variable `B`", e.getMessage());
     }
 }
@@ -319,7 +320,7 @@ TEST(LinesIOSegmentTest, VectorSizesMismatch) {
     try {
         segment.printTo(sout);
         FAIL();
-    } catch (IOFormatException& e) {
+    } catch (IOSegmentException& e) {
         EXPECT_EQ("Number of elements of vector `W` unsatisfied. Expected: 3, actual: 4", e.getMessage());
     }
 }
@@ -335,7 +336,7 @@ TEST(LinesIOSegmentTest, FailedParsingBecauseNoSpace) {
     try {
         segment.parseFrom(sin);
         FAIL();
-    } catch (IOFormatException& e) {
+    } catch (IOSegmentException& e) {
         EXPECT_EQ("Expected: <space> after variable `V[1]`", e.getMessage());
     }
 }
@@ -351,7 +352,7 @@ TEST(LinesIOSegmentTest, FailedParsingBecauseNoNewLine) {
     try {
         segment.parseFrom(sin);
         FAIL();
-    } catch (IOFormatException& e) {
+    } catch (IOSegmentException& e) {
         EXPECT_EQ("Expected: <new line> after variable `W[2]`", e.getMessage());
     }
 }
@@ -495,7 +496,7 @@ TEST(GridIOSegmentTest, RowSizesMismatch) {
     try {
         segment.printTo(sout);
         FAIL();
-    } catch (IOFormatException& e) {
+    } catch (IOSegmentException& e) {
         EXPECT_EQ("Number of rows of matrix `G` unsatisfied. Expected: 3, actual: 2", e.getMessage());
     }
 }
@@ -516,7 +517,7 @@ TEST(GridIOSegmentTest, ColumnSizesMismatch) {
     try {
         segment.printTo(sout);
         FAIL();
-    } catch (IOFormatException& e) {
+    } catch (IOSegmentException& e) {
         EXPECT_EQ("Number of columns row 1 of matrix `G` (0-based) unsatisfied. Expected: 3, actual: 2", e.getMessage());
     }
 }
@@ -532,7 +533,7 @@ TEST(GridIOSegmentTest, FailedParsingBecauseNoSpace) {
     try {
         segment.parseFrom(sin);
         FAIL();
-    } catch (IOFormatException& e) {
+    } catch (IOSegmentException& e) {
         EXPECT_EQ("Expected: <space> after variable `C[1][0]`", e.getMessage());
     }
 }
@@ -548,7 +549,7 @@ TEST(GridIOSegmentTest, FailedParsingBecauseNoNewLine) {
     try {
         segment.parseFrom(sin);
         FAIL();
-    } catch (IOFormatException& e) {
+    } catch (IOSegmentException& e) {
         EXPECT_EQ("Expected: <new line> after variable `C[1][1]`", e.getMessage());
     }
 }

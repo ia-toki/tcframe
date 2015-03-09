@@ -137,6 +137,25 @@ private:
     string message;
 };
 
+class IOSegmentFailure : public TestCaseFailure {
+public:
+    IOSegmentFailure(string message)
+            : message(message) { }
+
+    vector<FailureDescriptionItem> getDescription() override {
+        return vector<FailureDescriptionItem>{
+                FailureDescriptionItem(message, 0)
+        };
+    };
+
+    string getMessage() {
+        return message;
+    }
+
+private:
+    string message;
+};
+
 class TypeFailure : public TestCaseFailure {
 public:
     TypeFailure(string message)
