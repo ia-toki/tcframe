@@ -19,7 +19,7 @@ protected:
 
     virtual ~BaseProblem() { }
 
-    virtual void Config() = 0;
+    virtual void Config() { }
 
     void setSlug(string slug) {
         this->slug = slug;

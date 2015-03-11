@@ -79,7 +79,7 @@ protected:
 
     virtual ~BaseGenerator() { }
 
-    virtual void Config() = 0;
+    virtual void Config() { }
 
     void setBaseDir(string testCasesBaseDirectoryName) {
         this->testCasesBaseDirectoryName = testCasesBaseDirectoryName;

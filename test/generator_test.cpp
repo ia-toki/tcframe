@@ -180,8 +180,6 @@ protected:
 
 class GeneratorWithoutTestGroups : public BaseGenerator<ProblemWithoutSubtasks> {
 protected:
-    void Config() { }
-
     void SampleTestCases() {
         addSampleTestCase({"1 1", "1"});
         addSampleTestCase({"1 1", "-1"});
@@ -214,8 +212,6 @@ protected:
 
 class GeneratorForInvalidInputFormatProblem : public BaseGenerator<ProblemWithInvalidInputFormat> {
 protected:
-    void Config() { }
-
     void TestCases() { }
 
 public:
@@ -225,8 +221,6 @@ public:
 
 class GeneratorWithArrangedExecutionFailure : public BaseGenerator<ProblemWithoutSubtasks> {
 protected:
-    void Config() { }
-
     void TestCases() {
         addOfficialTestCase([this] { A = 1, B = 100, K = 7; }, "A = 1, B = 100, K = 7");
     }
