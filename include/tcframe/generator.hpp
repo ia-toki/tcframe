@@ -18,6 +18,7 @@
 #include <vector>
 
 using std::initializer_list;
+using std::istreambuf_iterator;
 using std::istringstream;
 using std::ostream;
 using std::set;
@@ -234,7 +235,15 @@ private:
     }
 
     void generateTestCaseOutput(string testCaseInputName, string testCaseOutputName) {
-        os->execute(solutionExecutionCommand, testCaseInputName, testCaseOutputName);
+        ExecutionResult result = os->execute(solutionExecutionCommand, testCaseInputName, testCaseOutputName);
+
+        if (result.exitCode != 0) {
+            throw ExecutionException({
+                    Failure("Execution of solution failed:", 0),
+                    Failure("Exit code: " + Util::toString(result.exitCode), 1),
+                    Failure("Standard error: " + string(istreambuf_iterator<char>(*result.errorStream), istreambuf_iterator<char>()), 1)
+            });
+        }
     }
 };
 

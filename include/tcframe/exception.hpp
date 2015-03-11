@@ -81,6 +81,12 @@ public:
             : TestCaseException(failures) { }
 };
 
+class ExecutionException : public TestCaseException {
+public:
+    ExecutionException(vector<Failure> failures)
+            : TestCaseException(failures) { }
+};
+
 }
 
 #endif

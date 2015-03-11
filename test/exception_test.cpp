@@ -5,6 +5,7 @@
 #include <vector>
 
 using std::vector;
+using tcframe::ExecutionException;
 using tcframe::Failure;
 using tcframe::IOFormatException;
 using tcframe::ParsingException;
@@ -26,6 +27,13 @@ TEST(PrintingException, Construction) {
 
 TEST(IOFormatException, Construction) {
     IOFormatException e({Failure("foo", 0)});
+
+    EXPECT_EQ((vector<Failure>{Failure("foo", 0)}), e.getFailures());
+    EXPECT_EQ("", e.getMessage());
+}
+
+TEST(ExecutionException, Construction) {
+    ExecutionException e({Failure("foo", 0)});
 
     EXPECT_EQ((vector<Failure>{Failure("foo", 0)}), e.getFailures());
     EXPECT_EQ("", e.getMessage());

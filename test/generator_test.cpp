@@ -3,6 +3,7 @@
 #include "tcframe/generator.hpp"
 
 #include <map>
+#include <set>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -10,6 +11,7 @@
 using std::istringstream;
 using std::map;
 using std::ostringstream;
+using std::set;
 using std::string;
 using std::vector;
 using tcframe::BaseGenerator;
@@ -51,6 +53,11 @@ private:
 
 class FakeOperatingSystem : public OperatingSystem {
 public:
+    FakeOperatingSystem() { }
+
+    FakeOperatingSystem(set<string> arrangedFailedInputNames)
+            : arrangedFailedInputNames(arrangedFailedInputNames) { }
+
     void setBaseDirectory(string) override { }
 
     istream* openForReading(string) override {
@@ -66,6 +73,10 @@ public:
     void remove(string) override { }
 
     ExecutionResult execute(string, string inputName, string) override {
+        if (arrangedFailedInputNames.count(inputName)) {
+            return ExecutionResult{1, new istringstream(), new istringstream("Intentionally failed")};
+        }
+
         istringstream input(testCaseInputs[inputName]->str());
 
         int A, B, K;
@@ -75,14 +86,15 @@ public:
 
         ExecutionResult result;
         result.exitCode = 0;
-        result.errorStream = new istringstream();
         result.outputStream = new istringstream(output);
+        result.errorStream = new istringstream();
 
         return result;
     }
 
 private:
     map<string, ostringstream*> testCaseInputs;
+    set<string> arrangedFailedInputNames;
 };
 
 class ProblemWithSubtasks : public BaseProblem {
@@ -204,12 +216,24 @@ class GeneratorForInvalidInputFormatProblem : public BaseGenerator<ProblemWithIn
 protected:
     void Config() { }
 
-    void TestCases() {
+    void TestCases() { }
 
-    }
 public:
     GeneratorForInvalidInputFormatProblem(FakeLogger* logger)
             : BaseGenerator(logger, new FakeOperatingSystem()) { }
+};
+
+class GeneratorWithArrangedExecutionFailure : public BaseGenerator<ProblemWithoutSubtasks> {
+protected:
+    void Config() { }
+
+    void TestCases() {
+        addOfficialTestCase([this] { A = 1, B = 100, K = 7; }, "A = 1, B = 100, K = 7");
+    }
+
+public:
+    GeneratorWithArrangedExecutionFailure(FakeLogger* logger, set<string> arrangedFailedInputNames)
+            : BaseGenerator(logger, new FakeOperatingSystem(arrangedFailedInputNames)) { }
 };
 
 TEST(GeneratorTest, GenerationWithSubtasksAndTestGroups) {
@@ -278,4 +302,18 @@ TEST(GeneratorTest, GenerationWithInvalidInputFormat) {
     auto failures = logger.getFailures("inputFormat");
     ASSERT_EQ(1, failures.size());
     EXPECT_EQ(Failure("Variable type of `K` unsatisfied. Expected: basic scalar or string type, or vector of those types", 0), failures[0]);
+}
+
+TEST(GeneratorTest, GenerationWithFailedExecution) {
+    FakeLogger logger;
+    GeneratorWithArrangedExecutionFailure gen(&logger, {"problem_1.in"});
+    int exitCode = gen.generate();
+
+    EXPECT_NE(0, exitCode);
+
+    auto failures = logger.getFailures("problem_1");
+    ASSERT_EQ(3, failures.size());
+    EXPECT_EQ(Failure("Execution of solution failed:", 0), failures[0]);
+    EXPECT_EQ(Failure("Exit code: 1", 1), failures[1]);
+    EXPECT_EQ(Failure("Standard error: Intentionally failed", 1), failures[2]);
 }

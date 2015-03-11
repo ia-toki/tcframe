@@ -65,7 +65,8 @@ public:
         string errorFilename = baseDirectoryName + "/_error.out";
 
         ExecutionResult result;
-        result.exitCode = system((command + " < " + inputFilename + " > " + outputFilename + " 2> " + errorFilename).c_str());
+        int exitStatus = system((command + " < " + inputFilename + " > " + outputFilename + " 2> " + errorFilename).c_str());
+        result.exitCode = WEXITSTATUS(exitStatus);
         result.outputStream = openForReading(outputFilename);
         result.errorStream = openForReadingAsStringStream(errorFilename);
 
