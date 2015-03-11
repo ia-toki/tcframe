@@ -613,7 +613,7 @@ TEST(IOFormatTest, FailedParsingBecauseNoEof) {
     try {
         format.parseFrom(sin);
         FAIL();
-    } catch (IOFormatException& e) {
+    } catch (ParsingException& e) {
         EXPECT_EQ("Expected: <EOF>", e.getMessage());
     }
 }

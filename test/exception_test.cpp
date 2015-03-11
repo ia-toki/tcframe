@@ -25,8 +25,8 @@ TEST(PrintingException, Construction) {
 }
 
 TEST(IOFormatException, Construction) {
-    IOFormatException e("foo");
+    IOFormatException e({Failure("foo", 0)});
 
     EXPECT_EQ((vector<Failure>{Failure("foo", 0)}), e.getFailures());
-    EXPECT_EQ("foo", e.getMessage());
+    EXPECT_EQ("", e.getMessage());
 }

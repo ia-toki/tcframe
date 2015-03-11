@@ -482,7 +482,7 @@ private:
 
     static void parseEofFrom(istream& in) {
         if (in.get() != char_traits<char>::eof()) {
-            throw IOFormatException("Expected: <EOF>");
+            throw ParsingException("Expected: <EOF>");
         }
     }
 };

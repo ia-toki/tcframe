@@ -47,9 +47,6 @@ private:
 
 class IOFormatException : public GenerationException {
 public:
-    IOFormatException(string message)
-            : GenerationException(message) { }
-
     IOFormatException(vector<Failure> failures)
             : GenerationException(failures) { }
 };
@@ -70,25 +67,16 @@ class ParsingException : public TestCaseException {
 public:
     ParsingException(string message)
             : TestCaseException(message) { }
-
-    ParsingException(vector<Failure> failures)
-            : TestCaseException(failures) { }
 };
 
 class PrintingException : public TestCaseException {
 public:
     PrintingException(string message)
             : TestCaseException(message) { }
-
-    PrintingException(vector<Failure> failures)
-            : TestCaseException(failures) { }
 };
 
 class SubtaskSatisfiabilityException : public TestCaseException {
 public:
-    SubtaskSatisfiabilityException(string message)
-            : TestCaseException(message) { }
-
     SubtaskSatisfiabilityException(vector<Failure> failures)
             : TestCaseException(failures) { }
 };
