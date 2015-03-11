@@ -36,7 +36,7 @@ TEST(LineIOSegmentTest, UnsupportedType) {
 
     vector<Failure> failures = collector.collectFailures();
     ASSERT_EQ(1, failures.size());
-    EXPECT_EQ(Failure("Variable type of `S` unsatisfied. Expected: basic scalar or string type", 0), failures[0]);
+    EXPECT_EQ(Failure("Variable type of `S` unsatisfied. Expected: basic scalar or string type, or vector of those types", 0), failures[0]);
 }
 
 TEST(LineIOSegmentTest, FailedPrintingBecauseVectorSizeMismatch) {

@@ -172,7 +172,7 @@ private:
 
     template<typename... T>
     void addVariable(T...) {
-        addFormatFailure("Variable type of `" + names[variables.size()] + "` unsatisfied. Expected: basic scalar or string type");
+        addFormatFailure("Variable type of `" + names[variables.size()] + "` unsatisfied. Expected: basic scalar or string type, or vector of those types");
         variables.push_back(nullptr);
     }
 
