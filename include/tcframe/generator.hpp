@@ -89,6 +89,8 @@ protected:
         this->solutionExecutionCommand = solutionExecutionCommand;
     }
 
+    virtual void FinalizeInput() { }
+
     virtual void SampleTestCases() { }
     virtual void TestCases() { throw NotImplementedException(); }
 
@@ -152,6 +154,7 @@ private:
         try {
             applyTestCase(testCase);
             checkConstraints(testCase);
+            FinalizeInput();
             generateTestCaseInput(testCaseInputName);
             generateTestCaseOutput(testCaseInputName, testCaseOutputName);
 
