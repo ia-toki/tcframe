@@ -31,7 +31,15 @@ class BaseGenerator : protected TProblem, protected TestCasesCollector {
 public:
     int generate() {
         logger->logIntroduction();
-        inputFormat = TProblem::getInputFormat();
+
+        try {
+            inputFormat = TProblem::getInputFormat();
+        } catch (IOFormatException& e) {
+            logger->logInputFormatFailedResult();
+            logger->logFailures(e.getFailures());
+            return 1;
+        }
+
         subtasks = TProblem::getSubtasks();
         testData = getTestData();
 

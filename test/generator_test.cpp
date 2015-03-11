@@ -34,6 +34,7 @@ public:
 
     void logTestCaseOkResult() override { }
     void logTestCaseFailedResult(string) override { }
+    void logInputFormatFailedResult() override { }
 
     void logFailures(vector<Failure> failures) override {
         this->failuresMap[currentKey] = failures;
@@ -184,6 +185,33 @@ public:
             : BaseGenerator(logger, new FakeOperatingSystem()) { }
 };
 
+class ProblemWithInvalidInputFormat : public BaseProblem {
+protected:
+    int A, B;
+    vector<int> K;
+
+    void Config() {
+        setSlug("problem");
+    }
+
+    void InputFormat() {
+        addLineSegment("A, B"), A, B;
+        addLineSegment("K"), K;
+    }
+};
+
+class GeneratorForInvalidInputFormatProblem : public BaseGenerator<ProblemWithInvalidInputFormat> {
+protected:
+    void Config() { }
+
+    void TestCases() {
+
+    }
+public:
+    GeneratorForInvalidInputFormatProblem(FakeLogger* logger)
+            : BaseGenerator(logger, new FakeOperatingSystem()) { }
+};
+
 TEST(GeneratorTest, GenerationWithSubtasksAndTestGroups) {
     FakeLogger logger;
     GeneratorWithTestGroups gen(&logger);
@@ -238,4 +266,16 @@ TEST(GeneratorTest, GenerationWithoutSubtasksAndWithoutTestGroups) {
     ASSERT_EQ(2, failures_sample_2.size());
     EXPECT_EQ(Failure("Does not satisfy constraints, on:", 0), failures_2[0]);
     EXPECT_EQ(Failure("1 <= B && B <= 1000", 1), failures_2[1]);
+}
+
+TEST(GeneratorTest, GenerationWithInvalidInputFormat) {
+    FakeLogger logger;
+    GeneratorForInvalidInputFormatProblem gen(&logger);
+    int exitCode = gen.generate();
+
+    EXPECT_NE(0, exitCode);
+
+    auto failures = logger.getFailures("inputFormat");
+    ASSERT_EQ(1, failures.size());
+    EXPECT_EQ(Failure("Variable type of `K` unsatisfied. Expected: basic scalar or string type, or vector of those types", 0), failures[0]);
 }

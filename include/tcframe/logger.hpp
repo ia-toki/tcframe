@@ -22,6 +22,7 @@ public:
     virtual void logTestCaseIntroduction(string testCaseName) = 0;
     virtual void logTestCaseOkResult() = 0;
     virtual void logTestCaseFailedResult(string testCaseDescription) = 0;
+    virtual void logInputFormatFailedResult() = 0;
     virtual void logFailures(vector<Failure> failures) = 0;
 };
 
@@ -58,6 +59,12 @@ public:
             cout << "    Description: " << testCaseDescription << endl;
         }
 
+        cout << "    Reasons:" << endl;
+    }
+
+    void logInputFormatFailedResult() override {
+        cout << endl;
+        cout << "  Input format check: FAILED" << endl;
         cout << "    Reasons:" << endl;
     }
 
