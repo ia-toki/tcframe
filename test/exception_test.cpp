@@ -5,24 +5,28 @@
 #include <vector>
 
 using std::vector;
+using tcframe::Failure;
 using tcframe::IOFormatException;
-using tcframe::IOFormatFailure;
-using tcframe::SubtaskException;
-using tcframe::SubtaskFailure;
-using tcframe::SubtaskUnsatisfiability;
+using tcframe::ParsingException;
+using tcframe::PrintingException;
 
-TEST(SubtaskExceptionTest, Construction) {
-    SubtaskFailure* failure = new SubtaskFailure(vector<SubtaskUnsatisfiability*>{nullptr, nullptr});
-    SubtaskException e(failure);
+TEST(ParsingException, Construction) {
+    ParsingException e("foo");
 
-    EXPECT_EQ(failure, e.getFailure());
+    EXPECT_EQ((vector<Failure>{Failure("foo", 0)}), e.getFailures());
+    EXPECT_EQ("foo", e.getMessage());
 }
 
-TEST(IOFormatExceptionTest, Construction) {
-    IOFormatException e("some text");
-    EXPECT_EQ("some text", e.getMessage());
+TEST(PrintingException, Construction) {
+    PrintingException e("foo");
 
-    IOFormatFailure* failure = new IOFormatFailure("some text");
-    IOFormatException e2(failure);
-    EXPECT_EQ(failure, e2.getFailure());
+    EXPECT_EQ((vector<Failure>{Failure("foo", 0)}), e.getFailures());
+    EXPECT_EQ("foo", e.getMessage());
+}
+
+TEST(IOFormatException, Construction) {
+    IOFormatException e("foo");
+
+    EXPECT_EQ((vector<Failure>{Failure("foo", 0)}), e.getFailures());
+    EXPECT_EQ("foo", e.getMessage());
 }

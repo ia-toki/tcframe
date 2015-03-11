@@ -30,16 +30,15 @@ template<typename TProblem>
 class BaseGenerator : protected TProblem, protected TestCasesCollector {
 public:
     int generate() {
+        logger->logIntroduction();
+        inputFormat = TProblem::getInputFormat();
         subtasks = TProblem::getSubtasks();
         testData = getTestData();
-        inputFormat = TProblem::getInputFormat();
 
         TProblem::Config();
         Config();
 
         os->setBaseDirectory(testCasesBaseDirectoryName);
-
-        logger->logIntroduction();
 
         bool succesful = true;
         for (TestGroup* testGroup : testData) {
@@ -150,7 +149,7 @@ private:
             logger->logTestCaseOkResult();
         } catch (TestCaseException& e) {
             logger->logTestCaseFailedResult(testCase->getDescription());
-            logger->logTestCaseFailure(e.getFailure());
+            logger->logFailures(e.getFailures());
 
             return false;
         }
@@ -184,7 +183,7 @@ private:
     }
 
     void checkConstraints(TestCase* testCase) {
-        vector<SubtaskUnsatisfiability*> unsatisfiabilities;
+        vector<Failure> failures;
 
         set<int> subtaskIds = testCase->getSubtaskIds();
 
@@ -198,17 +197,25 @@ private:
 
             if (subtaskIds.count(subtask->getId())) {
                 if (!unsatisfiedConstraints.empty()) {
-                    unsatisfiabilities.push_back(new SubtaskUnsatisfiedButAssigned(subtask->getId(), unsatisfiedConstraints));
+                    if (subtask->getId() == -1) {
+                        failures.push_back(Failure("Does not satisfy constraints, on:", 0));
+                    } else {
+                        failures.push_back(Failure("Does not satisfy subtask " + Util::toString(subtask->getId()) + ", on constraints:", 0));
+                    }
+
+                    for (Constraint* constraint : unsatisfiedConstraints) {
+                        failures.push_back(Failure(constraint->getDescription(), 1));
+                    }
                 }
             } else {
                 if (unsatisfiedConstraints.empty()) {
-                    unsatisfiabilities.push_back(new SubtaskSatisfiedButNotAssigned(subtask->getId()));
+                    failures.push_back(Failure("Satisfies subtask " + Util::toString(subtask->getId()) + " but is not assigned to it", 0));
                 }
             }
         }
 
-        if (!unsatisfiabilities.empty()) {
-            throw SubtaskException(new SubtaskFailure(unsatisfiabilities));
+        if (!failures.empty()) {
+            throw SubtaskSatisfiabilityException(failures);
         }
     }
 

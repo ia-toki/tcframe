@@ -11,36 +11,39 @@ using std::ostringstream;
 using std::set;
 using std::string;
 using std::vector;
+using tcframe::Failure;
+using tcframe::FailuresCollector;
 using tcframe::IOFormat;
 using tcframe::IOFormatException;
 using tcframe::IOFormatsCollector;
 using tcframe::IOMode;
-using tcframe::IOSegmentException;
 using tcframe::GridIOSegment;
 using tcframe::LineIOSegment;
 using tcframe::LinesIOSegment;
 using tcframe::MatrixSizes;
+using tcframe::ParsingException;
+using tcframe::PrintingException;
 using tcframe::VectorSize;
 using tcframe::VectorWithSize;
 
 TEST(LineIOSegmentTest, UnsupportedType) {
     set<int> S;
 
-    LineIOSegment segment("S");
+    FailuresCollector collector;
+    LineIOSegment segment("S", &collector);
 
-    try {
-        segment, S;
-        FAIL();
-    } catch (IOFormatException& e) {
-        EXPECT_EQ("Variable type of `S` unsatisfied. Expected: basic scalar or string type", e.getMessage());
-    }
+    segment, S;
+
+    vector<Failure> failures = collector.collectFailures();
+    ASSERT_EQ(1, failures.size());
+    EXPECT_EQ(Failure("Variable type of `S` unsatisfied. Expected: basic scalar or string type", 0), failures[0]);
 }
 
-TEST(LineIOSegmentTest, VectorSizeMismatch) {
+TEST(LineIOSegmentTest, FailedPrintingBecauseVectorSizeMismatch) {
     int N;
     vector<int> V;
 
-    LineIOSegment segment("V");
+    LineIOSegment segment("V", nullptr);
     segment, V % VectorSize(N);
 
     N = 4;
@@ -51,7 +54,7 @@ TEST(LineIOSegmentTest, VectorSizeMismatch) {
     try {
         segment.printTo(sout);
         FAIL();
-    } catch (IOSegmentException& e) {
+    } catch (PrintingException& e) {
         EXPECT_EQ("Number of elements of vector `V` unsatisfied. Expected: 4, actual: 3", e.getMessage());
     }
 };
@@ -59,7 +62,7 @@ TEST(LineIOSegmentTest, VectorSizeMismatch) {
 TEST(LineIOSegmentTest, FailedParsingBecauseNoSpace) {
     int A, B;
 
-    LineIOSegment segment("A, B");
+    LineIOSegment segment("A, B", nullptr);
     segment, A, B;
 
     istringstream sin("7\n");
@@ -67,7 +70,7 @@ TEST(LineIOSegmentTest, FailedParsingBecauseNoSpace) {
     try {
         segment.parseFrom(sin);
         FAIL();
-    } catch (IOSegmentException& e) {
+    } catch (ParsingException& e) {
         EXPECT_EQ("Expected: <space> after variable `A`", e.getMessage());
     }
 }
@@ -75,7 +78,7 @@ TEST(LineIOSegmentTest, FailedParsingBecauseNoSpace) {
 TEST(LineIOSegmentTest, FailedParsingBecauseNoNewLine) {
     int A, B;
 
-    LineIOSegment segment("A, B");
+    LineIOSegment segment("A, B", nullptr);
     segment, A, B;
 
     istringstream sin("7 123");
@@ -83,13 +86,13 @@ TEST(LineIOSegmentTest, FailedParsingBecauseNoNewLine) {
     try {
         segment.parseFrom(sin);
         FAIL();
-    } catch (IOSegmentException& e) {
+    } catch (ParsingException& e) {
         EXPECT_EQ("Expected: <new line> after variable `B`", e.getMessage());
     }
 }
 
 TEST(LineIOSegmentTest, EmptyLinePrinting) {
-    LineIOSegment segment("");
+    LineIOSegment segment("", nullptr);
 
     ostringstream sout;
     segment.printTo(sout);
@@ -100,7 +103,7 @@ TEST(LineIOSegmentTest, EmptyLinePrinting) {
 TEST(LineIOSegmentTest, SingleScalarPrinting) {
     int X;
 
-    LineIOSegment segment("X");
+    LineIOSegment segment("X", nullptr);
     segment, X;
 
     X = 42;
@@ -114,7 +117,7 @@ TEST(LineIOSegmentTest, SingleScalarPrinting) {
 TEST(LineIOSegmentTest, SingleScalarParsing) {
     int X;
 
-    LineIOSegment segment("X");
+    LineIOSegment segment("X", nullptr);
     segment, X;
 
     istringstream sin("42\n");
@@ -126,7 +129,7 @@ TEST(LineIOSegmentTest, SingleScalarParsing) {
 TEST(LineIOSegmentTest, MultipleScalarsPrinting) {
     int A, B, C;
 
-    LineIOSegment segment("A, B, C");
+    LineIOSegment segment("A, B, C", nullptr);
     segment, A, B, C;
 
     A = 42;
@@ -142,7 +145,7 @@ TEST(LineIOSegmentTest, MultipleScalarsPrinting) {
 TEST(LineIOSegmentTest, MultipleScalarsParsing) {
     int A, B, C;
 
-    LineIOSegment segment("A, B, C");
+    LineIOSegment segment("A, B, C", nullptr);
     segment, A, B, C;
 
     istringstream sin("42 7 123\n");
@@ -156,7 +159,7 @@ TEST(LineIOSegmentTest, MultipleScalarsParsing) {
 TEST(LineIOSegmentTest, SingleVectorPrinting) {
     vector<int> V;
 
-    LineIOSegment segment("V");
+    LineIOSegment segment("V", nullptr);
     segment, V % VectorSize(3);
 
     V = vector<int>{1, 2, 3};
@@ -170,7 +173,7 @@ TEST(LineIOSegmentTest, SingleVectorPrinting) {
 TEST(LineIOSegmentTest, SingleVectorParsing) {
     vector<int> V;
 
-    LineIOSegment segment("V");
+    LineIOSegment segment("V", nullptr);
     segment, V % VectorSize(3);
 
     istringstream sin("1 2 3\n");
@@ -182,7 +185,7 @@ TEST(LineIOSegmentTest, SingleVectorParsing) {
 TEST(LineIOSegmentTest, MultipleVectorsPrinting) {
     vector<int> V, W;
 
-    LineIOSegment segment("V, W");
+    LineIOSegment segment("V, W", nullptr);
     segment, V % VectorSize(3), W % VectorSize(4);
 
     V = vector<int>{1, 2, 3};
@@ -197,7 +200,7 @@ TEST(LineIOSegmentTest, MultipleVectorsPrinting) {
 TEST(LineIOSegmentTest, MultipleVectorsParsing) {
     vector<int> V, W;
 
-    LineIOSegment segment("V, W");
+    LineIOSegment segment("V, W", nullptr);
     segment, V % VectorSize(3), W % VectorSize(4);
 
     V = vector<int>{1, 2, 3};
@@ -214,7 +217,7 @@ TEST(LineIOSegmentTest, MixedVariablesPrinting) {
     vector<int> V, W;
     int A, B;
 
-    LineIOSegment segment("A, V, B, W");
+    LineIOSegment segment("A, V, B, W", nullptr);
     segment, A, V % VectorSize(3), B, W % VectorSize(4);
 
     V = vector<int>{1, 2, 3};
@@ -233,7 +236,7 @@ TEST(LineIOSegmentTest, MixedVariablesParsing) {
     vector<int> V, W;
     int A, B;
 
-    LineIOSegment segment("A, V, B, W");
+    LineIOSegment segment("A, V, B, W", nullptr);
     segment, A, V % VectorSize(3), B, W % VectorSize(4);
 
     V = vector<int>{1, 2, 3};
@@ -251,64 +254,52 @@ TEST(LineIOSegmentTest, MixedVariablesParsing) {
     EXPECT_EQ(4, B);
 }
 
-TEST(LinesIOSegmentTest, UnsupportedType) {
+TEST(LinesIOSegmentTest, UnsupportedTypes) {
     int X;
-
-    LinesIOSegment segment("X");
-
-    try {
-        segment, X;
-        FAIL();
-    } catch (IOFormatException& e) {
-        EXPECT_EQ("Variable type of `X` unsatisfied. Expected: vector of basic scalar or string type", e.getMessage());
-    }
-
     vector<vector<int>> V;
 
-    segment = LinesIOSegment("V");
+    FailuresCollector collector;
+    LinesIOSegment segment("X, V", &collector);
 
-    try {
-        segment, V;
-        FAIL();
-    } catch (IOFormatException& e) {
-        EXPECT_EQ("Variable type of `V` unsatisfied. Expected: vector of basic scalar or string type", e.getMessage());
-    }
+    segment, X, V;
+
+    vector<Failure> failures = collector.collectFailures();
+    ASSERT_EQ(2, failures.size());
+    EXPECT_EQ(Failure("Variable type of `X` unsatisfied. Expected: vector of basic scalar or string type", 0), failures[0]);
+    EXPECT_EQ(Failure("Variable type of `V` unsatisfied. Expected: vector of basic scalar or string type", 0), failures[1]);
 }
 
 TEST(LinesIOSegmentTest, NoVariables) {
-    LinesIOSegment segment("");
+    FailuresCollector collector;
+    LinesIOSegment segment("", &collector);
+    segment % VectorSize(4);
 
-    ostringstream sout;
+    segment.checkState();
 
-    try {
-        segment.printTo(sout);
-        FAIL();
-    } catch(IOFormatException& e) {
-        EXPECT_EQ("Lines segment must have at least one variable", e.getMessage());
-    }
+    vector<Failure> failures = collector.collectFailures();
+    ASSERT_EQ(1, failures.size());
+    EXPECT_EQ(Failure("Lines segment must have at least one variable", 0), failures[0]);
 }
 
 TEST(LineIOSegmentTest, NoVectorSizes) {
     vector<int> V;
 
-    LinesIOSegment segment("V");
+    FailuresCollector collector;
+    LinesIOSegment segment("V", &collector);
     segment, V;
 
-    ostringstream sout;
+    segment.checkState();
 
-    try {
-        segment.printTo(sout);
-        FAIL();
-    } catch(IOFormatException& e) {
-        EXPECT_EQ("Lines segment must define vector sizes", e.getMessage());
-    }
+    vector<Failure> failures = collector.collectFailures();
+    ASSERT_EQ(1, failures.size());
+    EXPECT_EQ(Failure("Lines segment must define vector sizes", 0), failures[0]);
 }
 
-TEST(LinesIOSegmentTest, VectorSizesMismatch) {
+TEST(LinesIOSegmentTest, FailedPrintingBecauseVectorSizesMismatch) {
     int N;
     vector<int> V, W;
 
-    LinesIOSegment segment("V, W");
+    LinesIOSegment segment("V, W", nullptr);
     (segment, V, W) % VectorSize(N);
 
     N = 3;
@@ -320,7 +311,7 @@ TEST(LinesIOSegmentTest, VectorSizesMismatch) {
     try {
         segment.printTo(sout);
         FAIL();
-    } catch (IOSegmentException& e) {
+    } catch (PrintingException& e) {
         EXPECT_EQ("Number of elements of vector `W` unsatisfied. Expected: 3, actual: 4", e.getMessage());
     }
 }
@@ -328,7 +319,7 @@ TEST(LinesIOSegmentTest, VectorSizesMismatch) {
 TEST(LinesIOSegmentTest, FailedParsingBecauseNoSpace) {
     vector<int> V, W;
 
-    LinesIOSegment segment("V, W");
+    LinesIOSegment segment("V, W", nullptr);
     (segment, V, W) % VectorSize(3);
 
     istringstream sin("1 2\n3\n5 6\n");
@@ -336,7 +327,7 @@ TEST(LinesIOSegmentTest, FailedParsingBecauseNoSpace) {
     try {
         segment.parseFrom(sin);
         FAIL();
-    } catch (IOSegmentException& e) {
+    } catch (ParsingException& e) {
         EXPECT_EQ("Expected: <space> after variable `V[1]`", e.getMessage());
     }
 }
@@ -344,7 +335,7 @@ TEST(LinesIOSegmentTest, FailedParsingBecauseNoSpace) {
 TEST(LinesIOSegmentTest, FailedParsingBecauseNoNewLine) {
     vector<int> V, W;
 
-    LinesIOSegment segment("V, W");
+    LinesIOSegment segment("V, W", nullptr);
     (segment, V, W) % VectorSize(3);
 
     istringstream sin("1 2\n3 4\n5 6");
@@ -352,7 +343,7 @@ TEST(LinesIOSegmentTest, FailedParsingBecauseNoNewLine) {
     try {
         segment.parseFrom(sin);
         FAIL();
-    } catch (IOSegmentException& e) {
+    } catch (ParsingException& e) {
         EXPECT_EQ("Expected: <new line> after variable `W[2]`", e.getMessage());
     }
 }
@@ -360,7 +351,7 @@ TEST(LinesIOSegmentTest, FailedParsingBecauseNoNewLine) {
 TEST(LinesIOSegmentTest, SingleVectorPrinting) {
     vector<int> V;
 
-    LinesIOSegment segment("V");
+    LinesIOSegment segment("V", nullptr);
     (segment, V) % VectorSize(3);
 
     V = vector<int>{1, 2, 3};
@@ -374,7 +365,7 @@ TEST(LinesIOSegmentTest, SingleVectorPrinting) {
 TEST(LinesIOSegmentTest, SingleVectorParsing) {
     vector<int> V;
 
-    LinesIOSegment segment("V");
+    LinesIOSegment segment("V", nullptr);
     (segment, V) % VectorSize(3);
 
     istringstream sin("1\n2\n3\n");
@@ -387,7 +378,7 @@ TEST(LinesIOSegmentTest, MultipleVectorsPrinting) {
     vector<int> V;
     vector<string> W;
 
-    LinesIOSegment segment("V, W");
+    LinesIOSegment segment("V, W", nullptr);
     (segment, V, W) % VectorSize(3);
 
     V = vector<int>{1, 2, 3};
@@ -403,7 +394,7 @@ TEST(LinesIOSegmentTest, MultipleVectorsParsing) {
     vector<int> V;
     vector<string> W;
 
-    LinesIOSegment segment("V, W");
+    LinesIOSegment segment("V, W", nullptr);
     (segment, V, W) % VectorSize(3);
 
     V = vector<int>{1, 2, 3};
@@ -419,72 +410,73 @@ TEST(LinesIOSegmentTest, MultipleVectorsParsing) {
 TEST(GridIOSegmentTest, UnsupportedTypes) {
     int X;
 
-    GridIOSegment segment("X");
+    FailuresCollector collector;
+    GridIOSegment segment("X", &collector);
 
-    try {
-        segment, X;
-        FAIL();
-    } catch (IOFormatException& e) {
-        EXPECT_EQ("Variable type of `X` unsatisfied. Expected: matrix of basic scalar or string type", e.getMessage());
-    }
+    segment, X;
+
+    vector<Failure> failures = collector.collectFailures();
+
+    ASSERT_EQ(1, failures.size());
+    EXPECT_EQ(Failure("Variable type of `X` unsatisfied. Expected: matrix of basic scalar or string type", 0), failures[0]);
 
     vector<vector<vector<int>>> V;
 
-    segment = GridIOSegment("V");
+    collector = FailuresCollector();
+    segment = GridIOSegment("V", &collector);
 
-    try {
-        segment, V;
-        FAIL();
-    } catch (IOFormatException& e) {
-        EXPECT_EQ("Variable type of `V` unsatisfied. Expected: matrix of basic scalar or string type", e.getMessage());
-    }
+    segment, V;
+
+    failures = collector.collectFailures();
+
+    ASSERT_EQ(1, failures.size());
+    EXPECT_EQ(Failure("Variable type of `V` unsatisfied. Expected: matrix of basic scalar or string type", 0), failures[0]);
+
 }
 
 TEST(GridIOSegmentTest, NonSingularVariables) {
-    GridIOSegment segment("");
+    FailuresCollector collector;
+    GridIOSegment segment("", &collector);
+    segment % MatrixSizes(2, 3);
 
-    ostringstream sout;
+    segment.checkState();
 
-    try {
-        segment.printTo(sout);
-        FAIL();
-    } catch (IOFormatException& e) {
-        EXPECT_EQ("Grid segment must have exactly one variable", e.getMessage());
-    }
+    vector<Failure> failures = collector.collectFailures();
+    ASSERT_EQ(1, failures.size());
+    EXPECT_EQ(Failure("Grid segment must have exactly one variable", 0), failures[0]);
 
     vector<vector<int>> V, W;
 
-    segment = GridIOSegment("V, W");
+    collector = FailuresCollector();
+    segment = GridIOSegment("V, W", &collector);
+    (segment, V, W)  % MatrixSizes(2, 3);;
 
-    try {
-        segment, V, W;
-        FAIL();
-    } catch (IOFormatException& e) {
-        EXPECT_EQ("Grid segment must have exactly one variable", e.getMessage());
-    }
+    segment.checkState();
+
+    failures = collector.collectFailures();
+    ASSERT_EQ(1, failures.size());
+    EXPECT_EQ(Failure("Grid segment must have exactly one variable", 0), failures[0]);
 }
 
 TEST(GridIOSegmentTest, NoMatrixSizes) {
     vector<vector<int>> G;
 
-    GridIOSegment segment("G");
+    FailuresCollector collector;
+    GridIOSegment segment("G", &collector);
     segment, G;
 
-    ostringstream sout;
+    segment.checkState();
 
-    try {
-        segment.printTo(sout);
-        FAIL();
-    } catch (IOFormatException& e) {
-        EXPECT_EQ("Grid segment must define matrix sizes", e.getMessage());
-    }
+    vector<Failure> failures = collector.collectFailures();
+    ASSERT_EQ(1, failures.size());
+    EXPECT_EQ(Failure("Grid segment must define matrix sizes", 0), failures[0]);
 }
 
-TEST(GridIOSegmentTest, RowSizesMismatch) {
+TEST(GridIOSegmentTest, FailedPrintingBecauseRowSizesMismatch) {
     int N, M;
     vector<vector<int>> G;
 
-    GridIOSegment segment("G");
+    GridIOSegment segment("G", nullptr);
     (segment, G) % MatrixSizes(N, M);
 
     N = 3;
@@ -496,16 +488,16 @@ TEST(GridIOSegmentTest, RowSizesMismatch) {
     try {
         segment.printTo(sout);
         FAIL();
-    } catch (IOSegmentException& e) {
+    } catch (PrintingException& e) {
         EXPECT_EQ("Number of rows of matrix `G` unsatisfied. Expected: 3, actual: 2", e.getMessage());
     }
 }
 
-TEST(GridIOSegmentTest, ColumnSizesMismatch) {
+TEST(GridIOSegmentTest, FailedPrintingBecauseColumnSizesMismatch) {
     int N, M;
     vector<vector<int>> G;
 
-    GridIOSegment segment("G");
+    GridIOSegment segment("G", nullptr);
     (segment, G) % MatrixSizes(N, M);
 
     N = 2;
@@ -517,7 +509,7 @@ TEST(GridIOSegmentTest, ColumnSizesMismatch) {
     try {
         segment.printTo(sout);
         FAIL();
-    } catch (IOSegmentException& e) {
+    } catch (PrintingException& e) {
         EXPECT_EQ("Number of columns row 1 of matrix `G` (0-based) unsatisfied. Expected: 3, actual: 2", e.getMessage());
     }
 }
@@ -525,7 +517,7 @@ TEST(GridIOSegmentTest, ColumnSizesMismatch) {
 TEST(GridIOSegmentTest, FailedParsingBecauseNoSpace) {
     vector<vector<int>> C;
 
-    GridIOSegment segment("C");
+    GridIOSegment segment("C", nullptr);
     (segment, C) % MatrixSizes(2, 2);
 
     istringstream sin("1 2\n3\n");
@@ -533,7 +525,7 @@ TEST(GridIOSegmentTest, FailedParsingBecauseNoSpace) {
     try {
         segment.parseFrom(sin);
         FAIL();
-    } catch (IOSegmentException& e) {
+    } catch (ParsingException& e) {
         EXPECT_EQ("Expected: <space> after variable `C[1][0]`", e.getMessage());
     }
 }
@@ -541,7 +533,7 @@ TEST(GridIOSegmentTest, FailedParsingBecauseNoSpace) {
 TEST(GridIOSegmentTest, FailedParsingBecauseNoNewLine) {
     vector<vector<int>> C;
 
-    GridIOSegment segment("C");
+    GridIOSegment segment("C", nullptr);
     (segment, C) % MatrixSizes(2, 2);
 
     istringstream sin("1 2\n3 4");
@@ -549,7 +541,7 @@ TEST(GridIOSegmentTest, FailedParsingBecauseNoNewLine) {
     try {
         segment.parseFrom(sin);
         FAIL();
-    } catch (IOSegmentException& e) {
+    } catch (ParsingException& e) {
         EXPECT_EQ("Expected: <new line> after variable `C[1][1]`", e.getMessage());
     }
 }
@@ -557,7 +549,7 @@ TEST(GridIOSegmentTest, FailedParsingBecauseNoNewLine) {
 TEST(GridIOSegmentTest, CharPrinting) {
     vector<vector<char>> C;
 
-    GridIOSegment segment("C");
+    GridIOSegment segment("C", nullptr);
     (segment, C) % MatrixSizes(2, 2);
 
     C = vector<vector<char>>{ {'a', 'b'}, {'c', 'd'} };
@@ -571,7 +563,7 @@ TEST(GridIOSegmentTest, CharPrinting) {
 TEST(GridIOSegmentTest, CharParsing) {
     vector<vector<char>> C;
 
-    GridIOSegment segment("C");
+    GridIOSegment segment("C", nullptr);
     (segment, C) % MatrixSizes(2, 2);
 
     istringstream sin("ab\ncd\n");
@@ -583,7 +575,7 @@ TEST(GridIOSegmentTest, CharParsing) {
 TEST(GridIOSegmentTest, NonCharPrinting) {
     vector<vector<int>> C;
 
-    GridIOSegment segment("C");
+    GridIOSegment segment("C", nullptr);
     (segment, C) % MatrixSizes(2, 2);
 
     C = vector<vector<int>>{ {1, 2}, {3, 4} };
@@ -597,7 +589,7 @@ TEST(GridIOSegmentTest, NonCharPrinting) {
 TEST(GridIOSegmentTest, NonCharParsing) {
     vector<vector<int>> C;
 
-    GridIOSegment segment("C");
+    GridIOSegment segment("C", nullptr);
     (segment, C) % MatrixSizes(2, 2);
 
     istringstream sin("1 2\n3 4\n");
@@ -611,7 +603,7 @@ TEST(IOFormatTest, FailedParsingBecauseNoEof) {
 
     IOFormat format;
 
-    LineIOSegment segment("A, B");
+    LineIOSegment segment("A, B", nullptr);
     segment, A, B;
 
     format.addSegment(&segment);
@@ -632,10 +624,10 @@ TEST(IOFormatTest, MultipleLinesPrinting) {
 
     IOFormat format;
 
-    LineIOSegment segment1("A, B");
+    LineIOSegment segment1("A, B", nullptr);
     segment1, A, B;
 
-    LineIOSegment segment2("K");
+    LineIOSegment segment2("K", nullptr);
     segment2, K;
 
     format.addSegment(&segment1);
@@ -657,10 +649,10 @@ TEST(IOFormatTest, MultipleLinesParsing) {
 
     IOFormat format;
 
-    LineIOSegment segment1("A, B");
+    LineIOSegment segment1("A, B", nullptr);
     segment1, A, B;
 
-    LineIOSegment segment2("K");
+    LineIOSegment segment2("K", nullptr);
     segment2, K;
 
     format.addSegment(&segment1);

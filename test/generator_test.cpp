@@ -15,42 +15,37 @@ using std::vector;
 using tcframe::BaseGenerator;
 using tcframe::BaseProblem;
 using tcframe::ExecutionResult;
+using tcframe::Failure;
 using tcframe::Logger;
 using tcframe::OperatingSystem;
-using tcframe::SubtaskFailure;
-using tcframe::SubtaskSatisfiedButNotAssigned;
-using tcframe::SubtaskUnsatisfiability;
-using tcframe::SubtaskUnsatisfiedButAssigned;
-using tcframe::TestCaseFailure;
 using tcframe::Util;
 
 class FakeLogger : public Logger {
 public:
+    FakeLogger()
+            : currentKey("inputFormat") { }
+
     void logIntroduction() override { }
     void logTestGroupIntroduction(int) override { }
 
     void logTestCaseIntroduction(string testCaseName) override {
-        currentTestCaseName = testCaseName;
+        currentKey = testCaseName;
     }
 
     void logTestCaseOkResult() override { }
     void logTestCaseFailedResult(string) override { }
 
-    void logTestCaseFailure(TestCaseFailure* testCaseFailure) override {
-        testCaseFailures[currentTestCaseName] = testCaseFailure;
+    void logFailures(vector<Failure> failures) override {
+        this->failuresMap[currentKey] = failures;
     }
 
-    bool hasFailure(string testCaseName) {
-        return testCaseFailures.count(testCaseName) > 0;
-    }
-
-    TestCaseFailure* getFailure(string testCaseName) {
-        return testCaseFailures[testCaseName];
+    vector<Failure> getFailures(string key) {
+        return failuresMap[key];
     }
 
 private:
-    string currentTestCaseName;
-    map<string, TestCaseFailure*> testCaseFailures;
+    string currentKey;
+    map<string, vector<Failure>> failuresMap;
 };
 
 class FakeOperatingSystem : public OperatingSystem {
@@ -196,59 +191,29 @@ TEST(GeneratorTest, GenerationWithSubtasksAndTestGroups) {
 
     EXPECT_NE(0, exitCode);
 
-    SubtaskFailure* failure_sample_1 = dynamic_cast<SubtaskFailure*>(logger.getFailure("problem_sample_1"));
-    ASSERT_NE(nullptr, failure_sample_1);
+    auto failures_sample_1 = logger.getFailures("problem_sample_1");
+    ASSERT_EQ(2, failures_sample_1.size());
+    EXPECT_EQ(Failure("Does not satisfy subtask 1, on constraints:", 0), failures_sample_1[0]);
+    EXPECT_EQ(Failure("1 <= B && B <= 1000", 1), failures_sample_1[1]);
 
-    ASSERT_EQ(1, failure_sample_1->getUnsatisfiabilities().size());
+    auto failures_1_1 = logger.getFailures("problem_1_1");
+    ASSERT_EQ(0, failures_1_1.size());
 
-    SubtaskUnsatisfiedButAssigned* failure_sample_1_0 = dynamic_cast<SubtaskUnsatisfiedButAssigned*>(failure_sample_1->getUnsatisfiabilities()[0]);
-    ASSERT_NE(nullptr, failure_sample_1_0);
+    auto failures_1_2 = logger.getFailures("problem_1_2");
+    ASSERT_EQ(2, failures_1_2.size());
+    EXPECT_EQ(Failure("Does not satisfy subtask 1, on constraints:", 0), failures_1_2[0]);
+    EXPECT_EQ(Failure("1 <= B && B <= 1000", 1), failures_1_2[1]);
 
-    EXPECT_EQ(1, failure_sample_1_0->getSubtaskId());
-    ASSERT_EQ(1, failure_sample_1_0->getUnsatisfiedConstraints().size());
-    EXPECT_EQ("1 <= B && B <= 1000", failure_sample_1_0->getUnsatisfiedConstraints()[0]->getDescription());
+    auto failures_2_1 = logger.getFailures("problem_2_1");
+    ASSERT_EQ(1, failures_2_1.size());
+    EXPECT_EQ(Failure("Satisfies subtask 1 but is not assigned to it", 0), failures_2_1[0]);
 
-    EXPECT_FALSE(logger.hasFailure("problem_1_1"));
-
-    SubtaskFailure* failure_1_2 = dynamic_cast<SubtaskFailure*>(logger.getFailure("problem_1_2"));
-    ASSERT_NE(nullptr, failure_1_2);
-
-    ASSERT_EQ(1, failure_1_2->getUnsatisfiabilities().size());
-
-    SubtaskUnsatisfiedButAssigned* failure_1_2_0 = dynamic_cast<SubtaskUnsatisfiedButAssigned*>(failure_1_2->getUnsatisfiabilities()[0]);
-    ASSERT_NE(nullptr, failure_1_2_0);
-
-    EXPECT_EQ(1, failure_1_2_0->getSubtaskId());
-    ASSERT_EQ(1, failure_1_2_0->getUnsatisfiedConstraints().size());
-    EXPECT_EQ("1 <= B && B <= 1000", failure_1_2_0->getUnsatisfiedConstraints()[0]->getDescription());
-
-    SubtaskFailure* failure_2_1 = dynamic_cast<SubtaskFailure*>(logger.getFailure("problem_2_1"));
-    ASSERT_NE(nullptr, failure_2_1);
-
-    ASSERT_EQ(1, failure_2_1->getUnsatisfiabilities().size());
-
-    SubtaskSatisfiedButNotAssigned* failure_2_1_0 = dynamic_cast<SubtaskSatisfiedButNotAssigned*>(failure_2_1->getUnsatisfiabilities()[0]);
-    ASSERT_NE(nullptr, failure_2_1_0);
-
-    EXPECT_EQ(1, failure_2_1_0->getSubtaskId());
-
-    SubtaskFailure* failure_2_2 = dynamic_cast<SubtaskFailure*>(logger.getFailure("problem_2_2"));
-    ASSERT_NE(nullptr, failure_2_2);
-
-    ASSERT_EQ(2, failure_2_2->getUnsatisfiabilities().size());
-
-    SubtaskUnsatisfiedButAssigned* failure_2_2_0 = dynamic_cast<SubtaskUnsatisfiedButAssigned*>(failure_2_2->getUnsatisfiabilities()[0]);
-    ASSERT_NE(failure_2_2_0, nullptr);
-
-    EXPECT_EQ(2, failure_2_2_0->getSubtaskId());
-    ASSERT_EQ(2, failure_2_2_0->getUnsatisfiedConstraints().size());
-    EXPECT_EQ("1 <= A && A <= 2000000000", failure_2_2_0->getUnsatisfiedConstraints()[0]->getDescription());
-    EXPECT_EQ("1 <= B && B <= 2000000000", failure_2_2_0->getUnsatisfiedConstraints()[1]->getDescription());
-
-    SubtaskSatisfiedButNotAssigned* failure_2_2_1 = dynamic_cast<SubtaskSatisfiedButNotAssigned*>(failure_2_2->getUnsatisfiabilities()[1]);
-    ASSERT_NE(nullptr, failure_2_2_1);
-
-    EXPECT_EQ(3, failure_2_2_1->getSubtaskId());
+    auto failures_2_2 = logger.getFailures("problem_2_2");
+    ASSERT_EQ(4, failures_2_2.size());
+    EXPECT_EQ(Failure("Does not satisfy subtask 2, on constraints:", 0), failures_2_2[0]);
+    EXPECT_EQ(Failure("1 <= A && A <= 2000000000", 1), failures_2_2[1]);
+    EXPECT_EQ(Failure("1 <= B && B <= 2000000000", 1), failures_2_2[2]);
+    EXPECT_EQ(Failure("Satisfies subtask 3 but is not assigned to it", 0), failures_2_2[3]);
 }
 
 TEST(GeneratorTest, GenerationWithoutSubtasksAndWithoutTestGroups) {
@@ -258,31 +223,19 @@ TEST(GeneratorTest, GenerationWithoutSubtasksAndWithoutTestGroups) {
 
     EXPECT_NE(0, exitCode);
 
-    EXPECT_FALSE(logger.hasFailure("problem_sample_1"));
+    auto failures_sample_1 = logger.getFailures("problem_sample_1");
+    ASSERT_EQ(0, failures_sample_1.size());
 
-    SubtaskFailure* failure_sample_2 = dynamic_cast<SubtaskFailure*>(logger.getFailure("problem_sample_2"));
-    ASSERT_NE(nullptr, failure_sample_2);
+    auto failures_sample_2 = logger.getFailures("problem_sample_2");
+    ASSERT_EQ(2, failures_sample_2.size());
+    EXPECT_EQ(Failure("Does not satisfy constraints, on:", 0), failures_sample_2[0]);
+    EXPECT_EQ(Failure("0 <= K <= 100", 1), failures_sample_2[1]);
 
-    ASSERT_EQ(1, failure_sample_2->getUnsatisfiabilities().size());
+    auto failures_1 = logger.getFailures("problem_1");
+    ASSERT_EQ(0, failures_1.size());
 
-    SubtaskUnsatisfiedButAssigned* failure_sample_2_0 = dynamic_cast<SubtaskUnsatisfiedButAssigned*>(failure_sample_2->getUnsatisfiabilities()[0]);
-    ASSERT_NE(nullptr, failure_sample_2_0);
-
-    EXPECT_EQ(-1, failure_sample_2_0->getSubtaskId());
-    ASSERT_EQ(1, failure_sample_2_0->getUnsatisfiedConstraints().size());
-    EXPECT_EQ("0 <= K <= 100", failure_sample_2_0->getUnsatisfiedConstraints()[0]->getDescription());
-
-    EXPECT_EQ(nullptr, logger.getFailure("problem_1"));
-
-    SubtaskFailure* failure_2 = dynamic_cast<SubtaskFailure*>(logger.getFailure("problem_2"));
-    ASSERT_NE(nullptr, failure_2);
-
-    ASSERT_EQ(1, failure_2->getUnsatisfiabilities().size());
-
-    SubtaskUnsatisfiedButAssigned* failure_2_0 = dynamic_cast<SubtaskUnsatisfiedButAssigned*>(failure_2->getUnsatisfiabilities()[0]);
-    ASSERT_NE(nullptr, failure_2_0);
-
-    EXPECT_EQ(-1, failure_2_0->getSubtaskId());
-    ASSERT_EQ(1, failure_2_0->getUnsatisfiedConstraints().size());
-    EXPECT_EQ("1 <= B && B <= 1000", failure_2_0->getUnsatisfiedConstraints()[0]->getDescription());
+    auto failures_2 = logger.getFailures("problem_2");
+    ASSERT_EQ(2, failures_sample_2.size());
+    EXPECT_EQ(Failure("Does not satisfy constraints, on:", 0), failures_2[0]);
+    EXPECT_EQ(Failure("1 <= B && B <= 1000", 1), failures_2[1]);
 }

@@ -22,7 +22,7 @@ public:
     virtual void logTestCaseIntroduction(string testCaseName) = 0;
     virtual void logTestCaseOkResult() = 0;
     virtual void logTestCaseFailedResult(string testCaseDescription) = 0;
-    virtual void logTestCaseFailure(TestCaseFailure* testCaseFailure) = 0;
+    virtual void logFailures(vector<Failure> failures) = 0;
 };
 
 class StandardLogger : public Logger {
@@ -61,16 +61,16 @@ public:
         cout << "    Reasons:" << endl;
     }
 
-    void logTestCaseFailure(TestCaseFailure* testCaseFailure) override {
-        for (FailureDescriptionItem item : testCaseFailure->getDescription()) {
+    void logFailures(vector<Failure> failures) override {
+        for (Failure failure : failures) {
             string prefix;
-            if (item.getLevel() == 0) {
+            if (failure.getLevel() == 0) {
                 prefix = "    * ";
             } else {
                 prefix = "      - ";
             }
 
-            cout << prefix << item.getMessage() << endl;
+            cout << prefix << failure.getMessage() << endl;
         }
     }
 };

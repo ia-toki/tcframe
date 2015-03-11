@@ -37,13 +37,13 @@ protected:
 
     static void checkNoEof(istream& in, string realName) {
         if (in.peek() == char_traits<char>::eof()) {
-            throw TypeException("Cannot parse for variable `" + realName + "`. Found: <EOF>");
+            throw ParsingException("Cannot parse for variable `" + realName + "`. Found: <EOF>");
         }
     }
 
     static void checkNoWhitespace(istream& in, string realName) {
         if (isspace(in.peek())) {
-            throw TypeException("Cannot parse for variable `" + realName + "`. Found: <whitespace>");
+            throw ParsingException("Cannot parse for variable `" + realName + "`. Found: <whitespace>");
         }
     }
 
@@ -62,7 +62,7 @@ protected:
             string found;
             in >> found;
 
-            throw TypeException("Cannot parse for variable `" + realName + "`. Found: '" + found + "'");
+            throw ParsingException("Cannot parse for variable `" + realName + "`. Found: '" + found + "'");
         }
     }
 

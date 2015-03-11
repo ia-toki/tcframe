@@ -8,8 +8,9 @@ using std::istringstream;
 using std::ostringstream;
 using tcframe::HorizontalVector;
 using tcframe::Matrix;
+using tcframe::ParsingException;
+using tcframe::PrintingException;
 using tcframe::Scalar;
-using tcframe::TypeException;
 using tcframe::VerticalVector;
 
 TEST(ScalarTest, Construction) {
@@ -39,7 +40,7 @@ TEST(ScalarTest, FailedParsingBecauseWhitespace) {
     try {
         wrappedX.parseFrom(sin);
         FAIL();
-    } catch (TypeException& e) {
+    } catch (ParsingException& e) {
         EXPECT_EQ("Cannot parse for variable `X`. Found: <whitespace>", e.getMessage());
     }
 }
@@ -53,7 +54,7 @@ TEST(ScalarTest, FailedParsingBecauseOverflow) {
     try {
         wrappedX.parseFrom(sin);
         FAIL();
-    } catch (TypeException& e) {
+    } catch (ParsingException& e) {
         EXPECT_EQ("Cannot parse for variable `X`. Found: '12345678901234567890'", e.getMessage());
     }
 }
@@ -67,7 +68,7 @@ TEST(ScalarTest, FailedParsingBecauseTypeMismatch) {
     try {
         wrappedX.parseFrom(sin);
         FAIL();
-    } catch (TypeException& e) {
+    } catch (ParsingException& e) {
         EXPECT_EQ("Cannot parse for variable `X`. Found: 'abc123'", e.getMessage());
     }
 }
@@ -81,7 +82,7 @@ TEST(ScalarTest, FailedParsingBecauseEof) {
     try {
         wrappedX.parseFrom(sin);
         FAIL();
-    } catch (TypeException& e) {
+    } catch (ParsingException& e) {
         EXPECT_EQ("Cannot parse for variable `X`. Found: <EOF>", e.getMessage());
     }
 }
@@ -142,7 +143,7 @@ TEST(HorizontalVectorTest, FailedParsingAndAdding) {
         sin.get();
         wrappedV.parseAndAddElementFrom(sin);
         FAIL();
-    } catch (TypeException& e) {
+    } catch (ParsingException& e) {
         EXPECT_EQ("Cannot parse for variable `V[1]`. Found: 'a'", e.getMessage());
     }
 }
@@ -211,7 +212,7 @@ TEST(VerticalVectorTest, FailedParsingAndAdding) {
         sin.get();
         wrappedV.parseAndAddElementFrom(sin);
         FAIL();
-    } catch (TypeException& e) {
+    } catch (ParsingException& e) {
         EXPECT_EQ("Cannot parse for variable `V[2]`. Found: 'a'", e.getMessage());
     }
 }
@@ -287,7 +288,7 @@ TEST(MatrixTest, FailedParsingAndAdding) {
         wrappedG.addRow();
         wrappedG.parseAndAddColumnElementFrom(sin);
         FAIL();
-    } catch (TypeException& e) {
+    } catch (ParsingException& e) {
         EXPECT_EQ("Cannot parse for variable `G[1][0]`. Found: 'a'", e.getMessage());
     }
 

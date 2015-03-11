@@ -2,7 +2,6 @@
 #define TCFRAME_EXCEPTION_H
 
 #include "failure.hpp"
-#include "util.hpp"
 
 #include <exception>
 #include <string>
@@ -16,64 +15,82 @@ namespace tcframe {
 
 class NotImplementedException : public exception { };
 
-class TestCaseException : public exception {
+class GenerationException : public exception {
 public:
-    virtual ~TestCaseException() { }
+    virtual ~GenerationException() { }
 
-    TestCaseException(TestCaseFailure* failure)
-            : failure(failure) { }
+    vector<Failure> getFailures() {
+        if (message != "") {
+            return {Failure(message, 0)};
+        } else {
+            return failures;
+        }
+    }
 
-    TestCaseFailure* getFailure() {
-        return failure;
+    string getMessage() {
+        return message;
+    }
+
+protected:
+    GenerationException(string message) {
+        this->message = message;
+    }
+
+    GenerationException(vector<Failure> failures) {
+        this->failures = failures;
     }
 
 private:
-    TestCaseFailure* failure;
+    string message;
+    vector<Failure> failures;
 };
 
-class SubtaskException : public TestCaseException {
+class IOFormatException : public GenerationException {
 public:
-    SubtaskException(SubtaskFailure* failure)
-            : TestCaseException(failure) { }
-};
-
-class IOFormatException : public TestCaseException {
-public:
-    IOFormatException(IOFormatFailure* failure)
-            : TestCaseException(failure) { }
-
     IOFormatException(string message)
-            : TestCaseException(new IOFormatFailure(message)) { }
+            : GenerationException(message) { }
 
-    string getMessage() {
-        return static_cast<IOFormatFailure*>(getFailure())->getMessage();
-    }
+    IOFormatException(vector<Failure> failures)
+            : GenerationException(failures) { }
 };
 
-class IOSegmentException : public TestCaseException {
+class TestCaseException : public GenerationException {
 public:
-    IOSegmentException(IOSegmentFailure* failure)
-            : TestCaseException(failure) { }
+    virtual ~TestCaseException() { }
 
-    IOSegmentException(string message)
-            : TestCaseException(new IOSegmentFailure(message)) { }
+protected:
+    TestCaseException(string message)
+            : GenerationException(message) { }
 
-    string getMessage() {
-        return static_cast<TypeFailure*>(getFailure())->getMessage();
-    }
+    TestCaseException(vector<Failure> failures)
+            : GenerationException(failures) { }
 };
 
-class TypeException : public TestCaseException {
+class ParsingException : public TestCaseException {
 public:
-    TypeException(TypeFailure* failure)
-            : TestCaseException(failure) { }
+    ParsingException(string message)
+            : TestCaseException(message) { }
 
-    TypeException(string message)
-            : TestCaseException(new TypeFailure(message)) { }
+    ParsingException(vector<Failure> failures)
+            : TestCaseException(failures) { }
+};
 
-    string getMessage() {
-        return static_cast<TypeFailure*>(getFailure())->getMessage();
-    }
+class PrintingException : public TestCaseException {
+public:
+    PrintingException(string message)
+            : TestCaseException(message) { }
+
+    PrintingException(vector<Failure> failures)
+            : TestCaseException(failures) { }
+};
+
+class SubtaskSatisfiabilityException : public TestCaseException {
+public:
+    SubtaskSatisfiabilityException(string message)
+            : TestCaseException(message) { }
+
+    SubtaskSatisfiabilityException(vector<Failure> failures)
+            : TestCaseException(failures) { }
 };
 
 }
