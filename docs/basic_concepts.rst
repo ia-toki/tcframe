@@ -382,6 +382,18 @@ for problems without subtasks. For problems with subtasks:
         }, {1, 3});
     }
 
+Main function
+*************
+
+After specifying problem and generator, write the **main()** function as follows:
+
+.. sourcecode:: cpp
+
+    int main() {
+        Generator gen;
+        return gen.generate();
+    }
+
 Compiling generator program
 ---------------------------
 
