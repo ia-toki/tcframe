@@ -37,6 +37,11 @@ protected:
     virtual void Subtask3() { throw NotImplementedException(); }
     virtual void Subtask4() { throw NotImplementedException(); }
     virtual void Subtask5() { throw NotImplementedException(); }
+    virtual void Subtask6() { throw NotImplementedException(); }
+    virtual void Subtask7() { throw NotImplementedException(); }
+    virtual void Subtask8() { throw NotImplementedException(); }
+    virtual void Subtask9() { throw NotImplementedException(); }
+    virtual void Subtask10() { throw NotImplementedException(); }
 
     vector<Subtask*> getSubtasks() {
         try {
@@ -71,7 +76,12 @@ private:
             &BaseProblem::Subtask2,
             &BaseProblem::Subtask3,
             &BaseProblem::Subtask4,
-            &BaseProblem::Subtask5
+            &BaseProblem::Subtask5,
+            &BaseProblem::Subtask6,
+            &BaseProblem::Subtask7,
+            &BaseProblem::Subtask8,
+            &BaseProblem::Subtask9,
+            &BaseProblem::Subtask10,
     };
 };
 

@@ -99,6 +99,11 @@ protected:
     virtual void TestGroup3() { throw NotImplementedException(); }
     virtual void TestGroup4() { throw NotImplementedException(); }
     virtual void TestGroup5() { throw NotImplementedException(); }
+    virtual void TestGroup6() { throw NotImplementedException(); }
+    virtual void TestGroup7() { throw NotImplementedException(); }
+    virtual void TestGroup8() { throw NotImplementedException(); }
+    virtual void TestGroup9() { throw NotImplementedException(); }
+    virtual void TestGroup10() { throw NotImplementedException(); }
 
 private:
     Logger* logger;
@@ -117,7 +122,12 @@ private:
             &BaseGenerator::TestGroup2,
             &BaseGenerator::TestGroup3,
             &BaseGenerator::TestGroup4,
-            &BaseGenerator::TestGroup5
+            &BaseGenerator::TestGroup5,
+            &BaseGenerator::TestGroup6,
+            &BaseGenerator::TestGroup7,
+            &BaseGenerator::TestGroup8,
+            &BaseGenerator::TestGroup9,
+            &BaseGenerator::TestGroup10
     };
 
     vector<TestGroup*> getTestData() {
