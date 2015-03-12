@@ -46,6 +46,14 @@ This component is defined by overriding the method **BaseProblem::Config()**. In
 
   If not specified, the default slug is **problem**.
 
+For example:
+
+.. sourcecode:: cpp
+
+    void Config() {
+        setSlug("helloworld");
+    }
+
 Input variables
 ***************
 
@@ -263,6 +271,15 @@ This component is defined by overriding the method **BaseGenerator::Config()**. 
       solutionExecutionCommand < [input filename] > [output filename]
 
   If not specified, the default command is **./solution**.
+
+For example:
+
+.. sourcecode:: cpp
+
+    void Config() {
+        setBaseDir("testdata");
+        setSolution("java Solution");
+    }
 
 Test cases
 **********
