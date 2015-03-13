@@ -67,9 +67,13 @@ There are three types of variables that are supported:
   Variables of built-in integral types (**int**, **long long**, **char**, etc.), built-in floating-point types
   (**float**, **double**), and **std::string**.
 
+  |
+
 - **Vector**
 
   **std::vector<T>**, where **T** is a scalar type as defined above.
+
+  |
 
 - **Matrix**
 
@@ -111,7 +115,7 @@ There are three types of segments that are supported:
       void InputFormat() {
           LINE(N);
           EMPTY_LINE();
-          LINE(A % SIZE(N));
+          LINE(A % SIZE(3));
           LINE(M, B % SIZE(M));
       }
 
@@ -143,7 +147,7 @@ There are three types of segments that are supported:
           LINES(X, Y) % SIZE(N);
       }
 
-  With V = {1, 2}, X = {100, 110}, Y = {200, 210}, N = 2, the above segments will produce:
+  With V = {1, 2}, X = {100, 110, 120}, Y = {200, 210, 220}, N = 3, the above segments will produce:
 
   ::
 
@@ -151,6 +155,7 @@ There are three types of segments that are supported:
       2
       100 200
       110 210
+      120 220
 
 - **Grid segment**
 
@@ -190,6 +195,8 @@ variables. There are two ways for defining constraints:
 - **Without subtasks**
 
   Override the method **BaseProblem::Constraints()**.
+
+  |
 
 - **With subtasks**
 
@@ -260,6 +267,8 @@ This component is defined by overriding the method **BaseGenerator::Config()**. 
 
   If not specified, the default directory name is **tc**.
 
+  |
+
 - **setSolution(string solutionExecutionCommand)**
 
   Sets the command for executing the official solution. This will be used for generating test case output files. For
@@ -320,6 +329,8 @@ defining constraints:
   - Test Group 1: assigned to subtasks 1, 2, and 3
   - Test Group 2: assigned to subtasks 2 and 3
   - Test Group 3: assigned to subtask 3
+
+  |
 
   To define test groups, override each of the methods **BaseGenerator::TestGroupX()**, where **X** is a positive integer
   denoting the test group number. For the current version, **X** can only be at most 10. Then, call
@@ -422,10 +433,14 @@ Generation can fail due to several reasons:
 
   In this case, no test cases will be generated.  For example: using scalar variable for a grid segment.
 
+  |
+
 - **Invalid input variable states**
 
   For example: a grid segment requires that the size is 2 x 3, but after applying the test case definition, the matrix
   consists of 3 x 4 elements.
+
+  |
 
 - **Unsatisfied constraints/subtasks**
 
