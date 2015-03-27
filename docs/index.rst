@@ -10,4 +10,5 @@ Contents:
    installation
    basic_concepts
    advanced_concepts
+   api_ref
    credits

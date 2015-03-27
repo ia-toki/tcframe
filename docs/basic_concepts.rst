@@ -1,403 +1,320 @@
 Basic concepts
 ==============
 
-Writing generator program
--------------------------
+Let's learn how to write a generator using tcframe with this basic tutorial. Consider the following example problem.
 
-To write a generator using **tcframe** framework, we need to define two specifications: a *problem specification* and a
-*generator specification*. Both specifications are to be written in a file called *generator program*.
+**Description**
 
-The generator program must include **tcframe**'s main header, as follows:
+You are given integers N and K, and an array consisting of N integers. Compute the largest possible product of any K elements of the array! Each element can be used more than once.
+
+**Input Format**
+
+The first line contains two integers N and K. The second line contains N space-separated integers: the elements of the array.
+
+**Output Format**
+
+A single line containing the required product.
+
+**Sample Input**
+
+::
+
+    5 3
+    0 1 -1 2 -2
+
+**Sample Output**
+
+::
+
+    8
+
+**Subtask 1:**
+
+- N = 1
+- 1 <= K <= 100
+- -100000 <= A[i] <= 100000
+
+**Subtask 2:**
+
+- 1 <= N <= 100
+- K = 1
+- -100000 <= A[i] <= 100000
+
+**Subtask 3:**
+
+- 1 <= N <= 100
+- 1 <= K <= 100
+- -100000 <= A[i] <= 100000
+
+We will be writing a test cases generator for this problem. Create a C++ file, for example, **generator.cpp**.
+
+First of all, we need to include the main tcframe header file:
 
 .. sourcecode:: cpp
 
     #include "tcframe/tcframe.hpp"
     using namespace tcframe;
 
+Then, we will need to write specifications as will be explained in the next sections.
+
 Problem specification
-~~~~~~~~~~~~~~~~~~~~~
+---------------------
 
-A problem specification is defined by writing a class that inherits **BaseProblem**. For simplicity, just name the class
-**Problem**.
+The first step is to write a **problem specification** class. It is basically a class that represents a problem's test case variables, I/O format, and the required constraints/subtasks.
 
-Here is a template of a problem specification.
+Create a class that inherits **BaseProblem**. The convention is to name the class **Problem**:
 
 .. sourcecode:: cpp
 
     class Problem : public BaseProblem {
     protected:
 
-        // component specifications
+        // components here
 
     };
 
-A problem specification consists of several components:
+A problem specification consists of several components. Note that publicly defined components must all go to the protected section of the class. You are allowed to write private helper variables and/or methods, of course.
 
-Configuration
-*************
+Problem configuration
+---------------------
 
-This component is defined by overriding the method **BaseProblem::Config()**. Inside this method, you can call:
-
-- **setSlug(string slug)**
-
-  Sets the *slug* of the problem. A slug is a nickname or code for the problem. The produced test case filenames will
-  have the slug as prefix. For example, if the slug is **helloworld** then one valid test case filename is
-  **helloworld_1.in**.
-
-  If not specified, the default slug is **problem**.
-
-For example:
+This component consists of configuration of several aspects of the problem. To define this component, override the method **void BaseProblem::Config()**. For example, for this problem, we want that the slug (i.e., file prefix) for the test cases to be "k-product".
 
 .. sourcecode:: cpp
 
     void Config() {
-        setSlug("helloworld");
+        setSlug("k-product");
     }
 
+The complete reference of configurable aspects of a problem can be found here: :ref:`Problem configuration API reference <api-ref-problem-configuration>`.
+
 Input variables
-***************
+---------------
 
-Everything that will be included in test case input files must be declared as variables. The variables have to be
-declared as member fields inside the **protected** (not **private**) section of the problem class.
+This component is a collection of variables which compose test cases inputs. They can be usually found in the input format section in the problem statement. For this problem, we have three input variables: **N**, **K**, and **A**. The input variables are defined as protected member variables.
 
-There are three types of variables that are supported:
+In this problem, we have two scalars (**N**, **K**) and one vector (**A**) as the input variables. We define them as follows:
 
-- **Scalar**
+.. sourcecode:: cpp
 
-  Variables of built-in integral types (**int**, **long long**, **char**, etc.), built-in floating-point types
-  (**float**, **double**), and **std::string**.
+    int N;
+    int K;
+    vector<int> A;
 
-  |
-
-- **Vector**
-
-  **std::vector<T>**, where **T** is a scalar type as defined above.
-
-  |
-
-- **Matrix**
-
-  **std::vector<std::vector<T>>**, where **T** is a scalar type as defined above.
-
+The complete reference of input variables can be found here: :ref:`Input variables API reference <api-ref-input-variables>`.
 
 Input format
-************
+------------
 
-This component specifies how the input variables should be printed in test case input files. The format is specified in
-terms of consecutive input **segment**\ s. The segments are declared inside an overriden **BaseProblem::InputFormat()**
-method.
+This component specifies how the input variables should be printed in test case input files. To define this component, override the method **void BaseProblem::InputFormat()**. The format is specified in terms of consecutive input **segment**\ s. Basically an input segment arranges the layout of several input variables.
 
-There are three types of segments that are supported:
+A test case input file for this problem consists of a single containing **N** and **K**, followed by a single line containing space-separated elements of **A**. We can define that format as follows:
 
-- **Line segment**
+.. sourcecode:: cpp
 
-  Defines a single line containing space-separated scalar or vector variables. In case of vector variables, the elements
-  are separated by spaces as well.
+    void InputFormat() {
+        LINE(N, K);
+        LINE(A % SIZE(N));
+    }
 
-  To define a line segment, use **LINE()** macro as follows:
-
-  .. sourcecode:: cpp
-
-      LINE([comma-separated elements]);
-
-  where an *element* is one of:
-
-  - *<scalar variable name>*.
-  - *<vector variable name>* **% SIZE(**\ *<number of elements>*\ **)**. The number of elements can be constant or a
-    scalar variable.
-
-  To specify an empty line, use **EMPTY_LINE()** macro instead.
-
-  For example:
-
-  .. sourcecode:: cpp
-
-      void InputFormat() {
-          LINE(N);
-          EMPTY_LINE();
-          LINE(A % SIZE(3));
-          LINE(M, B % SIZE(M));
-      }
-
-  With N = 2, A = {1, 2, 3}, M = 2, B = {7, 8}, the above segments will produce:
-
-  ::
-
-      2
-
-      1 2 3
-      2 7 8
-
-- **Lines segment**
-
-  Defines multiple lines, each consisting space-separated elements of given vector variables.
-
-  To define a lines segment, use **LINES()** macro as follows:
-
-  .. sourcecode:: cpp
-
-      LINES([comma-separated vector variable names]) % SIZE([number of elements]);
-
-  For example:
-
-  .. sourcecode:: cpp
-
-      void InputFormat() {
-          LINES(V) % SIZE(2);
-          LINES(X, Y) % SIZE(N);
-      }
-
-  With V = {1, 2}, X = {100, 110, 120}, Y = {200, 210, 220}, N = 3, the above segments will produce:
-
-  ::
-
-      1
-      2
-      100 200
-      110 210
-      120 220
-
-- **Grid segment**
-
-  Defines a grid consisting elements of a given matrix variable. If the given matrix variable is of type **char**, the
-  elements in each row is not space-separated, otherwise they are space-separated.
-
-  To define a grid segment, use **GRID()** macro as follows:
-
-  .. sourcecode:: cpp
-
-      GRID([matrix variable name]) % SIZE([number of rows], [number of columns]);
-
-  For example:
-
-  .. sourcecode:: cpp
-
-      void InputFormat() {
-          GRID(G) % SIZE(2, 2);
-          GRID(H) % SIZE(R, C);
-      }
-
-  With G = {{'a', 'b'}, {'c', 'd'}}, H = {{1, 2, 3}, {4, 5, 6}}, R = 2, C = 3, the above segments will produce:
-
-  ::
-
-      ab
-      cd
-      1 2 3
-      4 5 6
+The complete reference of input segments can be found here: :ref:`Input segments API reference <api-ref-input-segments>`.
 
 Constraints
-***********
+-----------
 
 This components specifies the constraints of the problem; i.e., the conditions that must be satisfied by the input
-variables. There are two ways for defining constraints:
+variables. Two types of problems are supported: the ones without subtasks, and the ones with subtasks.
 
-- **Without subtasks**
+**For problems without subtasks**\ : Override the method **void BaseProblem::Constraints()**.
 
-  Override the method **BaseProblem::Constraints()**.
+**For problems with subtasks**\ : Override each of the methods **void BaseProblem::SubtaskX()**, where **X** is a positive integer denoting the subtask number.
 
-  |
+.. note::
 
-- **With subtasks**
+    As of this version, you can define up to 10 subtasks: **Subtask1()** .. **Subtask10()**.
 
-  Override each of the methods **BaseProblem::SubtaskX()**, where **X** is a positive integer denoting the subtask
-  number. For the current version, **X** can only be at most 10.
+Inside the overriden method(s), we can define the constraints. A constraint is defined with a **CONS()** macro containing a boolean expression.
 
-Inside the overriden method(s), you can define the constraints. A constraint is defined with a **CONS()** macro as
-follows:
+Let's define the subtasks for this problem.
 
 .. sourcecode:: cpp
 
-    CONS([predicate]);
+    void Subtask1() {
+        CONS(N == 1);
+        CONS(1 <= K && K <= 100);
+        CONS(eachElementBetween(A, -100000, 100000));
+    }
 
-where *predicate* is a boolean expression.
-
-For example:
-
-.. sourcecode:: cpp
-
-    void Constraints() {
+    void Subtask2() {
         CONS(1 <= N && N <= 100);
-        CONS(1 <= A && A <= 1000);
-        CONS(A <= B && B <= 1000);
-        CONS(doesNotHaveCycles());
+        CONS(K == 1);
+        CONS(eachElementBetween(A, -100000, 100000));
+    }
+
+    void Subtask3() {
+        CONS(1 <= N && N <= 100);
+        CONS(1 <= K && K <= 100);
+        CONS(eachElementBetween(A, -100000, 100000));
+    }
+
+where **eachElementBetween()** is a private helper method, defined as follows:
+
+.. sourcecode:: cpp
+
+    bool eachElementBetween(const vector<int>& A, int lo, int hi) {
+        for (int x : A) {
+            if (x < lo || x > hi) {
+                return false;
+            }
+        }
+        return true;
     }
 
 .. note::
-    As of this version, there is no easy way to define a predicate on each of the elements of a vector or matrix. Use
-    for-loop instead as a workaround:
 
-    .. sourcecode:: cpp
+    As of this version, there is currently no easy way to test a predicate for each element of a vector. The workaround is to write a helper method ourselves, like what we did above.
 
-        void Constraints() {
-            CONS(1 <= N && N <= 100);
+The complete reference of input segments can be found here: :ref:`Constraints API reference <api-ref-constraints>`.
 
-            for (int i = 0; i < N; i++) {
-                CONS(1 <= P[i] <= 1000000000);
-            }
+We have now completed writing a problem specification class. In summary, our class should look like this:
+
+.. sourcecode:: cpp
+
+    class Problem : public BaseProblem {
+    protected:
+        int N;
+        int K;
+        vector<int> A;
+
+        void Config() {
+            setSlug("k-product");
         }
 
+        void InputFormat() {
+            LINE(N, K);
+            LINE(A % SIZE(N));
+        }
+
+        void Subtask1() {
+            CONS(N == 1);
+            CONS(1 <= K && K <= 100);
+            CONS(eachElementBetween(A, -100000, 100000));
+        }
+
+        void Subtask2() {
+            CONS(1 <= N && N <= 100);
+            CONS(K == 1);
+            CONS(eachElementBetween(A, -100000, 100000));
+        }
+
+        void Subtask3() {
+            CONS(1 <= N && N <= 100);
+            CONS(1 <= K && K <= 100);
+            CONS(eachElementBetween(A, -100000, 100000));
+        }
+
+    private:
+        bool eachElementBetween(const vector<int>& A, int lo, int hi) {
+            for (int x : A) {
+                if (x < lo || x > hi) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    };
+
+The nice thing is that this problem specification class is really similar to the problem statement! This class will then serve as a "contract" for the generator, which we will write next.
+
 Generator specification
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 
-A generator specification is defined by writing a class that inherits **BaseGenerator<T>**, where **T** is a problem
-specification class (which inherits **BaseProblem**). For simplicity, just name the class **Generator**.
+The next step is to write a **generator specification** class.  It is basically a class that represents a collection of (randomly generated) test cases, based on the specification defined in the problem specification class.
 
-Here is a template of a generator specification.
+Create a class that inherits **BaseGenerator<T>**, where **T** is the problem specification class. The convention is to name the class **Generator**:
 
 .. sourcecode:: cpp
 
     class Generator : public BaseGenerator<Problem> {
     protected:
 
-        // component specifications
+        // components here
 
     };
 
-A generator specification consists of several components:
+Similar to a problem specification, a generator specification consists of several components, which must go to the protected section of the class.
 
-Configuration
-*************
+Generator configuration
+-----------------------
 
-This component is defined by overriding the method **BaseGenerator::Config()**. Inside this method, you can call:
+This component consists of configuration of several aspects of the problem. To define this component, override the method void BaseGenerator::Config(). Currently, we can define where the test cases are output, and which solution to run on the test case input files.
 
-- **setBaseDir(string directoryName)**
-
-  Sets the directory for the generated test case files, relative to the location of the generator program.
-
-  If not specified, the default directory name is **tc**.
-
-  |
-
-- **setSolution(string solutionExecutionCommand)**
-
-  Sets the command for executing the official solution. This will be used for generating test case output files. For
-  each input files, this will be executed:
-
-
-  .. sourcecode:: bash
-
-      solutionExecutionCommand < [input filename] > [output filename]
-
-  If not specified, the default command is **./solution**.
-
-For example:
+For this problem:
 
 .. sourcecode:: cpp
 
     void Config() {
-        setBaseDir("testdata");
-        setSolution("java Solution");
+        setBaseDir("tc");
+        setSolution("./solution");
     }
+
+.. note::
+
+    For this tutorial, please create an executable file named "solution" in the same directory as generator.cpp. It could be any solution -- for example, a solution that just prints Hello World.
+
+The complete reference of generator configuration can be found here: :ref:`Generator configuration API reference <api-ref-generator-configuration>`.
 
 Test cases
-**********
+----------
 
-This component specifies the values of the problem's input variables, for each test case. There are two ways for
-defining constraints:
+This component specifies a collection of values of the problem's input variables, each of which constitute a test case. Two types of problems are supported: the ones without subtasks, and the ones with subtasks.
 
-- **For problems without subtasks**
+**For problems without subtasks:** Override the method **BaseGenerator::TestCases()**. The content of this method will be explained shortly.
 
-  Override the method **BaseGenerator::TestCases()**. Inside this method, you can define the test cases. A test case
-  is defined with a **CASE()** macro as follows:
+**For problems with subtasks:** The idea is that a test case must be able to be assigned to more than one subtasks. To support this, we introduce a concept called **test groups**. A test group is a set of test cases that are assigned to the same set of subtasks.
 
-  .. sourcecode:: cpp
+First, create a Venn diagram denoting the valid test cases for all subtasks. For this problem, the diagram will be like this:
 
-      CASE([comma-separated statement]);
+.. image:: venn-diagram.png
 
-  where a *statement* is either an assignment or function call. Each CASE() defines a single test case and should
-  assign valid values to all input variables.
+In order to have a strong set of test cases, we should create a test group for each **closed region** in the Venn diagram. In this case, we will have four test groups as follows:
 
-  For example:
+- Test group 1: consists of only one test case N = K = 1. Assign it to subtasks {1, 2, 3}.
+- Test group 2: generate test cases that satisfy N = 1; 2 <= K <= 100. Assign them to subtasks {1, 3}.
+- Test group 3: generate test cases that satisfy 2 <= N <= 100; K = 1. Assign them to subtasks {2, 3}.
+- Test group 4: generate test cases that satisfy 2 <= N, K <= 100. Assign them to subtasks {3}.
 
-  .. sourcecode:: cpp
+To define test groups, override each of the methods **BaseGenerator::TestGroupX()**, where **X** is a positive integer denoting the test group number. Then, call **assignToSubtasks(S)** method as the first statement, where **S** is a list of subtask numbers. The remaining content of test group methods are test case definitions which will be explained below.
 
-      void TestCases() {
-          CASE(N = 100, A = 1, B = 20);
-          CASE(N = rand() % 100, A = rand() % N, B = A * 2);
-      }
+.. note::
 
-- **For problems with subtasks**
+    As of this version, you can define up to 10 test groups: **TestGroup1()** .. **TestGroup10()**.
 
-  If the corresponding problem has subtasks, test cases should be divided into test groups. A test group is a set of
-  test cases that are assigned to the same set of subtasks. For example, suppose that there are 3 subtasks, with this
-  property: if a solution solves subtask i, it will automatically solve subtask j for all j < i as well. This means
-  a test case that is assigned to subtask i, must be assigned to subtask j for all j > i as well.
-
-  Using the concept of test groups, we can define the test cases as follows:
-
-  - Test Group 1: assigned to subtasks 1, 2, and 3
-  - Test Group 2: assigned to subtasks 2 and 3
-  - Test Group 3: assigned to subtask 3
-
-  |
-
-  To define test groups, override each of the methods **BaseGenerator::TestGroupX()**, where **X** is a positive integer
-  denoting the test group number. For the current version, **X** can only be at most 10. Then, call
-  **assignToSubtasks(S)** method as the first statement, where **S** is a list of subtask numbers. For example:
-
-  .. sourcecode:: cpp
-
-      void TestGroup1() {
-          assignToSubtasks({1, 2, 3});
-
-          CASE(N = 100, A = 1, B = 20);
-          CASE(N = rand() % 100, A = rand() % N, B = A * 2);
-      }
-
-For both cases (with and without subtasks), you can also specify sample test cases. To specify them, override the method
-**BaseGenerator::SampleTestCases()**. Inside this method, you can define sample test cases. A sample test case is
-defined with a **SAMPLE_CASE()** macro as follows:
+Inside the methods **TestCases()** or **TestGroupX()**, we can define the test cases. A test case is defined with a **CASE()** macro containing a list of assignment to an input variable or method call. Each CASE() defines a single test case and should assign valid values to all input variables. For example:
 
 .. sourcecode:: cpp
 
-    SAMPLE_CASE([list of lines]);
+    void TestGroup2() {
+        assignToSubtasks({1, 3});
 
-for problem without subtasks, and
-
-.. sourcecode:: cpp
-
-    SAMPLE_CASE([list of lines], [list of subtask numbers]);
-
-for problem with subtasks.
-
-Here, a sample test case is not defined by assigning values to the input variables. Instead, it is defined as an exact
-literal string, given as list of lines. This is so that we can be sure that the sample test case mentioned in problem
-statement and in the generator program match.
-
-For example suppose we want to define sample test case:
-
-::
-
-    1 2
-    3 4 5
-
-We can define that in the following way:
-
-.. sourcecode:: cpp
-
-    void SampleTestCases() {
-        SAMPLE_CASE({
-            "1 2",
-            "3 4 5"
-        });
+        CASE(N = 1, K = 3, randomArray());
+        CASE(N = 1, K = 100, randomArray());
     }
 
-for problems without subtasks. For problems with subtasks:
+where **randomArray()** is a private helper method that assign random values (between -100000 and 100000) to each of the element A[0] .. A[N-1].
 
-.. sourcecode:: cpp
+.. note::
 
-    void SampleTestCases() {
-        SAMPLE_CASE({
-            "1 2",
-            "3 4 5"
-        }, {1, 3});
-    }
+    Yes, we can access the input variables directly inside the generator, even though they belong to the problem specification class!
+
+We will also define sample test cases. Each sample test case is independent to each other, and they are not included in any test group. Therefore, for problems with subtasks, we must assign a set of subtasks for each sample test case.
+
+The complete reference of test case and sample test case definitions can be found here: :ref:`Test cases API reference <api-ref-test cases>`.
 
 Main function
-*************
+-------------
 
-After specifying problem and generator, write the **main()** function as follows:
+After writing problem and generator specification classes, write the **main()** function as follows:
 
 .. sourcecode:: cpp
 
@@ -405,6 +322,137 @@ After specifying problem and generator, write the **main()** function as follows
         Generator gen;
         return gen.generate();
     }
+
+The complete generator program for this problem is summarized below. Here, we are using a random number generator using the new C++11 **<random>** library, and the **randomArray()** private method as explained before.
+
+Note that for vector input variables, don't forget to clear them before assigning the values.
+
+.. sourcecode:: cpp
+
+    #include "tcframe/tcframe.hpp"
+    using namespace tcframe;
+
+    #include <random>
+    #include <vector>
+    using namespace std;
+
+    class Problem : public BaseProblem {
+    protected:
+        int N;
+        int K;
+        vector<int> A;
+
+        void Config() {
+            setSlug("k-product");
+        }
+
+        void InputFormat() {
+            LINE(N, K);
+            LINE(A % SIZE(N));
+        }
+
+        void Subtask1() {
+            CONS(N == 1);
+            CONS(1 <= K && K <= 100);
+            CONS(eachElementBetween(A, -100000, 100000));
+        }
+
+        void Subtask2() {
+            CONS(1 <= N && N <= 100);
+            CONS(K == 1);
+            CONS(eachElementBetween(A, -100000, 100000));
+        }
+
+        void Subtask3() {
+            CONS(1 <= N && N <= 100);
+            CONS(1 <= K && K <= 100);
+            CONS(eachElementBetween(A, -100000, 100000));
+        }
+
+    private:
+        bool eachElementBetween(const vector<int>& A, int lo, int hi) {
+            for (int x : A) {
+                if (x < lo || x > hi) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    };
+
+    class Generator : public BaseGenerator<Problem> {
+    public:
+        Generator() {
+            mt_rand = mt19937(12345 /* some seed value */);
+        }
+
+    protected:
+        void Config() {
+            setBaseDir("tc");
+            setSolution("./solution");
+        }
+
+        void SampleTestCases() {
+            SAMPLE_CASE({
+                "5 3",
+                "0 1 -1 2 -2"
+            }, {3});
+        }
+
+        void TestGroup1() {
+            assignToSubtasks({1, 2, 3});
+
+            CASE(N = 1, K = 1, randomArray());
+        }
+
+        void TestGroup2() {
+            assignToSubtasks({1, 3});
+
+            CASE(N = 1, K = 2, randomArray());
+            CASE(N = 1, K = 10, randomArray());
+            CASE(N = 1, K = 100, randomArray());
+        }
+
+        void TestGroup3() {
+            assignToSubtasks({2, 3});
+
+            CASE(N = 2, K = 1, randomArray());
+            CASE(N = 10, K = 1, randomArray());
+            CASE(N = 100, K = 1, randomArray());
+        }
+
+        void TestGroup4() {
+            assignToSubtasks({3});
+
+            CASE(N = 2, K = 2, randomArray());
+            CASE(N = 10, K = 10, randomArray());
+            CASE(N = 42, K = 58, randomArray());
+            CASE(N = 100, K = 100, randomArray());
+            CASE(N = 100, K = 100, randomArray());
+            CASE(N = 100, K = 100, randomArray());
+        }
+
+    private:
+        mt19937 mt_rand; // Mersenne Twister pseudo-random generator
+
+        void randomArray() {
+            uniform_int_distribution<int> dist(-100000, 100000);
+
+            A.clear(); // important!
+            for (int i = 0; i < N; i++) {
+                A.push_back(dist(mt_rand));
+            }
+        }
+    };
+
+    int main() {
+        Generator gen;
+        return gen.generate();
+    }
+
+.. note::
+
+    The next versions will have convenient wrapper for generating random numbers.
 
 Compiling generator program
 ---------------------------
@@ -414,6 +462,16 @@ Suppose that your generator program is **generator.cpp**. Compile it using this 
 .. sourcecode:: bash
 
     g++ -I[path to tcframe]/include -std=c++11 -o generator generator.cpp
+
+For example:
+
+.. sourcecode:: bash
+
+    g++ -I/home/fushar/tcframe/include -std=c++11 -o generator generator.cpp
+
+.. note::
+
+    The current version needs GCC version 4.9.
 
 Running generator program
 -------------------------
@@ -425,23 +483,15 @@ Just run
     ./generator
 
 The status of the generation of each test case will be output to the standard output. For each successful test cases,
-the input-output file pair will be stored in the specified base directory (by default, it is **tc**).
+the input-output file pair will be stored in the specified base directory (by default, it is "tc").
 
 Generation can fail due to several reasons:
 
-- **Invalid input format**
+Invalid input format
+    In this case, no test cases will be generated.  For example: using scalar variable for a grid segment.
 
-  In this case, no test cases will be generated.  For example: using scalar variable for a grid segment.
+Invalid input variable states
+  For example: a grid segment requires that the size is 2 x 3, but after applying the test case definition, the matrix consists of 3 x 4 elements.
 
-  |
-
-- **Invalid input variable states**
-
-  For example: a grid segment requires that the size is 2 x 3, but after applying the test case definition, the matrix
-  consists of 3 x 4 elements.
-
-  |
-
-- **Unsatisfied constraints/subtasks**
-
-  The input variables do not conform to the constraints.
+Unsatisfied constraints/subtasks
+    The input variables do not conform to the constraints.

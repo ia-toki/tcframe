@@ -2,8 +2,37 @@ Introduction
 ============
 
 **tcframe** is a framework for generating test cases, designed especially for problems in competitive programming
-contests. Using **tcframe**, we only need to write a single C++ generator program (and of course an official solution).
-When run, the generator will produce the test case files.
+contests. If you are a problem author and want to create test cases for your problem, you are on the right site!
+
+Philosophy
+----------
+
+First, let's begin with a philosophy on why this project is useful.
+
+**Why do we need to write generator for test cases?**
+
+- Writing test cases manually is error-prone and time-consuming.
+- We can easily distribute the test cases, as a single, small file.
+- We can easily modify test case values in the future, for example when there are changes in the constraints.
+
+**Why do we need a test cases generation framework?**
+
+- Not all people know how to write a test cases generator.
+- To avoid writing repetitive and boring tasks, for example, creating test case files with appropriate numbering, running official solution against the test case input files, etc.
+- To make all problems in a contest have test cases generator programs with consistent format.
+
+For the above reasons, **tcframe** was developed.
+
+Features
+----------------
+
+As a framework, **tcframe** offers the following exciting features:
+
+- Excluding the official solution, we only need to write a single C++ program.
+- The generator program has a syntax that is easy to read.
+- The generator program is nicely structured in several parts, similar to the problem statement: input format, output format, constraints/subtasks, etc.
+- The resulting test cases are validated according to the specification constraints/subtasks.
+- All errors (for example: constraints unsatisfiability) are presented to the users in human-readable format so that they can easily fix the errors.
 
 Examples
 --------
