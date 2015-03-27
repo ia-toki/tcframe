@@ -11,3 +11,7 @@ Consult the documentation at https://tcframe.readthedocs.org/en/latest/.
 ### Credits
 
 **tcframe** is created by **Ashar Fuadi**. Contact me at fushar [at] gmail [dot] com if you have any question.
+
+### License
+
+**tcframe** is released under MIT license.

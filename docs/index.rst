@@ -12,3 +12,4 @@ Contents:
    advanced_concepts
    api_ref
    credits
+   license
