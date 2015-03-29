@@ -1,13 +1,15 @@
 #include "gtest/gtest.h"
 
+#include <sstream>
+
 #include "tcframe/tcframe.hpp"
+
+using std::ostringstream;
 
 using tcframe::Constraint;
 using tcframe::ConstraintsCollector;
 using tcframe::GridIOSegment;
-using tcframe::IOFormat;
-using tcframe::IOFormatsCollector;
-using tcframe::IOMode;
+using tcframe::IOFormatProvider;
 using tcframe::IOSegment;
 using tcframe::LineIOSegment;
 using tcframe::LinesIOSegment;
@@ -21,14 +23,14 @@ using tcframe::VectorSize;
 TEST(MacroTest, SIZE_IMPL1) {
     VectorSize vs = SIZE(2);
 
-    EXPECT_EQ(2, *vs.getSize());
+    EXPECT_EQ(2, vs.getSize());
 }
 
 TEST(MacroTest, SIZE_IMPL2) {
     MatrixSizes ms = SIZE(2, 3);
 
-    EXPECT_EQ(2, *ms.getRowsSize());
-    EXPECT_EQ(3, *ms.getColumnsize());
+    EXPECT_EQ(2, ms.getRowsSize());
+    EXPECT_EQ(3, ms.getColumnsize());
 }
 
 class ConstraintsCollectorTester : public ConstraintsCollector {
@@ -91,8 +93,16 @@ TEST(MacroTest, CASE) {
     EXPECT_EQ("(A = 42)", testGroups[1]->getTestCase(1)->getDescription());
 }
 
-class IOFormatsCollectorTester : public IOFormatsCollector {
+class IOFormatProviderTester : public IOFormatProvider {
 public:
+    IOFormatProviderTester() {
+        this->A = 1;
+        this->B = 2;
+        this->V = vector<int>{1, 2, 3, 4, 5};
+        this->W = vector<int>{6, 7, 8, 9};
+        this->G = vector<vector<int>>{ {0, 0, 0}, {1, 1, 1}};
+    }
+
     void test() {
         LINE(A, W % SIZE(4));
         LINES(V) % SIZE(5);
@@ -106,17 +116,14 @@ private:
     vector<vector<int>> G;
 };
 
-TEST(MacroTest, IOFormats) {
-    IOFormatsCollectorTester tester;
+TEST(MacroTest, IOSegments) {
+    IOFormatProviderTester tester;
+
+    ostringstream sout;
+
+    tester.beginPrintingFormat(&sout);
     tester.test();
+    tester.endPrintingFormat();
 
-    IOFormat* format = tester.collectFormat(IOMode::INPUT);
-    vector<IOSegment*> segments = format->getSegments();
-
-    ASSERT_EQ(4, segments.size());
-
-    EXPECT_NE(nullptr, dynamic_cast<LineIOSegment*>(segments[0]));
-    EXPECT_NE(nullptr, dynamic_cast<LinesIOSegment*>(segments[1]));
-    EXPECT_NE(nullptr, dynamic_cast<LineIOSegment*>(segments[2]));
-    EXPECT_NE(nullptr, dynamic_cast<GridIOSegment*>(segments[3]));
+    EXPECT_EQ("1 6 7 8 9\n1\n2\n3\n4\n5\n\n0 0 0\n1 1 1\n", sout.str());
 }

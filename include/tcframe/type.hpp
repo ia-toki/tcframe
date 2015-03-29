@@ -13,6 +13,7 @@
 using std::char_traits;
 using std::enable_if;
 using std::is_arithmetic;
+using std::is_reference;
 using std::is_same;
 using std::istream;
 using std::ostream;
@@ -105,7 +106,10 @@ protected:
 };
 
 template<typename T>
-using RequiresScalar = typename enable_if<is_arithmetic<T>::value || is_same<string, T>::value>::type;
+using RequiresScalar = typename enable_if<!is_reference<T>::value && (is_arithmetic<T>::value || is_same<string, T>::value)>::type;
+
+template<typename T>
+using RequiresNotScalar = typename enable_if<is_reference<T>::value || (!is_arithmetic<T>::value && !is_same<string, T>::value)>::type;
 
 template<typename T>
 class Scalar : public ScalarHorizontalVariable {

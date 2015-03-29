@@ -15,9 +15,9 @@ namespace tcframe {
 
 class NotImplementedException : public exception { };
 
-class GenerationException : public exception {
+class TestCaseException : public exception {
 public:
-    virtual ~GenerationException() { }
+    virtual ~TestCaseException() { }
 
     vector<Failure> getFailures() {
         if (message != "") {
@@ -32,11 +32,11 @@ public:
     }
 
 protected:
-    GenerationException(string message) {
+    TestCaseException(string message) {
         this->message = message;
     }
 
-    GenerationException(vector<Failure> failures) {
+    TestCaseException(vector<Failure> failures) {
         this->failures = failures;
     }
 
@@ -45,22 +45,10 @@ private:
     vector<Failure> failures;
 };
 
-class IOFormatException : public GenerationException {
+class IOFormatException : public TestCaseException {
 public:
-    IOFormatException(vector<Failure> failures)
-            : GenerationException(failures) { }
-};
-
-class TestCaseException : public GenerationException {
-public:
-    virtual ~TestCaseException() { }
-
-protected:
-    TestCaseException(string message)
-            : GenerationException(message) { }
-
-    TestCaseException(vector<Failure> failures)
-            : GenerationException(failures) { }
+    IOFormatException(string message)
+            : TestCaseException(message) { }
 };
 
 class ParsingException : public TestCaseException {

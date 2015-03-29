@@ -5,8 +5,10 @@
 #include "util.hpp"
 
 #include <string>
+#include <vector>
 
 using std::string;
+using std::vector;
 
 namespace tcframe {
 
@@ -30,24 +32,6 @@ public:
 private:
     string message;
     int level;
-};
-
-class FailuresCollector {
-public:
-    void addFailure(Failure failure) {
-        failures.push_back(failure);
-    }
-
-    void addFailures(vector<Failure> failures) {
-        this->failures.insert(this->failures.end(), failures.begin(), failures.end());
-    }
-
-    vector<Failure> collectFailures() {
-        return failures;
-    }
-
-private:
-    vector<Failure> failures;
 };
 
 }

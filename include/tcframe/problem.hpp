@@ -12,7 +12,7 @@ using std::vector;
 
 namespace tcframe {
 
-class BaseProblem : protected ConstraintsCollector, protected IOFormatsCollector {
+class BaseProblem : protected ConstraintsCollector, protected IOFormatProvider {
 protected:
     BaseProblem()
             : slug("problem") { }
@@ -61,11 +61,6 @@ protected:
 
             return ConstraintsCollector::collectSubtasks();
         }
-    }
-
-    IOFormat* getInputFormat() {
-        InputFormat();
-        return IOFormatsCollector::collectFormat(IOMode::INPUT);
     }
 
 private:

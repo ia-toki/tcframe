@@ -33,14 +33,6 @@ public:
     int generate() {
         logger->logIntroduction();
 
-        try {
-            inputFormat = TProblem::getInputFormat();
-        } catch (IOFormatException& e) {
-            logger->logInputFormatFailedResult();
-            logger->logFailures(e.getFailures());
-            return 1;
-        }
-
         subtasks = TProblem::getSubtasks();
         testData = getTestData();
 
@@ -114,8 +106,6 @@ private:
 
     vector<TestGroup*> testData;
     vector<Subtask*> subtasks;
-
-    IOFormat* inputFormat;
 
     vector<void(BaseGenerator::*)()> testGroupBlocks = {
             &BaseGenerator::TestGroup1,
@@ -201,7 +191,9 @@ private:
 
     void applySampleTestCase(SampleTestCase* testCase) {
         istringstream sin(testCase->getContent());
-        inputFormat->parseFrom(sin);
+        TProblem::beginParsingFormat(&sin);
+        TProblem::InputFormat();
+        TProblem::endParsingFormat();
     }
 
     void checkConstraints(TestCase* testCase) {
@@ -243,7 +235,11 @@ private:
 
     void generateTestCaseInput(string testCaseInputName) {
         ostream* testCaseInput = os->openForWriting(testCaseInputName);
-        inputFormat->printTo(*testCaseInput);
+
+        TProblem::beginPrintingFormat(testCaseInput);
+        TProblem::InputFormat();
+        TProblem::endPrintingFormat();
+
         delete testCaseInput;
     }
 

@@ -26,16 +26,8 @@ public:
 
     virtual void printTo(ostream& out) = 0;
     virtual void parseFrom(istream& in) = 0;
-    virtual void checkState() = 0;
 
 protected:
-    IOSegment(FailuresCollector* formatFailuresCollector)
-            : formatFailuresCollector(formatFailuresCollector) { }
-
-    void addFormatFailure(string message) {
-        formatFailuresCollector->addFailure(Failure(message, 0));
-    }
-
     static void parseSpaceFrom(istream& in, string lastRealName) {
         if (in.get() != ' ') {
             throw ParsingException("Expected: <space> after variable `" + lastRealName + "`");
@@ -51,25 +43,19 @@ protected:
             }
         }
     }
-
-private:
-    FailuresCollector* formatFailuresCollector;
 };
 
 class VectorSize {
 public:
-    VectorSize(int& size)
-            : size(&size) { }
+    VectorSize(int size)
+            : size(size) { }
 
-    VectorSize(int&& size)
-            : size(new int(size)) { }
-
-    int* getSize() {
+    int getSize() {
         return size;
     }
 
 private:
-    int* size;
+    int size;
 };
 
 template<typename T>
@@ -86,21 +72,27 @@ VectorWithSize<T> operator%(vector<T>& v, VectorSize size) {
 
 class LineIOSegment : public IOSegment {
 public:
-    LineIOSegment(string names, FailuresCollector* formatFailuresCollector)
-            : IOSegment(formatFailuresCollector) {
+    LineIOSegment(string names) {
         this->names = Util::split(names);
     }
 
-    template<typename T>
-    LineIOSegment& operator,(T& variable) {
-        addVariable(variable);
+    template<typename T, typename = RequiresScalar<T>>
+    LineIOSegment& operator,(T& scalar) {
+        variables.push_back(new Scalar<T>(scalar, names[variables.size()]));
+        vectorSizes.push_back(0);
         return *this;
     }
 
-    template<typename T>
-    LineIOSegment& operator,(T&& variable) {
-        addVariable(variable);
+    template<typename T, typename = RequiresScalar<T>>
+    LineIOSegment& operator,(VectorWithSize<T> vektorWithSize) {
+        variables.push_back(new HorizontalVector<T>(*vektorWithSize.vektor, names[variables.size()]));
+        vectorSizes.push_back(vektorWithSize.size.getSize());
         return *this;
+    }
+
+    template<typename T, typename = RequiresNotScalar<T>>
+    LineIOSegment& operator,(T) {
+        throw IOFormatException("Variable type of `" + names[variables.size()] + "` unsatisfied. Expected: basic scalar or string type, or vector of those types");
     }
 
     void printTo(ostream& out) override {
@@ -116,7 +108,7 @@ public:
             if (dynamic_cast<ScalarHorizontalVariable*>(variable) != nullptr) {
                 printScalarTo((ScalarHorizontalVariable*)variable, out);
             } else {
-                printVectorTo((VectorHorizontalVariable*)variable, *vectorSizes[i], out);
+                printVectorTo((VectorHorizontalVariable*)variable, vectorSizes[i], out);
             }
         }
         out << "\n";
@@ -133,7 +125,7 @@ public:
             if (dynamic_cast<ScalarHorizontalVariable*>(variable) != nullptr) {
                 parseScalarFrom((ScalarHorizontalVariable*)variable, in);
             } else {
-                parseVectorFrom((VectorHorizontalVariable*)variable, *vectorSizes[i], in);
+                parseVectorFrom((VectorHorizontalVariable*)variable, vectorSizes[i], in);
             }
         }
 
@@ -144,37 +136,10 @@ public:
         }
     }
 
-    void checkState() override {}
-
 private:
     vector<string> names;
     vector<HorizontalVariable*> variables;
-    vector<int*> vectorSizes;
-
-    template<typename T, typename = RequiresScalar<T>>
-    void addVariable(T& scalar) {
-        variables.push_back(new Scalar<T>(scalar, names[variables.size()]));
-        vectorSizes.push_back(nullptr);
-    }
-
-    template<typename T, typename = RequiresScalar<T>>
-    void addVariable(T&& scalar) {
-        T* newScalar = new T(scalar);
-        variables.push_back(new Scalar<T>(*newScalar, names[variables.size()]));
-        vectorSizes.push_back(nullptr);
-    }
-
-    template<typename T, typename = RequiresScalar<T>>
-    void addVariable(VectorWithSize<T> vektorWithSize) {
-        variables.push_back(new HorizontalVector<T>(*vektorWithSize.vektor, names[variables.size()]));
-        vectorSizes.push_back(vektorWithSize.size.getSize());
-    }
-
-    template<typename... T>
-    void addVariable(T...) {
-        addFormatFailure("Variable type of `" + names[variables.size()] + "` unsatisfied. Expected: basic scalar or string type, or vector of those types");
-        variables.push_back(nullptr);
-    }
+    vector<int> vectorSizes;
 
     void printScalarTo(ScalarHorizontalVariable* scalar, ostream& out) {
         scalar->printTo(out);
@@ -218,21 +183,20 @@ private:
 
 class LinesIOSegment : public IOSegment {
 public:
-    LinesIOSegment(string names, FailuresCollector* formatFailuresCollector)
-            : IOSegment(formatFailuresCollector), size(nullptr) {
+    LinesIOSegment(string names)
+            : size(-1) {
         this->names = Util::split(names);
     }
 
-    template<typename T>
-    LinesIOSegment& operator,(T& variable) {
-        addVariable(variable);
+    template<typename T, typename = RequiresScalar<T>>
+    LinesIOSegment& operator,(vector<T>& vektor) {
+        variables.push_back(new VerticalVector<T>(vektor, names[variables.size()]));
         return *this;
     }
 
     template<typename T>
-    LinesIOSegment& operator,(T&& variable) {
-        addVariable(variable);
-        return *this;
+    LinesIOSegment& operator,(T) {
+        throw IOFormatException("Variable type of `" + names[variables.size()] + "` unsatisfied. Expected: vector of basic scalar or string type");
     }
 
     LinesIOSegment& operator%(VectorSize vektorSize) {
@@ -240,10 +204,21 @@ public:
         return *this;
     }
 
+    void checkState() {
+        if (variables.empty()) {
+            throw IOFormatException("Lines segment must have at least one variable");
+        }
+
+        if (size == -1) {
+            throw IOFormatException("Lines segment must define vector sizes");
+        }
+    }
+
     void printTo(ostream& out) override {
+        checkState();
         checkVectorSizes();
 
-        for (int i = 0; i < *size; i++) {
+        for (int i = 0; i < size; i++) {
             bool first = true;
             for (VerticalVariable* variable : variables) {
                 if (!first) {
@@ -257,11 +232,13 @@ public:
     }
 
     void parseFrom(istream& in) override {
+        checkState();
+
         for (VerticalVariable* variable : variables) {
             variable->clear();
         }
 
-        for (int i = 0; i < *size; i++) {
+        for (int i = 0; i < size; i++) {
             for (int j = 0; j < variables.size(); j++) {
                 VerticalVariable* variable = variables[j];
                 if (j > 0) {
@@ -273,46 +250,19 @@ public:
         }
     }
 
-    void checkState() override {
-        if (variables.empty()) {
-            addFormatFailure("Lines segment must have at least one variable");
-        }
-
-        if (size == nullptr) {
-            addFormatFailure("Lines segment must define vector sizes");
-        }
-    }
-
 private:
     vector<string> names;
     vector<VerticalVariable*> variables;
-    int* size;
+    int size;
 
-    template<typename T, typename = RequiresScalar<T>>
-    void addVariable(vector<T>& vektor) {
-        variables.push_back(new VerticalVector<T>(vektor, names[variables.size()]));
-    }
-
-    template<typename T, typename = RequiresScalar<T>>
-    void addVariable(vector<T>&& vektor) {
-        vector<T>* newVektor = new vector<T>(vektor);
-        variables.push_back(new VerticalVector<T>(*newVektor, names[variables.size()]));
-    }
-
-    template<typename... T>
-    void addVariable(T...) {
-        addFormatFailure("Variable type of `" + names[variables.size()] + "` unsatisfied. Expected: vector of basic scalar or string type");
-        variables.push_back(nullptr);
-    }
-
-    void setSize(int* size) {
+    void setSize(int size) {
         this->size = size;
     }
 
     void checkVectorSizes() {
         for (VerticalVariable* variable : variables) {
-            if (variable->size() != *size) {
-                throw PrintingException("Number of elements of vector `" + variable->getName() + "` unsatisfied. Expected: " + Util::toString(*size) + ", actual: " + Util::toString(variable->size()));
+            if (variable->size() != size) {
+                throw PrintingException("Number of elements of vector `" + variable->getName() + "` unsatisfied. Expected: " + Util::toString(size) + ", actual: " + Util::toString(variable->size()));
             }
         }
     }
@@ -320,46 +270,41 @@ private:
 
 class MatrixSizes {
 public:
-    MatrixSizes(int& rowsSize, int& columnsSize)
-            : rowsSize(&rowsSize), columnsSize(&columnsSize) { }
+    MatrixSizes(int rowsSize, int columnsSize)
+            : rowsSize(rowsSize), columnsSize(columnsSize) { }
 
-    MatrixSizes(int&& rowsSize, int& columnsSize)
-            : rowsSize(new int(rowsSize)), columnsSize(&columnsSize) { }
-
-    MatrixSizes(int& rowsSize, int&& columnsSize)
-            : rowsSize(&rowsSize), columnsSize(new int(columnsSize)) { }
-
-    MatrixSizes(int&& rowsSize, int&& columnsSize)
-            : rowsSize(new int(rowsSize)), columnsSize(new int(columnsSize)) { }
-
-    int* getRowsSize() {
+    int getRowsSize() {
         return rowsSize;
     }
 
-    int* getColumnsize() {
+    int getColumnsize() {
         return columnsSize;
     }
 
 private:
-    int* rowsSize;
-    int* columnsSize;
+    int rowsSize;
+    int columnsSize;
 };
 
 class GridIOSegment : public IOSegment {
 public:
-    GridIOSegment(string name, FailuresCollector* formatFailuresCollector)
-            : IOSegment(formatFailuresCollector), name(name), variable(nullptr), hasSpaces(false), rowsSize(nullptr), columnsSize(nullptr) { }
+    GridIOSegment(string name)
+            : name(name), variable(nullptr), hasSpaces(false), rowsSize(-1), columnsSize(-1) { }
 
-    template<typename T>
-    GridIOSegment& operator,(T& variable) {
-        setVariable(variable, name);
+    template<typename T, typename = RequiresScalar<T>>
+    GridIOSegment& operator,(vector<vector<T>>& matrix) {
+        if (variable != nullptr) {
+            throw IOFormatException("Grid segment must have exactly one variable");
+        }
+
+        variable = new Matrix<T>(matrix, name);
+        hasSpaces = !is_same<T, char>::value;
         return *this;
     }
 
     template<typename T>
-    GridIOSegment& operator,(T&& variable) {
-        setVariable(variable, name);
-        return *this;
+    GridIOSegment& operator,(T) {
+        throw IOFormatException("Variable type of `" + name + "` unsatisfied. Expected: matrix of basic scalar or string type");
     }
 
     GridIOSegment& operator%(MatrixSizes sizes) {
@@ -368,7 +313,18 @@ public:
         return *this;
     }
 
+    void checkState() {
+        if (variable == nullptr) {
+            throw IOFormatException("Grid segment must have exactly one variable");
+        }
+
+        if (rowsSize == -1 || columnsSize == -1) {
+            throw IOFormatException("Grid segment must define matrix sizes");
+        }
+    }
+
     void printTo(ostream& out) override {
+        checkState();
         checkMatrixSizes();
 
         for (int i = 0; i < variable->rowsSize(); i++) {
@@ -383,27 +339,18 @@ public:
     }
 
     void parseFrom(istream& in) override {
+        checkState();
         variable->clear();
 
-        for (int i = 0; i < *rowsSize; i++) {
+        for (int i = 0; i < rowsSize; i++) {
             variable->addRow();
-            for (int j = 0; j < *columnsSize; j++) {
+            for (int j = 0; j < columnsSize; j++) {
                 if (j > 0 && hasSpaces) {
                     parseSpaceFrom(in, variable->getName() + "[" + Util::toString(i) + "][" + Util::toString(j - 1) + "]");
                 }
                 variable->parseAndAddColumnElementFrom(in);
             }
-            parseNewLineFrom(in, variable->getName() + "[" + Util::toString(i) + "][" + Util::toString(*rowsSize - 1) + "]");
-        }
-    }
-
-    void checkState() override {
-        if (variable == nullptr) {
-            addFormatFailure("Grid segment must have exactly one variable");
-        }
-
-        if (rowsSize == nullptr || columnsSize == nullptr) {
-            addFormatFailure("Grid segment must define matrix sizes");
+            parseNewLineFrom(in, variable->getName() + "[" + Util::toString(i) + "][" + Util::toString(rowsSize - 1) + "]");
         }
     }
 
@@ -411,139 +358,85 @@ private:
     string name;
     MatrixVariable* variable;
     bool hasSpaces;
-    int* rowsSize;
-    int* columnsSize;
-
-    template<typename T, typename = RequiresScalar<T>>
-    void setVariable(vector<vector<T>>& matrix, string name) {
-        if (variable != nullptr) {
-            addFormatFailure("Grid segment must have exactly one variable");
-        }
-
-        variable = new Matrix<T>(matrix, name);
-        hasSpaces = !is_same<T, char>::value;
-    }
-
-    template<typename T, typename = RequiresScalar<T>>
-    void setVariable(vector<vector<T>>&& matrix, string name) {
-        if (variable != nullptr) {
-            addFormatFailure("Grid segment must have exactly one variable");
-        }
-
-        vector<vector<T>>* newMatrix = new vector<vector<T>>(matrix);
-
-        variable = new Matrix<T>(*newMatrix, name);
-        hasSpaces = !is_same<T, char>::value;
-    }
-
-    template<typename... T>
-    void setVariable(T...) {
-        addFormatFailure("Variable type of `" + name + "` unsatisfied. Expected: matrix of basic scalar or string type");
-    }
+    int rowsSize;
+    int columnsSize;
 
     void checkMatrixSizes() {
-        if (variable->rowsSize() != *rowsSize) {
-            throw PrintingException("Number of rows of matrix `" + variable->getName() + "` unsatisfied. Expected: " + Util::toString(*rowsSize) + ", actual: " + Util::toString(variable->rowsSize()));
+        if (variable->rowsSize() != rowsSize) {
+            throw PrintingException("Number of rows of matrix `" + variable->getName() + "` unsatisfied. Expected: " + Util::toString(rowsSize) + ", actual: " + Util::toString(variable->rowsSize()));
         }
 
-        for (int i = 0; i < *rowsSize; i++) {
-            if (variable->columnsSize(i) != *columnsSize) {
-                throw PrintingException("Number of columns row " + Util::toString(i) + " of matrix `" + variable->getName() + "` (0-based) unsatisfied. Expected: " + Util::toString(*columnsSize) + ", actual: " + Util::toString(variable->columnsSize(i)));
+        for (int i = 0; i < rowsSize; i++) {
+            if (variable->columnsSize(i) != columnsSize) {
+                throw PrintingException("Number of columns row " + Util::toString(i) + " of matrix `" + variable->getName() + "` (0-based) unsatisfied. Expected: " + Util::toString(columnsSize) + ", actual: " + Util::toString(variable->columnsSize(i)));
             }
         }
     }
 };
 
-class IOFormat {
+class IOFormatProvider {
 public:
-    void addSegment(IOSegment* segment) {
-        segments.push_back(segment);
+    void beginParsingFormat(istream* in) {
+        this->in = in;
+        this->out = nullptr;
+        this->lastSegment = nullptr;
     }
 
-    vector<IOSegment*> getSegments() {
-        return segments;
+    void beginPrintingFormat(ostream* out) {
+        this->in = nullptr;
+        this->out = out;
+        this->lastSegment = nullptr;
     }
 
-    void printTo(ostream& out) {
-        for (IOSegment* segment : segments) {
-            segment->printTo(out);
-        }
+    LineIOSegment& applyLineSegment(string names) {
+        applyLastSegment();
+        LineIOSegment* segment = new LineIOSegment(names);
+        lastSegment = segment;
+        return *segment;
     }
 
-    void parseFrom(istream& in) {
-        for (IOSegment* segment : segments) {
-            segment->parseFrom(in);
-        }
-        parseEofFrom(in);
+    LinesIOSegment& applyLinesSegment(string names) {
+        applyLastSegment();
+        LinesIOSegment* segment = new LinesIOSegment(names);
+        lastSegment = segment;
+        return *segment;
     }
 
-private:
-    vector<IOSegment*> segments;
+    GridIOSegment& applyGridSegment(string name) {
+        applyLastSegment();
+        GridIOSegment* segment = new GridIOSegment(name);
+        lastSegment = segment;
+        return *segment;
+    }
 
-    static void parseEofFrom(istream& in) {
-        if (in.get() != char_traits<char>::eof()) {
+    void endParsingFormat() {
+        applyLastSegment();
+
+        if (in->get() != char_traits<char>::eof()) {
             throw ParsingException("Expected: <EOF>");
         }
     }
-};
 
-enum IOMode {
-    INPUT,
-    OUTPUT
-};
-
-class IOFormatsCollector {
-public:
-    IOFormatsCollector() : mode(IOMode::INPUT) {
-        this->formats[IOMode::INPUT] = new IOFormat();
-        this->formats[IOMode::OUTPUT] = new IOFormat();
-
-        this->formatFailuresCollectors[IOMode::INPUT] = new FailuresCollector();
-        this->formatFailuresCollectors[IOMode::OUTPUT] = new FailuresCollector();
-    }
-
-    void setMode(IOMode mode) {
-        this->mode = mode;
-    }
-
-    LineIOSegment& addLineSegment(string names) {
-        LineIOSegment* segment = new LineIOSegment(names, formatFailuresCollectors[mode]);
-        formats[mode]->addSegment(segment);
-        return *segment;
-    }
-
-    LinesIOSegment& addLinesSegment(string names) {
-        LinesIOSegment* segment = new LinesIOSegment(names, formatFailuresCollectors[mode]);
-        formats[mode]->addSegment(segment);
-        return *segment;
-    }
-
-    GridIOSegment& addGridSegment(string name) {
-        GridIOSegment* segment = new GridIOSegment(name, formatFailuresCollectors[mode]);
-        formats[mode]->addSegment(segment);
-        return *segment;
-    }
-
-    IOFormat* collectFormat(IOMode mode) {
-        IOFormat* format = formats[mode];
-
-        for (IOSegment* segment : format->getSegments()) {
-            segment->checkState();
-        }
-
-        vector<Failure> failures = formatFailuresCollectors[mode]->collectFailures();
-
-        if (failures.empty()) {
-            return format;
-        } else {
-            throw IOFormatException(failures);
-        }
+    void endPrintingFormat() {
+        applyLastSegment();
     }
 
 private:
-    IOFormat* formats[2];
-    FailuresCollector* formatFailuresCollectors[2];
-    IOMode mode;
+    istream* in;
+    ostream* out;
+    IOSegment* lastSegment;
+
+    void applyLastSegment() {
+        if (lastSegment == nullptr) {
+            return;
+        }
+
+        if (in != nullptr) {
+            lastSegment->parseFrom(*in);
+        } else {
+            lastSegment->printTo(*out);
+        }
+    }
 };
 
 }
