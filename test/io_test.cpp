@@ -570,8 +570,8 @@ TEST(IOFormatProviderTest, Printing) {
     ostringstream sout;
 
     provider.beginPrintingFormat(&sout);
-    provider.applyLineSegment("A, B"), A, B;
-    provider.applyLineSegment("K"), K;
+    provider.applyLastSegment(); provider.applyLineSegment("A, B"), A, B;
+    provider.applyLastSegment(); provider.applyLineSegment("K"), K;
     provider.endPrintingFormat();
 
     EXPECT_EQ("1 2\n77\n", sout.str());
@@ -586,8 +586,8 @@ TEST(IOFormatProviderTest, Parsing) {
     istringstream sin("1 2\n77\n");
 
     provider.beginParsingFormat(&sin);
-    provider.applyLineSegment("A, B"), A, B;
-    provider.applyLineSegment("K"), K;
+    provider.applyLastSegment(); provider.applyLineSegment("A, B"), A, B;
+    provider.applyLastSegment(); provider.applyLineSegment("K"), K;
     provider.endPrintingFormat();
 
     EXPECT_EQ(1, A);

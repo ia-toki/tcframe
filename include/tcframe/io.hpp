@@ -389,21 +389,18 @@ public:
     }
 
     LineIOSegment& applyLineSegment(string names) {
-        applyLastSegment();
         LineIOSegment* segment = new LineIOSegment(names);
         lastSegment = segment;
         return *segment;
     }
 
     LinesIOSegment& applyLinesSegment(string names) {
-        applyLastSegment();
         LinesIOSegment* segment = new LinesIOSegment(names);
         lastSegment = segment;
         return *segment;
     }
 
     GridIOSegment& applyGridSegment(string name) {
-        applyLastSegment();
         GridIOSegment* segment = new GridIOSegment(name);
         lastSegment = segment;
         return *segment;
@@ -421,11 +418,6 @@ public:
         applyLastSegment();
     }
 
-private:
-    istream* in;
-    ostream* out;
-    IOSegment* lastSegment;
-
     void applyLastSegment() {
         if (lastSegment == nullptr) {
             return;
@@ -437,6 +429,11 @@ private:
             lastSegment->printTo(*out);
         }
     }
+
+private:
+    istream* in;
+    ostream* out;
+    IOSegment* lastSegment;
 };
 
 }

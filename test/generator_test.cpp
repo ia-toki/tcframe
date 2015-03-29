@@ -107,8 +107,8 @@ public:
     }
 
     void InputFormat() {
-        applyLineSegment("A, B"), A, B;
-        applyLineSegment("K"), K;
+        applyLastSegment(), (applyLineSegment("A, B"), A, B);
+        applyLastSegment(), (applyLineSegment("K"), K);
     }
 
     void Subtask1() {
@@ -167,8 +167,8 @@ protected:
     }
 
     void InputFormat() {
-        applyLineSegment("A, B"), A, B;
-        applyLineSegment("K"), K;
+        applyLastSegment(), (applyLineSegment("A, B"), A, B);
+        applyLastSegment(), (applyLineSegment("K"), K);
     }
 
     void Constraints() {
