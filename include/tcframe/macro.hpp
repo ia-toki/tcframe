@@ -11,8 +11,7 @@
 #define LINES(...) (applyLinesSegment(#__VA_ARGS__), __VA_ARGS__)
 #define GRID(...) (applyGridSegment(#__VA_ARGS__), __VA_ARGS__)
 
-#define ESCAPED_CASE(escaped_closure) addOfficialTestCase([this] {escaped_closure;}, #escaped_closure)
-#define CASE(...) ESCAPED_CASE((__VA_ARGS__))
+#define CASE(...) addOfficialTestCase([this] {__VA_ARGS__;}, #__VA_ARGS__)
 #define SAMPLE_CASE(...) addSampleTestCase(__VA_ARGS__)
 
 #define CONS(predicate) addConstraint([this] {return predicate;}, #predicate)

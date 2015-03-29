@@ -106,7 +106,7 @@ The above generator program, when run, will output:
     [ OFFICIAL TEST CASES ]
       problem_1: OK
       problem_2: FAILED
-        Description: (A = 100, B = 2000, K = 0)
+        Description: A = 100, B = 2000, K = 0
         Reasons:
         * Does not satisfy constraints, on:
           - 1 <= B && B <= 1000
@@ -201,18 +201,18 @@ The above generator program, when run, will output:
     [ TEST GROUP 1 ]
       problem_1_1: OK
       problem_1_2: FAILED
-        Description: (A = 100, B = 2000, K = 0)
+        Description: A = 100, B = 2000, K = 0
         Reasons:
         * Does not satisfy subtask 1, on constraints:
           - 1 <= B && B <= 1000
 
     [ TEST GROUP 2 ]
       problem_2_1: FAILED
-        Description: (A = 1, B = 2, K = 1)
+        Description: A = 1, B = 2, K = 1
         Reasons:
         * Satisfies subtask 1 but is not assigned to it
       problem_2_2: FAILED
-        Description: (A = 0, B = 0, K = 100)
+        Description: A = 0, B = 0, K = 100
         Reasons:
         * Does not satisfy subtask 2, on constraints:
           - 1 <= A && A <= 2000000000

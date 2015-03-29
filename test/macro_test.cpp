@@ -89,8 +89,8 @@ TEST(MacroTest, CASE) {
     EXPECT_EQ("", testGroups[0]->getTestCase(0)->getDescription());
 
     ASSERT_EQ(2, testGroups[1]->getTestCasesCount());
-    EXPECT_EQ("(A = 7)", testGroups[1]->getTestCase(0)->getDescription());
-    EXPECT_EQ("(A = 42)", testGroups[1]->getTestCase(1)->getDescription());
+    EXPECT_EQ("A = 7", testGroups[1]->getTestCase(0)->getDescription());
+    EXPECT_EQ("A = 42", testGroups[1]->getTestCase(1)->getDescription());
 }
 
 class IOFormatProviderTester : public IOFormatProvider {
