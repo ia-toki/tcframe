@@ -82,7 +82,7 @@ public:
         int A, B, K;
         input >> A >> B >> K;
 
-        string output = Util::toString(A + B * K);
+        string output = Util::toString(A + B * K) + "\n";
 
         ExecutionResult result;
         result.exitCode = 0;
@@ -102,6 +102,8 @@ public:
     int A, B;
     int K;
 
+    int result;
+
     void Config() {
         setSlug("problem");
     }
@@ -109,6 +111,10 @@ public:
     void InputFormat() {
         applyLastSegment(), (applyLineSegment("A, B"), A, B);
         applyLastSegment(), (applyLineSegment("K"), K);
+    }
+
+    void OutputFormat() {
+        applyLastSegment(), (applyLineSegment("result"), result);
     }
 
     void Subtask1() {
@@ -162,6 +168,8 @@ protected:
     int A, B;
     int K;
 
+    int result;
+
     void Config() {
         setSlug("problem");
     }
@@ -169,6 +177,10 @@ protected:
     void InputFormat() {
         applyLastSegment(), (applyLineSegment("A, B"), A, B);
         applyLastSegment(), (applyLineSegment("K"), K);
+    }
+
+    void OutputFormat() {
+        applyLastSegment(), (applyLineSegment("result"), result);
     }
 
     void Constraints() {

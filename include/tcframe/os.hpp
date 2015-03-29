@@ -67,7 +67,7 @@ public:
         ExecutionResult result;
         int exitStatus = system((command + " < " + inputFilename + " > " + outputFilename + " 2> " + errorFilename).c_str());
         result.exitCode = WEXITSTATUS(exitStatus);
-        result.outputStream = openForReading(outputFilename);
+        result.outputStream = openForReading(outputName);
         result.errorStream = openForReadingAsStringStream(errorFilename);
 
         return result;

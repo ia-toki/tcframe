@@ -253,6 +253,10 @@ private:
                     Failure("Standard error: " + string(istreambuf_iterator<char>(*result.errorStream), istreambuf_iterator<char>()), 1)
             });
         }
+
+        TProblem::beginParsingFormat(result.outputStream);
+        TProblem::OutputFormat();
+        TProblem::endParsingFormat();
     }
 };
 

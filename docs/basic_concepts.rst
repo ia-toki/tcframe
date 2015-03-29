@@ -88,10 +88,10 @@ This component consists of configuration of several aspects of the problem. To d
 
 The complete reference of configurable aspects of a problem can be found here: :ref:`Problem configuration API reference <api-ref-problem-configuration>`.
 
-Input variables
----------------
+Input/output variables
+----------------------
 
-This component is a collection of variables which compose test cases inputs. They can be usually found in the input format section in the problem statement. For this problem, we have three input variables: **N**, **K**, and **A**. The input variables are defined as protected member variables.
+**Input variables** are a collection of variables which compose test cases inputs. They can be usually found in the input format section in the problem statement. For this problem, we have three input variables: **N**, **K**, and **A**. The input variables are defined as protected member variables.
 
 In this problem, we have two scalars (**N**, **K**) and one vector (**A**) as the input variables. We define them as follows:
 
@@ -101,12 +101,22 @@ In this problem, we have two scalars (**N**, **K**) and one vector (**A**) as th
     int K;
     vector<int> A;
 
-The complete reference of input variables can be found here: :ref:`Input variables API reference <api-ref-input-variables>`.
+Similarly, **output variables** are a collection of variables which compose test cases inputs. Most of the cases, this is just a single variable and does not have a particular name in the problem statement. Let's just call it result.
 
-Input format
-------------
+.. sourcecode:: cpp
 
-This component specifies how the input variables should be printed in test case input files. To define this component, override the method **void BaseProblem::InputFormat()**. The format is specified in terms of consecutive input **segment**\ s. Basically an input segment arranges the layout of several input variables.
+    int N;
+    int K;
+    vector<int> A;
+
+    int result;
+
+The complete reference of input/output variables can be found here: :ref:`Input/output variables API reference <api-ref-io-variables>`.
+
+Input/output format
+-------------------
+
+**Input format** specifies how the input variables should be printed in test case input files. To define this component, override the method **void BaseProblem::InputFormat()**. The format is specified in terms of consecutive input **segment**\ s. Basically an input segment arranges the layout of several input variables.
 
 A test case input file for this problem consists of a single containing **N** and **K**, followed by a single line containing space-separated elements of **A**. We can define that format as follows:
 
@@ -117,12 +127,20 @@ A test case input file for this problem consists of a single containing **N** an
         LINE(A % SIZE(N));
     }
 
-The complete reference of input segments can be found here: :ref:`Input segments API reference <api-ref-input-segments>`.
+Similarly, **output format** specifies how the input variables should be printed in test case input files. To define this component, override the method **void BaseProblem::OutputFormat()**.
+
+.. sourcecode:: cpp
+
+    void OutputFormat() {
+        LINE(result);
+    }
+
+The complete reference of input/output segments can be found here: :ref:`Input/output segments API reference <api-ref-io-segments>`.
 
 Constraints
 -----------
 
-This components specifies the constraints of the problem; i.e., the conditions that must be satisfied by the input
+This components specifies the constraints of the problem; i.e., the conditions that must be satisfied by the input/output
 variables. Two types of problems are supported: the ones without subtasks, and the ones with subtasks.
 
 **For problems without subtasks**\ : Override the method **void BaseProblem::Constraints()**.
@@ -174,7 +192,7 @@ where **eachElementBetween()** is a private helper method, defined as follows:
 
     As of this version, there is currently no easy way to test a predicate for each element of a vector. The workaround is to write a helper method ourselves, like what we did above.
 
-The complete reference of input segments can be found here: :ref:`Constraints API reference <api-ref-constraints>`.
+The complete reference of constraints can be found here: :ref:`Constraints API reference <api-ref-constraints>`.
 
 We have now completed writing a problem specification class. In summary, our class should look like this:
 
@@ -186,6 +204,8 @@ We have now completed writing a problem specification class. In summary, our cla
         int K;
         vector<int> A;
 
+        int result;
+
         void Config() {
             setSlug("k-product");
         }
@@ -193,6 +213,10 @@ We have now completed writing a problem specification class. In summary, our cla
         void InputFormat() {
             LINE(N, K);
             LINE(A % SIZE(N));
+        }
+
+        void OutputFormat() {
+            LINE(result);
         }
 
         void Subtask1() {
@@ -342,6 +366,8 @@ Note that for vector input variables, don't forget to clear them before assignin
         int K;
         vector<int> A;
 
+        int result;
+
         void Config() {
             setSlug("k-product");
         }
@@ -349,6 +375,10 @@ Note that for vector input variables, don't forget to clear them before assignin
         void InputFormat() {
             LINE(N, K);
             LINE(A % SIZE(N));
+        }
+
+        void OutputFormat() {
+            LINE(result);
         }
 
         void Subtask1() {
@@ -487,8 +517,8 @@ the input-output file pair will be stored in the specified base directory (by de
 
 Generation can fail due to several reasons:
 
-Invalid input format
-    In this case, no test cases will be generated.  For example: using scalar variable for a grid segment.
+Invalid input/output format
+    For example: using scalar variable for a grid segment.
 
 Invalid input variable states
   For example: a grid segment requires that the size is 2 x 3, but after applying the test case definition, the matrix consists of 3 x 4 elements.

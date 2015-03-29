@@ -14,10 +14,10 @@ The following methods can be called inside the overridden method **BaseProblem::
 
     If not specified, the default slug is "problem".
 
-.. _api-ref-input-variables:
+.. _api-ref-io-variables:
 
-Input variables
----------------
+Input/output variables
+----------------------
 
 There are three types of variables that are supported:
 
@@ -30,12 +30,12 @@ Vector
 Matrix
     std::vector<std::vector<\ **T**\ >>, where T is a scalar type as defined above. Note that you cannot use 2D arrays (\ **T**\ [][]).
 
-.. _api-ref-input-segments:
+.. _api-ref-io-segments:
 
-Input segments
---------------
+Input/output segments
+---------------------
 
-The following macros can be called inside the overridden method **BaseProblem::InputFormat()**.
+The following macros can be called inside the overridden method **BaseProblem::InputFormat()** or **BaseProblem::OutputFormat()**.
 
 .. py:function:: EMPTY_LINE()
 

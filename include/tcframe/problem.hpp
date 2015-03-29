@@ -30,6 +30,7 @@ protected:
     }
 
     virtual void InputFormat() = 0;
+    virtual void OutputFormat() = 0;
 
     virtual void Constraints() { throw NotImplementedException(); }
     virtual void Subtask1() { throw NotImplementedException(); }
