@@ -29,3 +29,24 @@ This can be achieved by overriding a special method **BaseGenerator::FinalizeInp
             }
         }
     }
+
+Complex input/output format
+---------------------------
+
+Suppose we have the following input format description from the problem statement:
+
+    The first line contains an integer N. The next N lines each contains one of the following type:
+
+    - 1 A[i] B[i]
+    - 2 A[i] B[i] C[i]
+
+How to deal with this one?
+
+Unfortunately, as of this version, the above format is not supported yet. This version only supports input/output formats that are free of custom loops and conditional branches.
+
+I am designing how to support that in the next versions.
+
+Complex predicates in constraints
+---------------------------------
+
+Similarly, methods used in defining constraints (Constraints(), SubtaskX()) must be free of custom loops and conditional branches. If you want to use complex predicate, such as determining whether the input is a tree, create a custom private helper method that return boolean (whether the input is a tree).
