@@ -17,7 +17,7 @@ class NotImplementedException : public exception { };
 
 class TestCaseException : public exception {
 public:
-    virtual ~TestCaseException() { }
+    virtual ~TestCaseException() noexcept { }
 
     vector<Failure> getFailures() {
         if (message != "") {

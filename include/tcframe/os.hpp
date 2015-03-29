@@ -38,28 +38,28 @@ public:
     UnixOperatingSystem()
             : baseDirectoryName(".") { }
 
-    void setBaseDirectory(string baseDirectoryName) override {
+    void setBaseDirectory(string baseDirectoryName) {
         this->baseDirectoryName = baseDirectoryName;
 
         system(("rm -rf " + baseDirectoryName).c_str());
         system(("mkdir -p " + baseDirectoryName).c_str());
     }
 
-    istream* openForReading(string name) override {
+    istream* openForReading(string name) {
         string filename = baseDirectoryName + "/" + name;
         ifstream* file = new ifstream();
         file->open(filename);
         return file;
     }
 
-    ostream* openForWriting(string name) override {
+    ostream* openForWriting(string name) {
         string filename = baseDirectoryName + "/" + name;
         ofstream* file = new ofstream();
         file->open(filename);
         return file;
     }
 
-    ExecutionResult execute(string command, string inputName, string outputName) override {
+    ExecutionResult execute(string command, string inputName, string outputName) {
         string inputFilename = baseDirectoryName + "/" + inputName;
         string outputFilename = baseDirectoryName + "/" + outputName;
         string errorFilename = baseDirectoryName + "/_error.out";
@@ -73,7 +73,7 @@ public:
         return result;
     }
 
-    void remove(string name) override {
+    void remove(string name) {
         string filename = baseDirectoryName + "/" + name;
         removeFile(filename);
     }

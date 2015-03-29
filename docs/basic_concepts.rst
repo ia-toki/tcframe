@@ -471,7 +471,7 @@ For example:
 
 .. note::
 
-    The current version needs GCC version 4.9.
+    The current version needs GCC version >= 4.7.
 
 Running generator program
 -------------------------

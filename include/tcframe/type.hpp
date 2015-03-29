@@ -117,15 +117,15 @@ public:
     Scalar(T& value, string name)
             : ScalarHorizontalVariable(name), value(&value) { }
 
-    void printTo(ostream& out) override {
+    void printTo(ostream& out) {
         out << *value;
     }
 
-    void parseFrom(istream& in) override {
+    void parseFrom(istream& in) {
         parseVariableFrom(in, value, getName());
     }
 
-    void clear() override {
+    void clear() {
         *value = T();
     }
 
@@ -139,22 +139,22 @@ public:
     HorizontalVector(vector<T>& value, string name)
             : VectorHorizontalVariable(name), value(&value) { }
 
-    int size() override {
+    int size() {
         return (int)(value->size());
     }
 
-    void printElementTo(int index, ostream& out) override {
+    void printElementTo(int index, ostream& out) {
         out << (*value)[index];
     }
 
-    void parseAndAddElementFrom(istream& in) override {
+    void parseAndAddElementFrom(istream& in) {
         int index = (int)value->size();
         T element;
         parseVariableFrom(in, &element, getName() + "[" + Util::toString(index) + "]");
         value->push_back(element);
     }
 
-    void clear() override {
+    void clear() {
         *value = vector<T>();
     }
 
@@ -181,22 +181,22 @@ public:
     VerticalVector(vector<T>& value, string name)
             : VerticalVariable(name), value(&value) { }
 
-    int size() override {
+    int size() {
         return (int)(value->size());
     }
 
-    void printElementTo(int index, ostream& out) override {
+    void printElementTo(int index, ostream& out) {
         out << (*value)[index];
     }
 
-    void parseAndAddElementFrom(istream& in) override {
+    void parseAndAddElementFrom(istream& in) {
         int index = (int)value->size();
         T element;
         parseVariableFrom(in, &element, getName() + "[" + Util::toString(index) + "]");
         value->push_back(element);
     }
 
-    void clear() override {
+    void clear() {
         *value = vector<T>();
     }
 
@@ -225,23 +225,23 @@ public:
     Matrix(vector<vector<T>>& value, string name)
             : MatrixVariable(name), value(&value) { }
 
-    int rowsSize() override {
+    int rowsSize() {
         return (int)(value->size());
     }
 
-    int columnsSize(int rowIndex) override {
+    int columnsSize(int rowIndex) {
         return (int)((*value)[rowIndex].size());
     }
 
-    void printElementTo(int rowIndex, int columnIndex, ostream& out) override {
+    void printElementTo(int rowIndex, int columnIndex, ostream& out) {
         out << (*value)[rowIndex][columnIndex];
     }
 
-    void addRow() override {
+    void addRow() {
         value->push_back(vector<T>());
     }
 
-    void parseAndAddColumnElementFrom(istream& in) override {
+    void parseAndAddColumnElementFrom(istream& in) {
         int rowIndex = (int)value->size() - 1;
         int columnIndex = (int)value->back().size();
 
@@ -250,7 +250,7 @@ public:
         value->back().push_back(element);
     }
 
-    void clear() override {
+    void clear() {
         *value = vector<vector<T>>();
     }
 

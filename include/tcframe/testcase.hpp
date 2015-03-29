@@ -28,11 +28,11 @@ public:
     OfficialTestCase(function<void()> closure, string description, set<int> subtaskIds)
             : closure(closure), description(description), subtaskIds(subtaskIds) { }
 
-    string getDescription() override {
+    string getDescription() {
         return description;
     }
 
-    set<int> getSubtaskIds() override {
+    set<int> getSubtaskIds() {
         return subtaskIds;
     }
 
@@ -52,11 +52,11 @@ public:
     SampleTestCase(string content, set<int> subtaskIds) :
         content(content), subtaskIds(subtaskIds) { }
 
-    string getDescription() override {
+    string getDescription() {
         return "";
     }
 
-    set<int> getSubtaskIds() override {
+    set<int> getSubtaskIds() {
         return subtaskIds;
     }
 

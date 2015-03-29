@@ -27,18 +27,18 @@ public:
     FakeLogger()
             : currentKey("inputFormat") { }
 
-    void logIntroduction() override { }
-    void logTestGroupIntroduction(int) override { }
+    void logIntroduction() { }
+    void logTestGroupIntroduction(int) { }
 
-    void logTestCaseIntroduction(string testCaseName) override {
+    void logTestCaseIntroduction(string testCaseName) {
         currentKey = testCaseName;
     }
 
-    void logTestCaseOkResult() override { }
-    void logTestCaseFailedResult(string) override { }
-    void logInputFormatFailedResult() override { }
+    void logTestCaseOkResult() { }
+    void logTestCaseFailedResult(string) { }
+    void logInputFormatFailedResult() { }
 
-    void logFailures(vector<Failure> failures) override {
+    void logFailures(vector<Failure> failures) {
         this->failuresMap[currentKey] = failures;
     }
 
@@ -58,21 +58,21 @@ public:
     FakeOperatingSystem(set<string> arrangedFailedInputNames)
             : arrangedFailedInputNames(arrangedFailedInputNames) { }
 
-    void setBaseDirectory(string) override { }
+    void setBaseDirectory(string) { }
 
-    istream* openForReading(string) override {
+    istream* openForReading(string) {
         return new istringstream();
     }
 
-    ostream* openForWriting(string name) override {
+    ostream* openForWriting(string name) {
         ostringstream* testCaseInput = new ostringstream();
         testCaseInputs[name] = testCaseInput;
         return testCaseInput;
     }
 
-    void remove(string) override { }
+    void remove(string) { }
 
-    ExecutionResult execute(string, string inputName, string) override {
+    ExecutionResult execute(string, string inputName, string) {
         if (arrangedFailedInputNames.count(inputName)) {
             return ExecutionResult{1, new istringstream(), new istringstream("Intentionally failed")};
         }

@@ -7,7 +7,7 @@ Dependencies
 **tcframe** needs the following minimum requirements:
 
 - UNIX-based operating system
-- GCC >= 4.9
+- GCC >= 4.7
 
 Setup
 -----

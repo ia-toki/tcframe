@@ -28,11 +28,11 @@ public:
 
 class StandardLogger : public Logger {
 public:
-    void logIntroduction() override {
+    void logIntroduction() {
         cout << "Generating test cases..." << endl;
     }
 
-    void logTestGroupIntroduction(int testGroupId) override {
+    void logTestGroupIntroduction(int testGroupId) {
         cout << endl;
 
         if (testGroupId == 0) {
@@ -44,15 +44,15 @@ public:
         }
     }
 
-    void logTestCaseIntroduction(string testCaseName) override {
+    void logTestCaseIntroduction(string testCaseName) {
         cout << "  " << testCaseName << ": " << flush;
     }
 
-    void logTestCaseOkResult() override {
+    void logTestCaseOkResult() {
         cout << "OK" << endl;
     }
 
-    void logTestCaseFailedResult(string testCaseDescription) override {
+    void logTestCaseFailedResult(string testCaseDescription) {
         cout << "FAILED" << endl;
 
         if (testCaseDescription != "") {
@@ -62,13 +62,13 @@ public:
         cout << "    Reasons:" << endl;
     }
 
-    void logInputFormatFailedResult() override {
+    void logInputFormatFailedResult() {
         cout << endl;
         cout << "  Input format check: FAILED" << endl;
         cout << "    Reasons:" << endl;
     }
 
-    void logFailures(vector<Failure> failures) override {
+    void logFailures(vector<Failure> failures) {
         for (Failure failure : failures) {
             string prefix;
             if (failure.getLevel() == 0) {

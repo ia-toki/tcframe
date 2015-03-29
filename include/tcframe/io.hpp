@@ -95,7 +95,7 @@ public:
         throw IOFormatException("Variable type of `" + names[variables.size()] + "` unsatisfied. Expected: basic scalar or string type, or vector of those types");
     }
 
-    void printTo(ostream& out) override {
+    void printTo(ostream& out) {
         bool first = true;
         for (int i = 0; i < variables.size(); i++) {
             HorizontalVariable* variable = variables[i];
@@ -114,7 +114,7 @@ public:
         out << "\n";
     }
 
-    void parseFrom(istream& in) override {
+    void parseFrom(istream& in) {
         for (int i = 0; i < variables.size(); i++) {
             HorizontalVariable* variable = variables[i];
 
@@ -214,7 +214,7 @@ public:
         }
     }
 
-    void printTo(ostream& out) override {
+    void printTo(ostream& out) {
         checkState();
         checkVectorSizes();
 
@@ -231,7 +231,7 @@ public:
         }
     }
 
-    void parseFrom(istream& in) override {
+    void parseFrom(istream& in) {
         checkState();
 
         for (VerticalVariable* variable : variables) {
@@ -323,7 +323,7 @@ public:
         }
     }
 
-    void printTo(ostream& out) override {
+    void printTo(ostream& out) {
         checkState();
         checkMatrixSizes();
 
@@ -338,7 +338,7 @@ public:
         }
     }
 
-    void parseFrom(istream& in) override {
+    void parseFrom(istream& in) {
         checkState();
         variable->clear();
 
