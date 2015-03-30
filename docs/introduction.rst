@@ -53,6 +53,8 @@ For problems without subtasks
         int A, B;
         int K;
 
+        int result;
+
         void Config() {
             setSlug("problem");
         }
@@ -60,6 +62,10 @@ For problems without subtasks
         void InputFormat() {
             LINE(A, B);
             LINE(K);
+        }
+
+        void OutputFormat() {
+            LINE(result);
         }
 
         void Constraints() {
@@ -125,6 +131,8 @@ For problems with subtasks
         int A, B;
         int K;
 
+        int result;
+
         void Config() {
             setSlug("problem");
         }
@@ -132,6 +140,10 @@ For problems with subtasks
         void InputFormat() {
             LINE(A, B);
             LINE(K);
+        }
+
+        void OutputFormat() {
+            LINE(result);
         }
 
         void Subtask1() {
