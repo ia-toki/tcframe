@@ -24,7 +24,7 @@ set(SOURCE_FILES
     include/tcframe/macro.hpp
     include/tcframe/os.hpp
     include/tcframe/problem.hpp
-    include/tcframe/tcframe.hpp
+    include/tcframe/runner.hpp
     include/tcframe/testcase.hpp
     include/tcframe/type.hpp
     include/tcframe/util.hpp
@@ -34,6 +34,7 @@ set(SOURCE_FILES
     test/generator_test.cpp
     test/io_test.cpp
     test/macro_test.cpp
+    test/runner_test.cpp
     test/testcase_test.cpp
     test/type_test.cpp
     test/util_test.cpp)

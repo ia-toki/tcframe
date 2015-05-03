@@ -30,16 +30,18 @@ namespace tcframe {
 template<typename TProblem>
 class BaseGenerator : protected TProblem, protected TestCasesCollector {
 public:
+    void applyConfigurations() {
+        TProblem::Config();
+        Config();
+    }
+
     int generate() {
         logger->logIntroduction();
 
         subtasks = TProblem::getSubtasks();
         testData = getTestData();
 
-        TProblem::Config();
-        Config();
-
-        os->setBaseDirectory(testCasesBaseDirectoryName);
+        os->setBaseDir(testCasesDir);
 
         bool succesful = true;
         for (TestGroup* testGroup : testData) {
@@ -56,30 +58,42 @@ public:
         return succesful ? 0 : 1;
     }
 
+    void setProblemSlug(string slug) {
+        TProblem::setSlug(slug);
+    }
+
+    string getProblemSlug() {
+        return TProblem::getSlug();
+    }
+
+    void setSolutionCommand(string solutionCommand) {
+        this->solutionCommand = solutionCommand;
+    }
+
+    string getSolutionCommand() {
+        return solutionCommand;
+    }
+
+    void setTestCasesDir(string testCasesDir) {
+        this->testCasesDir = testCasesDir;
+    }
+
+    string getTestCasesDir() {
+        return testCasesDir;
+    }
+
 protected:
     BaseGenerator()
             : logger(new StandardLogger()),
-              os(new UnixOperatingSystem()),
-              solutionExecutionCommand("./solution"),
-              testCasesBaseDirectoryName("tc") { }
+              os(new UnixOperatingSystem()) { }
 
     BaseGenerator(Logger* logger, OperatingSystem* os)
             : logger(logger),
-              os(os),
-              solutionExecutionCommand("./solution"),
-              testCasesBaseDirectoryName("tc") { }
+              os(os) { }
 
     virtual ~BaseGenerator() { }
 
     virtual void Config() { }
-
-    void setBaseDir(string testCasesBaseDirectoryName) {
-        this->testCasesBaseDirectoryName = testCasesBaseDirectoryName;
-    }
-
-    void setSolution(string solutionExecutionCommand) {
-        this->solutionExecutionCommand = solutionExecutionCommand;
-    }
 
     virtual void FinalizeInput() { }
 
@@ -101,8 +115,8 @@ private:
     Logger* logger;
     OperatingSystem* os;
 
-    string solutionExecutionCommand;
-    string testCasesBaseDirectoryName;
+    string solutionCommand = "./solution";
+    string testCasesDir = "tc";
 
     vector<TestGroup*> testData;
     vector<Subtask*> subtasks;
@@ -244,7 +258,7 @@ private:
     }
 
     void generateTestCaseOutput(string testCaseInputName, string testCaseOutputName) {
-        ExecutionResult result = os->execute(solutionExecutionCommand, testCaseInputName, testCaseOutputName);
+        ExecutionResult result = os->execute(solutionCommand, testCaseInputName, testCaseOutputName);
 
         if (result.exitCode != 0) {
             throw ExecutionException({

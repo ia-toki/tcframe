@@ -19,7 +19,7 @@ First, let's begin with a philosophy on why this project is useful.
 
 - Not all people know how to write a test cases generator.
 - To avoid writing repetitive and boring tasks, for example, creating test case files with appropriate numbering, running official solution against the test case input files, etc.
-- To make all problems in a contest have test cases generator programs with consistent format.
+- To make all problems in a contest have test cases generator with consistent format.
 
 For the above reasons, **tcframe** was developed.
 
@@ -28,24 +28,23 @@ Features
 
 As a framework, **tcframe** offers the following exciting features:
 
-- Excluding the official solution, we only need to write a single C++ program.
-- The generator program has a syntax that is easy to read.
-- The generator program is nicely structured in several parts, similar to the problem statement: input format, output format, constraints/subtasks, etc.
+- Excluding the official solution, we only need to write a single C++ program, called runner program.
+- The runner program has a syntax that is easy to read.
+- The runner program is nicely structured in several parts, similar to the problem statement: input format, output format, constraints/subtasks, etc.
 - The resulting test cases are validated according to the specification constraints/subtasks.
 - All errors (for example: constraints unsatisfiability) are presented to the users in human-readable format so that they can easily fix the errors.
 
 Examples
 --------
 
-Here are some example of generator files written using **tcframe** framework:
+Here are some example of runner programs written using **tcframe** framework:
 
 For problems without subtasks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. sourcecode:: cpp
 
-    #include "tcframe/tcframe.hpp"
-
+    #include "tcframe/runner.hpp"
     using namespace tcframe;
 
     class Problem : public BaseProblem {
@@ -54,10 +53,6 @@ For problems without subtasks
         int K;
 
         int result;
-
-        void Config() {
-            setSlug("problem");
-        }
 
         void InputFormat() {
             LINE(A, B);
@@ -77,11 +72,6 @@ For problems without subtasks
 
     class Generator : public BaseGenerator<Problem> {
     protected:
-        void Config() {
-            setBaseDir("tc");
-            setSolution("./solution");
-        }
-
         void SampleTestCases() {
             SAMPLE_CASE({
                 "1 1",
@@ -95,12 +85,14 @@ For problems without subtasks
         }
     };
 
-    int main() {
-        Generator gen;
-        return gen.generate();
+    int main(int argc, char* argv[]) {
+        Runner<Problem> runner(argc, argv);
+
+        runner.setGenerator(new Generator());
+        return runner.run();
     }
 
-The above generator program, when run, will output:
+The above runner program, when run, will output:
 
 ::
 
@@ -122,8 +114,7 @@ For problems with subtasks
 
 .. sourcecode:: cpp
 
-    #include "tcframe/tcframe.hpp"
-
+    #include "tcframe/runner.hpp"
     using namespace tcframe;
 
     class Problem : public BaseProblem {
@@ -132,10 +123,6 @@ For problems with subtasks
         int K;
 
         int result;
-
-        void Config() {
-            setSlug("problem");
-        }
 
         void InputFormat() {
             LINE(A, B);
@@ -167,11 +154,6 @@ For problems with subtasks
 
     class Generator : public BaseGenerator<Problem> {
     protected:
-        void Config() {
-            setBaseDir("tc");
-            setSolution("./solution");
-        }
-
         void SampleTestCases() {
             SAMPLE_CASE({
                 "1  1",
@@ -194,12 +176,14 @@ For problems with subtasks
         }
     };
 
-    int main() {
-        Generator gen;
-        return gen.generate();
+    int main(int argc, char* argv[]) {
+        Runner<Problem> runner(argc, argv);
+
+        runner.setGenerator(new Generator());
+        return runner.run();
     }
 
-The above generator program, when run, will output:
+The above runner program, when run, will output:
 
 ::
 

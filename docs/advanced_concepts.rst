@@ -49,4 +49,4 @@ I am designing how to support that in the next versions.
 Complex predicates in constraints
 ---------------------------------
 
-Similarly, methods used in defining constraints (Constraints(), SubtaskX()) must be free of custom loops and conditional branches. If you want to use complex predicate, such as determining whether the input is a tree, create a custom private helper method that return boolean (whether the input is a tree).
+Similarly, methods used in defining constraints (**Constraints()**, **SubtaskX()**) must be free of custom loops and conditional branches. If you want to use complex predicate, such as determining whether the input is a tree, create a custom private helper method that return boolean (whether the input is a tree).

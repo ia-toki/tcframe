@@ -26,7 +26,7 @@ class OperatingSystem {
 public:
     virtual ~OperatingSystem() { }
 
-    virtual void setBaseDirectory(string baseDirectoryName) = 0;
+    virtual void setBaseDir(string baseDirName) = 0;
     virtual istream* openForReading(string name) = 0;
     virtual ostream* openForWriting(string name) = 0;
     virtual void remove(string name) = 0;
@@ -36,33 +36,33 @@ public:
 class UnixOperatingSystem : public OperatingSystem {
 public:
     UnixOperatingSystem()
-            : baseDirectoryName(".") { }
+            : baseDirName(".") { }
 
-    void setBaseDirectory(string baseDirectoryName) {
-        this->baseDirectoryName = baseDirectoryName;
+    void setBaseDir(string baseDirName) {
+        this->baseDirName = baseDirName;
 
-        system(("rm -rf " + baseDirectoryName).c_str());
-        system(("mkdir -p " + baseDirectoryName).c_str());
+        system(("rm -rf " + baseDirName).c_str());
+        system(("mkdir -p " + baseDirName).c_str());
     }
 
     istream* openForReading(string name) {
-        string filename = baseDirectoryName + "/" + name;
+        string filename = baseDirName + "/" + name;
         ifstream* file = new ifstream();
         file->open(filename);
         return file;
     }
 
     ostream* openForWriting(string name) {
-        string filename = baseDirectoryName + "/" + name;
+        string filename = baseDirName + "/" + name;
         ofstream* file = new ofstream();
         file->open(filename);
         return file;
     }
 
     ExecutionResult execute(string command, string inputName, string outputName) {
-        string inputFilename = baseDirectoryName + "/" + inputName;
-        string outputFilename = baseDirectoryName + "/" + outputName;
-        string errorFilename = baseDirectoryName + "/_error.out";
+        string inputFilename = baseDirName + "/" + inputName;
+        string outputFilename = baseDirName + "/" + outputName;
+        string errorFilename = baseDirName + "/_error.out";
 
         ExecutionResult result;
         int exitStatus = system((command + " < " + inputFilename + " > " + outputFilename + " 2> " + errorFilename).c_str());
@@ -74,12 +74,12 @@ public:
     }
 
     void remove(string name) {
-        string filename = baseDirectoryName + "/" + name;
+        string filename = baseDirName + "/" + name;
         removeFile(filename);
     }
 
 private:
-    string baseDirectoryName;
+    string baseDirName;
 
     void removeFile(string filename) {
         system(("rm -f " + filename).c_str());

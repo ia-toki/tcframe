@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-#include "tcframe/tcframe.hpp"
+#include "tcframe/runner.hpp"
 
 using std::ostringstream;
 

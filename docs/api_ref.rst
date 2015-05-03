@@ -140,22 +140,22 @@ Generator configuration
 
 The following methods can be called inside the overridden method **BaseGenerator::Config()**.
 
-.. cpp:function:: void setBaseDir(string directoryName)
+.. cpp:function:: void setTestCasesDir(string testCasesDir)
 
   Sets the directory for the generated test case files, relative to the location of the generator program.
 
-  If not specified, the default directory name is "tc".
+  If not specified, the default directory is "tc".
 
-.. cpp:function:: void setSolution(string solutionExecutionCommand)
+.. cpp:function:: void setSolutionCommand(string solutionCommand)
 
   Sets the command for executing the official solution. This will be used for generating test case output files. For
   each input files, this will be executed:
 
   .. sourcecode:: bash
 
-      solutionExecutionCommand < [input filename] > [output filename]
+      solutionCommand < [input filename] > [output filename]
 
-  If not specified, the default command is "./solution".
+  If not specified, the default solution command is "./solution".
 
 .. _api-ref-test cases:
 
@@ -236,3 +236,22 @@ The following macros can be called inside the overridden method **BaseGenerator:
     assuming that the sample test case is assigned to subtasks 1 and 3.
 
     Multiple sample test cases can be defined inside the same method.
+
+.. _api-ref-command-line-options:
+
+Command-line options
+--------------------
+
+The following options can be specified when running the runner program. They mostly override the specified problem and generator configuration.
+
+.. py:function:: --slug=slug
+
+    Overrides the slug specified by setSlug() in **BaseProblem::Config()**.
+
+.. py:function:: --tc-dir=dir
+
+    Overrides the test cases directory specified by setTestCasesDir() in **BaseGenerator::Config()**.
+
+.. py:function:: --solution-command=command
+
+    Overrides the solution command specified by setSolutionCommand() in **BaseGenerator::Config()**.

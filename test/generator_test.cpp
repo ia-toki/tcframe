@@ -58,7 +58,7 @@ public:
     FakeOperatingSystem(set<string> arrangedFailedInputNames)
             : arrangedFailedInputNames(arrangedFailedInputNames) { }
 
-    void setBaseDirectory(string) { }
+    void setBaseDir(string) { }
 
     istream* openForReading(string) {
         return new istringstream();
@@ -104,10 +104,6 @@ public:
 
     int result;
 
-    void Config() {
-        setSlug("problem");
-    }
-
     void InputFormat() {
         applyLastSegment(), (applyLineSegment("A, B"), A, B);
         applyLastSegment(), (applyLineSegment("K"), K);
@@ -138,8 +134,6 @@ public:
 
 class GeneratorWithTestGroups : public BaseGenerator<ProblemWithSubtasks> {
 protected:
-    void Config() { }
-
     void SampleTestCases() {
         addSampleTestCase({"1 1001", "1"}, {1, 2});
     }
@@ -169,10 +163,6 @@ protected:
     int K;
 
     int result;
-
-    void Config() {
-        setSlug("problem");
-    }
 
     void InputFormat() {
         applyLastSegment(), (applyLineSegment("A, B"), A, B);

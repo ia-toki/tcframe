@@ -46,13 +46,13 @@ A single line containing the required product.
 - 1 <= K <= 100
 - -100000 <= A[i] <= 100000
 
-We will be writing a test cases generator for this problem. Create a C++ file, for example, **generator.cpp**.
+We will be writing a test cases generator for this problem. The program we will be writing is called **runner program**. Create a C++ file, for example, **runner.cpp**.
 
-First of all, we need to include the main tcframe header file:
+First of all, we need to include the main tcframe runner header file:
 
 .. sourcecode:: cpp
 
-    #include "tcframe/tcframe.hpp"
+    #include "tcframe/runner.hpp"
     using namespace tcframe;
 
 Then, we will need to write specifications as will be explained in the next sections.
@@ -87,6 +87,8 @@ This component consists of configuration of several aspects of the problem. To d
     }
 
 The complete reference of configurable aspects of a problem can be found here: :ref:`Problem configuration API reference <api-ref-problem-configuration>`.
+
+This component can be omitted if you don't want to override any default settings.
 
 Input/output variables
 ----------------------
@@ -278,8 +280,8 @@ For this problem:
 .. sourcecode:: cpp
 
     void Config() {
-        setBaseDir("tc");
-        setSolution("./solution");
+        setTestCasesDir("tc");
+        setSolutionCommand("./solution");
     }
 
 .. note::
@@ -287,6 +289,8 @@ For this problem:
     For this tutorial, please create an executable file named "solution" in the same directory as generator.cpp. It could be any solution -- for example, a solution that just prints Hello World.
 
 The complete reference of generator configuration can be found here: :ref:`Generator configuration API reference <api-ref-generator-configuration>`.
+
+The above configuration is the default one. This component can be omitted if you don't want to override any default values, which we will do for this tutorial.
 
 Test cases
 ----------
@@ -338,22 +342,24 @@ The complete reference of test case and sample test case definitions can be foun
 Main function
 -------------
 
-After writing problem and generator specification classes, write the **main()** function as follows:
+After writing problem and generator specification classes, write the **main()** function and configure the runner as follows:
 
 .. sourcecode:: cpp
 
-    int main() {
-        Generator gen;
-        return gen.generate();
+    int main(int argc, char* argv[]) {
+        Runner<Problem> runner(argc, argv);
+
+        runner.setGenerator(new Generator());
+        return runner.run();
     }
 
-The complete generator program for this problem is summarized below. Here, we are using a random number generator using the new C++11 **<random>** library, and the **randomArray()** private method as explained before.
+The complete runner program for this problem is summarized below. Here, we are using a random number generator using the new C++11 **<random>** library, and the **randomArray()** private method as explained before.
 
 Note that for vector input variables, don't forget to clear them before assigning the values.
 
 .. sourcecode:: cpp
 
-    #include "tcframe/tcframe.hpp"
+    #include "tcframe/runner.hpp"
     using namespace tcframe;
 
     #include <random>
@@ -417,11 +423,6 @@ Note that for vector input variables, don't forget to clear them before assignin
         }
 
     protected:
-        void Config() {
-            setBaseDir("tc");
-            setSolution("./solution");
-        }
-
         void SampleTestCases() {
             SAMPLE_CASE({
                 "5 3",
@@ -475,45 +476,55 @@ Note that for vector input variables, don't forget to clear them before assignin
         }
     };
 
-    int main() {
-        Generator gen;
-        return gen.generate();
+    int main(int argc, char* argv[]) {
+        Runner<Problem> runner(argc, argv);
+
+        runner.setGenerator(new Generator());
+        return runner.run();
     }
 
 .. note::
 
     The next versions will have convenient wrapper for generating random numbers.
 
-Compiling generator program
+Compiling runner program
 ---------------------------
 
-Suppose that your generator program is **generator.cpp**. Compile it using this compilation command:
+Suppose that your runner program is **runner.cpp**. Compile it using this compilation command:
 
 .. sourcecode:: bash
 
-    g++ -I[path to tcframe]/include -std=c++11 -o generator generator.cpp
+    g++ -I[path to tcframe]/include -std=c++11 -o runner runner.cpp
 
 For example:
 
 .. sourcecode:: bash
 
-    g++ -I/home/fushar/tcframe/include -std=c++11 -o generator generator.cpp
+    g++ -I/home/fushar/tcframe/include -std=c++11 -o runner runner.cpp
 
 .. note::
 
     The current version needs GCC version >= 4.7.
 
-Running generator program
--------------------------
+Running runner program
+----------------------
 
 Just run
 
 .. sourcecode:: bash
 
-    ./generator
+    ./runner
 
-The status of the generation of each test case will be output to the standard output. For each successful test cases,
-the input-output file pair will be stored in the specified base directory (by default, it is "tc").
+There are several command-line options that can be specified when running the runner program. The options mostly override the problem and generator configuration. For example, we can override the specified official solution:
+
+.. sourcecode:: bash
+
+    ./runner --solution-command="java Solution"
+
+See :ref:`Command-line options <api-ref-command-line-options>` for more information on the command-line options.
+
+The status of the generation of each test case will be output to the standard output. For each successful test case,
+the input-output file pair will be stored in the specified test cases directory (by default, it is "tc").
 
 Generation can fail due to several reasons:
 
