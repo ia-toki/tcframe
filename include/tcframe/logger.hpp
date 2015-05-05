@@ -22,7 +22,6 @@ public:
     virtual void logTestCaseIntroduction(string testCaseName) = 0;
     virtual void logTestCaseOkResult() = 0;
     virtual void logTestCaseFailedResult(string testCaseDescription) = 0;
-    virtual void logInputFormatFailedResult() = 0;
     virtual void logFailures(vector<Failure> failures) = 0;
 };
 

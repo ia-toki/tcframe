@@ -36,7 +36,6 @@ public:
 
     void logTestCaseOkResult() { }
     void logTestCaseFailedResult(string) { }
-    void logInputFormatFailedResult() { }
 
     void logFailures(vector<Failure> failures) {
         this->failuresMap[currentKey] = failures;
@@ -72,7 +71,7 @@ public:
 
     void removeFile(string) { }
 
-    ExecutionResult execute(string, string inputFilename, string) {
+    ExecutionResult execute(string, string inputFilename, string, string) {
         if (arrangedFailedInputFilenames.count(inputFilename)) {
             return ExecutionResult{1, new istringstream(), new istringstream("Intentionally failed")};
         }

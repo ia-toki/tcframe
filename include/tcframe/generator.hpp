@@ -256,7 +256,7 @@ private:
     }
 
     void generateTestCaseOutput(string testCaseInputFilename, string testCaseOutputFilename) {
-        ExecutionResult result = os->execute(solutionCommand, testCaseInputFilename, testCaseOutputFilename);
+        ExecutionResult result = os->execute(solutionCommand, testCaseInputFilename, testCaseOutputFilename, "_error.out");
 
         if (result.exitCode != 0) {
             throw ExecutionException({

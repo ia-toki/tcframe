@@ -30,7 +30,7 @@ public:
     virtual ostream* openForWriting(string filename) = 0;
     virtual void forceMakeDir(string dirName) = 0;
     virtual void removeFile(string filename) = 0;
-    virtual ExecutionResult execute(string command, string inputFilename, string outputFilename) = 0;
+    virtual ExecutionResult execute(string command, string inputFilename, string outputFilename, string errorFilename) = 0;
 };
 
 class UnixOperatingSystem : public OperatingSystem {
@@ -56,7 +56,7 @@ public:
         system(("rm -f " + filename).c_str());
     }
 
-    ExecutionResult execute(string command, string inputFilename, string outputFilename) {
+    ExecutionResult execute(string command, string inputFilename, string outputFilename, string errorFilename) {
         ostringstream sout;
 
         sout << command;
@@ -66,15 +66,25 @@ public:
         if (!outputFilename.empty()) {
             sout << " > " << outputFilename;
         }
-
-        string errorFilename = "_error.out";
-        sout << " 2> " << errorFilename;
+        if (!errorFilename.empty()) {
+            sout << " 2> " << errorFilename;
+        }
 
         ExecutionResult result;
         int exitStatus = system(sout.str().c_str());
         result.exitCode = WEXITSTATUS(exitStatus);
-        result.outputStream = openForReading(outputFilename);
-        result.errorStream = openForReadingAsStringStream(errorFilename);
+
+        if (outputFilename.empty()) {
+            result.outputStream = new istringstream();
+        } else {
+            result.outputStream = openForReading(outputFilename);
+        }
+
+        if (errorFilename.empty()) {
+            result.errorStream = new istringstream();
+        } else {
+            result.errorStream = openForReadingAsStringStream(errorFilename);
+        }
 
         return result;
     }
