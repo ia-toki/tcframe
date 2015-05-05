@@ -28,6 +28,7 @@ public:
 
     virtual istream* openForReading(string filename) = 0;
     virtual ostream* openForWriting(string filename) = 0;
+    virtual void closeOpenedWritingStream(ostream* out) = 0;
     virtual void forceMakeDir(string dirName) = 0;
     virtual void removeFile(string filename) = 0;
     virtual ExecutionResult execute(string command, string inputFilename, string outputFilename, string errorFilename) = 0;
@@ -45,6 +46,10 @@ public:
         ofstream* file = new ofstream();
         file->open(filename);
         return file;
+    }
+
+    void closeOpenedWritingStream(ostream* out) {
+        delete out;
     }
 
     void forceMakeDir(string dirName) {

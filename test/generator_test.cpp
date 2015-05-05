@@ -67,6 +67,8 @@ public:
         return testCaseInput;
     }
 
+    void closeOpenedWritingStream(ostream*) { }
+
     void forceMakeDir(string) { }
 
     void removeFile(string) { }

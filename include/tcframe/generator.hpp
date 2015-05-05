@@ -252,7 +252,7 @@ private:
         TProblem::InputFormat();
         TProblem::endPrintingFormat();
 
-        delete testCaseInput;
+        os->closeOpenedWritingStream(testCaseInput);
     }
 
     void generateTestCaseOutput(string testCaseInputFilename, string testCaseOutputFilename) {
