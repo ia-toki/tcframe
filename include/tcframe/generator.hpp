@@ -41,8 +41,6 @@ public:
         subtasks = TProblem::getSubtasks();
         testData = getTestData();
 
-        os->setBaseDir(testCasesDir);
-
         bool succesful = true;
         for (TestGroup* testGroup : testData) {
             int testGroupId = testGroup->getId();
@@ -160,8 +158,8 @@ private:
         string testCaseName = Util::constructTestCaseName(TProblem::getSlug(), testGroupId, testCaseId);
         logger->logTestCaseIntroduction(testCaseName);
 
-        string testCaseInputName = testCaseName + ".in";
-        string testCaseOutputName = testCaseName + ".out";
+        string testCaseInputFilename = testCasesDir + "/" + testCaseName + ".in";
+        string testCaseOutputFilename = testCasesDir + "/" + testCaseName + ".out";
 
         TestCase* testCase = getTestCase(testGroupId, testCaseId);
 
@@ -169,8 +167,8 @@ private:
             applyTestCase(testCase);
             checkConstraints(testCase);
             FinalizeInput();
-            generateTestCaseInput(testCaseInputName);
-            generateTestCaseOutput(testCaseInputName, testCaseOutputName);
+            generateTestCaseInput(testCaseInputFilename);
+            generateTestCaseOutput(testCaseInputFilename, testCaseOutputFilename);
 
             logger->logTestCaseOkResult();
         } catch (TestCaseException& e) {
@@ -247,8 +245,8 @@ private:
         }
     }
 
-    void generateTestCaseInput(string testCaseInputName) {
-        ostream* testCaseInput = os->openForWriting(testCaseInputName);
+    void generateTestCaseInput(string testCaseInputFilename) {
+        ostream* testCaseInput = os->openForWriting(testCaseInputFilename);
 
         TProblem::beginPrintingFormat(testCaseInput);
         TProblem::InputFormat();
@@ -257,8 +255,8 @@ private:
         delete testCaseInput;
     }
 
-    void generateTestCaseOutput(string testCaseInputName, string testCaseOutputName) {
-        ExecutionResult result = os->execute(solutionCommand, testCaseInputName, testCaseOutputName);
+    void generateTestCaseOutput(string testCaseInputFilename, string testCaseOutputFilename) {
+        ExecutionResult result = os->execute(solutionCommand, testCaseInputFilename, testCaseOutputFilename);
 
         if (result.exitCode != 0) {
             throw ExecutionException({

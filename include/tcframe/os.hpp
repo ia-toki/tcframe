@@ -26,65 +26,60 @@ class OperatingSystem {
 public:
     virtual ~OperatingSystem() { }
 
-    virtual void setBaseDir(string baseDirName) = 0;
-    virtual istream* openForReading(string name) = 0;
-    virtual ostream* openForWriting(string name) = 0;
-    virtual void remove(string name) = 0;
-    virtual ExecutionResult execute(string command, string inputName, string outputName) = 0;
+    virtual istream* openForReading(string filename) = 0;
+    virtual ostream* openForWriting(string filename) = 0;
+    virtual void forceMakeDir(string dirName) = 0;
+    virtual void removeFile(string filename) = 0;
+    virtual ExecutionResult execute(string command, string inputFilename, string outputFilename) = 0;
 };
 
 class UnixOperatingSystem : public OperatingSystem {
 public:
-    UnixOperatingSystem()
-            : baseDirName(".") { }
-
-    void setBaseDir(string baseDirName) {
-        this->baseDirName = baseDirName;
-
-        system(("rm -rf " + baseDirName).c_str());
-        system(("mkdir -p " + baseDirName).c_str());
-    }
-
-    istream* openForReading(string name) {
-        string filename = baseDirName + "/" + name;
+    istream* openForReading(string filename) {
         ifstream* file = new ifstream();
         file->open(filename);
         return file;
     }
 
-    ostream* openForWriting(string name) {
-        string filename = baseDirName + "/" + name;
+    ostream* openForWriting(string filename) {
         ofstream* file = new ofstream();
         file->open(filename);
         return file;
     }
 
-    ExecutionResult execute(string command, string inputName, string outputName) {
-        string inputFilename = baseDirName + "/" + inputName;
-        string outputFilename = baseDirName + "/" + outputName;
-        string errorFilename = baseDirName + "/_error.out";
-
-        ExecutionResult result;
-        int exitStatus = system((command + " < " + inputFilename + " > " + outputFilename + " 2> " + errorFilename).c_str());
-        result.exitCode = WEXITSTATUS(exitStatus);
-        result.outputStream = openForReading(outputName);
-        result.errorStream = openForReadingAsStringStream(errorFilename);
-
-        return result;
+    void forceMakeDir(string dirName) {
+        system(("rm -rf " + dirName).c_str());
+        system(("mkdir -p " + dirName).c_str());
     }
-
-    void remove(string name) {
-        string filename = baseDirName + "/" + name;
-        removeFile(filename);
-    }
-
-private:
-    string baseDirName;
 
     void removeFile(string filename) {
         system(("rm -f " + filename).c_str());
     }
 
+    ExecutionResult execute(string command, string inputFilename, string outputFilename) {
+        ostringstream sout;
+
+        sout << command;
+        if (!inputFilename.empty()) {
+            sout << " < " << inputFilename;
+        }
+        if (!outputFilename.empty()) {
+            sout << " > " << outputFilename;
+        }
+
+        string errorFilename = "_error.out";
+        sout << " 2> " << errorFilename;
+
+        ExecutionResult result;
+        int exitStatus = system(sout.str().c_str());
+        result.exitCode = WEXITSTATUS(exitStatus);
+        result.outputStream = openForReading(outputFilename);
+        result.errorStream = openForReadingAsStringStream(errorFilename);
+
+        return result;
+    }
+
+private:
     istringstream* openForReadingAsStringStream(string filename) {
         ifstream file(filename);
 

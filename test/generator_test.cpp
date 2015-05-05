@@ -56,28 +56,28 @@ public:
     FakeOperatingSystem() { }
 
     FakeOperatingSystem(set<string> arrangedFailedInputNames)
-            : arrangedFailedInputNames(arrangedFailedInputNames) { }
-
-    void setBaseDir(string) { }
+            : arrangedFailedInputFilenames(arrangedFailedInputNames) { }
 
     istream* openForReading(string) {
         return new istringstream();
     }
 
-    ostream* openForWriting(string name) {
+    ostream* openForWriting(string filename) {
         ostringstream* testCaseInput = new ostringstream();
-        testCaseInputs[name] = testCaseInput;
+        testCaseInputs[filename] = testCaseInput;
         return testCaseInput;
     }
 
-    void remove(string) { }
+    void forceMakeDir(string) { }
 
-    ExecutionResult execute(string, string inputName, string) {
-        if (arrangedFailedInputNames.count(inputName)) {
+    void removeFile(string) { }
+
+    ExecutionResult execute(string, string inputFilename, string) {
+        if (arrangedFailedInputFilenames.count(inputFilename)) {
             return ExecutionResult{1, new istringstream(), new istringstream("Intentionally failed")};
         }
 
-        istringstream input(testCaseInputs[inputName]->str());
+        istringstream input(testCaseInputs[inputFilename]->str());
 
         int A, B, K;
         input >> A >> B >> K;
@@ -94,7 +94,7 @@ public:
 
 private:
     map<string, ostringstream*> testCaseInputs;
-    set<string> arrangedFailedInputNames;
+    set<string> arrangedFailedInputFilenames;
 };
 
 class ProblemWithSubtasks : public BaseProblem {
@@ -266,7 +266,7 @@ TEST(GeneratorTest, GenerationWithoutSubtasksAndWithoutTestGroups) {
 
 TEST(GeneratorTest, GenerationWithFailedExecution) {
     FakeLogger logger;
-    GeneratorWithArrangedExecutionFailure gen(&logger, {"problem_1.in"});
+    GeneratorWithArrangedExecutionFailure gen(&logger, {"tc/problem_1.in"});
     int exitCode = gen.generate();
 
     EXPECT_NE(0, exitCode);
