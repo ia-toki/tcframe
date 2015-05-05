@@ -68,10 +68,14 @@ public:
         if (!inputFilename.empty()) {
             sout << " < " << inputFilename;
         }
-        if (!outputFilename.empty()) {
+        if (outputFilename.empty()) {
+            sout << " > /dev/null";
+        } else {
             sout << " > " << outputFilename;
         }
-        if (!errorFilename.empty()) {
+        if (errorFilename.empty()) {
+            sout << " 2> /dev/null";
+        } else {
             sout << " 2> " << errorFilename;
         }
 
