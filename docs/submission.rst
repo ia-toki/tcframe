@@ -99,12 +99,6 @@ and here is for problems without subtasks
     [ RESULT ]
       Wrong Answer
 
-The command-line options listed :ref:`here <api-ref-command-line-options>` can still be used. For example, if you want to check the submission against another submission, you can run
-
-.. sourcecode:: bash
-
-    ./runner submit ./alt_solution --solution-command=./another_reference_solution
-
 This submission simulation feature is useful for creating "unit tests" for your test cases. For each problem, you can write many solutions with different intended results. For example, solution_123.cpp should pass subtasks 1 - 3; solution_12.cpp should pass subtasks 1 and 2 but not subtask 3, etc.
 
 Porcelain output
