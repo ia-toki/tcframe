@@ -134,7 +134,7 @@ private:
     }
 
     Verdict scoreOnTestCase(string testCaseOutputFilename) {
-        string diffCommand = "diff --unchanged-line-format=' %.2dn    %L' --old-line-format='-%.2dn    %L' --new-line-format='+%.2dn    %L' _submission.out " + testCaseOutputFilename + " | head -n 10";
+        string diffCommand = "diff --unchanged-line-format=' %.2dn    %L' --old-line-format='(expected) [line %.2dn]    %L' --new-line-format='(received) [line %.2dn]    %L' " + testCaseOutputFilename + " _submission.out | head -n 10";
         ExecutionResult result = os->execute(diffCommand, "", "_diff.out", "");
 
         string briefDiffCommand = "diff --brief _submission.out " + testCaseOutputFilename;
