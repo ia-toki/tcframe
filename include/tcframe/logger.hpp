@@ -2,13 +2,16 @@
 #define TCFRAME_LOGGER_H
 
 #include "failure.hpp"
+#include "verdict.hpp"
 
 #include <iostream>
+#include <map>
 #include <string>
 
 using std::cout;
 using std::endl;
 using std::flush;
+using std::map;
 using std::string;
 
 namespace tcframe {
@@ -17,21 +20,33 @@ class Logger {
 public:
     virtual ~Logger() { }
 
-    virtual void logIntroduction() = 0;
     virtual void logTestGroupIntroduction(int testGroupId) = 0;
     virtual void logTestCaseIntroduction(string testCaseName) = 0;
-    virtual void logTestCaseOkResult() = 0;
-    virtual void logTestCaseFailedResult(string testCaseDescription) = 0;
     virtual void logFailures(vector<Failure> failures) = 0;
 };
 
-class StandardLogger : public Logger {
+class GeneratorLogger : public Logger {
 public:
-    void logIntroduction() {
-        cout << "Generating test cases..." << endl;
-    }
+    virtual ~GeneratorLogger() { }
 
-    void logTestGroupIntroduction(int testGroupId) {
+    virtual void logIntroduction() = 0;
+    virtual void logTestCaseOkResult() = 0;
+    virtual void logTestCaseFailedResult(string testCaseDescription) = 0;
+};
+
+class SubmitterLogger : public Logger {
+public:
+    virtual ~SubmitterLogger() { }
+
+    virtual void logIntroduction() = 0;
+    virtual void logTestCaseVerdict(Verdict verdict) = 0;
+    virtual void logSubmissionResult(map<int, Verdict> subtaskVerdicts) = 0;
+    virtual void logPorcelainSubmissionResult(map<int, Verdict> subtaskVerdicts) = 0;
+};
+
+class DefaultLoggerUtils {
+public:
+    static void logTestGroupIntroduction(int testGroupId) {
         cout << endl;
 
         if (testGroupId == 0) {
@@ -43,8 +58,32 @@ public:
         }
     }
 
-    void logTestCaseIntroduction(string testCaseName) {
+    static void logTestCaseIntroduction(string testCaseName) {
         cout << "  " << testCaseName << ": " << flush;
+    }
+
+    static void logFailures(vector<Failure> failures) {
+        for (Failure failure : failures) {
+            string prefix;
+            if (failure.getLevel() == 0) {
+                prefix = "    * ";
+            } else {
+                prefix = "      - ";
+            }
+
+            cout << prefix << failure.getMessage() << endl;
+        }
+    }
+};
+
+class DefaultGeneratorLogger : public GeneratorLogger {
+public:
+    void logTestGroupIntroduction(int testGroupId) { DefaultLoggerUtils::logTestGroupIntroduction(testGroupId); }
+    void logTestCaseIntroduction(string testCaseName) { DefaultLoggerUtils::logTestCaseIntroduction(testCaseName); }
+    void logFailures(vector<Failure> failures) { DefaultLoggerUtils::logFailures(failures); }
+
+    void logIntroduction() {
+        cout << "Generating test cases..." << endl;
     }
 
     void logTestCaseOkResult() {
@@ -60,23 +99,42 @@ public:
 
         cout << "    Reasons:" << endl;
     }
+};
 
-    void logInputFormatFailedResult() {
-        cout << endl;
-        cout << "  Input format check: FAILED" << endl;
-        cout << "    Reasons:" << endl;
+class DefaultSubmitterLogger : public SubmitterLogger {
+public:
+    void logTestGroupIntroduction(int testGroupId) { DefaultLoggerUtils::logTestGroupIntroduction(testGroupId); }
+    void logTestCaseIntroduction(string testCaseName) { DefaultLoggerUtils::logTestCaseIntroduction(testCaseName); }
+    void logFailures(vector<Failure> failures) { DefaultLoggerUtils::logFailures(failures); }
+
+    void logIntroduction() {
+        cout << "Submitting..." << endl;
     }
 
-    void logFailures(vector<Failure> failures) {
-        for (Failure failure : failures) {
-            string prefix;
-            if (failure.getLevel() == 0) {
-                prefix = "    * ";
-            } else {
-                prefix = "      - ";
-            }
+    void logTestCaseVerdict(Verdict verdict) {
+        cout << verdict.getName() << endl;
+    }
 
-            cout << prefix << failure.getMessage() << endl;
+    void logSubmissionResult(map<int, Verdict> subtaskVerdicts) {
+        cout << endl;
+        cout << "[ RESULT ]" << endl;
+
+        for (auto entry : subtaskVerdicts) {
+            if (entry.first == -1) {
+                cout << entry.second.getName() << endl;
+            } else {
+                cout << "  Subtask " << entry.first << ": " << entry.second.getName() << endl;
+            }
+        }
+    }
+
+    void logPorcelainSubmissionResult(map<int, Verdict> subtaskVerdicts) {
+        for (auto entry : subtaskVerdicts) {
+            if (entry.first == -1) {
+                cout << entry.second.getCode() << endl;
+            } else {
+                cout << entry.first << ":" << entry.second.getCode() << endl;
+            }
         }
     }
 };

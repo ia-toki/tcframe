@@ -30,7 +30,7 @@ namespace tcframe {
 template<typename TProblem>
 class BaseGenerator : protected TProblem, protected TestCasesCollector {
 public:
-    void applyConfigurations() {
+    void applyConfiguration() {
         TProblem::Config();
         Config();
     }
@@ -56,14 +56,6 @@ public:
         return succesful ? 0 : 1;
     }
 
-    void setProblemSlug(string slug) {
-        TProblem::setSlug(slug);
-    }
-
-    string getProblemSlug() {
-        return TProblem::getSlug();
-    }
-
     void setSolutionCommand(string solutionCommand) {
         this->solutionCommand = solutionCommand;
     }
@@ -80,12 +72,34 @@ public:
         return testCasesDir;
     }
 
+    vector<TestGroup*> getTestData() {
+        SampleTestCases();
+
+        try {
+            TestCases();
+            return TestCasesCollector::collectTestData();
+        } catch (NotImplementedException& e1){
+            for (auto testGroupBlock : testGroupBlocks) {
+                try {
+                    TestCasesCollector::newTestGroup();
+                    (this->*testGroupBlock)();
+                } catch (NotImplementedException& e2) {
+                    vector<TestGroup*> localTestData = TestCasesCollector::collectTestData();
+                    localTestData.pop_back();
+                    return localTestData;
+                }
+            }
+
+            return TestCasesCollector::collectTestData();
+        }
+    }
+
 protected:
     BaseGenerator()
-            : logger(new StandardLogger()),
+            : logger(new DefaultGeneratorLogger()),
               os(new UnixOperatingSystem()) { }
 
-    BaseGenerator(Logger* logger, OperatingSystem* os)
+    BaseGenerator(GeneratorLogger* logger, OperatingSystem* os)
             : logger(logger),
               os(os) { }
 
@@ -110,7 +124,7 @@ protected:
     virtual void TestGroup10() { throw NotImplementedException(); }
 
 private:
-    Logger* logger;
+    GeneratorLogger* logger;
     OperatingSystem* os;
 
     string solutionCommand = "./solution";
@@ -131,28 +145,6 @@ private:
             &BaseGenerator::TestGroup9,
             &BaseGenerator::TestGroup10
     };
-
-    vector<TestGroup*> getTestData() {
-        SampleTestCases();
-
-        try {
-            TestCases();
-            return TestCasesCollector::collectTestData();
-        } catch (NotImplementedException& e1){
-            for (auto testGroupBlock : testGroupBlocks) {
-                try {
-                    TestCasesCollector::newTestGroup();
-                    (this->*testGroupBlock)();
-                } catch (NotImplementedException& e2) {
-                    vector<TestGroup*> localTestData = TestCasesCollector::collectTestData();
-                    localTestData.pop_back();
-                    return localTestData;
-                }
-            }
-
-            return TestCasesCollector::collectTestData();
-        }
-    }
 
     bool generateTestCase(int testGroupId, int testCaseId) {
         string testCaseName = Util::constructTestCaseName(TProblem::getSlug(), testGroupId, testCaseId);

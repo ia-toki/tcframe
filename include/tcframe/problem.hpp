@@ -13,13 +13,10 @@ using std::vector;
 namespace tcframe {
 
 class BaseProblem : protected ConstraintsCollector, protected IOFormatProvider {
-protected:
-    BaseProblem()
-            : slug("problem") { }
-
-    virtual ~BaseProblem() { }
-
-    virtual void Config() { }
+public:
+    void applyConfiguration() {
+        Config();
+    }
 
     void setSlug(string slug) {
         this->slug = slug;
@@ -28,21 +25,6 @@ protected:
     string getSlug() {
         return slug;
     }
-
-    virtual void InputFormat() = 0;
-    virtual void OutputFormat() = 0;
-
-    virtual void Constraints() { throw NotImplementedException(); }
-    virtual void Subtask1() { throw NotImplementedException(); }
-    virtual void Subtask2() { throw NotImplementedException(); }
-    virtual void Subtask3() { throw NotImplementedException(); }
-    virtual void Subtask4() { throw NotImplementedException(); }
-    virtual void Subtask5() { throw NotImplementedException(); }
-    virtual void Subtask6() { throw NotImplementedException(); }
-    virtual void Subtask7() { throw NotImplementedException(); }
-    virtual void Subtask8() { throw NotImplementedException(); }
-    virtual void Subtask9() { throw NotImplementedException(); }
-    virtual void Subtask10() { throw NotImplementedException(); }
 
     vector<Subtask*> getSubtasks() {
         try {
@@ -63,6 +45,28 @@ protected:
             return ConstraintsCollector::collectSubtasks();
         }
     }
+protected:
+    BaseProblem()
+            : slug("problem") { }
+
+    virtual ~BaseProblem() { }
+
+    virtual void Config() { }
+
+    virtual void InputFormat() = 0;
+    virtual void OutputFormat() = 0;
+
+    virtual void Constraints() { throw NotImplementedException(); }
+    virtual void Subtask1() { throw NotImplementedException(); }
+    virtual void Subtask2() { throw NotImplementedException(); }
+    virtual void Subtask3() { throw NotImplementedException(); }
+    virtual void Subtask4() { throw NotImplementedException(); }
+    virtual void Subtask5() { throw NotImplementedException(); }
+    virtual void Subtask6() { throw NotImplementedException(); }
+    virtual void Subtask7() { throw NotImplementedException(); }
+    virtual void Subtask8() { throw NotImplementedException(); }
+    virtual void Subtask9() { throw NotImplementedException(); }
+    virtual void Subtask10() { throw NotImplementedException(); }
 
 private:
     string slug;

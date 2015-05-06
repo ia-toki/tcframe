@@ -10,6 +10,7 @@ Contents:
    installation
    basic_concepts
    advanced_concepts
+   submission
    api_ref
    credits
    license
