@@ -38,6 +38,8 @@ public:
     int generate() {
         logger->logIntroduction();
 
+        os->forceMakeDir(testCasesDir);
+
         subtasks = TProblem::getSubtasks();
         testData = getTestData();
 
