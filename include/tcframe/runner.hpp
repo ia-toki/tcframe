@@ -81,6 +81,7 @@ public:
         problem->applyConfiguration();
         generator->applyConfiguration();
 
+        isPorcelain = 0;
         applyCommandLineOptions();
 
         if (mode == RunnerMode::GENERATION) {
