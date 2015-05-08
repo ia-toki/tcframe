@@ -24,10 +24,10 @@ template<typename TProblem>
 class Runner {
 public:
     Runner(int argc, char** argv)
-            : argc(argc), argv(argv), problem(new TProblem()), mode(RunnerMode::GENERATION) { }
+            : argc(argc), argv(argv), problem(new TProblem()), mode(RunnerMode::GENERATION), isPorcelain(0) { }
 
     Runner(int argc, char** argv, TProblem* problem)
-            : argc(argc), argv(argv), problem(problem), mode(RunnerMode::GENERATION) { }
+            : argc(argc), argv(argv), problem(problem), mode(RunnerMode::GENERATION), isPorcelain(0) { }
 
     void setGenerator(BaseGenerator<TProblem>* generator) {
         this->generator = generator;
