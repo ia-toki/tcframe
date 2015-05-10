@@ -88,7 +88,7 @@ public:
         string output = Util::toString(A + B * K) + "\n";
 
         ExecutionResult result;
-        result.exitCode = 0;
+        result.exitStatus = 0;
         result.outputStream = new istringstream(output);
         result.errorStream = new istringstream();
 

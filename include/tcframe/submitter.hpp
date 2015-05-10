@@ -124,12 +124,18 @@ private:
     void executeOnTestCase(string submissionCommand, string testCaseInputFilename) {
         ExecutionResult result = os->execute(submissionCommand, testCaseInputFilename, "_submission.out", "_error.out");
 
-        if (result.exitCode != 0) {
-            throw ExecutionException({
-                    Failure("Execution of submission failed:", 0),
-                    Failure("Exit code: " + Util::toString(result.exitCode), 1),
-                    Failure("Standard error: " + string(istreambuf_iterator<char>(*result.errorStream), istreambuf_iterator<char>()), 1)
-            });
+        if (result.exitStatus != 0) {
+            vector<Failure> failures;
+            failures.push_back(Failure("Execution of submission failed:", 0));
+
+            if (result.exitStatus <= 128) {
+                failures.push_back(Failure("Exit code: " + Util::toString(result.exitStatus), 1));
+                failures.push_back(Failure("Standard error: " + string(istreambuf_iterator<char>(*result.errorStream), istreambuf_iterator<char>()), 1));
+            } else {
+                failures.push_back(Failure(string(strsignal(result.exitStatus - 128)), 1));
+            }
+
+            throw ExecutionException(failures);
         }
     }
 
@@ -140,7 +146,7 @@ private:
         string briefDiffCommand = "diff --brief _submission.out " + testCaseOutputFilename;
         ExecutionResult briefResult = os->execute(briefDiffCommand, "", "", "");
 
-        if (briefResult.exitCode == 0) {
+        if (briefResult.exitStatus == 0) {
             return Verdict::accepted();
         } else {
             string diff = string(istreambuf_iterator<char>(*result.outputStream), istreambuf_iterator<char>());

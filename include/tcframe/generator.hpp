@@ -11,6 +11,7 @@
 #include "util.hpp"
 
 #include <cstdio>
+#include <cstring>
 #include <ostream>
 #include <set>
 #include <sstream>
@@ -252,12 +253,18 @@ private:
     void generateTestCaseOutput(string testCaseInputFilename, string testCaseOutputFilename) {
         ExecutionResult result = os->execute(solutionCommand, testCaseInputFilename, testCaseOutputFilename, "_error.out");
 
-        if (result.exitCode != 0) {
-            throw ExecutionException({
-                    Failure("Execution of solution failed:", 0),
-                    Failure("Exit code: " + Util::toString(result.exitCode), 1),
-                    Failure("Standard error: " + string(istreambuf_iterator<char>(*result.errorStream), istreambuf_iterator<char>()), 1)
-            });
+        if (result.exitStatus != 0) {
+            vector<Failure> failures;
+            failures.push_back(Failure("Execution of solution failed:", 0));
+
+            if (result.exitStatus <= 128) {
+                failures.push_back(Failure("Exit code: " + Util::toString(result.exitStatus), 1));
+                failures.push_back(Failure("Standard error: " + string(istreambuf_iterator<char>(*result.errorStream), istreambuf_iterator<char>()), 1));
+            } else {
+                failures.push_back(Failure(string(strsignal(result.exitStatus - 128)), 1));
+            }
+
+            throw ExecutionException(failures);
         }
 
         TProblem::beginParsingFormat(result.outputStream);

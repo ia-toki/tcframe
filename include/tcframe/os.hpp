@@ -17,7 +17,7 @@ using std::string;
 namespace tcframe {
 
 struct ExecutionResult {
-    int exitCode;
+    int exitStatus;
     istream* outputStream;
     istream* errorStream;
 };
@@ -64,7 +64,7 @@ public:
     ExecutionResult execute(string command, string inputFilename, string outputFilename, string errorFilename) {
         ostringstream sout;
 
-        sout << command;
+        sout << "{ " << command << "; }";
         if (!inputFilename.empty()) {
             sout << " < " << inputFilename;
         }
@@ -81,7 +81,7 @@ public:
 
         ExecutionResult result;
         int exitStatus = system(sout.str().c_str());
-        result.exitCode = WEXITSTATUS(exitStatus);
+        result.exitStatus = WEXITSTATUS(exitStatus);
 
         if (outputFilename.empty()) {
             result.outputStream = new istringstream();
