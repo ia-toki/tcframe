@@ -126,11 +126,11 @@ private:
             vector<Failure> failures;
             failures.push_back(Failure("Execution of submission failed:", 0));
 
-            if (result.exitStatus <= 128) {
+            if (result.exitStatus & (1<<7)) {
+                failures.push_back(Failure(string(strsignal(WTERMSIG(result.exitStatus))), 1));
+            } else {
                 failures.push_back(Failure("Exit code: " + Util::toString(result.exitStatus), 1));
                 failures.push_back(Failure("Standard error: " + string(istreambuf_iterator<char>(*result.errorStream), istreambuf_iterator<char>()), 1));
-            } else {
-                failures.push_back(Failure(string(strsignal(result.exitStatus - 128)), 1));
             }
 
             throw ExecutionException(failures);
