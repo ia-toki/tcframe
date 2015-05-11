@@ -44,19 +44,19 @@ public:
         subtasks = TProblem::getSubtasks();
         testData = getTestData();
 
-        bool succesful = true;
+        bool successful = true;
         for (TestGroup* testGroup : testData) {
             int testGroupId = testGroup->getId();
             logger->logTestGroupIntroduction(testGroupId);
 
             for (int testCaseId = 1; testCaseId <= testGroup->getTestCasesCount(); testCaseId++) {
                 if (!generateTestCase(testGroupId, testCaseId)) {
-                    succesful = false;
+                    successful = false;
                 }
             }
         }
 
-        return succesful ? 0 : 1;
+        return successful ? 0 : 1;
     }
 
     void setSolutionCommand(string solutionCommand) {
