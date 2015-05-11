@@ -100,11 +100,15 @@ public:
 protected:
     BaseGenerator()
             : logger(new DefaultGeneratorLogger()),
-              os(new UnixOperatingSystem()) { }
+              os(new UnixOperatingSystem()),
+              solutionCommand("./solution"),
+              testCasesDir("tc") { }
 
     BaseGenerator(GeneratorLogger* logger, OperatingSystem* os)
             : logger(logger),
-              os(os) { }
+              os(os),
+              solutionCommand("./solution"),
+              testCasesDir("tc") { }
 
     virtual ~BaseGenerator() { }
 
@@ -130,8 +134,8 @@ private:
     GeneratorLogger* logger;
     OperatingSystem* os;
 
-    string solutionCommand = "./solution";
-    string testCasesDir = "tc";
+    string solutionCommand;
+    string testCasesDir;
 
     vector<TestGroup*> testData;
     vector<Subtask*> subtasks;
