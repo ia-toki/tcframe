@@ -32,10 +32,9 @@ namespace tcframe {
 template<typename TProblem>
 class Submitter {
 public:
-    Submitter(TProblem* problem, BaseGenerator<TProblem>* generator)
+    Submitter(BaseGenerator<TProblem>* generator)
         : logger(new DefaultSubmitterLogger()),
           os(new UnixOperatingSystem()),
-          problem(problem),
           generator(generator) { }
 
     int submit(string submissionCommand) {
@@ -44,7 +43,7 @@ public:
         }
 
         map<int, Verdict> subtaskVerdicts;
-        for (Subtask* subtask : problem->getSubtasks()) {
+        for (Subtask* subtask : generator->getSubtasks()) {
             subtaskVerdicts[subtask->getId()] = Verdict::accepted();
         }
 
@@ -80,13 +79,12 @@ public:
 private:
     SubmitterLogger* logger;
     OperatingSystem* os;
-    TProblem* problem;
     BaseGenerator<TProblem>* generator;
 
     bool isPorcelain;
 
     Verdict submitOnTestCase(string submissionCommand, int testGroupId, int testCaseId) {
-        string testCaseName = Util::constructTestCaseName(problem->getSlug(), testGroupId, testCaseId);
+        string testCaseName = Util::constructTestCaseName(generator->getSlug(), testGroupId, testCaseId);
 
         if (!isPorcelain) {
             logger->logTestCaseIntroduction(testCaseName);

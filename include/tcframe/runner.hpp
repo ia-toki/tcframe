@@ -24,10 +24,7 @@ template<typename TProblem>
 class Runner {
 public:
     Runner(int argc, char** argv)
-            : argc(argc), argv(argv), problem(new TProblem()), mode(RunnerMode::GENERATION), isPorcelain(0) { }
-
-    Runner(int argc, char** argv, TProblem* problem)
-            : argc(argc), argv(argv), problem(problem), mode(RunnerMode::GENERATION), isPorcelain(0) { }
+            : argc(argc), argv(argv), mode(RunnerMode::GENERATION), isPorcelain(0) { }
 
     void setGenerator(BaseGenerator<TProblem>* generator) {
         this->generator = generator;
@@ -46,7 +43,7 @@ public:
         while ((c = getopt_long(argc, argv, "", longopts, nullptr)) != -1) {
             switch (c) {
                 case 's':
-                    problem->setSlug(string(optarg));
+                    generator->setSlug(string(optarg));
                     break;
                 case 'd':
                     generator->setTestCasesDir(string(optarg));
@@ -78,7 +75,6 @@ public:
             }
         }
 
-        problem->applyConfiguration();
         generator->applyConfiguration();
 
         applyCommandLineOptions();
@@ -86,7 +82,7 @@ public:
         if (mode == RunnerMode::GENERATION) {
             return generator->generate();
         } else {
-            Submitter<TProblem>* submitter = new Submitter<TProblem>(problem, generator);
+            Submitter<TProblem>* submitter = new Submitter<TProblem>(generator);
             submitter->setPorcelain((bool) isPorcelain);
             return submitter->submit(submissionCommand);
         }
@@ -101,7 +97,6 @@ private:
 
     int isPorcelain;
 
-    TProblem* problem;
     BaseGenerator<TProblem>* generator;
 };
 

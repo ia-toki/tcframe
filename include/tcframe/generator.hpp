@@ -29,7 +29,7 @@ using std::vector;
 namespace tcframe {
 
 template<typename TProblem>
-class BaseGenerator : protected TProblem, protected TestCasesCollector {
+class BaseGenerator : public TProblem, protected TestCasesCollector {
 public:
     void applyConfiguration() {
         TProblem::Config();
