@@ -16,6 +16,10 @@ class Verdict {
 public:
     Verdict() { }
 
+    static Verdict unknown() {
+        return Verdict("Unknown", "?", -1);
+    }
+
     static Verdict accepted() {
         return Verdict("Accepted", "AC", 0);
     }
@@ -26,6 +30,14 @@ public:
 
     static Verdict runtimeError(vector<Failure> failures) {
         return Verdict("Runtime Error", "RTE", 2, failures);
+    }
+
+    static Verdict timeLimitExceeded() {
+        return Verdict("Time Limit Exceeded", "TLE", 3);
+    }
+
+    bool isUnknown() {
+        return code == "?";
     }
 
     bool isAccepted() {

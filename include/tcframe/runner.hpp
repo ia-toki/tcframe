@@ -31,9 +31,13 @@ public:
     }
 
     void applyCommandLineOptions() {
-        option longopts[5] = {
+        option longopts[9] = {
                 { "slug", required_argument, nullptr, 's'},
                 { "tc-dir", required_argument, nullptr, 'd'},
+                { "time-limit", required_argument, nullptr, 't'},
+                { "no-time-limit", no_argument, nullptr, 'T'},
+                { "memory-limit", required_argument, nullptr, 'm'},
+                { "no-memory-limit", no_argument, nullptr, 'M'},
                 { "solution-command", required_argument, nullptr, 'c'},
                 { "porcelain", no_argument, &isPorcelain, 1},
                 { 0, 0, 0, 0 }
@@ -50,6 +54,18 @@ public:
                     break;
                 case 'c':
                     generator->setSolutionCommand(string(optarg));
+                    break;
+                case 't':
+                    generator->setTimeLimit(Util::toInt(string(optarg)));
+                    break;
+                case 'T':
+                    generator->setTimeLimit(0);
+                    break;
+                case 'm':
+                    generator->setMemoryLimit(Util::toInt(string(optarg)));
+                    break;
+                case 'M':
+                    generator->setMemoryLimit(0);
                     break;
                 case '?':
                 case ':':

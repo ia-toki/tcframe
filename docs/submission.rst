@@ -32,7 +32,10 @@ Wrong Answer (WA)
     The output produced by the submission does not match. The diff will be shown, truncated to the first 10 lines.
 
 Runtime Error (RTE)
-    The submission crashes.
+    The submission crashed or used memory above the limit, if specified.
+
+Time Limit Exceeded (TLE)
+    The submission did not stop within the time limit, if specified.
 
 The verdict of each subtask will be also shown. The verdict of a subtask is the worst verdict of all verdicts of test cases that are assigned to it. Here, RTE is worse than WA, and WA is worse than AC.
 
@@ -100,6 +103,8 @@ and here is for problems without subtasks
       Wrong Answer
 
 This submission simulation feature is useful for creating "unit tests" for your test cases. For each problem, you can write many solutions with different intended results. For example, solution_123.cpp should pass subtasks 1 - 3; solution_12.cpp should pass subtasks 1 and 2 but not subtask 3, etc.
+
+You can also specify options. See :ref:`Command-line options <api-ref-command-line-options>` for available command-line options. The most useful optionr are specifying time and memory limit.
 
 Porcelain output
 ----------------

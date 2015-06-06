@@ -21,6 +21,13 @@ public:
         return sout.str();
     }
 
+    static int toInt(string s) {
+        istringstream sin(s);
+        int i;
+        sin >> i;
+        return i;
+    }
+
     static vector<string> split(string s) {
         for (int i = 0; i < s.size(); i++) {
             if (s[i] == ',') {

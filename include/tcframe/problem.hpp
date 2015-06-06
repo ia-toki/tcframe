@@ -26,6 +26,22 @@ public:
         return slug;
     }
 
+    void setTimeLimit(int timeLimit) {
+        this->timeLimit = timeLimit;
+    }
+
+    int getTimeLimit() {
+        return timeLimit;
+    }
+
+    void setMemoryLimit(int memoryLimit) {
+        this->memoryLimit = memoryLimit;
+    }
+
+    int getMemoryLimit() {
+        return memoryLimit;
+    }
+
     vector<Subtask*> getSubtasks() {
         try {
             Constraints();
@@ -47,7 +63,7 @@ public:
     }
 protected:
     BaseProblem()
-            : slug("problem") { }
+            : slug("problem"), timeLimit(0), memoryLimit(0) { }
 
     virtual ~BaseProblem() { }
 
@@ -70,6 +86,8 @@ protected:
 
 private:
     string slug;
+    int timeLimit;
+    int memoryLimit;
 
     vector<void(BaseProblem::*)()> subtaskBlocks = {
             &BaseProblem::Subtask1,

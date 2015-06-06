@@ -75,6 +75,9 @@ public:
 
     void removeFile(string) { }
 
+    void limitExecutionTime(int) { }
+    void limitExecutionMemory(int) { }
+
     ExecutionResult execute(string, string inputFilename, string, string) {
         if (arrangedFailedInputFilenames.count(inputFilename)) {
             return ExecutionResult{1, new istringstream(), new istringstream("Intentionally failed")};

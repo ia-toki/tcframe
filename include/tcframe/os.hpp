@@ -31,11 +31,17 @@ public:
     virtual void closeOpenedWritingStream(ostream* out) = 0;
     virtual void forceMakeDir(string dirName) = 0;
     virtual void removeFile(string filename) = 0;
+    virtual void limitExecutionTime(int timeLimitInSeconds) = 0;
+    virtual void limitExecutionMemory(int memoryLimitInMegabytes) = 0;
     virtual ExecutionResult execute(string command, string inputFilename, string outputFilename, string errorFilename) = 0;
 };
 
 class UnixOperatingSystem : public OperatingSystem {
 public:
+    UnixOperatingSystem()
+            : timeLimitInSeconds(0),
+              memoryLimitInMegabytes(0) { }
+
     istream* openForReading(string filename) {
         ifstream* file = new ifstream();
         file->open(filename);
@@ -61,10 +67,30 @@ public:
         system(("rm -f " + filename).c_str());
     }
 
+    void limitExecutionTime(int timeLimitInSeconds) {
+        this->timeLimitInSeconds = timeLimitInSeconds;
+    }
+
+    void limitExecutionMemory(int memoryLimitInMegabytes) {
+        this->memoryLimitInMegabytes = memoryLimitInMegabytes;
+    }
+
     ExecutionResult execute(string command, string inputFilename, string outputFilename, string errorFilename) {
         ostringstream sout;
 
-        sout << "{ " << command << "; }";
+        sout << "{ ";
+
+        if (timeLimitInSeconds != 0 || memoryLimitInMegabytes != 0) {
+            if (timeLimitInSeconds != 0) {
+                sout << "ulimt -S -t " << timeLimitInSeconds << "; ";
+            }
+            if (memoryLimitInMegabytes != 0) {
+                sout << "ulimit -S -v " << memoryLimitInMegabytes * 1024 << "; ";
+            }
+        }
+
+        sout << command << "; }";
+
         if (!inputFilename.empty()) {
             sout << " < " << inputFilename;
         }
@@ -99,6 +125,9 @@ public:
     }
 
 private:
+    int timeLimitInSeconds;
+    int memoryLimitInMegabytes;
+
     istringstream* openForReadingAsStringStream(string filename) {
         ifstream file(filename);
 

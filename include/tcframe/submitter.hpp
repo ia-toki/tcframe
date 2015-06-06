@@ -9,6 +9,7 @@
 #include "verdict.hpp"
 
 #include <algorithm>
+#include <csignal>
 #include <map>
 #include <set>
 #include <string>
@@ -111,30 +112,41 @@ private:
     }
 
     Verdict gradeOnTestCase(string submissionCommand, string testCaseInputFilename, string testCaseOutputFilename) {
-        try {
-            executeOnTestCase(submissionCommand, testCaseInputFilename);
+        Verdict verdict = executeOnTestCase(submissionCommand, testCaseInputFilename);
+        if (verdict.isUnknown()) {
             return scoreOnTestCase(testCaseOutputFilename);
-        } catch (ExecutionException& e) {
-            return Verdict::runtimeError(e.getFailures());
         }
+        return verdict;
     }
 
-    void executeOnTestCase(string submissionCommand, string testCaseInputFilename) {
+    Verdict executeOnTestCase(string submissionCommand, string testCaseInputFilename) {
+        os->limitExecutionTime(generator->getTimeLimit());
+        os->limitExecutionMemory(generator->getMemoryLimit());
         ExecutionResult result = os->execute(submissionCommand, testCaseInputFilename, "_submission.out", "_error.out");
+        os->limitExecutionTime(0);
+        os->limitExecutionMemory(0);
 
-        if (result.exitStatus != 0) {
-            vector<Failure> failures;
-            failures.push_back(Failure("Execution of submission failed:", 0));
+        if (result.exitStatus == 0) {
+            return Verdict::unknown();
+        }
 
-            if (result.exitStatus & (1<<7)) {
-                failures.push_back(Failure(string(strsignal(WTERMSIG(result.exitStatus))), 1));
-            } else {
-                failures.push_back(Failure("Exit code: " + Util::toString(result.exitStatus), 1));
-                failures.push_back(Failure("Standard error: " + string(istreambuf_iterator<char>(*result.errorStream), istreambuf_iterator<char>()), 1));
+        vector<Failure> failures;
+
+        if (result.exitStatus & (1<<7)) {
+            int signal = WTERMSIG(result.exitStatus);
+
+            if (signal == SIGXCPU) {
+                return Verdict::timeLimitExceeded();
             }
 
-            throw ExecutionException(failures);
+            failures.push_back(Failure("Execution of submission failed:", 0));
+            failures.push_back(Failure(string(strsignal(signal)), 1));
+        } else {
+            failures.push_back(Failure("Execution of submission failed:", 0));
+            failures.push_back(Failure("Exit code: " + Util::toString(result.exitStatus), 1));
+            failures.push_back(Failure("Standard error: " + string(istreambuf_iterator<char>(*result.errorStream), istreambuf_iterator<char>()), 1));
         }
+        return Verdict::runtimeError(failures);
     }
 
     Verdict scoreOnTestCase(string testCaseOutputFilename) {

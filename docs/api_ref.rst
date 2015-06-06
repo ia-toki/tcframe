@@ -14,6 +14,14 @@ The following methods can be called inside the overridden method **BaseProblem::
 
     If not specified, the default slug is "problem".
 
+.. cpp:function:: void setTimeLimit(int timeLimitInSeconds)
+
+    Sets the time limit of the problem, in seconds. This time limit is used in simulating submission.
+
+.. cpp:function:: void setMemoryLimit(int memoryLimitInKilobytes)
+
+    Sets the memory limit of the problem, in KB. This memory limit is used in simulating submission.
+
 .. _api-ref-io-variables:
 
 Input/output variables
@@ -255,3 +263,19 @@ The following options can be specified when running the runner program. They mos
 .. py:function:: --solution-command=command
 
     Overrides the solution command specified by setSolutionCommand() in **BaseGenerator::Config()**.
+
+.. py:function:: --time-limit=timeLimitInSeconds
+
+    Overrides the time limit specified by setTimeLimit() in **BaseProblem::Config()**.
+
+.. py:function:: --memory-limit=memoryLimitInKilobytes
+
+    Overrides the memory limit specified by setMemoryLimit() in **BaseProblem::Config()**.
+
+.. py:function:: --no-time-limit
+
+    Unset the time limit specified by setTimeLimit() in **BaseProblem::Config()**.
+
+.. py:function:: --no-memory-limit
+
+    Unset the memory limit specified by setMemoryLimit() in **BaseProblem::Config()**.
