@@ -58,20 +58,24 @@ public:
                     break;
             }
         }
+
+        args.clear();
+        for (int i = optind; i < argc; i++) {
+            args.push_back(string(argv[i]));
+        }
     }
 
     int run() {
-        if (argc > 1 && string(argv[1]) == "submit") {
-            mode = RunnerMode::SUBMISSION;
+        string program = argv[0];
 
-            if (argc == 2) {
-                submissionCommand = generator->getSolutionCommand();
+        if (argc > 1) {
+            if (string(argv[1]) == "submit") {
+                mode = RunnerMode::SUBMISSION;
                 argc--;
                 argv++;
-            } else {
-                submissionCommand = string(argv[2]);
-                argc -= 2;
-                argv += 2;
+            } else if (argv[1][0] != '-') {
+                cout << "Unknown runner command: " << string(argv[1]) << endl;
+                return 1;
             }
         }
 
@@ -82,6 +86,18 @@ public:
         if (mode == RunnerMode::GENERATION) {
             return generator->generate();
         } else {
+            if (args.size() > 1) {
+                cout << "Usage: " << program << " submit [ <submissionCommand> ]" << endl;
+                return 1;
+            }
+
+            string submissionCommand;
+            if (args.empty()) {
+                submissionCommand = generator->getSolutionCommand();
+            } else {
+                submissionCommand = args[0];
+            }
+
             Submitter<TProblem>* submitter = new Submitter<TProblem>(generator);
             submitter->setPorcelain((bool) isPorcelain);
             return submitter->submit(submissionCommand);
@@ -91,9 +107,9 @@ public:
 private:
     int argc;
     char** argv;
+    vector<string> args;
 
     RunnerMode mode;
-    string submissionCommand;
 
     int isPorcelain;
 
