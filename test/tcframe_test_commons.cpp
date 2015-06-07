@@ -2,7 +2,6 @@
 #include "tcframe/problem.hpp"
 
 #include <map>
-#include <set>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -10,7 +9,6 @@
 using std::istringstream;
 using std::map;
 using std::ostringstream;
-using std::set;
 using std::string;
 using std::vector;
 using tcframe::BaseGenerator;
@@ -56,8 +54,8 @@ class FakeOperatingSystem : public OperatingSystem {
 public:
     FakeOperatingSystem() { }
 
-    FakeOperatingSystem(set<string> arrangedFailedInputNames)
-            : arrangedFailedInputFilenames(arrangedFailedInputNames) { }
+    FakeOperatingSystem(map<string, ExecutionResult> arrangedResultsMap)
+            : arrangedResultsMap(arrangedResultsMap) { }
 
     istream* openForReading(string) {
         return new istringstream();
@@ -70,17 +68,14 @@ public:
     }
 
     void closeOpenedWritingStream(ostream*) { }
-
     void forceMakeDir(string) { }
-
     void removeFile(string) { }
-
     void limitExecutionTime(int) { }
     void limitExecutionMemory(int) { }
 
     ExecutionResult execute(string, string inputFilename, string, string) {
-        if (arrangedFailedInputFilenames.count(inputFilename)) {
-            return ExecutionResult{1, new istringstream(), new istringstream("Intentionally failed")};
+        if (arrangedResultsMap.count(inputFilename)) {
+            return arrangedResultsMap[inputFilename];
         }
 
         istringstream input(testCaseInputs[inputFilename]->str());
@@ -100,7 +95,7 @@ public:
 
 private:
     map<string, ostringstream*> testCaseInputs;
-    set<string> arrangedFailedInputFilenames;
+    map<string, ExecutionResult> arrangedResultsMap;
 };
 
 class ProblemWithSubtasks : public BaseProblem {
@@ -161,6 +156,9 @@ protected:
 public:
     GeneratorWithTestGroups(FakeLogger* logger)
             : BaseGenerator(logger, new FakeOperatingSystem()) { }
+
+    GeneratorWithTestGroups(FakeLogger* logger, FakeOperatingSystem* os)
+            : BaseGenerator(logger, os) { }
 };
 
 class ProblemWithoutSubtasks : public BaseProblem {
@@ -201,15 +199,7 @@ protected:
 public:
     GeneratorWithoutTestGroups(FakeLogger* logger)
             : BaseGenerator(logger, new FakeOperatingSystem()) { }
-};
 
-class GeneratorWithArrangedExecutionFailure : public BaseGenerator<ProblemWithoutSubtasks> {
-protected:
-    void TestCases() {
-        addOfficialTestCase([this] { A = 1, B = 100, K = 7; }, "A = 1, B = 100, K = 7");
-    }
-
-public:
-    GeneratorWithArrangedExecutionFailure(FakeLogger* logger, set<string> arrangedFailedInputNames)
-            : BaseGenerator(logger, new FakeOperatingSystem(arrangedFailedInputNames)) { }
+    GeneratorWithoutTestGroups(FakeLogger* logger, FakeOperatingSystem* os)
+            : BaseGenerator(logger, os) { }
 };

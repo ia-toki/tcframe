@@ -60,7 +60,7 @@ TEST(GeneratorTest, GenerationWithoutSubtasksAndWithoutTestGroups) {
 
 TEST(GeneratorTest, GenerationWithFailedExecution) {
     FakeLogger logger;
-    GeneratorWithArrangedExecutionFailure gen(&logger, {"tc/problem_1.in"});
+    GeneratorWithoutTestGroups gen(&logger, new FakeOperatingSystem({ {"tc/problem_1.in", ExecutionResult{1, new istringstream(), new istringstream("Intentionally failed")} } }));
     int exitCode = gen.generate();
 
     EXPECT_NE(0, exitCode);
