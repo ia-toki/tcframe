@@ -18,9 +18,9 @@ The following methods can be called inside the overridden method **BaseProblem::
 
     Sets the time limit of the problem, in seconds. This time limit is used in simulating submission.
 
-.. cpp:function:: void setMemoryLimit(int memoryLimitInKilobytes)
+.. cpp:function:: void setMemoryLimit(int memoryLimitInMegabytes)
 
-    Sets the memory limit of the problem, in KB. This memory limit is used in simulating submission.
+    Sets the memory limit of the problem, in MB. This memory limit is used in simulating submission.
 
 .. _api-ref-io-variables:
 
@@ -268,7 +268,7 @@ The following options can be specified when running the runner program. They mos
 
     Overrides the time limit specified by setTimeLimit() in **BaseProblem::Config()**.
 
-.. py:function:: --memory-limit=memoryLimitInKilobytes
+.. py:function:: --memory-limit=memoryLimitInMegabytes
 
     Overrides the memory limit specified by setMemoryLimit() in **BaseProblem::Config()**.
 
