@@ -55,9 +55,10 @@ public:
                 logger->logTestGroupIntroduction(testGroupId);
             }
 
-            for (int i = 0; i < testGroup->getTestCasesCount(); i++) {
-                TestCase* testCase = testGroup->getTestCase(i);
-                Verdict verdict = submitOnTestCase(submissionCommand, testGroupId, i + 1);
+            for (int testCaseId = 1; testCaseId <= testGroup->getTestCasesCount(); testCaseId++) {
+                TestCase* testCase = testGroup->getTestCase(testCaseId - 1);
+                string testCaseName = Util::constructTestCaseName(generator->getSlug(), testGroup->getId(), testCaseId);
+                Verdict verdict = submitOnTestCase(testCaseName, submissionCommand);
                 for (int subtaskId : testCase->getSubtaskIds()) {
                     subtaskVerdicts[subtaskId] = max(subtaskVerdicts[subtaskId], verdict);
                 }
@@ -84,17 +85,13 @@ private:
 
     bool isPorcelain;
 
-    Verdict submitOnTestCase(string submissionCommand, int testGroupId, int testCaseId) {
-        string testCaseName = Util::constructTestCaseName(generator->getSlug(), testGroupId, testCaseId);
+    Verdict submitOnTestCase(string testCaseName, string submissionCommand) {
 
         if (!isPorcelain) {
             logger->logTestCaseIntroduction(testCaseName);
         }
 
-        string testCaseInputFilename = generator->getTestCasesDir() + "/" + testCaseName + ".in";
-        string testCaseOutputFilename = generator->getTestCasesDir() + "/" + testCaseName + ".out";
-
-        Verdict verdict = gradeOnTestCase(submissionCommand, testCaseInputFilename, testCaseOutputFilename);
+        Verdict verdict = gradeOnTestCase(testCaseName, submissionCommand);
         os->removeFile("_submission.out");
         os->removeFile("_diff.out");
 
@@ -111,18 +108,20 @@ private:
         return verdict;
     }
 
-    Verdict gradeOnTestCase(string submissionCommand, string testCaseInputFilename, string testCaseOutputFilename) {
-        Verdict verdict = executeOnTestCase(submissionCommand, testCaseInputFilename);
+    Verdict gradeOnTestCase(string testCaseName, string submissionCommand) {
+        Verdict verdict = executeOnTestCase(testCaseName, submissionCommand);
         if (verdict.isUnknown()) {
-            return scoreOnTestCase(testCaseOutputFilename);
+            return scoreOnTestCase(testCaseName);
         }
         return verdict;
     }
 
-    Verdict executeOnTestCase(string submissionCommand, string testCaseInputFilename) {
+    Verdict executeOnTestCase(string testCaseName, string submissionCommand) {
+        string testCaseInputFilename = generator->getTestCasesDir() + "/" + testCaseName + ".in";
+
         os->limitExecutionTime(generator->getTimeLimit());
         os->limitExecutionMemory(generator->getMemoryLimit());
-        ExecutionResult result = os->execute(submissionCommand, testCaseInputFilename, "_submission.out", "_error.out");
+        ExecutionResult result = os->execute(testCaseName + "-submission-evaluation", submissionCommand, testCaseInputFilename, "_submission.out", "_error.out");
         os->limitExecutionTime(0);
         os->limitExecutionMemory(0);
 
@@ -149,12 +148,14 @@ private:
         return Verdict::runtimeError(failures);
     }
 
-    Verdict scoreOnTestCase(string testCaseOutputFilename) {
+    Verdict scoreOnTestCase(string testCaseName) {
+        string testCaseOutputFilename = generator->getTestCasesDir() + "/" + testCaseName + ".out";
+
         string diffCommand = "diff --unchanged-line-format=' %.2dn    %L' --old-line-format='(expected) [line %.2dn]    %L' --new-line-format='(received) [line %.2dn]    %L' " + testCaseOutputFilename + " _submission.out | head -n 10";
-        ExecutionResult result = os->execute(diffCommand, "", "_diff.out", "");
+        ExecutionResult result = os->execute(testCaseName + "-submission-scoring", diffCommand, "", "_diff.out", "");
 
         string briefDiffCommand = "diff --brief _submission.out " + testCaseOutputFilename;
-        ExecutionResult briefResult = os->execute(briefDiffCommand, "", "", "");
+        ExecutionResult briefResult = os->execute(testCaseName + "-submission-scoring-brief", briefDiffCommand, "", "", "");
 
         if (briefResult.exitStatus == 0) {
             return Verdict::accepted();

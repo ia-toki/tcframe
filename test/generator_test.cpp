@@ -4,7 +4,7 @@
 
 TEST(GeneratorTest, GenerationWithSubtasksAndTestGroups) {
     FakeLogger logger;
-    GeneratorWithTestGroups gen(&logger);
+    GeneratorWithTestGroups gen(&logger, new FakeOperatingSystem());
     int exitCode = gen.generate();
 
     EXPECT_NE(0, exitCode);
@@ -36,7 +36,7 @@ TEST(GeneratorTest, GenerationWithSubtasksAndTestGroups) {
 
 TEST(GeneratorTest, GenerationWithoutSubtasksAndWithoutTestGroups) {
     FakeLogger logger;
-    GeneratorWithoutTestGroups gen(&logger);
+    GeneratorWithoutTestGroups gen(&logger, new FakeOperatingSystem());
     int exitCode = gen.generate();
 
     EXPECT_NE(0, exitCode);
@@ -60,7 +60,7 @@ TEST(GeneratorTest, GenerationWithoutSubtasksAndWithoutTestGroups) {
 
 TEST(GeneratorTest, GenerationWithFailedExecution) {
     FakeLogger logger;
-    GeneratorWithoutTestGroups gen(&logger, new FakeOperatingSystem({ {"tc/problem_1.in", ExecutionResult{1, new istringstream(), new istringstream("Intentionally failed")} } }));
+    GeneratorWithoutTestGroups gen(&logger, new FakeOperatingSystem({ {"problem_1-generation-evaluation", ExecutionResult{1, new istringstream(), new istringstream("Intentionally failed")} } }));
     int exitCode = gen.generate();
 
     EXPECT_NE(0, exitCode);

@@ -73,9 +73,9 @@ public:
     void limitExecutionTime(int) { }
     void limitExecutionMemory(int) { }
 
-    ExecutionResult execute(string, string inputFilename, string, string) {
-        if (arrangedResultsMap.count(inputFilename)) {
-            return arrangedResultsMap[inputFilename];
+    ExecutionResult execute(string id, string command, string inputFilename, string outputFilename, string errorFilename) {
+        if (arrangedResultsMap.count(id)) {
+            return arrangedResultsMap[id];
         }
 
         istringstream input(testCaseInputs[inputFilename]->str());
@@ -154,10 +154,7 @@ protected:
     }
 
 public:
-    GeneratorWithTestGroups(FakeLogger* logger)
-            : BaseGenerator(logger, new FakeOperatingSystem()) { }
-
-    GeneratorWithTestGroups(FakeLogger* logger, FakeOperatingSystem* os)
+    GeneratorWithTestGroups(GeneratorLogger* logger, OperatingSystem* os)
             : BaseGenerator(logger, os) { }
 };
 
@@ -197,9 +194,6 @@ protected:
     }
 
 public:
-    GeneratorWithoutTestGroups(FakeLogger* logger)
-            : BaseGenerator(logger, new FakeOperatingSystem()) { }
-
-    GeneratorWithoutTestGroups(FakeLogger* logger, FakeOperatingSystem* os)
+    GeneratorWithoutTestGroups(GeneratorLogger* logger, OperatingSystem* os)
             : BaseGenerator(logger, os) { }
 };

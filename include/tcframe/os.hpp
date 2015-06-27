@@ -33,7 +33,7 @@ public:
     virtual void removeFile(string filename) = 0;
     virtual void limitExecutionTime(int timeLimitInSeconds) = 0;
     virtual void limitExecutionMemory(int memoryLimitInMegabytes) = 0;
-    virtual ExecutionResult execute(string command, string inputFilename, string outputFilename, string errorFilename) = 0;
+    virtual ExecutionResult execute(string id, string command, string inputFilename, string outputFilename, string errorFilename) = 0;
 };
 
 class UnixOperatingSystem : public OperatingSystem {
@@ -75,7 +75,7 @@ public:
         this->memoryLimitInMegabytes = memoryLimitInMegabytes;
     }
 
-    ExecutionResult execute(string command, string inputFilename, string outputFilename, string errorFilename) {
+    ExecutionResult execute(string, string command, string inputFilename, string outputFilename, string errorFilename) {
         ostringstream sout;
 
         sout << "{ ";

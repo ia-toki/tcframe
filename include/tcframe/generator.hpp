@@ -167,7 +167,7 @@ private:
             checkConstraints(testCase);
             FinalizeInput();
             generateTestCaseInput(testCaseInputFilename);
-            generateTestCaseOutput(testCaseInputFilename, testCaseOutputFilename);
+            generateTestCaseOutput(testCaseName, testCaseInputFilename, testCaseOutputFilename);
 
             logger->logTestCaseOkResult();
         } catch (TestCaseException& e) {
@@ -254,8 +254,8 @@ private:
         os->closeOpenedWritingStream(testCaseInput);
     }
 
-    void generateTestCaseOutput(string testCaseInputFilename, string testCaseOutputFilename) {
-        ExecutionResult result = os->execute(solutionCommand, testCaseInputFilename, testCaseOutputFilename, "_error.out");
+    void generateTestCaseOutput(string testCaseName, string testCaseInputFilename, string testCaseOutputFilename) {
+        ExecutionResult result = os->execute(testCaseName + "-generation-evaluation", solutionCommand, testCaseInputFilename, testCaseOutputFilename, "_error.out");
 
         if (result.exitStatus != 0) {
             vector<Failure> failures;
