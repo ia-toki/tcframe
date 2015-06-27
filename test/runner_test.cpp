@@ -1,21 +1,9 @@
 #include "gtest/gtest.h"
 
+#include "tcframe_test_commons.cpp"
 #include "tcframe/runner.hpp"
 
-using tcframe::BaseGenerator;
-using tcframe::BaseProblem;
 using tcframe::Runner;
-
-class DefaultProblem : public BaseProblem {
-protected:
-    void InputFormat() { }
-
-    void OutputFormat() { }
-};
-
-class DefaultGenerator : public BaseGenerator<DefaultProblem> {
-
-};
 
 class MyProblem : public BaseProblem {
 protected:

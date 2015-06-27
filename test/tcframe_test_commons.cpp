@@ -68,6 +68,17 @@ private:
     map<string, ExecutionResult> arrangedResultsMap;
 };
 
+class DefaultProblem : public BaseProblem {
+protected:
+    void InputFormat() { }
+
+    void OutputFormat() { }
+};
+
+class DefaultGenerator : public BaseGenerator<DefaultProblem> {
+
+};
+
 class ProblemWithSubtasks : public BaseProblem {
 public:
     int A, B;
