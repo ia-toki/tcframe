@@ -20,36 +20,6 @@ using tcframe::OperatingSystem;
 using tcframe::Util;
 using tcframe::Verdict;
 
-class FakeLogger : public GeneratorLogger {
-public:
-    void logIntroduction() { }
-    void logTestGroupIntroduction(int) { }
-
-    void logTestCaseIntroduction(string testCaseName) {
-        currentKey = testCaseName;
-    }
-
-    void logTestCaseOkResult() { }
-    void logTestCaseFailedResult(string) { }
-
-    void logSubmissionIntroduction() { }
-    void logTestCaseVerdictName(string) { }
-    void logSubmissionResult(map<int, Verdict>) { }
-    void logPorcelainSubmissionResult(map<int, Verdict>) { }
-
-    void logFailures(vector<Failure> failures) {
-        this->failuresMap[currentKey] = failures;
-    }
-
-    vector<Failure> getFailures(string key) {
-        return failuresMap[key];
-    }
-
-private:
-    string currentKey;
-    map<string, vector<Failure>> failuresMap;
-};
-
 class FakeOperatingSystem : public OperatingSystem {
 public:
     FakeOperatingSystem() { }

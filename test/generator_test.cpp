@@ -2,8 +2,38 @@
 
 #include "tcframe_test_commons.cpp"
 
+class FakeGeneratorLogger : public GeneratorLogger {
+public:
+    void logIntroduction() { }
+    void logTestGroupIntroduction(int) { }
+
+    void logTestCaseIntroduction(string testCaseName) {
+        currentKey = testCaseName;
+    }
+
+    void logTestCaseOkResult() { }
+    void logTestCaseFailedResult(string) { }
+
+    void logSubmissionIntroduction() { }
+    void logTestCaseVerdictName(string) { }
+    void logSubmissionResult(map<int, Verdict>) { }
+    void logPorcelainSubmissionResult(map<int, Verdict>) { }
+
+    void logFailures(vector<Failure> failures) {
+        this->failuresMap[currentKey] = failures;
+    }
+
+    vector<Failure> getFailures(string key) {
+        return failuresMap[key];
+    }
+
+private:
+    string currentKey;
+    map<string, vector<Failure>> failuresMap;
+};
+
 TEST(GeneratorTest, GenerationWithSubtasksAndTestGroups) {
-    FakeLogger logger;
+    FakeGeneratorLogger logger;
     GeneratorWithTestGroups gen(&logger, new FakeOperatingSystem());
     int exitCode = gen.generate();
 
@@ -35,7 +65,7 @@ TEST(GeneratorTest, GenerationWithSubtasksAndTestGroups) {
 }
 
 TEST(GeneratorTest, GenerationWithoutSubtasksAndWithoutTestGroups) {
-    FakeLogger logger;
+    FakeGeneratorLogger logger;
     GeneratorWithoutTestGroups gen(&logger, new FakeOperatingSystem());
     int exitCode = gen.generate();
 
@@ -59,7 +89,7 @@ TEST(GeneratorTest, GenerationWithoutSubtasksAndWithoutTestGroups) {
 }
 
 TEST(GeneratorTest, GenerationWithFailedExecution) {
-    FakeLogger logger;
+    FakeGeneratorLogger logger;
     GeneratorWithoutTestGroups gen(&logger, new FakeOperatingSystem({ {"problem_1-generation-evaluation", ExecutionResult{1, new istringstream(), new istringstream("Intentionally failed")} } }));
     int exitCode = gen.generate();
 
