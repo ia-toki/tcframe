@@ -20,11 +20,36 @@ using tcframe::OperatingSystem;
 using tcframe::Util;
 using tcframe::Verdict;
 
-class FakeOperatingSystem : public OperatingSystem {
+class FakeGeneratorLogger : public GeneratorLogger {
 public:
-    FakeOperatingSystem() { }
+    void logTestGroupIntroduction(int) { }
 
-    FakeOperatingSystem(map<string, ExecutionResult> arrangedResultsMap)
+    void logTestCaseIntroduction(string testCaseName) {
+        currentKey = testCaseName;
+    }
+
+    void logFailures(vector<Failure> failures) {
+        this->failuresMap[currentKey] = failures;
+    }
+
+    void logIntroduction() { }
+    void logTestCaseOkResult() { }
+    void logTestCaseFailedResult(string) { }
+
+    vector<Failure> getFailures(string key) {
+        return failuresMap[key];
+    }
+
+private:
+    string currentKey;
+    map<string, vector<Failure>> failuresMap;
+};
+
+class FakeGeneratorOperatingSystem : public OperatingSystem {
+public:
+    FakeGeneratorOperatingSystem() { }
+
+    FakeGeneratorOperatingSystem(map<string, ExecutionResult> arrangedResultsMap)
             : arrangedResultsMap(arrangedResultsMap) { }
 
     istream* openForReading(string) {
@@ -141,6 +166,9 @@ protected:
     }
 
 public:
+    GeneratorWithTestGroups()
+            : BaseGenerator(new FakeGeneratorLogger(), new FakeGeneratorOperatingSystem()) { }
+
     GeneratorWithTestGroups(GeneratorLogger* logger, OperatingSystem* os)
             : BaseGenerator(logger, os) { }
 };
@@ -166,6 +194,9 @@ protected:
     }
 
 public:
+    InvalidGeneratorWithTestGroups()
+            : BaseGenerator(new FakeGeneratorLogger(), new FakeGeneratorOperatingSystem()) { }
+
     InvalidGeneratorWithTestGroups(GeneratorLogger* logger, OperatingSystem* os)
             : BaseGenerator(logger, os) { }
 };
@@ -206,6 +237,9 @@ protected:
     }
 
 public:
+    GeneratorWithoutTestGroups()
+            : BaseGenerator(new FakeGeneratorLogger(), new FakeGeneratorOperatingSystem()) { }
+
     GeneratorWithoutTestGroups(GeneratorLogger* logger, OperatingSystem* os)
             : BaseGenerator(logger, os) { }
 };
@@ -223,6 +257,9 @@ protected:
     }
 
 public:
+    InvalidGeneratorWithoutTestGroups()
+            : BaseGenerator(new FakeGeneratorLogger(), new FakeGeneratorOperatingSystem()) { }
+
     InvalidGeneratorWithoutTestGroups(GeneratorLogger* logger, OperatingSystem* os)
             : BaseGenerator(logger, os) { }
 };

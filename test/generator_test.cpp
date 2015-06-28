@@ -2,31 +2,6 @@
 
 #include "tcframe_test_commons.cpp"
 
-class FakeGeneratorLogger : public GeneratorLogger {
-public:
-    void logTestGroupIntroduction(int) { }
-
-    void logTestCaseIntroduction(string testCaseName) {
-        currentKey = testCaseName;
-    }
-
-    void logFailures(vector<Failure> failures) {
-        this->failuresMap[currentKey] = failures;
-    }
-
-    void logIntroduction() { }
-    void logTestCaseOkResult() { }
-    void logTestCaseFailedResult(string) { }
-
-    vector<Failure> getFailures(string key) {
-        return failuresMap[key];
-    }
-
-private:
-    string currentKey;
-    map<string, vector<Failure>> failuresMap;
-};
-
 class MyGenerator : public BaseGenerator<DefaultProblem> {
     void Config() {
         setTestCasesDir("testdata");
@@ -63,7 +38,7 @@ TEST(GeneratorTest, CommandLineOptions) {
 
 TEST(GeneratorTest, GenerationWithSubtasksAndTestGroups) {
     FakeGeneratorLogger logger;
-    GeneratorWithTestGroups gen(&logger, new FakeOperatingSystem());
+    GeneratorWithTestGroups gen(&logger, new FakeGeneratorOperatingSystem());
     int exitCode = gen.generate();
 
     EXPECT_EQ(0, exitCode);
@@ -78,7 +53,7 @@ TEST(GeneratorTest, GenerationWithSubtasksAndTestGroups) {
 
 TEST(GeneratorTest, FailedGenerationWithSubtasksAndTestGroups) {
     FakeGeneratorLogger logger;
-    InvalidGeneratorWithTestGroups gen(&logger, new FakeOperatingSystem());
+    InvalidGeneratorWithTestGroups gen(&logger, new FakeGeneratorOperatingSystem());
     int exitCode = gen.generate();
 
     EXPECT_NE(0, exitCode);
@@ -110,7 +85,7 @@ TEST(GeneratorTest, FailedGenerationWithSubtasksAndTestGroups) {
 
 TEST(GeneratorTest, GenerationWithoutSubtasksAndWithoutTestGroups) {
     FakeGeneratorLogger logger;
-    GeneratorWithoutTestGroups gen(&logger, new FakeOperatingSystem());
+    GeneratorWithoutTestGroups gen(&logger, new FakeGeneratorOperatingSystem());
     int exitCode = gen.generate();
 
     EXPECT_EQ(0, exitCode);
@@ -123,7 +98,7 @@ TEST(GeneratorTest, GenerationWithoutSubtasksAndWithoutTestGroups) {
 
 TEST(GeneratorTest, FailedGenerationWithoutSubtasksAndWithoutTestGroups) {
     FakeGeneratorLogger logger;
-    InvalidGeneratorWithoutTestGroups gen(&logger, new FakeOperatingSystem());
+    InvalidGeneratorWithoutTestGroups gen(&logger, new FakeGeneratorOperatingSystem());
     int exitCode = gen.generate();
 
     EXPECT_NE(0, exitCode);
@@ -147,7 +122,7 @@ TEST(GeneratorTest, FailedGenerationWithoutSubtasksAndWithoutTestGroups) {
 
 TEST(GeneratorTest, GenerationWithFailedExecution) {
     FakeGeneratorLogger logger;
-    GeneratorWithoutTestGroups gen(&logger, new FakeOperatingSystem({ {"problem_1-generation-evaluation", ExecutionResult{1, new istringstream(), new istringstream("Intentionally failed")} } }));
+    GeneratorWithoutTestGroups gen(&logger, new FakeGeneratorOperatingSystem({ {"problem_1-generation-evaluation", ExecutionResult{1, new istringstream(), new istringstream("Intentionally failed")} } }));
     int exitCode = gen.generate();
 
     EXPECT_NE(0, exitCode);
