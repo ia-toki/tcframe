@@ -47,7 +47,8 @@ public:
         }
 
         generator->applyProblemConfiguration();
-        generator->applyProblemCommandLineOptions();
+        generator->applyProblemCommandLineOptions(argc, argv);
+
 
         if (mode == RunnerMode::GENERATION) {
             generator->applyGeneratorConfiguration();

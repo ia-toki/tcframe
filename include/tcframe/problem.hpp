@@ -15,7 +15,7 @@ namespace tcframe {
 
 class BaseProblem : protected ConstraintsCollector, protected IOFormatProvider {
 public:
-    void applyProblemConfiguration() {
+    virtual void applyProblemConfiguration() {
         Config();
     }
 

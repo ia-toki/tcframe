@@ -31,6 +31,12 @@ namespace tcframe {
 template<typename TProblem>
 class BaseGenerator : public TProblem, protected TestCasesCollector {
 public:
+    void applyProblemConfiguration() {
+        // This method is a hack because Config() method is ambiguous
+        // between BaseProblem and BaseGenerator.
+        TProblem::Config();
+    }
+
     void applyGeneratorConfiguration() {
         Config();
     }
