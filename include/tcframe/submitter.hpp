@@ -61,7 +61,7 @@ public:
             ;
         }
 
-        porcelain = (bool) porcelain_opt;
+        porcelain = (bool)porcelain_opt;
 
         if (optind + 1 == argc) {
             submissionCommand = string(argv[optind]);

@@ -2,15 +2,7 @@
 
 #include "tcframe/io.hpp"
 
-#include <set>
-#include <sstream>
-#include <string>
-#include <vector>
-
-using std::ostringstream;
 using std::set;
-using std::string;
-using std::vector;
 using tcframe::Failure;
 using tcframe::IOFormatException;
 using tcframe::IOFormatProvider;

@@ -136,7 +136,7 @@ private:
             &BaseProblem::Subtask7,
             &BaseProblem::Subtask8,
             &BaseProblem::Subtask9,
-            &BaseProblem::Subtask10,
+            &BaseProblem::Subtask10
     };
 };
 

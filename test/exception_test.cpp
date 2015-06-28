@@ -2,9 +2,6 @@
 
 #include "tcframe/exception.hpp"
 
-#include <vector>
-
-using std::vector;
 using tcframe::ExecutionException;
 using tcframe::Failure;
 using tcframe::IOFormatException;

@@ -2,10 +2,6 @@
 
 #include "tcframe/type.hpp"
 
-#include <sstream>
-
-using std::istringstream;
-using std::ostringstream;
 using tcframe::HorizontalVector;
 using tcframe::Matrix;
 using tcframe::ParsingException;

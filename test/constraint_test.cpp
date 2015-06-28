@@ -2,9 +2,6 @@
 
 #include "tcframe/constraint.hpp"
 
-#include <vector>
-
-using std::vector;
 using tcframe::Constraint;
 using tcframe::ConstraintsCollector;
 using tcframe::Subtask;

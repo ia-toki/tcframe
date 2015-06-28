@@ -1,9 +1,6 @@
 #include "gtest/gtest.h"
 
 #include "tcframe_test_commons.cpp"
-#include "tcframe/problem.hpp"
-
-using tcframe::BaseProblem;
 
 class MyProblem : public BaseProblem {
 protected:
@@ -36,7 +33,7 @@ TEST(ProblemTest, MyOptions) {
 }
 
 TEST(ProblemTest, CommandLineOptions) {
-    char* argv[] = {(char*) "<runner>", (char*)"--slug=bar", (char*)"--time-limit=3", (char*)"--memory-limit=64"};
+    char* argv[] = {(char*)"<runner>", (char*)"--slug=bar", (char*)"--time-limit=3", (char*)"--memory-limit=64"};
 
     BaseProblem* problem = new MyProblem();
     problem->applyProblemConfiguration();
@@ -49,7 +46,7 @@ TEST(ProblemTest, CommandLineOptions) {
 
 
 TEST(ProblemTest, CommandLineOptionsWithNos) {
-    char* argv[] = {(char*) "<runner>", (char*)"--no-time-limit", (char*)"--no-memory-limit"};
+    char* argv[] = {(char*)"<runner>", (char*)"--no-time-limit", (char*)"--no-memory-limit"};
 
     BaseProblem* problem = new MyProblem();
     problem->applyProblemConfiguration();

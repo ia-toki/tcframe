@@ -26,7 +26,7 @@ TEST(GeneratorTest, MyOptions) {
 }
 
 TEST(GeneratorTest, CommandLineOptions) {
-    char* argv[] = {(char*) "<runner>", (char*)"--tc-dir=testcases", (char*)"--solution-command=\"python sol.py\""};
+    char* argv[] = {(char*)"<runner>", (char*)"--tc-dir=testcases", (char*)"--solution-command=\"python sol.py\""};
 
     BaseGenerator<DefaultProblem>* generator = new MyGenerator();
     generator->applyGeneratorConfiguration();

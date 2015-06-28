@@ -30,10 +30,6 @@ public:
         this->generator = generator;
     }
 
-    Submitter<TProblem>* getSubmitter() {
-        return submitter;
-    }
-
     int run() {
         if (argc > 1) {
             if (string(argv[1]) == "submit") {
@@ -59,7 +55,7 @@ public:
             generator->applyGeneratorConfiguration();
             generator->applyGeneratorCommandLineOptions(argc, argv);
 
-            submitter = new Submitter<TProblem>(generator);
+            Submitter<TProblem>* submitter = new Submitter<TProblem>(generator);
             string result = submitter->applySubmitterCommandLineOptions(argc, argv);
 
             if (result != "") {
@@ -78,7 +74,6 @@ private:
     RunnerMode mode;
 
     BaseGenerator<TProblem>* generator;
-    Submitter<TProblem>* submitter;
 };
 
 }

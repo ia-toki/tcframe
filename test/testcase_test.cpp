@@ -2,9 +2,6 @@
 
 #include "tcframe/testcase.hpp"
 
-#include <vector>
-
-using std::vector;
 using tcframe::OfficialTestCase;
 using tcframe::SampleTestCase;
 using tcframe::TestCasesCollector;

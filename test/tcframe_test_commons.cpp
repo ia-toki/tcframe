@@ -1,16 +1,5 @@
 #include "tcframe/generator.hpp"
-#include "tcframe/problem.hpp"
 
-#include <map>
-#include <sstream>
-#include <string>
-#include <vector>
-
-using std::istringstream;
-using std::map;
-using std::ostringstream;
-using std::string;
-using std::vector;
 using tcframe::BaseGenerator;
 using tcframe::BaseProblem;
 using tcframe::ExecutionResult;

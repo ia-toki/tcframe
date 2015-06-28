@@ -1,10 +1,6 @@
 #include "gtest/gtest.h"
 
-#include <sstream>
-
 #include "tcframe/runner.hpp"
-
-using std::ostringstream;
 
 using tcframe::Constraint;
 using tcframe::ConstraintsCollector;
