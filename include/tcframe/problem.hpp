@@ -30,6 +30,7 @@ public:
         };
 
         optind = 1;
+        opterr = 0;
 
         int c;
         while ((c = getopt_long(argc, argv, "", longopts, nullptr)) != -1) {
