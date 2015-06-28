@@ -5,3 +5,180 @@
 
 using tcframe::Submitter;
 
+class FakeSubmitterLogger : public SubmitterLogger {
+public:
+    void logTestGroupIntroduction(int) { }
+
+    void logTestCaseIntroduction(string testCaseName) {
+        currentKey = testCaseName;
+    }
+
+    void logFailures(vector<Failure>) { }
+    void logIntroduction() { }
+
+    void logTestCaseVerdict(Verdict verdict) {
+        testCaseVerdictsMap[currentKey] = verdict;
+    }
+
+    void logSubmissionResult(map<int, Verdict> subtaskVerdicts) {
+        subtaskVerdictsMap = subtaskVerdicts;
+    }
+
+    void logPorcelainSubmissionResult(map<int, Verdict> subtaskVerdicts) {
+        subtaskVerdictsMap = subtaskVerdicts;
+    }
+
+    Verdict getTestCaseVerdict(string testCaseName) {
+        return testCaseVerdictsMap[testCaseName];
+    }
+
+    Verdict getSubtaskVerdict(int subtaskId) {
+        return subtaskVerdictsMap[subtaskId];
+    }
+
+private:
+    string currentKey;
+    map<string, Verdict> testCaseVerdictsMap;
+    map<int, Verdict> subtaskVerdictsMap;
+};
+
+class FakeSubmitterOperatingSystem : public OperatingSystem {
+public:
+    FakeSubmitterOperatingSystem() { }
+
+    FakeSubmitterOperatingSystem(map<string, ExecutionResult> arrangedResultsMap)
+            : arrangedResultsMap(arrangedResultsMap) { }
+
+    istream* openForReading(string) { }
+    ostream* openForWriting(string) { }
+    void closeOpenedWritingStream(ostream*) { }
+    void forceMakeDir(string) { }
+    void removeFile(string) { }
+    void limitExecutionTime(int) { }
+    void limitExecutionMemory(int) { }
+
+    ExecutionResult execute(string id, string command, string inputFilename, string outputFilename, string errorFilename) {
+        if (arrangedResultsMap.count(id)) {
+            return arrangedResultsMap[id];
+        } else {
+            return (ExecutionResult){0, new istringstream(), new istringstream()};
+        }
+    }
+
+private:
+    map<string, ExecutionResult> arrangedResultsMap;
+};
+
+TEST(SubmitterTest, DefaultOptions) {
+    Submitter<DefaultProblem>* submitter = new Submitter<DefaultProblem>(new DefaultGenerator());
+
+    EXPECT_FALSE(submitter->isPorcelain());
+}
+
+TEST(SubmitterTest, CommandLineOptions) {
+    char* argv[] = {(char*)"submit", (char*)"--porcelain"};
+
+    Submitter<DefaultProblem>* submitter = new Submitter<DefaultProblem>(new DefaultGenerator());
+    submitter->applySubmitterCommandLineOptions(2, argv);
+
+    EXPECT_TRUE(submitter->isPorcelain());
+}
+
+TEST(SubmitterTest, DefaultSubmissionCommand) {
+    Submitter<DefaultProblem>* submitter = new Submitter<DefaultProblem>(new DefaultGenerator());
+
+    EXPECT_EQ("./solution", submitter->getSubmissionCommand());
+}
+
+TEST(SubmitterTest, MySubmissionCommand) {
+    char* argv[] = {(char*)"submit", (char*)"./other_solution"};
+
+    Submitter<DefaultProblem>* submitter = new Submitter<DefaultProblem>(new DefaultGenerator());
+    submitter->applySubmitterCommandLineOptions(2, argv);
+
+    EXPECT_EQ("./other_solution", submitter->getSubmissionCommand());
+}
+
+TEST(SubmitterTest, AcceptedSubmissionWithSubtasksAndTestGroups) {
+    FakeSubmitterLogger* logger = new FakeSubmitterLogger();
+    Submitter<ProblemWithSubtasks>* submitter = new Submitter<ProblemWithSubtasks>(new GeneratorWithTestGroups(), logger, new FakeSubmitterOperatingSystem());
+    int exitCode = submitter->submit();
+
+    EXPECT_EQ(0, exitCode);
+
+    EXPECT_EQ("AC", logger->getTestCaseVerdict("problem_sample_1").getCode());
+    EXPECT_EQ("AC", logger->getTestCaseVerdict("problem_1_1").getCode());
+    EXPECT_EQ("AC", logger->getTestCaseVerdict("problem_1_2").getCode());
+    EXPECT_EQ("AC", logger->getTestCaseVerdict("problem_2_1").getCode());
+    EXPECT_EQ("AC", logger->getTestCaseVerdict("problem_2_2").getCode());
+    EXPECT_EQ("AC", logger->getTestCaseVerdict("problem_3_1").getCode());
+
+    EXPECT_EQ("AC", logger->getSubtaskVerdict(1).getCode());
+    EXPECT_EQ("AC", logger->getSubtaskVerdict(2).getCode());
+    EXPECT_EQ("AC", logger->getSubtaskVerdict(3).getCode());
+}
+
+TEST(SubmitterTest, FailedSubmissionWithSubtasksAndTestGroups) {
+    FakeSubmitterLogger* logger = new FakeSubmitterLogger();
+
+    map<string, ExecutionResult> arrangedResultsMap = {
+            {"problem_1_1-submission-scoring-brief", (ExecutionResult){1, new istringstream(), new istringstream()}},
+            {"problem_1_2-submission-evaluation", (ExecutionResult){1, new istringstream(), new istringstream()}},
+            {"problem_2_1-submission-evaluation", (ExecutionResult){1, new istringstream(), new istringstream()}},
+            {"problem_2_2-submission-evaluation", (ExecutionResult){SIGXCPU | (1<<7), new istringstream(), new istringstream()}},
+            {"problem_3_1-submission-scoring-brief", (ExecutionResult){1, new istringstream(), new istringstream()}}
+    };
+
+    Submitter<ProblemWithSubtasks>* submitter = new Submitter<ProblemWithSubtasks>(new GeneratorWithTestGroups(), logger, new FakeSubmitterOperatingSystem(arrangedResultsMap));
+    int exitCode = submitter->submit();
+
+    EXPECT_EQ(0, exitCode);
+
+    EXPECT_EQ("AC", logger->getTestCaseVerdict("problem_sample_1").getCode());
+    EXPECT_EQ("WA", logger->getTestCaseVerdict("problem_1_1").getCode());
+    EXPECT_EQ("RTE", logger->getTestCaseVerdict("problem_1_2").getCode());
+    EXPECT_EQ("RTE", logger->getTestCaseVerdict("problem_2_1").getCode());
+    EXPECT_EQ("TLE", logger->getTestCaseVerdict("problem_2_2").getCode());
+    EXPECT_EQ("WA", logger->getTestCaseVerdict("problem_3_1").getCode());
+
+    EXPECT_EQ("RTE", logger->getSubtaskVerdict(1).getCode());
+    EXPECT_EQ("TLE", logger->getSubtaskVerdict(2).getCode());
+    EXPECT_EQ("WA", logger->getSubtaskVerdict(3).getCode());
+}
+
+TEST(SubmitterTest, AcceptedSubmissionWithoutSubtasksAndTestGroups) {
+    FakeSubmitterLogger* logger = new FakeSubmitterLogger();
+    Submitter<ProblemWithoutSubtasks>* submitter = new Submitter<ProblemWithoutSubtasks>(new GeneratorWithoutTestGroups(), logger, new FakeSubmitterOperatingSystem());
+    int exitCode = submitter->submit();
+
+    EXPECT_EQ(0, exitCode);
+
+    EXPECT_EQ("AC", logger->getTestCaseVerdict("problem_sample_1").getCode());
+    EXPECT_EQ("AC", logger->getTestCaseVerdict("problem_sample_2").getCode());
+    EXPECT_EQ("AC", logger->getTestCaseVerdict("problem_1").getCode());
+    EXPECT_EQ("AC", logger->getTestCaseVerdict("problem_2").getCode());
+
+    EXPECT_EQ("AC", logger->getSubtaskVerdict(-1).getCode());
+}
+
+TEST(SubmitterTest, FailedSubmissionWithoutSubtasksAndTestGroups) {
+    FakeSubmitterLogger* logger = new FakeSubmitterLogger();
+
+    map<string, ExecutionResult> arrangedResultsMap = {
+            {"problem_sample_2-submission-scoring-brief", (ExecutionResult){1, new istringstream(), new istringstream()}},
+            {"problem_1-submission-evaluation", (ExecutionResult){1, new istringstream(), new istringstream()}},
+            {"problem_2-submission-evaluation", (ExecutionResult){SIGXCPU | (1<<7), new istringstream(), new istringstream()}},
+    };
+
+    Submitter<ProblemWithoutSubtasks>* submitter = new Submitter<ProblemWithoutSubtasks>(new GeneratorWithoutTestGroups(), logger, new FakeSubmitterOperatingSystem(arrangedResultsMap));
+    int exitCode = submitter->submit();
+
+    EXPECT_EQ(0, exitCode);
+
+    EXPECT_EQ("AC", logger->getTestCaseVerdict("problem_sample_1").getCode());
+    EXPECT_EQ("WA", logger->getTestCaseVerdict("problem_sample_2").getCode());
+    EXPECT_EQ("RTE", logger->getTestCaseVerdict("problem_1").getCode());
+    EXPECT_EQ("TLE", logger->getTestCaseVerdict("problem_2").getCode());
+
+    EXPECT_EQ("TLE", logger->getSubtaskVerdict(-1).getCode());
+}

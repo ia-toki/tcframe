@@ -40,6 +40,13 @@ public:
           porcelain(false),
           submissionCommand(generator->getSolutionCommand()) { }
 
+    Submitter(BaseGenerator<TProblem>* generator, SubmitterLogger* logger, OperatingSystem* os)
+            : logger(logger),
+              os(os),
+              generator(generator),
+              porcelain(false),
+              submissionCommand(generator->getSolutionCommand()) { }
+
     string applySubmitterCommandLineOptions(int argc, char** argv) {
         int porcelain_opt = 0;
 
@@ -101,6 +108,10 @@ public:
         return 0;
     }
 
+    string getSubmissionCommand() {
+        return submissionCommand;
+    }
+
     bool isPorcelain() {
         return porcelain;
     }
@@ -116,7 +127,7 @@ private:
 
     Verdict submitOnTestCase(string testCaseName) {
 
-        if (!isPorcelain) {
+        if (!porcelain) {
             logger->logTestCaseIntroduction(testCaseName);
         }
 
@@ -129,7 +140,7 @@ private:
         }
 
         if (!verdict.isAccepted()) {
-            if (!isPorcelain) {
+            if (!porcelain) {
                 logger->logFailures(verdict.getFailures());
             }
         }
