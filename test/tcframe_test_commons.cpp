@@ -117,6 +117,37 @@ public:
 class GeneratorWithTestGroups : public BaseGenerator<ProblemWithSubtasks> {
 protected:
     void SampleTestCases() {
+        addSampleTestCase({"1 1000", "1"}, {1, 2});
+    }
+
+    void TestGroup1() {
+        assignToSubtasks({1, 2});
+
+        addOfficialTestCase([this] { A = 1, B = 100, K = 7; }, "A = 1, B = 100, K = 7");
+        addOfficialTestCase([this] { A = 100, B = 1000, K = 0; }, "A = 100, B = 1000, K = 0");
+    }
+
+    void TestGroup2() {
+        assignToSubtasks({2});
+
+        addOfficialTestCase([this] { A = 1001, B = 2, K = 1; }, "A = 1001, B = 2, K = 1");
+        addOfficialTestCase([this] { A = 2000, B = 3000, K = 100; }, "A = 2000, B = 3000, K = 100");
+    }
+
+    void TestGroup3() {
+        assignToSubtasks({3});
+
+        addOfficialTestCase([this] { A = 0, B = 0, K = 42; }, "A = 0, B = 0, K = 42");
+    }
+
+public:
+    GeneratorWithTestGroups(GeneratorLogger* logger, OperatingSystem* os)
+            : BaseGenerator(logger, os) { }
+};
+
+class InvalidGeneratorWithTestGroups : public BaseGenerator<ProblemWithSubtasks> {
+protected:
+    void SampleTestCases() {
         addSampleTestCase({"1 1001", "1"}, {1, 2});
     }
 
@@ -131,11 +162,11 @@ protected:
         assignToSubtasks({2});
 
         addOfficialTestCase([this] { A = 1, B = 2, K = 1; }, "A = 1, B = 2, K = 1");
-        addOfficialTestCase([this] { A = 0, B = 0, K = 100; }, "A = 2000000000, B = 2000000000, K = 100");
+        addOfficialTestCase([this] { A = 0, B = 0, K = 100; }, "A = 0, B = 0, K = 100");
     }
 
 public:
-    GeneratorWithTestGroups(GeneratorLogger* logger, OperatingSystem* os)
+    InvalidGeneratorWithTestGroups(GeneratorLogger* logger, OperatingSystem* os)
             : BaseGenerator(logger, os) { }
 };
 
@@ -166,6 +197,23 @@ class GeneratorWithoutTestGroups : public BaseGenerator<ProblemWithoutSubtasks> 
 protected:
     void SampleTestCases() {
         addSampleTestCase({"1 1", "1"});
+        addSampleTestCase({"1 1", "0"});
+    }
+
+    void TestCases() {
+        addOfficialTestCase([this] { A = 1, B = 100, K = 7; }, "A = 1, B = 100, K = 7");
+        addOfficialTestCase([this] { A = 100, B = 1000, K = 0; }, "A = 100, B = 1000, K = 0");
+    }
+
+public:
+    GeneratorWithoutTestGroups(GeneratorLogger* logger, OperatingSystem* os)
+            : BaseGenerator(logger, os) { }
+};
+
+class InvalidGeneratorWithoutTestGroups : public BaseGenerator<ProblemWithoutSubtasks> {
+protected:
+    void SampleTestCases() {
+        addSampleTestCase({"1 1", "1"});
         addSampleTestCase({"1 1", "-1"});
     }
 
@@ -175,6 +223,6 @@ protected:
     }
 
 public:
-    GeneratorWithoutTestGroups(GeneratorLogger* logger, OperatingSystem* os)
+    InvalidGeneratorWithoutTestGroups(GeneratorLogger* logger, OperatingSystem* os)
             : BaseGenerator(logger, os) { }
 };

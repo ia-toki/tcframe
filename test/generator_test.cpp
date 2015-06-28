@@ -71,6 +71,21 @@ TEST(GeneratorTest, GenerationWithSubtasksAndTestGroups) {
     GeneratorWithTestGroups gen(&logger, new FakeOperatingSystem());
     int exitCode = gen.generate();
 
+    EXPECT_EQ(0, exitCode);
+
+    EXPECT_EQ(0, logger.getFailures("problem_sample_1").size());
+    EXPECT_EQ(0, logger.getFailures("problem_1_1").size());
+    EXPECT_EQ(0, logger.getFailures("problem_1_2").size());
+    EXPECT_EQ(0, logger.getFailures("problem_2_1").size());
+    EXPECT_EQ(0, logger.getFailures("problem_2_2").size());
+    EXPECT_EQ(0, logger.getFailures("problem_3_1").size());
+}
+
+TEST(GeneratorTest, FailedGenerationWithSubtasksAndTestGroups) {
+    FakeGeneratorLogger logger;
+    InvalidGeneratorWithTestGroups gen(&logger, new FakeOperatingSystem());
+    int exitCode = gen.generate();
+
     EXPECT_NE(0, exitCode);
 
     auto failures_sample_1 = logger.getFailures("problem_sample_1");
@@ -101,6 +116,19 @@ TEST(GeneratorTest, GenerationWithSubtasksAndTestGroups) {
 TEST(GeneratorTest, GenerationWithoutSubtasksAndWithoutTestGroups) {
     FakeGeneratorLogger logger;
     GeneratorWithoutTestGroups gen(&logger, new FakeOperatingSystem());
+    int exitCode = gen.generate();
+
+    EXPECT_EQ(0, exitCode);
+
+    EXPECT_EQ(0, logger.getFailures("problem_sample_1").size());
+    EXPECT_EQ(0, logger.getFailures("problem_sample_2").size());
+    EXPECT_EQ(0, logger.getFailures("problem_1").size());
+    EXPECT_EQ(0, logger.getFailures("problem_2").size());
+}
+
+TEST(GeneratorTest, FailedGenerationWithoutSubtasksAndWithoutTestGroups) {
+    FakeGeneratorLogger logger;
+    InvalidGeneratorWithoutTestGroups gen(&logger, new FakeOperatingSystem());
     int exitCode = gen.generate();
 
     EXPECT_NE(0, exitCode);
