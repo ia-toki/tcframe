@@ -37,7 +37,8 @@ public:
         : logger(new DefaultSubmitterLogger()),
           os(new UnixOperatingSystem()),
           generator(generator),
-          porcelain(false) { }
+          porcelain(false),
+          submissionCommand(generator->getSolutionCommand()) { }
 
     string applySubmitterCommandLineOptions(int argc, char** argv) {
         int porcelain_opt = 0;
@@ -55,11 +56,9 @@ public:
 
         porcelain = (bool) porcelain_opt;
 
-        if (optind == argc) {
-            submissionCommand = generator->getSolutionCommand();
-        } else if (optind + 1 == argc) {
+        if (optind + 1 == argc) {
             submissionCommand = string(argv[optind]);
-        } else {
+        } else if (optind + 1 < argc) {
             return "Usage: <runner> submit [ <submissionCommand> ]";
         }
 
