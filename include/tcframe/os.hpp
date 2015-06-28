@@ -82,7 +82,7 @@ public:
 
         if (timeLimitInSeconds != 0 || memoryLimitInMegabytes != 0) {
             if (timeLimitInSeconds != 0) {
-                sout << "ulimt -S -t " << timeLimitInSeconds << "; ";
+                sout << "ulimit -S -t " << timeLimitInSeconds << "; ";
             }
             if (memoryLimitInMegabytes != 0) {
                 sout << "ulimit -S -v " << memoryLimitInMegabytes * 1024 << "; ";
