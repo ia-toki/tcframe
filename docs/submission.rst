@@ -60,8 +60,8 @@ Here is a sample output of a submission simulation for problems with subtasks.
       k-product_3_1: Accepted
       k-product_3_2: Wrong Answer
         * Diff:
-(expected) [line 01]    11
-(received) [line 01]    12
+    (expected) [line 01]    11
+    (received) [line 01]    12
 
       k-product_3_3: Accepted
 
@@ -96,8 +96,8 @@ and here is for problems without subtasks
       k-product_3: Accepted
       k-product_4: Wrong Answer
         * Diff:
-(expected) [line 01]    11
-(received) [line 01]    12
+    (expected) [line 01]    11
+    (received) [line 01]    12
 
     [ RESULT ]
       Wrong Answer
