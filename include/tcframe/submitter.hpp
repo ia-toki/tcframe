@@ -36,10 +36,36 @@ public:
     Submitter(BaseGenerator<TProblem>* generator)
         : logger(new DefaultSubmitterLogger()),
           os(new UnixOperatingSystem()),
-          generator(generator) { }
+          generator(generator),
+          porcelain(false) { }
 
-    int submit(string submissionCommand) {
-        if (!isPorcelain) {
+    string applySubmitterCommandLineOptions(int argc, char** argv) {
+        int porcelain_opt = 0;
+
+        option longopts[2] = {
+                { "porcelain", no_argument, &porcelain_opt, 1},
+                { 0, 0, 0, 0 }
+        };
+
+        while (getopt_long(argc, argv, "", longopts, nullptr) != -1) {
+            ;
+        }
+
+        porcelain = (bool) porcelain_opt;
+
+        if (optind == argc) {
+            submissionCommand = generator->getSolutionCommand();
+        } else if (optind + 1 == argc) {
+            submissionCommand = string(argv[optind]);
+        } else {
+            return "Usage: <runner> submit [ <submissionCommand> ]";
+        }
+
+        return "";
+    }
+
+    int submit() {
+        if (!porcelain) {
             logger->logIntroduction();
         }
 
@@ -51,21 +77,21 @@ public:
         for (TestGroup* testGroup : generator->getTestData()) {
             int testGroupId = testGroup->getId();
 
-            if (!isPorcelain) {
+            if (!porcelain) {
                 logger->logTestGroupIntroduction(testGroupId);
             }
 
             for (int testCaseId = 1; testCaseId <= testGroup->getTestCasesCount(); testCaseId++) {
                 TestCase* testCase = testGroup->getTestCase(testCaseId - 1);
                 string testCaseName = Util::constructTestCaseName(generator->getSlug(), testGroup->getId(), testCaseId);
-                Verdict verdict = submitOnTestCase(testCaseName, submissionCommand);
+                Verdict verdict = submitOnTestCase(testCaseName);
                 for (int subtaskId : testCase->getSubtaskIds()) {
                     subtaskVerdicts[subtaskId] = max(subtaskVerdicts[subtaskId], verdict);
                 }
             }
         }
 
-        if (!isPorcelain) {
+        if (!porcelain) {
             logger->logSubmissionResult(subtaskVerdicts);
         } else {
             logger->logPorcelainSubmissionResult(subtaskVerdicts);
@@ -74,8 +100,8 @@ public:
         return 0;
     }
 
-    void setPorcelain(bool isPorcelain) {
-        this->isPorcelain = isPorcelain;
+    bool isPorcelain() {
+        return porcelain;
     }
 
 private:
@@ -83,19 +109,21 @@ private:
     OperatingSystem* os;
     BaseGenerator<TProblem>* generator;
 
-    bool isPorcelain;
+    bool porcelain;
 
-    Verdict submitOnTestCase(string testCaseName, string submissionCommand) {
+    string submissionCommand;
+
+    Verdict submitOnTestCase(string testCaseName) {
 
         if (!isPorcelain) {
             logger->logTestCaseIntroduction(testCaseName);
         }
 
-        Verdict verdict = gradeOnTestCase(testCaseName, submissionCommand);
+        Verdict verdict = gradeOnTestCase(testCaseName);
         os->removeFile("_submission.out");
         os->removeFile("_diff.out");
 
-        if (!isPorcelain) {
+        if (!porcelain) {
             logger->logTestCaseVerdict(verdict);
         }
 
@@ -108,15 +136,15 @@ private:
         return verdict;
     }
 
-    Verdict gradeOnTestCase(string testCaseName, string submissionCommand) {
-        Verdict verdict = executeOnTestCase(testCaseName, submissionCommand);
+    Verdict gradeOnTestCase(string testCaseName) {
+        Verdict verdict = executeOnTestCase(testCaseName);
         if (verdict.isUnknown()) {
             return scoreOnTestCase(testCaseName);
         }
         return verdict;
     }
 
-    Verdict executeOnTestCase(string testCaseName, string submissionCommand) {
+    Verdict executeOnTestCase(string testCaseName) {
         string testCaseInputFilename = generator->getTestCasesDir() + "/" + testCaseName + ".in";
 
         os->limitExecutionTime(generator->getTimeLimit());

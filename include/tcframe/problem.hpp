@@ -6,6 +6,7 @@
 #include "io.hpp"
 #include "testcase.hpp"
 
+#include <getopt.h>
 #include <vector>
 
 using std::vector;
@@ -14,28 +15,50 @@ namespace tcframe {
 
 class BaseProblem : protected ConstraintsCollector, protected IOFormatProvider {
 public:
-    void applyConfiguration() {
+    void applyProblemConfiguration() {
         Config();
     }
 
-    void setSlug(string slug) {
-        this->slug = slug;
+    void applyProblemCommandLineOptions(int argc, char* argv[]) {
+        option longopts[6] = {
+                { "slug", required_argument, nullptr, 's'},
+                { "time-limit", required_argument, nullptr, 't'},
+                { "no-time-limit", no_argument, nullptr, 'T'},
+                { "memory-limit", required_argument, nullptr, 'm'},
+                { "no-memory-limit", no_argument, nullptr, 'M'},
+                { 0, 0, 0, 0 }
+        };
+
+        int c;
+        while ((c = getopt_long(argc, argv, "", longopts, nullptr)) != -1) {
+            switch (c) {
+                case 's':
+                    slug = string(optarg);
+                    break;
+                case 't':
+                    timeLimit = Util::toInt(string(optarg));
+                    break;
+                case 'T':
+                    timeLimit = 0;
+                    break;
+                case 'm':
+                    memoryLimit = Util::toInt(string(optarg));
+                    break;
+                case 'M':
+                    memoryLimit = 0;
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     string getSlug() {
         return slug;
     }
 
-    void setTimeLimit(int timeLimit) {
-        this->timeLimit = timeLimit;
-    }
-
     int getTimeLimit() {
         return timeLimit;
-    }
-
-    void setMemoryLimit(int memoryLimit) {
-        this->memoryLimit = memoryLimit;
     }
 
     int getMemoryLimit() {
@@ -83,6 +106,18 @@ protected:
     virtual void Subtask8() { throw NotImplementedException(); }
     virtual void Subtask9() { throw NotImplementedException(); }
     virtual void Subtask10() { throw NotImplementedException(); }
+
+    void setSlug(string slug) {
+        this->slug = slug;
+    }
+
+    void setTimeLimit(int timeLimitInSeconds) {
+        this->timeLimit = timeLimitInSeconds;
+    }
+
+    void setMemoryLimit(int memoryLimitInMegabytes) {
+        this->memoryLimit = memoryLimitInMegabytes;
+    }
 
 private:
     string slug;

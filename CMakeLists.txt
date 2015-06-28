@@ -36,6 +36,7 @@ set(SOURCE_FILES
     test/generator_test.cpp
     test/io_test.cpp
     test/macro_test.cpp
+    test/problem_test.cpp
     test/runner_test.cpp
     test/submitter_test.cpp
     test/tcframe_test_commons.cpp

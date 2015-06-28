@@ -32,6 +32,40 @@ private:
     map<string, vector<Failure>> failuresMap;
 };
 
+class MyGenerator : public BaseGenerator<DefaultProblem> {
+    void Config() {
+        setTestCasesDir("testdata");
+        setSolutionCommand("java Solution");
+    }
+};
+
+TEST(GeneratorTest, DefaultOptions) {
+    BaseGenerator<DefaultProblem>* generator = new DefaultGenerator();
+    generator->applyGeneratorConfiguration();
+
+    EXPECT_EQ("tc", generator->getTestCasesDir());
+    EXPECT_EQ("./solution", generator->getSolutionCommand());
+}
+
+TEST(GeneratorTest, MyOptions) {
+    BaseGenerator<DefaultProblem>* generator = new MyGenerator();
+    generator->applyGeneratorConfiguration();
+
+    EXPECT_EQ("testdata", generator->getTestCasesDir());
+    EXPECT_EQ("java Solution", generator->getSolutionCommand());
+}
+
+TEST(GeneratorTest, CommandLineOptions) {
+    char* argv[] = {(char*) "<runner>", (char*)"--tc-dir=testcases", (char*)"--solution-command=\"python sol.py\""};
+
+    BaseGenerator<DefaultProblem>* generator = new MyGenerator();
+    generator->applyGeneratorConfiguration();
+    generator->applyGeneratorCommandLineOptions(3, argv);
+
+    EXPECT_EQ("testcases", generator->getTestCasesDir());
+    EXPECT_EQ("\"python sol.py\"", generator->getSolutionCommand());
+}
+
 TEST(GeneratorTest, GenerationWithSubtasksAndTestGroups) {
     FakeGeneratorLogger logger;
     GeneratorWithTestGroups gen(&logger, new FakeOperatingSystem());

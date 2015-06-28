@@ -31,9 +31,32 @@ namespace tcframe {
 template<typename TProblem>
 class BaseGenerator : public TProblem, protected TestCasesCollector {
 public:
-    void applyConfiguration() {
-        TProblem::Config();
+    void applyGeneratorConfiguration() {
         Config();
+    }
+
+    int applyGeneratorCommandLineOptions(int argc, char* argv[]) {
+        option longopts[3] = {
+                { "tc-dir", required_argument, nullptr, 'd'},
+                { "solution-command", required_argument, nullptr, 'c'},
+                { 0, 0, 0, 0 }
+        };
+
+        int c;
+        while ((c = getopt_long(argc, argv, "", longopts, nullptr)) != -1) {
+            switch (c) {
+                case 'd':
+                    testCasesDir = string(optarg);
+                    break;
+                case 'c':
+                    solutionCommand = string(optarg);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return 0;
     }
 
     int generate() {
@@ -59,16 +82,8 @@ public:
         return successful ? 0 : 1;
     }
 
-    void setSolutionCommand(string solutionCommand) {
-        this->solutionCommand = solutionCommand;
-    }
-
     string getSolutionCommand() {
         return solutionCommand;
-    }
-
-    void setTestCasesDir(string testCasesDir) {
-        this->testCasesDir = testCasesDir;
     }
 
     string getTestCasesDir() {
@@ -129,6 +144,14 @@ protected:
     virtual void TestGroup8() { throw NotImplementedException(); }
     virtual void TestGroup9() { throw NotImplementedException(); }
     virtual void TestGroup10() { throw NotImplementedException(); }
+
+    void setTestCasesDir(string testCasesDir) {
+        this->testCasesDir = testCasesDir;
+    }
+
+    void setSolutionCommand(string solutionCommand) {
+        this->solutionCommand = solutionCommand;
+    }
 
 private:
     GeneratorLogger* logger;
