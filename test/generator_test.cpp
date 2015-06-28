@@ -4,24 +4,19 @@
 
 class FakeGeneratorLogger : public GeneratorLogger {
 public:
-    void logIntroduction() { }
     void logTestGroupIntroduction(int) { }
 
     void logTestCaseIntroduction(string testCaseName) {
         currentKey = testCaseName;
     }
 
-    void logTestCaseOkResult() { }
-    void logTestCaseFailedResult(string) { }
-
-    void logSubmissionIntroduction() { }
-    void logTestCaseVerdictName(string) { }
-    void logSubmissionResult(map<int, Verdict>) { }
-    void logPorcelainSubmissionResult(map<int, Verdict>) { }
-
     void logFailures(vector<Failure> failures) {
         this->failuresMap[currentKey] = failures;
     }
+
+    void logIntroduction() { }
+    void logTestCaseOkResult() { }
+    void logTestCaseFailedResult(string) { }
 
     vector<Failure> getFailures(string key) {
         return failuresMap[key];
