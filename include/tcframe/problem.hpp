@@ -29,6 +29,8 @@ public:
                 { 0, 0, 0, 0 }
         };
 
+        optind = 1;
+
         int c;
         while ((c = getopt_long(argc, argv, "", longopts, nullptr)) != -1) {
             switch (c) {

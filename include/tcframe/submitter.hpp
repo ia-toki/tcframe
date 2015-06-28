@@ -47,6 +47,8 @@ public:
                 { 0, 0, 0, 0 }
         };
 
+        optind = 1;
+
         while (getopt_long(argc, argv, "", longopts, nullptr) != -1) {
             ;
         }
