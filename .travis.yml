@@ -3,7 +3,6 @@ language: cpp
 before_install:
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
   - sudo apt-get -qq update
-  - sudo pip install cpp-coveralls
 
 install:
   - sudo apt-get -qq install g++-4.7
@@ -16,4 +15,4 @@ script:
   - cmake . && cmake --build . && ctest
 
 after_success:
-  - coveralls --include include --gcov-options '\-lp'
+  - bash <(curl -s https://codecov.io/bash)
