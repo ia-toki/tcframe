@@ -1,7 +1,7 @@
 # tcframe 0.4.0
 
-[![Build Status](https://travis-ci.org/ia-toki/tcframe.svg?branch=master)](https://travis-ci.org/ia-toki/tcframe)
-[![Coverage Status](http://codecov.io/github/ia-toki/tcframe/coverage.svg?branch=master)](http://codecov.io/github/ia-toki/tcframe?branch=master)
+[![Build Status](https://travis-ci.org/fushar/tcframe.svg?branch=master)](https://travis-ci.org/fushar/tcframe)
+[![Coverage Status](http://codecov.io/github/fushar/tcframe/coverage.svg?branch=master)](http://codecov.io/github/fushar/tcframe?branch=master)
 [![Documentation Status](https://readthedocs.org/projects/tcframe/badge/?version=latest)](https://readthedocs.org/projects/tcframe)
 
 **tcframe** is a framework for generating test cases, designed especially for problems in competitive programming contests.
