@@ -329,11 +329,23 @@ Inside the methods **TestCases()** or **TestGroupX()**, we can define the test c
         CASE(N = 1, K = 100, randomArray());
     }
 
-where **randomArray()** is a private helper method that assign random values (between -100000 and 100000) to each of the element A[0] .. A[N-1].
+where **randomArray()** is a private helper method that assign random values (between -100000 and 100000) to each of the element A[0] .. A[N-1]:
+
+
+.. sourcecode:: cpp
+
+    void randomArray() {
+        A.clear(); // important!
+        for (int i = 0; i < N; i++) {
+            A.push_back(rnd.nextInt(-100000, 100000));
+        }
+    }
 
 .. note::
 
     Yes, we can access the input variables directly inside the generator, even though they belong to the problem specification class!
+
+Here, we are using random number generator object :code:`rnd` that is available inside generator class. The complete reference of randomization methods can be found here: :ref:`Random number generator API reference <api-ref-random-number-generator>`.
 
 We will also define sample test cases. Each sample test case is independent to each other, and they are not included in any test group. Therefore, for problems with subtasks, we must assign a set of subtasks for each sample test case.
 
@@ -417,11 +429,6 @@ Note that for vector input variables, don't forget to clear them before assignin
     };
 
     class Generator : public BaseGenerator<Problem> {
-    public:
-        Generator() {
-            mt_rand = mt19937(12345 /* some seed value */);
-        }
-
     protected:
         void SampleTestCases() {
             SAMPLE_CASE({
@@ -464,14 +471,10 @@ Note that for vector input variables, don't forget to clear them before assignin
         }
 
     private:
-        mt19937 mt_rand; // Mersenne Twister pseudo-random generator
-
         void randomArray() {
-            uniform_int_distribution<int> dist(-100000, 100000);
-
             A.clear(); // important!
             for (int i = 0; i < N; i++) {
-                A.push_back(dist(mt_rand));
+                A.push_back(rnd.nextInt(-100000, 100000));
             }
         }
     };
@@ -482,10 +485,6 @@ Note that for vector input variables, don't forget to clear them before assignin
         runner.setGenerator(new Generator());
         return runner.run();
     }
-
-.. note::
-
-    The next versions will have convenient wrapper for generating random numbers.
 
 Compiling runner program
 ---------------------------

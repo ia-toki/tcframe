@@ -26,6 +26,7 @@ set(SOURCE_FILES
     include/tcframe/problem.hpp
     include/tcframe/runner.hpp
     include/tcframe/submitter.hpp
+    include/tcframe/random.hpp
     include/tcframe/testcase.hpp
     include/tcframe/type.hpp
     include/tcframe/util.hpp
@@ -37,6 +38,7 @@ set(SOURCE_FILES
     test/io_test.cpp
     test/macro_test.cpp
     test/problem_test.cpp
+    test/random_test.cpp
     test/submitter_test.cpp
     test/tcframe_test_commons.cpp
     test/testcase_test.cpp

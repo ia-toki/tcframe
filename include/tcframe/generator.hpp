@@ -7,6 +7,7 @@
 #include "logger.hpp"
 #include "os.hpp"
 #include "problem.hpp"
+#include "random.hpp"
 #include "testcase.hpp"
 #include "util.hpp"
 
@@ -42,9 +43,10 @@ public:
     }
 
     int applyGeneratorCommandLineOptions(int argc, char* argv[]) {
-        option longopts[3] = {
+        option longopts[4] = {
                 { "tc-dir", required_argument, nullptr, 'd'},
                 { "solution-command", required_argument, nullptr, 'c'},
+                { "seed", required_argument, nullptr, 's'},
                 { 0, 0, 0, 0 }
         };
 
@@ -59,6 +61,9 @@ public:
                     break;
                 case 'c':
                     solutionCommand = string(optarg);
+                    break;
+                case 's':
+                    rnd.setSeed((unsigned int) Util::toInt(optarg));
                     break;
                 default:
                     break;
@@ -161,6 +166,9 @@ protected:
     void setSolutionCommand(string solutionCommand) {
         this->solutionCommand = solutionCommand;
     }
+
+protected:
+    Random rnd;
 
 private:
     GeneratorLogger* logger;

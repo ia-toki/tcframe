@@ -245,6 +245,41 @@ The following macros can be called inside the overridden method **BaseGenerator:
 
     Multiple sample test cases can be defined inside the same method.
 
+.. _api-ref-random-number-generator:
+
+Random number generator
+-----------------------
+
+The following methods can be called on the random number generator :code:`rnd` object inside a generator.
+
+.. cpp:function:: int nextInt(int minNum, int maxNum)
+
+    Return a uniformly distributed random integer (int) between minNum and maxNum, inclusive.
+
+.. cpp:function:: int nextInt(int maxNumEx)
+
+    Return a uniformly distributed random integer (int) between 0 and maxNumEx - 1, inclusive.
+
+.. cpp:function:: long long nextLongLong(long long minNum, long long maxNum)
+
+    Return a uniformly distributed random integer (long long) between minNum and maxNum, inclusive.
+
+.. cpp:function:: long long nextLongLong(long long maxNumEx)
+
+    Return a uniformly distributed random integer (long long) between 0 and maxNumEx - 1, inclusive.
+
+.. cpp:function:: double nextDouble(double minNum, double maxNum)
+
+    Return a uniformly distributed random real number (double) between minNum and maxNum, inclusive.
+
+.. cpp:function:: double nextDouble(double maxNum)
+
+    Return a uniformly distributed random real number (double) between 0 and maxNum, inclusive.
+
+.. cpp:function:: void shuffle(RandomAccessIterator first, RandomAccessIterator last)
+
+    Randomly shuffles the elements in [first, last). Use this rather than :code:`std::random_shuffle`.
+
 .. _api-ref-command-line-options:
 
 Command-line options
@@ -263,6 +298,10 @@ The following options can be specified when running the runner program. They mos
 .. py:function:: --solution-command=command
 
     Overrides the solution command specified by setSolutionCommand() in **BaseGenerator::Config()**.
+
+.. py:function:: --seed=seed
+
+    Sets the seed for the random number generator :code:`rnd` inside the generator.
 
 .. py:function:: --time-limit=timeLimitInSeconds
 
