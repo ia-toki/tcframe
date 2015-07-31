@@ -365,7 +365,7 @@ After writing problem and generator specification classes, write the **main()** 
         return runner.run();
     }
 
-The complete runner program for this problem is summarized below. Here, we are using a random number generator using the new C++11 **<random>** library, and the **randomArray()** private method as explained before.
+The complete runner program for this problem is summarized below.
 
 Note that for vector input variables, don't forget to clear them before assigning the values.
 
