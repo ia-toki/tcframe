@@ -1,5 +1,5 @@
-#ifndef TCFRAME_RAND_H
-#define TCFRAME_RAND_H
+#ifndef TCFRAME_RANDOM_H
+#define TCFRAME_RANDOM_H
 
 #include <algorithm>
 #include <random>
