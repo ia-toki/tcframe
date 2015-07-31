@@ -46,7 +46,7 @@ public:
         option longopts[4] = {
                 { "tc-dir", required_argument, nullptr, 'd'},
                 { "solution-command", required_argument, nullptr, 'c'},
-                { "seed", required_argument, nullptr, 's'},
+                { "seed", required_argument, nullptr, 'e'},
                 { 0, 0, 0, 0 }
         };
 
@@ -62,7 +62,7 @@ public:
                 case 'c':
                     solutionCommand = string(optarg);
                     break;
-                case 's':
+                case 'e':
                     rnd.setSeed((unsigned int) Util::toInt(optarg));
                     break;
                 default:
