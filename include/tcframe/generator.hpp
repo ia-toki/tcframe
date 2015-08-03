@@ -129,15 +129,11 @@ public:
 protected:
     BaseGenerator()
             : logger(new DefaultGeneratorLogger()),
-              os(new UnixOperatingSystem()),
-              solutionCommand("./solution"),
-              testCasesDir("tc") { }
+              os(new UnixOperatingSystem()) { }
 
     BaseGenerator(GeneratorLogger* logger, OperatingSystem* os)
             : logger(logger),
-              os(os),
-              solutionCommand("./solution"),
-              testCasesDir("tc") { }
+              os(os) { }
 
     virtual ~BaseGenerator() { }
 
@@ -167,15 +163,14 @@ protected:
         this->solutionCommand = solutionCommand;
     }
 
-protected:
     Random rnd;
 
 private:
     GeneratorLogger* logger;
     OperatingSystem* os;
 
-    string solutionCommand;
-    string testCasesDir;
+    string solutionCommand = "./solution";
+    string testCasesDir = "tc";
 
     vector<TestGroup*> testData;
     vector<Subtask*> subtasks;
@@ -230,9 +225,9 @@ private:
 
     void applyTestCase(TestCase* testCase) {
         if (dynamic_cast<OfficialTestCase*>(testCase) != nullptr) {
-            applyOfficialTestCase(dynamic_cast<OfficialTestCase*>(testCase));
+            applyOfficialTestCase((OfficialTestCase*)testCase);
         } else {
-            applySampleTestCase(dynamic_cast<SampleTestCase*>(testCase));
+            applySampleTestCase((SampleTestCase*)testCase);
         }
     }
 

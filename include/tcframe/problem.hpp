@@ -87,10 +87,8 @@ public:
             return ConstraintsCollector::collectSubtasks();
         }
     }
-protected:
-    BaseProblem()
-            : slug("problem"), timeLimit(0), memoryLimit(0) { }
 
+protected:
     virtual ~BaseProblem() { }
 
     virtual void Config() { }
@@ -123,9 +121,9 @@ protected:
     }
 
 private:
-    string slug;
-    int timeLimit;
-    int memoryLimit;
+    string slug = "problem";
+    int timeLimit = 0;
+    int memoryLimit = 0;
 
     vector<void(BaseProblem::*)()> subtaskBlocks = {
             &BaseProblem::Subtask1,

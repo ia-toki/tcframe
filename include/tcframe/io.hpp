@@ -183,8 +183,7 @@ private:
 
 class LinesIOSegment : public IOSegment {
 public:
-    LinesIOSegment(string names)
-            : size(-1) {
+    LinesIOSegment(string names) {
         this->names = Util::split(names);
     }
 
@@ -253,7 +252,7 @@ public:
 private:
     vector<string> names;
     vector<VerticalVariable*> variables;
-    int size;
+    int size = -1;
 
     void setSize(int size) {
         this->size = size;
@@ -289,7 +288,7 @@ private:
 class GridIOSegment : public IOSegment {
 public:
     GridIOSegment(string name)
-            : name(name), variable(nullptr), hasSpaces(false), rowsSize(-1), columnsSize(-1) { }
+            : name(name) { }
 
     template<typename T, typename = RequiresScalar<T>>
     GridIOSegment& operator,(vector<vector<T>>& matrix) {
@@ -356,10 +355,10 @@ public:
 
 private:
     string name;
-    MatrixVariable* variable;
-    bool hasSpaces;
-    int rowsSize;
-    int columnsSize;
+    MatrixVariable* variable = nullptr;
+    bool hasSpaces = false;
+    int rowsSize = -1;
+    int columnsSize = -1;
 
     void checkMatrixSizes() {
         if (variable->rowsSize() != rowsSize) {

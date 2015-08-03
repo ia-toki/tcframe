@@ -97,8 +97,7 @@ private:
 
 class TestCasesCollector {
 public:
-    TestCasesCollector()
-            : curTestGroupId(0), curSubtaskIds({-1}) {
+    TestCasesCollector() {
         testGroups.push_back(new TestGroup(0));
     }
 
@@ -138,8 +137,8 @@ public:
     }
 
 private:
-    int curTestGroupId;
-    set<int> curSubtaskIds;
+    int curTestGroupId = 0;
+    set<int> curSubtaskIds = {-1};
 
     vector<TestGroup*> testGroups;
 };

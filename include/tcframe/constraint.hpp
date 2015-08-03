@@ -53,9 +53,6 @@ private:
 
 class ConstraintsCollector {
 public:
-    ConstraintsCollector()
-            : curSubtaskId(0) { }
-
     void newSubtask() {
         curSubtaskId++;
         subtasks.push_back(new Subtask(curSubtaskId));
@@ -74,7 +71,7 @@ public:
     }
 
 private:
-    int curSubtaskId;
+    int curSubtaskId = 0;
     vector<Subtask*> subtasks;
 };
 

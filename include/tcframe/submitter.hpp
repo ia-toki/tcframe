@@ -37,14 +37,12 @@ public:
         : logger(new DefaultSubmitterLogger()),
           os(new UnixOperatingSystem()),
           generator(generator),
-          porcelain(false),
           submissionCommand(generator->getSolutionCommand()) { }
 
     Submitter(BaseGenerator<TProblem>* generator, SubmitterLogger* logger, OperatingSystem* os)
             : logger(logger),
               os(os),
               generator(generator),
-              porcelain(false),
               submissionCommand(generator->getSolutionCommand()) { }
 
     string applySubmitterCommandLineOptions(int argc, char** argv) {
@@ -122,7 +120,7 @@ private:
     OperatingSystem* os;
     BaseGenerator<TProblem>* generator;
 
-    bool porcelain;
+    bool porcelain = false;
 
     string submissionCommand;
 

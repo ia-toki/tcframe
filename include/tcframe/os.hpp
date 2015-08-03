@@ -38,10 +38,6 @@ public:
 
 class UnixOperatingSystem : public OperatingSystem {
 public:
-    UnixOperatingSystem()
-            : timeLimitInSeconds(0),
-              memoryLimitInMegabytes(0) { }
-
     istream* openForReading(string filename) {
         ifstream* file = new ifstream();
         file->open(filename);
@@ -125,8 +121,8 @@ public:
     }
 
 private:
-    int timeLimitInSeconds;
-    int memoryLimitInMegabytes;
+    int timeLimitInSeconds = 0;
+    int memoryLimitInMegabytes = 0;
 
     istringstream* openForReadingAsStringStream(string filename) {
         ifstream file(filename);
