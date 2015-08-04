@@ -47,14 +47,18 @@ public:
         return result;
     }
 
-    static string constructTestCaseName(string slug, int testGroupId, int testCaseId) {
+    static string constructTestCaseBaseName(string slug, int testGroupId) {
         if (testGroupId == 0) {
-            return slug + "_sample_" + toString(testCaseId);
+            return slug + "_sample";
         } else if (testGroupId == -1) {
-            return slug + "_" + toString(testCaseId);
+            return slug;
         } else {
-            return slug + "_" + toString(testGroupId) + "_" + toString(testCaseId);
+            return slug + "_" + toString(testGroupId);
         }
+    }
+
+    static string constructTestCaseName(string slug, int testGroupId, int testCaseId) {
+        return constructTestCaseBaseName(slug, testGroupId) + "_" + toString(testCaseId);
     }
 };
 

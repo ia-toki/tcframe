@@ -32,6 +32,9 @@ public:
     virtual void logIntroduction() = 0;
     virtual void logTestCaseOkResult() = 0;
     virtual void logTestCaseFailedResult(string testCaseDescription) = 0;
+    virtual void logMultipleTestCasesCombinationIntroduction(string testCaseBaseName) = 0;
+    virtual void logMultipleTestCasesCombinationOkResult() = 0;
+    virtual void logMultipleTestCasesCombinationFailedResult() = 0;
 };
 
 class SubmitterLogger : public Logger {
@@ -97,6 +100,19 @@ public:
             cout << "    Description: " << testCaseDescription << endl;
         }
 
+        cout << "    Reasons:" << endl;
+    }
+
+    void logMultipleTestCasesCombinationIntroduction(string testCaseBaseName) {
+        cout << "  Combining test cases into a single file (" << testCaseBaseName << ")... ";
+    }
+
+    void logMultipleTestCasesCombinationOkResult() {
+        cout << "OK" << endl;
+    }
+
+    void logMultipleTestCasesCombinationFailedResult() {
+        cout << "FAILED" << endl;
         cout << "    Reasons:" << endl;
     }
 };

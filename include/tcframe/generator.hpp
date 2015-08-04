@@ -79,6 +79,7 @@ public:
         os->forceMakeDir(testCasesDir);
 
         subtasks = TProblem::getSubtasks();
+        multipleTestCasesConstraints = TProblem::getMultipleTestCasesConstraints();
         testData = getTestData();
 
         bool successful = true;
@@ -86,10 +87,37 @@ public:
             int testGroupId = testGroup->getId();
             logger->logTestGroupIntroduction(testGroupId);
 
+            bool testGroupSuccessful = true;
+
             for (int testCaseId = 1; testCaseId <= testGroup->getTestCasesCount(); testCaseId++) {
                 if (!generateTestCase(testGroupId, testCaseId)) {
-                    successful = false;
+                    testGroupSuccessful = false;
                 }
+            }
+
+            if (!testGroupSuccessful) {
+                successful = false;
+            }
+
+            if (testGroupSuccessful && TProblem::isMultipleTestCasesPerFile()) {
+                string testCaseBaseName = Util::constructTestCaseBaseName(TProblem::getSlug(), testGroupId);
+                logger->logMultipleTestCasesCombinationIntroduction(testCaseBaseName);
+
+                *(TProblem::getMultipleTestCasesCountPointer()) = testGroup->getTestCasesCount();
+
+                try {
+                    checkMultipleTestCasesConstraints();
+                } catch (MultipleTestCasesConstraintsSatisfiabilityException& e) {
+                    logger->logMultipleTestCasesCombinationFailedResult();
+                    logger->logFailures(e.getFailures());
+                    successful = false;
+                    continue;
+                }
+
+                string testCaseBaseFilename = getTestCasesDir() + "/" + testCaseBaseName;
+                os->combineMultipleTestCases(testCaseBaseFilename, testGroup->getTestCasesCount());
+
+                logger->logMultipleTestCasesCombinationOkResult();
             }
         }
 
@@ -174,6 +202,7 @@ private:
 
     vector<TestGroup*> testData;
     vector<Subtask*> subtasks;
+    vector<Constraint*> multipleTestCasesConstraints;
 
     vector<void(BaseGenerator::*)()> testGroupBlocks = {
             &BaseGenerator::TestGroup1,
@@ -279,8 +308,31 @@ private:
         }
     }
 
+    void checkMultipleTestCasesConstraints() {
+        vector<Constraint*> unsatisfiedConstraints;
+        for (Constraint* constraint : multipleTestCasesConstraints) {
+            if (!constraint->isSatisfied()) {
+                unsatisfiedConstraints.push_back(constraint);
+            }
+        }
+
+        if (!unsatisfiedConstraints.empty()) {
+            vector<Failure> failures;
+            failures.push_back(Failure("Does not satisfy multiple test cases constraints, on:", 0));
+            for (Constraint* constraint : unsatisfiedConstraints) {
+                failures.push_back(Failure(constraint->getDescription(), 1));
+            }
+
+            throw MultipleTestCasesConstraintsSatisfiabilityException(failures);
+        }
+    }
+
     void generateTestCaseInput(string testCaseInputFilename) {
         ostream* testCaseInput = os->openForWriting(testCaseInputFilename);
+
+        if (TProblem::isMultipleTestCasesPerFile()) {
+            *testCaseInput << "1\n";
+        }
 
         TProblem::beginPrintingFormat(testCaseInput);
         TProblem::InputFormat();

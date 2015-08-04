@@ -34,6 +34,7 @@ public:
     virtual void limitExecutionTime(int timeLimitInSeconds) = 0;
     virtual void limitExecutionMemory(int memoryLimitInMegabytes) = 0;
     virtual ExecutionResult execute(string id, string command, string inputFilename, string outputFilename, string errorFilename) = 0;
+    virtual void combineMultipleTestCases(string testCaseBaseFilename, int testCasesCount) = 0;
 };
 
 class UnixOperatingSystem : public OperatingSystem {
@@ -118,6 +119,25 @@ public:
         }
 
         return result;
+    }
+
+    void combineMultipleTestCases(string testCaseBaseFilename, int testCasesCount) {
+        ostringstream sout;
+        sout << "echo " << testCasesCount << " > " << testCaseBaseFilename << ".in";
+        sout << " && touch " << testCaseBaseFilename << ".out";
+        system(sout.str().c_str());
+
+        for (int i = 1; i <= testCasesCount; i++) {
+            ostringstream sout2;
+            sout2 << "tail -n +2 " << testCaseBaseFilename << "_" << i << ".in >> " << testCaseBaseFilename << ".in";
+            sout2 << "&& cat " << testCaseBaseFilename << "_" << i << ".out >> " << testCaseBaseFilename << ".out";
+            system(sout2.str().c_str());
+
+            ostringstream sout3;
+            sout3 << "rm " << testCaseBaseFilename << "_" << i << ".in ";
+            sout3 << testCaseBaseFilename << "_" << i << ".out";
+            system(sout3.str().c_str());
+        }
     }
 
 private:

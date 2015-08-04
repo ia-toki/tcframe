@@ -24,6 +24,11 @@ public:
     void logIntroduction() { }
     void logTestCaseOkResult() { }
     void logTestCaseFailedResult(string) { }
+    void logMultipleTestCasesCombinationIntroduction(string testCaseBaseName) {
+        currentKey = testCaseBaseName;
+    }
+    void logMultipleTestCasesCombinationOkResult() { }
+    void logMultipleTestCasesCombinationFailedResult() { }
 
     vector<Failure> getFailures(string key) {
         return failuresMap[key];
@@ -77,6 +82,8 @@ public:
         return result;
     }
 
+    void combineMultipleTestCases(string testCaseBaseFilename, int testCasesCount) { }
+
 private:
     map<string, ostringstream*> testCaseInputs;
     map<string, ExecutionResult> arrangedResultsMap;
@@ -93,8 +100,26 @@ class DefaultGenerator : public BaseGenerator<DefaultProblem> {
 
 };
 
+template<typename TProblem>
+class ProblemWithMultipleTestCasesPerFile : public TProblem {
+    using TProblem::setMultipleTestCasesCount;
+    using TProblem::addConstraint;
+    using TProblem::setSlug;
+
+protected:
+    int T;
+
+    void Config() {
+        setMultipleTestCasesCount(T);
+    }
+
+    void MultipleTestCasesConstraints() {
+        addConstraint([this] { return 1 <= T && T <= 3; }, "1 <= T && T <= 3");
+    }
+};
+
 class ProblemWithSubtasks : public BaseProblem {
-public:
+protected:
     int A, B;
     int K;
 
@@ -128,7 +153,16 @@ public:
     }
 };
 
-class GeneratorWithTestGroups : public BaseGenerator<ProblemWithSubtasks> {
+template<typename TProblemWithSubtasks>
+class GeneratorWithTestGroups : public BaseGenerator<TProblemWithSubtasks> {
+    using TProblemWithSubtasks::A;
+    using TProblemWithSubtasks::B;
+    using TProblemWithSubtasks::K;
+
+    using BaseGenerator<TProblemWithSubtasks>::addSampleTestCase;
+    using BaseGenerator<TProblemWithSubtasks>::assignToSubtasks;
+    using BaseGenerator<TProblemWithSubtasks>::addOfficialTestCase;
+
 protected:
     void SampleTestCases() {
         addSampleTestCase({"1 1000", "1"}, {1, 2});
@@ -156,13 +190,22 @@ protected:
 
 public:
     GeneratorWithTestGroups()
-            : BaseGenerator(new FakeGeneratorLogger(), new FakeGeneratorOperatingSystem()) { }
+            : BaseGenerator<TProblemWithSubtasks>(new FakeGeneratorLogger(), new FakeGeneratorOperatingSystem()) { }
 
     GeneratorWithTestGroups(GeneratorLogger* logger, OperatingSystem* os)
-            : BaseGenerator(logger, os) { }
+            : BaseGenerator<TProblemWithSubtasks>(logger, os) { }
 };
 
-class InvalidGeneratorWithTestGroups : public BaseGenerator<ProblemWithSubtasks> {
+template<typename TProblemWithSubtasks>
+class InvalidGeneratorWithTestGroups : public BaseGenerator<TProblemWithSubtasks> {
+    using TProblemWithSubtasks::A;
+    using TProblemWithSubtasks::B;
+    using TProblemWithSubtasks::K;
+
+    using BaseGenerator<TProblemWithSubtasks>::addSampleTestCase;
+    using BaseGenerator<TProblemWithSubtasks>::assignToSubtasks;
+    using BaseGenerator<TProblemWithSubtasks>::addOfficialTestCase;
+
 protected:
     void SampleTestCases() {
         addSampleTestCase({"1 1001", "1"}, {1, 2});
@@ -182,12 +225,21 @@ protected:
         addOfficialTestCase([this] { A = 0, B = 0, K = 100; }, "A = 0, B = 0, K = 100");
     }
 
+    void TestGroup3() {
+        assignToSubtasks({1, 2});
+
+        addOfficialTestCase([this] { A = 1, B = 1, K = 1; }, "A = 1, B = 1, K = 1");
+        addOfficialTestCase([this] { A = 1, B = 1, K = 1; }, "A = 1, B = 1, K = 1");
+        addOfficialTestCase([this] { A = 1, B = 1, K = 1; }, "A = 1, B = 1, K = 1");
+        addOfficialTestCase([this] { A = 1, B = 1, K = 1; }, "A = 1, B = 1, K = 1");
+    }
+
 public:
     InvalidGeneratorWithTestGroups()
-            : BaseGenerator(new FakeGeneratorLogger(), new FakeGeneratorOperatingSystem()) { }
+            : BaseGenerator<TProblemWithSubtasks>(new FakeGeneratorLogger(), new FakeGeneratorOperatingSystem()) { }
 
     InvalidGeneratorWithTestGroups(GeneratorLogger* logger, OperatingSystem* os)
-            : BaseGenerator(logger, os) { }
+            : BaseGenerator<TProblemWithSubtasks>(logger, os) { }
 };
 
 class ProblemWithoutSubtasks : public BaseProblem {
@@ -213,7 +265,15 @@ protected:
     }
 };
 
-class GeneratorWithoutTestGroups : public BaseGenerator<ProblemWithoutSubtasks> {
+template<typename TProblemWithoutSubtasks>
+class GeneratorWithoutTestGroups : public BaseGenerator<TProblemWithoutSubtasks> {
+    using TProblemWithoutSubtasks::A;
+    using TProblemWithoutSubtasks::B;
+    using TProblemWithoutSubtasks::K;
+
+    using BaseGenerator<TProblemWithoutSubtasks>::addSampleTestCase;
+    using BaseGenerator<TProblemWithoutSubtasks>::addOfficialTestCase;
+
 protected:
     void SampleTestCases() {
         addSampleTestCase({"1 1", "1"});
@@ -227,10 +287,10 @@ protected:
 
 public:
     GeneratorWithoutTestGroups()
-            : BaseGenerator(new FakeGeneratorLogger(), new FakeGeneratorOperatingSystem()) { }
+            : BaseGenerator<TProblemWithoutSubtasks>(new FakeGeneratorLogger(), new FakeGeneratorOperatingSystem()) { }
 
     GeneratorWithoutTestGroups(GeneratorLogger* logger, OperatingSystem* os)
-            : BaseGenerator(logger, os) { }
+            : BaseGenerator<TProblemWithoutSubtasks>(logger, os) { }
 };
 
 class InvalidGeneratorWithoutTestGroups : public BaseGenerator<ProblemWithoutSubtasks> {
@@ -250,5 +310,23 @@ public:
             : BaseGenerator(new FakeGeneratorLogger(), new FakeGeneratorOperatingSystem()) { }
 
     InvalidGeneratorWithoutTestGroups(GeneratorLogger* logger, OperatingSystem* os)
+            : BaseGenerator(logger, os) { }
+};
+
+class InvalidGeneratorWithoutTestGroupsAndWithMultipleTestCasesPerFile : public BaseGenerator<ProblemWithMultipleTestCasesPerFile<ProblemWithoutSubtasks>> {
+protected:
+
+    void TestCases() {
+        addOfficialTestCase([this] { A = 1, B = 100, K = 1; }, "A = 1, B = 100, K = 1");
+        addOfficialTestCase([this] { A = 1, B = 100, K = 1; }, "A = 1, B = 100, K = 1");
+        addOfficialTestCase([this] { A = 1, B = 100, K = 1; }, "A = 1, B = 100, K = 1");
+        addOfficialTestCase([this] { A = 1, B = 100, K = 1; }, "A = 1, B = 100, K = 1");
+    }
+
+public:
+    InvalidGeneratorWithoutTestGroupsAndWithMultipleTestCasesPerFile()
+            : BaseGenerator(new FakeGeneratorLogger(), new FakeGeneratorOperatingSystem()) { }
+
+    InvalidGeneratorWithoutTestGroupsAndWithMultipleTestCasesPerFile(GeneratorLogger* logger, OperatingSystem* os)
             : BaseGenerator(logger, os) { }
 };

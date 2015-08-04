@@ -88,12 +88,23 @@ public:
                 logger->logTestGroupIntroduction(testGroupId);
             }
 
-            for (int testCaseId = 1; testCaseId <= testGroup->getTestCasesCount(); testCaseId++) {
-                TestCase* testCase = testGroup->getTestCase(testCaseId - 1);
-                string testCaseName = Util::constructTestCaseName(generator->getSlug(), testGroup->getId(), testCaseId);
+            if (generator->isMultipleTestCasesPerFile()) {
+                string testCaseName = Util::constructTestCaseBaseName(generator->getSlug(), testGroupId);
                 Verdict verdict = submitOnTestCase(testCaseName);
+
+                TestCase* testCase = testGroup->getTestCase(0);
                 for (int subtaskId : testCase->getSubtaskIds()) {
                     subtaskVerdicts[subtaskId] = max(subtaskVerdicts[subtaskId], verdict);
+                }
+            } else {
+                for (int testCaseId = 1; testCaseId <= testGroup->getTestCasesCount(); testCaseId++) {
+                    TestCase *testCase = testGroup->getTestCase(testCaseId - 1);
+                    string testCaseName = Util::constructTestCaseName(generator->getSlug(), testGroup->getId(),
+                                                                      testCaseId);
+                    Verdict verdict = submitOnTestCase(testCaseName);
+                    for (int subtaskId : testCase->getSubtaskIds()) {
+                        subtaskVerdicts[subtaskId] = max(subtaskVerdicts[subtaskId], verdict);
+                    }
                 }
             }
         }

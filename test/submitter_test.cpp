@@ -65,6 +65,8 @@ public:
         }
     }
 
+    void combineMultipleTestCases(string testCaseBaseFilename, int testCasesCount) { }
+
 private:
     map<string, ExecutionResult> arrangedResultsMap;
 };
@@ -101,7 +103,7 @@ TEST(SubmitterTest, MySubmissionCommand) {
 
 TEST(SubmitterTest, AcceptedSubmissionWithSubtasksAndTestGroups) {
     FakeSubmitterLogger* logger = new FakeSubmitterLogger();
-    Submitter<ProblemWithSubtasks>* submitter = new Submitter<ProblemWithSubtasks>(new GeneratorWithTestGroups(), logger, new FakeSubmitterOperatingSystem());
+    Submitter<ProblemWithSubtasks>* submitter = new Submitter<ProblemWithSubtasks>(new GeneratorWithTestGroups<ProblemWithSubtasks>(), logger, new FakeSubmitterOperatingSystem());
     int exitCode = submitter->submit();
 
     EXPECT_EQ(0, exitCode);
@@ -129,7 +131,7 @@ TEST(SubmitterTest, FailedSubmissionWithSubtasksAndTestGroups) {
             {"problem_3_1-submission-scoring-brief", (ExecutionResult){1, new istringstream(), new istringstream()}}
     };
 
-    Submitter<ProblemWithSubtasks>* submitter = new Submitter<ProblemWithSubtasks>(new GeneratorWithTestGroups(), logger, new FakeSubmitterOperatingSystem(arrangedResultsMap));
+    Submitter<ProblemWithSubtasks>* submitter = new Submitter<ProblemWithSubtasks>(new GeneratorWithTestGroups<ProblemWithSubtasks>(), logger, new FakeSubmitterOperatingSystem(arrangedResultsMap));
     int exitCode = submitter->submit();
 
     EXPECT_EQ(0, exitCode);
@@ -148,7 +150,7 @@ TEST(SubmitterTest, FailedSubmissionWithSubtasksAndTestGroups) {
 
 TEST(SubmitterTest, AcceptedSubmissionWithoutSubtasksAndTestGroups) {
     FakeSubmitterLogger* logger = new FakeSubmitterLogger();
-    Submitter<ProblemWithoutSubtasks>* submitter = new Submitter<ProblemWithoutSubtasks>(new GeneratorWithoutTestGroups(), logger, new FakeSubmitterOperatingSystem());
+    Submitter<ProblemWithoutSubtasks>* submitter = new Submitter<ProblemWithoutSubtasks>(new GeneratorWithoutTestGroups<ProblemWithoutSubtasks>(), logger, new FakeSubmitterOperatingSystem());
     int exitCode = submitter->submit();
 
     EXPECT_EQ(0, exitCode);
@@ -170,7 +172,7 @@ TEST(SubmitterTest, FailedSubmissionWithoutSubtasksAndTestGroups) {
             {"problem_2-submission-evaluation", (ExecutionResult){SIGXCPU | (1<<7), new istringstream(), new istringstream()}},
     };
 
-    Submitter<ProblemWithoutSubtasks>* submitter = new Submitter<ProblemWithoutSubtasks>(new GeneratorWithoutTestGroups(), logger, new FakeSubmitterOperatingSystem(arrangedResultsMap));
+    Submitter<ProblemWithoutSubtasks>* submitter = new Submitter<ProblemWithoutSubtasks>(new GeneratorWithoutTestGroups<ProblemWithoutSubtasks>(), logger, new FakeSubmitterOperatingSystem(arrangedResultsMap));
     int exitCode = submitter->submit();
 
     EXPECT_EQ(0, exitCode);

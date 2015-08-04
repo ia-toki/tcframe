@@ -63,6 +63,12 @@ public:
             : TestCaseException(message) { }
 };
 
+class MultipleTestCasesConstraintsSatisfiabilityException : public TestCaseException {
+public:
+    MultipleTestCasesConstraintsSatisfiabilityException(vector<Failure> failures)
+            : TestCaseException(failures) { }
+};
+
 class SubtaskSatisfiabilityException : public TestCaseException {
 public:
     SubtaskSatisfiabilityException(vector<Failure> failures)

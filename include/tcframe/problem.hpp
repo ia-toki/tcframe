@@ -68,6 +68,14 @@ public:
         return memoryLimit;
     }
 
+    bool isMultipleTestCasesPerFile() {
+        return multipleTestCasesCount != nullptr;
+    }
+
+    int* getMultipleTestCasesCountPointer() {
+        return multipleTestCasesCount;
+    }
+
     vector<Subtask*> getSubtasks() {
         try {
             Constraints();
@@ -88,6 +96,12 @@ public:
         }
     }
 
+    vector<Constraint*> getMultipleTestCasesConstraints() {
+        ConstraintsCollector::setMultipleTestCasesMode();
+        MultipleTestCasesConstraints();
+        return ConstraintsCollector::collectMultipleTestCasesConstraints();
+    }
+
 protected:
     virtual ~BaseProblem() { }
 
@@ -95,6 +109,8 @@ protected:
 
     virtual void InputFormat() = 0;
     virtual void OutputFormat() = 0;
+
+    virtual void MultipleTestCasesConstraints() { }
 
     virtual void Constraints() { throw NotImplementedException(); }
     virtual void Subtask1() { throw NotImplementedException(); }
@@ -120,10 +136,15 @@ protected:
         this->memoryLimit = memoryLimitInMegabytes;
     }
 
+    void setMultipleTestCasesCount(int& testCasesCount) {
+        this->multipleTestCasesCount = &testCasesCount;
+    }
+
 private:
     string slug = "problem";
     int timeLimit = 0;
     int memoryLimit = 0;
+    int* multipleTestCasesCount = nullptr;
 
     vector<void(BaseProblem::*)()> subtaskBlocks = {
             &BaseProblem::Subtask1,

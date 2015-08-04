@@ -50,3 +50,54 @@ Complex predicates in constraints
 ---------------------------------
 
 Similarly, methods used in defining constraints (**Constraints()**, **SubtaskX()**) must be free of custom loops and conditional branches. If you want to use complex predicate, such as determining whether the input is a tree, create a custom private helper method that return boolean (whether the input is a tree).
+
+Multiple test cases per file (ICPC-style)
+------------------------------------------------
+
+tcframe supports ICPC-style problem as well. In this style, for each of the **SampleTestCases()**, **TestCases()**, and **TestGroupX()** methods, the test cases will be combined into a single file. The file is prepended with a single line containing the number of test cases in it.
+
+To write, an ICPC-style test cases generator, first write the runner as usual, assuming that the problem not ICPC-style. Then, apply the following changes.
+
+Problem specification class
+***************************
+
+- Declare an integer variable (e.g., **T**) that will hold the number of test cases in a single file.
+
+  .. sourcecode:: cpp
+
+      protected:
+          int T;
+
+          ...
+
+- In the problem configuration, call **setMultipleTestCasesCount()** method with the previous variable as the argument.
+
+  .. sourcecode:: cpp
+
+      void Config() {
+          ...
+
+          setMultipleTestCasesCount(T);
+
+          ...
+      }
+
+- The input format specification should not contain **T**. It should specify the format of a single test case only. The number of test cases will be automatically prepended in the final combined test case input file.
+
+- We can impose a constraint on **T**, inside **MultipleTestCasesConstraints()** method.
+
+  .. sourcecode:: cpp
+
+      void MultipleTestCasesConstraints() {
+          CONS(1 <= T <= 20);
+      }
+
+Generation specification class
+******************************
+
+No changes are necessary.
+
+Solution program
+****************
+
+Although the input format only specifies a single test case, the solution should read the number of test cases in the first line. In other words, the solution will read the final combined test cases input file.
