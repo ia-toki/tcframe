@@ -89,6 +89,14 @@ int main(int argc, char* argv[]) {
 }
 ```
 
+### Usage
+
+There have been several competitions that used **tcframe** as the test cases generation framework for the problems:
+
+- Asia-Pacific Informatics Olympiad (APIO) 2015
+- Indonesia National Olympiad in Informatics 2015
+- Indonesia IOI training camps in 2015
+
 ### Credits
 
 **tcframe** is created by **Ashar Fuadi**. Contact me at fushar [at] gmail [dot] com if you have any question.
