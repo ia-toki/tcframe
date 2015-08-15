@@ -180,7 +180,7 @@ TEST(GeneratorTest, FailedGenerationWithoutSubtasksAndWithoutTestGroups) {
 
 TEST(GeneratorTest, GenerationWithoutSubtasksAndWithoutTestGroupsAndWithMultipleTestCasesPerFile) {
     FakeGeneratorLogger logger;
-    GeneratorWithoutTestGroups<ProblemWithoutSubtasks> generator(&logger, new FakeGeneratorOperatingSystem());
+    GeneratorWithoutTestGroups<ProblemWithMultipleTestCasesPerFile<ProblemWithoutSubtasks>> generator(&logger, new FakeGeneratorOperatingSystem());
 
     generator.applyProblemConfiguration();
 
