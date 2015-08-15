@@ -106,16 +106,16 @@ This submission simulation feature is useful for creating "unit tests" for your 
 
 You can also specify options. See :ref:`Command-line options <api-ref-command-line-options>` for available command-line options. The most useful optionr are specifying time and memory limit.
 
-Porcelain output
-----------------
+Brief output
+------------
 
-If you want to automate checking the result of each solution, you can set the output of the submission to be "porcelain", i.e., concise and easy to parse by another program. Just pass the command-line option **-**\ **-**\ **porcelain**:
+If you want to automate checking the result of each solution, you can set the output of the submission to be "brief", i.e., concise and easy to parse by another program. Just pass the command-line option **-**\ **-**\ **brief**:
 
 .. sourcecode:: bash
 
-    ./runner submit ./alt_solution --porcelain
+    ./runner submit ./alt_solution --brief
 
-Here is a sample porcelain output for problems with subtasks:
+Here is a sample brief output for problems with subtasks:
 
 .. sourcecode:: bash
 

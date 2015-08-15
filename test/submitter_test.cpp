@@ -24,7 +24,7 @@ public:
         subtaskVerdictsMap = subtaskVerdicts;
     }
 
-    void logPorcelainSubmissionResult(map<int, Verdict> subtaskVerdicts) {
+    void logBriefSubmissionResult(map<int, Verdict> subtaskVerdicts) {
         subtaskVerdictsMap = subtaskVerdicts;
     }
 
@@ -74,16 +74,16 @@ private:
 TEST(SubmitterTest, DefaultOptions) {
     Submitter<DefaultProblem> submitter(new DefaultGenerator());
 
-    EXPECT_FALSE(submitter.isPorcelain());
+    EXPECT_FALSE(submitter.isBrief());
 }
 
 TEST(SubmitterTest, CommandLineOptions) {
-    char* argv[] = {(char*)"submit", (char*)"--porcelain"};
+    char* argv[] = {(char*)"submit", (char*)"--briegf"};
 
     Submitter<DefaultProblem> submitter(new DefaultGenerator());
     submitter.applySubmitterCommandLineOptions(2, argv);
 
-    EXPECT_TRUE(submitter.isPorcelain());
+    EXPECT_TRUE(submitter.isBrief());
 }
 
 TEST(SubmitterTest, DefaultSubmissionCommand) {

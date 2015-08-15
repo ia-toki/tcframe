@@ -46,10 +46,10 @@ public:
               submissionCommand(generator->getSolutionCommand()) { }
 
     string applySubmitterCommandLineOptions(int argc, char** argv) {
-        int porcelain_opt = 0;
+        int brief_opt = 0;
 
         option longopts[2] = {
-                { "porcelain", no_argument, &porcelain_opt, 1},
+                { "brief", no_argument, &brief_opt, 1},
                 { 0, 0, 0, 0 }
         };
 
@@ -60,7 +60,7 @@ public:
             ;
         }
 
-        porcelain = (bool)porcelain_opt;
+        brief = (bool) brief_opt;
 
         if (optind + 1 == argc) {
             submissionCommand = string(argv[optind]);
@@ -72,7 +72,7 @@ public:
     }
 
     int submit() {
-        if (!porcelain) {
+        if (!brief) {
             logger->logIntroduction();
         }
 
@@ -84,7 +84,7 @@ public:
         for (TestGroup* testGroup : generator->getTestData()) {
             int testGroupId = testGroup->getId();
 
-            if (!porcelain) {
+            if (!brief) {
                 logger->logTestGroupIntroduction(testGroupId);
             }
 
@@ -109,10 +109,10 @@ public:
             }
         }
 
-        if (!porcelain) {
+        if (!brief) {
             logger->logSubmissionResult(subtaskVerdicts);
         } else {
-            logger->logPorcelainSubmissionResult(subtaskVerdicts);
+            logger->logBriefSubmissionResult(subtaskVerdicts);
         }
 
         return 0;
@@ -122,8 +122,8 @@ public:
         return submissionCommand;
     }
 
-    bool isPorcelain() {
-        return porcelain;
+    bool isBrief() {
+        return brief;
     }
 
 private:
@@ -131,13 +131,13 @@ private:
     OperatingSystem* os;
     BaseGenerator<TProblem>* generator;
 
-    bool porcelain = false;
+    bool brief = false;
 
     string submissionCommand;
 
     Verdict submitOnTestCase(string testCaseName) {
 
-        if (!porcelain) {
+        if (!brief) {
             logger->logTestCaseIntroduction(testCaseName);
         }
 
@@ -145,12 +145,12 @@ private:
         os->removeFile("_submission.out");
         os->removeFile("_diff.out");
 
-        if (!porcelain) {
+        if (!brief) {
             logger->logTestCaseVerdict(verdict);
         }
 
         if (!verdict.isAccepted()) {
-            if (!porcelain) {
+            if (!brief) {
                 logger->logFailures(verdict.getFailures());
             }
         }

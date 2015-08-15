@@ -44,7 +44,7 @@ public:
     virtual void logIntroduction() = 0;
     virtual void logTestCaseVerdict(Verdict verdict) = 0;
     virtual void logSubmissionResult(map<int, Verdict> subtaskVerdicts) = 0;
-    virtual void logPorcelainSubmissionResult(map<int, Verdict> subtaskVerdicts) = 0;
+    virtual void logBriefSubmissionResult(map<int, Verdict> subtaskVerdicts) = 0;
 };
 
 class DefaultLoggerUtils {
@@ -144,7 +144,7 @@ public:
         }
     }
 
-    void logPorcelainSubmissionResult(map<int, Verdict> subtaskVerdicts) {
+    void logBriefSubmissionResult(map<int, Verdict> subtaskVerdicts) {
         for (auto entry : subtaskVerdicts) {
             if (entry.first == -1) {
                 cout << entry.second.getCode() << endl;
