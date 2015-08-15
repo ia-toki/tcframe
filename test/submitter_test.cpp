@@ -78,7 +78,7 @@ TEST(SubmitterTest, DefaultOptions) {
 }
 
 TEST(SubmitterTest, CommandLineOptions) {
-    char* argv[] = {(char*)"submit", (char*)"--briegf"};
+    char* argv[] = {(char*)"submit", (char*)"--brief"};
 
     Submitter<DefaultProblem> submitter(new DefaultGenerator());
     submitter.applySubmitterCommandLineOptions(2, argv);
