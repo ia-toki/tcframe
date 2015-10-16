@@ -220,6 +220,152 @@ TEST(LineIOSegmentTest, MixedVariablesParsing) {
     EXPECT_EQ(4, B);
 }
 
+TEST(LineIOSegmentTest, VectorWithoutSizePrinting) {
+    vector<int> V = {1, 2, 3};
+
+    LineIOSegment segment("V");
+    segment, V;
+
+    ostringstream sout;
+    segment.printTo(sout);
+
+    EXPECT_EQ("1 2 3\n", sout.str());
+}
+
+TEST(LineIOSegmentTest, VectorWithoutSizeParsing) {
+    vector<int> V;
+
+    LineIOSegment segment("V");
+    segment, V;
+
+    istringstream sin("1 2 3\n");
+    segment.parseFrom(sin);
+
+    EXPECT_EQ((vector<int>{1, 2, 3}), V);
+}
+
+TEST(LineIOSegmentTest, MixedWithVectorWithoutSizePrinting) {
+    vector<int> V = vector<int>{1, 2, 3};
+    vector<int> W = vector<int>{4, 5, 6, 7};
+
+    int A = V.size();
+    int B = W.size();
+
+    LineIOSegment segment("A, V, B, W");
+    segment, A, V % VectorSize(3), B, W;
+
+    ostringstream sout;
+    segment.printTo(sout);
+
+    EXPECT_EQ("3 1 2 3 4 4 5 6 7\n", sout.str());
+}
+
+TEST(LineIOSegmentTest, MixedWithVectorWithoutSizeParsing) {
+    vector<int> V, W;
+    int A, B;
+
+    LineIOSegment segment("A, V, B, W");
+    segment, A, V % VectorSize(3), B, W;
+
+    istringstream sin("3 1 2 3 4 4 5 6 7\n");
+    segment.parseFrom(sin);
+
+    EXPECT_EQ((vector<int>{1, 2, 3}), V);
+    EXPECT_EQ((vector<int>{4, 5, 6, 7}), W);
+    EXPECT_EQ(3, A);
+    EXPECT_EQ(4, B);
+}
+
+TEST(LineIOSegmentTest, VectorWithoutSizeNoElementsParsing) {
+    vector<int> V;
+
+    LineIOSegment segment("V");
+    segment, V;
+
+    istringstream sin("\n");
+    segment.parseFrom(sin);
+
+    EXPECT_TRUE(V.empty());
+}
+
+TEST(LineIOSegmentTest, FailedParsingVectorWithoutSizeBecauseOfSpacePrefix) {
+    vector<int> V;
+
+    LineIOSegment segment("V");
+    segment, V;
+
+    istringstream sin(" 1 2 3\n");
+
+    try {
+        segment.parseFrom(sin);
+        FAIL();
+    } catch (ParsingException& e) {
+        EXPECT_EQ("Cannot parse for variable `V[0]`. Found: <whitespace>", e.getMessage());
+    }
+}
+
+TEST(LineIOSegmentTest, FailedParsingVectorWithoutSizeBecauseOfStrangeCharBetweenElements) {
+    vector<int> V;
+
+    LineIOSegment segment("V");
+    segment, V;
+
+    istringstream sin("1 2\t3\n");
+
+    try {
+        segment.parseFrom(sin);
+        FAIL();
+    } catch (ParsingException& e) {
+        EXPECT_EQ("Expected: <space> or <new line> after variable `V[1]`", e.getMessage());
+    }
+}
+
+TEST(LineIOSegmentTest, FailedParsingVectorWithoutSizeBecauseOfNoNewline) {
+    vector<int> V;
+
+    LineIOSegment segment("V");
+    segment, V;
+
+    istringstream sin("1 2 3");
+
+    try {
+        segment.parseFrom(sin);
+        FAIL();
+    } catch (ParsingException& e) {
+        EXPECT_EQ("Expected: <space> or <new line> after variable `V[2]`", e.getMessage());
+    }
+}
+
+TEST(LineIOSegmentTest, FailedParsingVectorWithoutSizeBecauseOfTrailingSpace) {
+    vector<int> V;
+
+    LineIOSegment segment("V");
+    segment, V;
+
+    istringstream sin("1 2 3 ");
+
+    try {
+        segment.parseFrom(sin);
+        FAIL();
+    } catch (ParsingException& e) {
+        EXPECT_EQ("Cannot parse for variable `V[3]`. Found: <EOF>", e.getMessage());
+    }
+}
+
+TEST(LineIOSegmentTest, FailedParsingVectorWithoutSizeBecauseItIsNotLast) {
+    vector<int> V, W;
+    int A, B;
+
+    LineIOSegment segment("A, V, B, W");
+
+    try {
+        segment, A, V, B, W % VectorSize(4);
+        FAIL();
+    } catch (IOFormatException& e) {
+        EXPECT_EQ("Vector without size can only be the last variable in a line segment", e.getMessage());
+    }
+}
+
 TEST(LinesIOSegmentTest, UnsupportedTypes) {
     int X;
 

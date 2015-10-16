@@ -96,11 +96,12 @@ public:
         this->B = 2;
         this->V = vector<int>{1, 2, 3, 4, 5};
         this->W = vector<int>{6, 7, 8, 9};
+        this->Y = vector<int>{100, 200};
         this->G = vector<vector<int>>{ {0, 0, 0}, {1, 1, 1}};
     }
 
     void test() {
-        LINE(A, W % SIZE(4));
+        LINE(A, W % SIZE(4), Y);
         LINES(V) % SIZE(5);
         EMPTY_LINE();
         GRID(G) % SIZE(2, 3);
@@ -108,7 +109,7 @@ public:
 
 private:
     int A, B, C;
-    vector<int> V, W;
+    vector<int> V, W, Y;
     vector<vector<int>> G;
 };
 
@@ -121,5 +122,5 @@ TEST(MacroTest, IOSegments) {
     tester.test();
     tester.endPrintingFormat();
 
-    EXPECT_EQ("1 6 7 8 9\n1\n2\n3\n4\n5\n\n0 0 0\n1 1 1\n", sout.str());
+    EXPECT_EQ("1 6 7 8 9 100 200\n1\n2\n3\n4\n5\n\n0 0 0\n1 1 1\n", sout.str());
 }

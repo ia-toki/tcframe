@@ -57,6 +57,7 @@ The following macros can be called inside the overridden method **BaseProblem::I
 
     - *<scalar variable name>*.
     - *<vector variable name>* **% SIZE(**\ *<number of elements>*\ **)**. The number of elements can be a constant or a scalar variable.
+    - *<vector variable name>*. Here, the number of elements is unspecified. This kind of element must occur last in a line segment, if any. Elements will be considered until new line is found.
 
     For example:
 
@@ -64,16 +65,16 @@ The following macros can be called inside the overridden method **BaseProblem::I
 
         void InputFormat() {
             LINE(N);
-            LINE(A % SIZE(3));
-            LINE(M, B % SIZE(M));
+            LINE(A % SIZE(3), B);
+            LINE(M, C % SIZE(M));
         }
 
-    With **N** = 2, **A** = {1, 2, 3}, **M** = 2, **B** = {7, 8}, the above segments will produce:
+    With **N** = 2, **A** = {1, 2, 3}, **B** = {100, 200, 300, 400}, **M** = 2, **C** = {7, 8}, the above segments will produce:
 
     ::
 
         2
-        1 2 3
+        1 2 3 100 200 300 400
         2 7 8
 
 .. py:function:: LINES(comma-separated vector variable names) % SIZE(number of elements)
