@@ -232,6 +232,18 @@ TEST(LineIOSegmentTest, VectorWithoutSizePrinting) {
     EXPECT_EQ("1 2 3\n", sout.str());
 }
 
+TEST(LineIOSegmentTest, EmptyVectorWithoutSizePrinting) {
+    vector<int> V = {};
+
+    LineIOSegment segment("V");
+    segment, V;
+
+    ostringstream sout;
+    segment.printTo(sout);
+
+    EXPECT_EQ("\n", sout.str());
+}
+
 TEST(LineIOSegmentTest, VectorWithoutSizeParsing) {
     vector<int> V;
 
@@ -242,6 +254,18 @@ TEST(LineIOSegmentTest, VectorWithoutSizeParsing) {
     segment.parseFrom(sin);
 
     EXPECT_EQ((vector<int>{1, 2, 3}), V);
+}
+
+TEST(LineIOSegmentTest, EmptyVectorWithoutSizeParsing) {
+    vector<int> V;
+
+    LineIOSegment segment("V");
+    segment, V;
+
+    istringstream sin("\n");
+    segment.parseFrom(sin);
+
+    EXPECT_EQ((vector<int>{}), V);
 }
 
 TEST(LineIOSegmentTest, MixedWithVectorWithoutSizePrinting) {
