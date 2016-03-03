@@ -359,8 +359,13 @@ private:
         }
 
         TProblem::beginParsingFormat(result.outputStream);
-        TProblem::OutputFormat();
-        TProblem::endParsingFormat();
+
+        try {
+            TProblem::OutputFormat();
+            TProblem::endParsingFormat();
+        } catch (NotImplementedException& e) {
+            // skip
+        }
     }
 };
 

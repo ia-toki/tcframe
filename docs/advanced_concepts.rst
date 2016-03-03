@@ -44,6 +44,8 @@ How to deal with this one?
 
 Unfortunately, as of this version, the above format is not supported yet. This version only supports input/output formats that are free of custom loops and conditional branches.
 
+Currently, if you have complex output format, you can just omit the method **OutputFormat()** altogether and your solution's output won't be checked.
+
 I am designing how to support that in the next versions.
 
 Complex predicates in constraints

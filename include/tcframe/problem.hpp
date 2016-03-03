@@ -108,7 +108,7 @@ protected:
     virtual void Config() { }
 
     virtual void InputFormat() = 0;
-    virtual void OutputFormat() = 0;
+    virtual void OutputFormat() { throw NotImplementedException(); }
 
     virtual void MultipleTestCasesConstraints() { }
 
