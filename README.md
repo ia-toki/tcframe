@@ -2,11 +2,11 @@
 
 [![Build Status](https://travis-ci.org/fushar/tcframe.svg?branch=master)](https://travis-ci.org/fushar/tcframe)
 [![Coverage Status](http://codecov.io/github/fushar/tcframe/coverage.svg?branch=master)](http://codecov.io/github/fushar/tcframe?branch=master)
-[![Documentation Status](https://readthedocs.org/projects/tcframe/badge/?version=latest)](https://readthedocs.org/projects/tcframe)
+[![Documentation Status](https://readthedocs.org/projects/tcframe/badge/?version=latest)](http://docs.tcframe.org/)
 
 **tcframe** is a C++ framework for generating test cases of competitive programming problems. This framework helps problem writers prepare test cases in a structured manner and ensures that the generated test cases are valid according to the specified constraints.
 
-Consult the complete documentation at https://tcframe.readthedocs.org/en/latest/.
+Consult the complete documentation at http://docs.tcframe.org/.
 
 At a very high level, with some details omitted, it works as follows:
 
