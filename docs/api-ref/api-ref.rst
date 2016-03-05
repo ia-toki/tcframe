@@ -1,49 +1,70 @@
-API reference
+.. _api-ref:
+
+API Reference
 =============
 
-.. _api-ref-problem-configuration:
+- :ref:`Problem configuration <api-ref_problem-config>`
+- :ref:`Input/output variables <api-ref_io-variables>`
+- :ref:`Input/output segments <api-ref_io-segments>`
+- :ref:`Constraints <api-ref_constraints>`
+- :ref:`Generator configuration <api-ref_generator-config>`
+- :ref:`Test cases <api-ref_test-cases>`
+- :ref:`Random number generator <api-ref_rnd>`
+- :ref:`Command line options <api-ref_cli-options>`
+
+----
+
+.. _api-ref_problem-config:
 
 Problem configuration
 ---------------------
 
-The following methods can be called inside the overridden method **BaseProblem::Config()**.
+The following methods are available inside the overridden method :code:`BaseProblem::Config()`.
 
 .. cpp:function:: void setSlug(string slug)
 
-    Sets the *slug* of the problem. A slug is a nickname or code for the problem. The produced test case filenames will have the slug as prefix. For example, if the slug is helloworld" then one valid test case filename is "helloworld_1.in".
+    Sets the *slug* of the problem. A slug is a nickname or code for the problem. The produced test case filenames will have the slug as prefix. For example, if the slug is "helloworld" then one valid test case filename is "helloworld_1.in".
 
-    If not specified, the default slug is "problem".
+    If not specified, the default slug is :code:`"problem"`.
 
 .. cpp:function:: void setTimeLimit(int timeLimitInSeconds)
 
-    Sets the time limit of the problem, in seconds. This time limit is used in simulating submission.
+    Sets the time limit of the problem, in seconds. This time limit is used in :ref:`submission simulation <submission>`.
 
 .. cpp:function:: void setMemoryLimit(int memoryLimitInMegabytes)
 
-    Sets the memory limit of the problem, in MB. This memory limit is used in simulating submission.
+    Sets the memory limit of the problem, in MB. This memory limit is used in submission simulation.
 
-.. _api-ref-io-variables:
+.. cpp:function:: void setMultipleTestCasesCount(int& countVariable)
+
+    Sets **countVariable** to hold the total number of test cases in a single file, in :ref:`multiple test cases per file <multi-case>` problems.
+
+----
+
+.. _api-ref_io-variables:
 
 Input/output variables
 ----------------------
 
-There are three types of variables that are supported:
+There are three supported types of variables:
 
 Scalar
-    Variables of built-in integral types (int, long long, char, etc.), built-in floating-point types (float, double), and std::string.
+    Variables of built-in integral types (:code:`int`, :code:`long long`, :code:`char`, etc.), built-in floating-point types (:code:`float`, :code:`double`), and :code:`std::string`.
 
 Vector
-    std::vector<\ **T**\ >, where **T** is a scalar type as defined above. Note that you cannot use arrays (\ **T**\ []).
+    :code:`std::vector<T>`, where :code:`T` is a scalar type as defined above. Arrays (:code:`T[]`) are not supported.
 
 Matrix
-    std::vector<std::vector<\ **T**\ >>, where T is a scalar type as defined above. Note that you cannot use 2D arrays (\ **T**\ [][]).
+    :code:`std::vector<std::vector<T>>`, where :code:`T` is a scalar type as defined above. 2D arrays (:code:`T[][]`) are not supported.
 
-.. _api-ref-io-segments:
+----
+
+.. _api-ref_io-segments:
 
 Input/output segments
 ---------------------
 
-The following macros can be called inside the overridden method **BaseProblem::InputFormat()** or **BaseProblem::OutputFormat()**.
+The following macros are available inside the overridden method :code:`BaseProblem::InputFormat()` and :code:`BaseProblem::OutputFormat()`.
 
 .. py:function:: EMPTY_LINE()
 
@@ -122,16 +143,18 @@ The following macros can be called inside the overridden method **BaseProblem::I
         1 2 3
         4 5 6
 
-.. _api-ref-constraints:
+----
+
+.. _api-ref_constraints:
 
 Constraints
 -----------
 
-The following macros can be called inside the overridden method **BaseProblem::Constraints()** or **BaseProblem::SubtaskX()**.
+The following macros are available inside the overridden method :code:`BaseProblem::Constraints()`, :code:`BaseProblem::MultipleTestCasesConstraints()`, and :code:`BaseProblem::SubtaskX()`.
 
 .. py:function:: CONS(predicate)
 
-    Defines a constraint. **predicate** is a boolean expression, whose value must be completely defined by the values of the input variables (only).
+    Defines a constraint. **predicate** is a boolean expression, whose value must be completely determined by the values of the input variables (only).
 
     For example:
 
@@ -142,18 +165,20 @@ The following macros can be called inside the overridden method **BaseProblem::C
             CONS(graphDoesNotHaveCycles());
         }
 
-.. _api-ref-generator-configuration:
+----
+
+.. _api-ref_generator-config:
 
 Generator configuration
 -----------------------
 
-The following methods can be called inside the overridden method **BaseGenerator::Config()**.
+The following methods are available inside the overridden method :code:`BaseGenerator::Config()`.
 
 .. cpp:function:: void setTestCasesDir(string testCasesDir)
 
   Sets the directory for the generated test case files, relative to the location of the generator program.
 
-  If not specified, the default directory is "tc".
+  If not specified, the default directory is :code:`"tc"`.
 
 .. cpp:function:: void setSolutionCommand(string solutionCommand)
 
@@ -164,14 +189,16 @@ The following methods can be called inside the overridden method **BaseGenerator
 
       solutionCommand < [input filename] > [output filename]
 
-  If not specified, the default solution command is "./solution".
+  If not specified, the default solution command is :code:`"./solution"`.
 
-.. _api-ref-test cases:
+----
+
+.. _api-ref_test-cases:
 
 Test cases
 ----------
 
-The following macros can be called inside the overridden method **BaseGenerator::())**.
+The following macros are available inside the overridden method :code:`BaseGenerator::TestCases()`.
 
 .. cpp:function:: void assignToSubtasks(set<int> subtaskNumbers)
 
@@ -187,7 +214,7 @@ The following macros can be called inside the overridden method **BaseGenerator:
             // test case definitions follow
         }
 
-The following macros can be called inside the overridden method **BaseGenerator::TestCases()** or **BaseGenerator::TestGroupX()**.
+The following macros are available inside the overridden method :code:`BaseGenerator::TestCases()` and :code:`BaseGenerator::TestGroupX()`.
 
 .. py:function:: CASE(comma-separated statements)
 
@@ -207,7 +234,7 @@ The following macros can be called inside the overridden method **BaseGenerator:
             CASE(N = 1000, M = 1000, randomArray());
         }
 
-The following macros can be called inside the overridden method **BaseGenerator::SampleTestCases()**.
+The following macros are available inside the overridden method :code:`BaseGenerator::SampleTestCases()`.
 
 .. py:function:: SAMPLE_CASE(list of lines, [list of subtask numbers])
 
@@ -246,42 +273,46 @@ The following macros can be called inside the overridden method **BaseGenerator:
 
     Multiple sample test cases can be defined inside the same method.
 
-.. _api-ref-random-number-generator:
+----
+
+.. _api-ref_rnd:
 
 Random number generator
 -----------------------
 
-The following methods can be called on the random number generator :code:`rnd` object inside a generator.
+The following methods are available on the random number generator :code:`rnd` object inside a generator.
 
 .. cpp:function:: int nextInt(int minNum, int maxNum)
 
-    Return a uniformly distributed random integer (int) between minNum and maxNum, inclusive.
+    Returns a uniformly distributed random integer (int) between **minNum** and **maxNum**, inclusive.
 
 .. cpp:function:: int nextInt(int maxNumEx)
 
-    Return a uniformly distributed random integer (int) between 0 and maxNumEx - 1, inclusive.
+    Returns a uniformly distributed random integer (int) between 0 and **maxNumEx** - 1, inclusive.
 
 .. cpp:function:: long long nextLongLong(long long minNum, long long maxNum)
 
-    Return a uniformly distributed random integer (long long) between minNum and maxNum, inclusive.
+    Returns a uniformly distributed random integer (long long) between **minNum** and **maxNum**, inclusive.
 
 .. cpp:function:: long long nextLongLong(long long maxNumEx)
 
-    Return a uniformly distributed random integer (long long) between 0 and maxNumEx - 1, inclusive.
+    Returns a uniformly distributed random integer (long long) between 0 and **maxNumEx** - 1, inclusive.
 
 .. cpp:function:: double nextDouble(double minNum, double maxNum)
 
-    Return a uniformly distributed random real number (double) between minNum and maxNum, inclusive.
+    Returns a uniformly distributed random real number (double) between **minNum** and **maxNum**, inclusive.
 
 .. cpp:function:: double nextDouble(double maxNum)
 
-    Return a uniformly distributed random real number (double) between 0 and maxNum, inclusive.
+    Returns a uniformly distributed random real number (double) between 0 and **maxNum**, inclusive.
 
-.. cpp:function:: void shuffle(RandomAccessIterator first, RandomAccessIterator last)
+.. cpp:function:: void shuffle(std::RandomAccessIterator first, std::RandomAccessIterator last)
 
-    Randomly shuffles the elements in [first, last). Use this rather than :code:`std::random_shuffle`.
+    Randomly shuffles the elements in [\ **first**, **last**). Use this rather than :code:`std::random_shuffle()`.
 
-.. _api-ref-command-line-options:
+----
+
+.. _api-ref_cli-options:
 
 Command-line options
 --------------------
@@ -290,15 +321,15 @@ The following options can be specified when running the runner program. They mos
 
 .. py:function:: --slug=slug
 
-    Overrides the slug specified by setSlug() in **BaseProblem::Config()**.
+    Overrides the slug specified by :code:`setSlug()` in problem configuration.
 
 .. py:function:: --tc-dir=dir
 
-    Overrides the test cases directory specified by setTestCasesDir() in **BaseGenerator::Config()**.
+    Overrides the test cases directory specified by :code:`setTestCasesDir()` in generator configuration.
 
 .. py:function:: --solution-command=command
 
-    Overrides the solution command specified by setSolutionCommand() in **BaseGenerator::Config()**.
+    Overrides the solution command specified by :code:`setSolutionCommand()` in generator configuration.
 
 .. py:function:: --seed=seed
 
@@ -306,16 +337,16 @@ The following options can be specified when running the runner program. They mos
 
 .. py:function:: --time-limit=timeLimitInSeconds
 
-    Overrides the time limit specified by setTimeLimit() in **BaseProblem::Config()**.
+    Overrides the time limit specified by :code:`setTimeLimit()` in problem configuration.
 
 .. py:function:: --memory-limit=memoryLimitInMegabytes
 
-    Overrides the memory limit specified by setMemoryLimit() in **BaseProblem::Config()**.
+    Overrides the memory limit specified by :code:`setMemoryLimit()` in problem configuration.
 
 .. py:function:: --no-time-limit
 
-    Unset the time limit specified by setTimeLimit() in **BaseProblem::Config()**.
+    Unsets the time limit specified by :code:`setTimeLimit()` in problem configuration.
 
 .. py:function:: --no-memory-limit
 
-    Unset the memory limit specified by setMemoryLimit() in **BaseProblem::Config()**.
+    Unsets the memory limit specified by :code:`setMemoryLimit()` in problem configuration.

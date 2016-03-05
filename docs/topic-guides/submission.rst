@@ -1,7 +1,9 @@
-Simulating submission
+.. _submission:
+
+Submission simulation
 =====================
 
-**tcframe** allows you to simulate solution submission locally, on your machine.
+**tcframe** allows you to simulate submission locally, on your machine.
 
 Before simulating a submission, you must have generated the test cases:
 
@@ -9,15 +11,15 @@ Before simulating a submission, you must have generated the test cases:
 
     ./runner
 
-Then, you can simulate a submission, by executing:
+Then, you can "submit" a solution, by executing:
 
 .. sourcecode:: bash
 
     ./runner submit [<submissionCommand>]
 
-where <submissionCommand> is the command for executing the submission. If it is omitted, then the command will be the original solution command used in the generator.
+where <submissionCommand> is the command for executing the solution. If it is omitted, then the command will be the original solution command used in the generator.
 
-For example, suppose you have written a generator for a problem. Your friend also has written an alternate solution to the problem, and he wants to check whether his solution agrees with yours. Let's assume that his solution file is **alt_solution**.cpp. Compile it into **alt_solution**, place it in the same directory of the runner, and then run
+For example, suppose you have written a generator for a problem. Your friend also has written an alternate solution to the problem, and he wants to check whether his solution agrees with yours. Let's assume that his solution file is :code:`alt_solution.cpp`. Compile it into :code:`alt_solution`, place it in the same directory of the runner, and then run
 
 .. sourcecode:: bash
 
@@ -32,14 +34,14 @@ Wrong Answer (WA)
     The output produced by the submission does not match. The diff will be shown, truncated to the first 10 lines.
 
 Runtime Error (RTE)
-    The submission crashed or used memory above the limit, if specified.
+    The solution crashed or used memory above the limit, if specified.
 
 Time Limit Exceeded (TLE)
-    The submission did not stop within the time limit, if specified.
+    The solution did not stop within the time limit, if specified.
 
 The verdict of each subtask will be also shown. The verdict of a subtask is the worst verdict of all verdicts of test cases that are assigned to it. Here, RTE is worse than WA, and WA is worse than AC.
 
-Here is a sample output of a submission simulation for problems with subtasks.
+Here is a sample output of a submission for problems with subtasks.
 
 .. sourcecode:: bash
 
@@ -102,14 +104,12 @@ and here is for problems without subtasks
     [ RESULT ]
       Wrong Answer
 
-This submission simulation feature is useful for creating "unit tests" for your test cases. For each problem, you can write many solutions with different intended results. For example, solution_123.cpp should pass subtasks 1 - 3; solution_12.cpp should pass subtasks 1 and 2 but not subtask 3, etc.
-
-You can also specify options. See :ref:`Command-line options <api-ref-command-line-options>` for available command-line options. The most useful optionr are specifying time and memory limit.
+This submission feature is useful for creating "unit tests" for your test cases. For each problem, you can write many solutions with different intended results. For example, :code:`solution_123.cpp` should pass subtasks 1 - 3; :code:`solution_12.cpp` should pass subtasks 1 and 2 but not subtask 3, etc.
 
 Brief output
 ------------
 
-If you want to automate checking the result of each solution, you can set the output of the submission to be "brief", i.e., concise and easy to parse by another program. Just pass the command-line option **-**\ **-**\ **brief**:
+If you want to automate checking the result of each solution, you can set the output of the submission to be "brief", i.e., concise and easy to parse by another program. Just pass the command-line option :code:`--brief`:
 
 .. sourcecode:: bash
 
