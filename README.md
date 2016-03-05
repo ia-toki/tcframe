@@ -67,6 +67,7 @@ At a very high level, with some details omitted, it works as follows:
     using namespace std;
 
     int main() {
+        int A, B;
         cin >> A >> B;
         cout << (A + B) << endl;
     }
