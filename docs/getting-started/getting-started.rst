@@ -40,7 +40,7 @@ Installation
 
 Firstly, we must get **tcframe** on our system. Fortunately, **tcframe** consists of just C++ header files: we don't actually need to "install" anything; we just have to :code:`#include` the header files in our program and we are ready to go.
 
-Download the latest **tcframe** here: https://github.com/fushar/tcframe/releases/download/v0.6.0/tcframe_0.6.0.zip.
+Download the latest **tcframe** here: https://github.com/fushar/tcframe/releases/download/v0.7.0/tcframe_0.7.0.zip.
 
 Extract the zip file somewhere on your system. For example, extract it to :code:`~/tcframe`.
 

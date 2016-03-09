@@ -1,4 +1,4 @@
-# tcframe 0.6.0
+# tcframe 0.7.0
 
 [![Build Status](https://img.shields.io/travis/fushar/tcframe/master.svg)](https://travis-ci.org/fushar/tcframe)
 [![Coverage Status](https://img.shields.io/codecov/c/github/fushar/tcframe/master.svg)](http://codecov.io/github/fushar/tcframe?branch=master)
