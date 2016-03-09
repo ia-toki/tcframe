@@ -64,6 +64,8 @@ Multiple lines
 
     There could be more than one vector as well. For example: "... the next **N** lines each contains space-separated integers **X**\ [i] and **Y**\ [i]" can be specified by :code:`LINES(X, Y) % SIZE(N)`. If there are multiple vectors, they all must have the same number of elements.
 
+    You also could specify jagged vector as the last argument. This is useful for input format like, "... then **M** lines follow. Each line begins with a string **op**. If **op** is :code:`UPDATE`, then it is followed by two integers **x** **y**. If it is :code:`QUERY`, then it is followed by a single integer **z**". This can be specified by :code:`LINES(op, data)` where :code:`op` is a :code:`vector<string>` and :code:`data` is a :code:`vector<vector<int>>`. Then, :code:`data[i]` represents a vector of integers in the i-th line, which can consist of one of two elements.
+
 Grid
     Specified by the macro :code:`GRID(...) % SIZE(<row>, <column>)`. Represents a grid containing elements of a matrix given as the argument, laid out in a grid.
 
@@ -85,20 +87,13 @@ Constants in I/O segments
 
     As a workaround, just create an input variable and initialize it to :code:`BEGIN`.
 
-Conditional I/O format
-    For example: "... then **M** lines follow. Each line begins with a string **op**. If **op** is :code:`UPDATE`, then it is followed by two integers **x** **y**. If it is :code:`QUERY`, then it is followed by a single integer **z**.
-
-    There is **NO** known workaround yet. We're still working on designing how to handle this format.
+Complex conditional I/O format that can't be handled by jagged vectors
+    There is **NO** known general workaround yet. We're still working on designing how to handle complex format.
 
     However, there are workarounds for simple cases, for example:
 
     "Output the required sum, or the string :code:`IMPOSSIBLE` if there is no solution."
 
-    In this case, you can just use a string as the output variable. The downside is that it is not typesafe; for example, the generation won't fail if the reference solution mistakenly output an invalid string such as :code:`123abc`.
-
-Jagged array
-    For example: "... then **V** lines follow, each representing a node. Each line begins with **K**\ [i], the number of adjacent nodes for this node. Then, it is followed by **K**\ [i] number -- the indices of its neighbors."
-
-    No workaround for this case yet.
+    In this case, you can just use a string as the output variable. The downside is that it is not type-safe; for example, the generation won't fail if the reference solution mistakenly output an invalid string such as :code:`123abc`.
 
 However, a last resort for a workaround does exist for output format. If you have complex output format, you can just omit the method :code:`OutputFormat()` altogether and your solution's output won't be checked at all for validity.

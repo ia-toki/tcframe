@@ -399,20 +399,8 @@ TEST(LinesIOSegmentTest, UnsupportedTypes) {
         segment, X;
         FAIL();
     } catch (IOFormatException& e) {
-        EXPECT_EQ("Variable type of `X` unsatisfied. Expected: vector of basic scalar or string type", e.getMessage());
+        EXPECT_EQ("Variable type of `X` unsatisfied. Expected: (jagged) vector of basic scalar or string type", e.getMessage());
     }
-
-    vector<vector<int>> V;
-
-    segment = LinesIOSegment("V");
-
-    try {
-        segment, X;
-        FAIL();
-    } catch (IOFormatException& e) {
-        EXPECT_EQ("Variable type of `V` unsatisfied. Expected: vector of basic scalar or string type", e.getMessage());
-    }
-
 }
 
 TEST(LinesIOSegmentTest, NoVariables) {
@@ -540,6 +528,135 @@ TEST(LinesIOSegmentTest, MultipleVectorsParsing) {
 
     EXPECT_EQ((vector<int>{1, 2, 3}), V);
     EXPECT_EQ((vector<string>{"a", "bb", "ccc"}), W);
+}
+
+TEST(LinesIOSegmentTest, JaggedVectorPrinting) {
+    vector<vector<int>> V = {{1}, {2, 3}, {4, 5, 6}};
+
+    LinesIOSegment segment("V");
+    (segment, V) % VectorSize(3);
+
+    ostringstream sout;
+    segment.printTo(sout);
+
+    EXPECT_EQ("1\n2 3\n4 5 6\n", sout.str());
+}
+
+TEST(LinesIOSegmentTest, JaggedVectorParsing) {
+    vector<vector<int>> V;
+
+    LinesIOSegment segment("V");
+    (segment, V) % VectorSize(3);
+
+    istringstream sin("1\n2 3\n4 5 6\n");
+    segment.parseFrom(sin);
+
+    EXPECT_EQ((vector<vector<int>>{{1}, {2, 3}, {4, 5, 6}}), V);
+}
+
+TEST(LinesIOSegmentTest, FailedParsingJaggedMatrixBecauseOfSpacePrefix) {
+    vector<vector<int>> V;
+
+    LinesIOSegment segment("V");
+    (segment, V) % VectorSize(3);
+
+    istringstream sin("1 2 3\n 4 5 6\n");
+
+    try {
+        segment.parseFrom(sin);
+        FAIL();
+    } catch (ParsingException& e) {
+        EXPECT_EQ("Cannot parse for variable `V[1][0]`. Found: <whitespace>", e.getMessage());
+    }
+}
+
+TEST(LinesIOSegmentTest, FailedParsingJaggedVectorBecauseOfStrangeCharBetweenElements) {
+    vector<vector<int>> V;
+
+    LinesIOSegment segment("V");
+    (segment, V) % VectorSize(2);
+
+    istringstream sin("1 2\t3\n");
+
+    try {
+        segment.parseFrom(sin);
+        FAIL();
+    } catch (ParsingException& e) {
+        EXPECT_EQ("Expected: <space> or <new line> after variable `V[0][1]`", e.getMessage());
+    }
+}
+
+TEST(LinesIOSegmentTest, FailedParsingJaggedVectorBecauseOfNoNewline) {
+    vector<vector<int>> V;
+
+    LinesIOSegment segment("V");
+    (segment, V) % VectorSize(2);
+
+    istringstream sin("1 2 3\n4 5 6");
+
+    try {
+        segment.parseFrom(sin);
+        FAIL();
+    } catch (ParsingException& e) {
+        EXPECT_EQ("Expected: <space> or <new line> after variable `V[1][2]`", e.getMessage());
+    }
+}
+
+TEST(LinesIOSegmentTest, FailedParsingJaggedVectorBecauseOfTrailingSpace) {
+    vector<vector<int>> V;
+
+    LinesIOSegment segment("V");
+    (segment, V) % VectorSize(2);
+
+    istringstream sin("1 2 3\n4 5 6 ");
+
+    try {
+        segment.parseFrom(sin);
+        FAIL();
+    } catch (ParsingException& e) {
+        EXPECT_EQ("Cannot parse for variable `V[1][3]`. Found: <EOF>", e.getMessage());
+    }
+}
+
+TEST(LinesIOSegmentTest, FailedParsingJaggedVectorBecauseItIsNotLast) {
+    vector<vector<int>> V;
+    vector<int> W;
+
+    LinesIOSegment segment("V, W");
+
+    try {
+        (segment, V, W) % VectorSize(4);
+        FAIL();
+    } catch (IOFormatException& e) {
+        EXPECT_EQ("Jagged vector can only be the last variable in a lines segment", e.getMessage());
+    }
+}
+
+TEST(LinesIOSegmentTest, MixedWithJaggedVectorPrinting) {
+    vector<int> V = vector<int>{1, 2, 3};
+    vector<vector<int>> W = vector<vector<int>>{{4}, {5, 6}, {7, 8, 9}};
+
+    LinesIOSegment segment("V, W");
+    (segment, V, W) % VectorSize(3);
+
+    ostringstream sout;
+    segment.printTo(sout);
+
+    EXPECT_EQ("1 4\n2 5 6\n3 7 8 9\n", sout.str());
+}
+
+TEST(LinesIOSegmentTest, MixedWithJaggedVectorSizeParsing) {
+    vector<int> V;
+    vector<vector<int>> W;
+
+    LinesIOSegment segment("V, W");
+    (segment, V, W) % VectorSize(3);
+
+    istringstream sin("1 4\n2 5 6\n3 7 8 9\n");
+    segment.parseFrom(sin);
+
+    EXPECT_EQ((vector<int>{1, 2, 3}), V);
+    EXPECT_EQ((vector<vector<int>>{{4}, {5, 6}, {7, 8, 9}}), W);
 }
 
 TEST(GridIOSegmentTest, UnsupportedTypes) {

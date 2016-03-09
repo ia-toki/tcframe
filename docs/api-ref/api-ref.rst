@@ -98,9 +98,9 @@ The following macros are available inside the overridden method :code:`BaseProbl
         1 2 3 100 200 300 400
         2 7 8
 
-.. py:function:: LINES(comma-separated vector variable names) % SIZE(number of elements)
+.. py:function:: LINES(comma-separated vector/matrix variable names) % SIZE(number of elements)
 
-    Defines multiple lines, each consisting space-separated elements of given vector variables.
+    Defines multiple lines, each consisting space-separated elements of given vector/matrix variables.
 
     For example:
 
@@ -120,6 +120,23 @@ The following macros are available inside the overridden method :code:`BaseProbl
         100 200
         110 210
         120 220
+
+    If a matrix variable is given, it must occur as the last argument, and the number of rows must match with the number of elements of the other vector variables (if any). It is not required that each row of the matrix consists of the same number of columns.
+
+    For example:
+
+    .. sourcecode:: cpp
+
+        void InputFormat() {
+            LINES(op, data) % SIZE(2);
+        }
+
+    With **op** = {"UPDATE, "QUERY"}, **data** = {{3, 5}, {7}}, the above segments will produce:
+
+    ::
+
+        UPDATE 3 5
+        QUERY 7
 
 .. py:function:: GRID(matrix variable name) % SIZE(number of rows, number of columns)
 
