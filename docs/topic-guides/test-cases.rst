@@ -128,7 +128,7 @@ Random number generator
 
 .. sourcecode:: cpp
 
-    void SampleTestCases() {
+    void randomArray() {
         A.clear();
         for (int i = 0; i < N; i++) {
             A.push_back(rnd.nextInt(1000000));
