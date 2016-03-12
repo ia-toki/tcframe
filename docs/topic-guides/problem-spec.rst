@@ -30,7 +30,7 @@ Time limit
     By calling :code:`setTimeLimit(<timeLimit>)`. Time limit is specified in seconds. Time limit will be enforced when simulating submissoin.
 
 Memory limit
-    By calling :code:`setTimeLimit(<memoryLimit>)`. Memory limit is specified in megabytes. Similarly, it will be enforced when simulating submission.
+    By calling :code:`setMemoryLimit(<memoryLimit>)`. Memory limit is specified in megabytes. Similarly, it will be enforced when simulating submission.
 
 Here is an example of a valid problem configuration:
 
