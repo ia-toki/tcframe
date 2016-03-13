@@ -10,7 +10,7 @@
 #define LINES(...) applyLastSegment(), (applyLinesSegment(#__VA_ARGS__), __VA_ARGS__)
 #define GRID(...) applyLastSegment(), (applyGridSegment(#__VA_ARGS__), __VA_ARGS__)
 
-#define CASE(...) addOfficialTestCase([this] {__VA_ARGS__;}, #__VA_ARGS__)
+#define CASE(...) addOfficialTestCase([=] {__VA_ARGS__;}, #__VA_ARGS__)
 #define SAMPLE_CASE(...) addSampleTestCase(__VA_ARGS__)
 
-#define CONS(predicate) addConstraint([this] {return predicate;}, #predicate)
+#define CONS(predicate) addConstraint([=] {return predicate;}, #predicate)

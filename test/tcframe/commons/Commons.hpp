@@ -136,7 +136,7 @@ protected:
     }
 
     void MultipleTestCasesConstraints() {
-        addConstraint([this] { return 1 <= T && T <= 3; }, "1 <= T && T <= 3");
+        addConstraint([=] { return 1 <= T && T <= 3; }, "1 <= T && T <= 3");
     }
 };
 
@@ -157,21 +157,21 @@ protected:
     }
 
     void Subtask1() {
-        addConstraint([this] { return 1 <= A && A <= 1000; }, "1 <= A && A <= 1000");
-        addConstraint([this] { return 1 <= B && B <= 1000; }, "1 <= B && B <= 1000");
-        addConstraint([this] { return 0 <= K && K <= 100; }, "0 <= K <= 100");
+        addConstraint([=] { return 1 <= A && A <= 1000; }, "1 <= A && A <= 1000");
+        addConstraint([=] { return 1 <= B && B <= 1000; }, "1 <= B && B <= 1000");
+        addConstraint([=] { return 0 <= K && K <= 100; }, "0 <= K <= 100");
     }
 
     void Subtask2() {
-        addConstraint([this] { return 1 <= A && A <= 2000000000; }, "1 <= A && A <= 2000000000");
-        addConstraint([this] { return 1 <= B && B <= 2000000000; }, "1 <= B && B <= 2000000000");
-        addConstraint([this] { return 0 <= K && K <= 10000; }, "0 <= K <= 10000");
+        addConstraint([=] { return 1 <= A && A <= 2000000000; }, "1 <= A && A <= 2000000000");
+        addConstraint([=] { return 1 <= B && B <= 2000000000; }, "1 <= B && B <= 2000000000");
+        addConstraint([=] { return 0 <= K && K <= 10000; }, "0 <= K <= 10000");
     }
 
     void Subtask3() {
-        addConstraint([this] { return A == 0; }, "A == 0");
-        addConstraint([this] { return B == 0; }, "B == 0");
-        addConstraint([this] { return 0 <= K && K <= 100; }, "0 <= K <= 100");
+        addConstraint([=] { return A == 0; }, "A == 0");
+        addConstraint([=] { return B == 0; }, "B == 0");
+        addConstraint([=] { return 0 <= K && K <= 100; }, "0 <= K <= 100");
     }
 };
 
@@ -193,21 +193,21 @@ protected:
     void TestGroup1() {
         assignToSubtasks({1, 2});
 
-        addOfficialTestCase([this] { A = 1, B = 100, K = 7; }, "A = 1, B = 100, K = 7");
-        addOfficialTestCase([this] { A = 100, B = 1000, K = 0; }, "A = 100, B = 1000, K = 0");
+        addOfficialTestCase([=] { A = 1, B = 100, K = 7; }, "A = 1, B = 100, K = 7");
+        addOfficialTestCase([=] { A = 100, B = 1000, K = 0; }, "A = 100, B = 1000, K = 0");
     }
 
     void TestGroup2() {
         assignToSubtasks({2});
 
-        addOfficialTestCase([this] { A = 1001, B = 2, K = 1; }, "A = 1001, B = 2, K = 1");
-        addOfficialTestCase([this] { A = 2000, B = 3000, K = 100; }, "A = 2000, B = 3000, K = 100");
+        addOfficialTestCase([=] { A = 1001, B = 2, K = 1; }, "A = 1001, B = 2, K = 1");
+        addOfficialTestCase([=] { A = 2000, B = 3000, K = 100; }, "A = 2000, B = 3000, K = 100");
     }
 
     void TestGroup3() {
         assignToSubtasks({3});
 
-        addOfficialTestCase([this] { A = 0, B = 0, K = 42; }, "A = 0, B = 0, K = 42");
+        addOfficialTestCase([=] { A = 0, B = 0, K = 42; }, "A = 0, B = 0, K = 42");
     }
 
 public:
@@ -236,24 +236,24 @@ protected:
     void TestGroup1() {
         assignToSubtasks({1, 2});
 
-        addOfficialTestCase([this] { A = 1, B = 100, K = 7; }, "A = 1, B = 100, K = 7");
-        addOfficialTestCase([this] { A = 100, B = 2000, K = 0; }, "A = 100, B = 2000, K = 0");
+        addOfficialTestCase([=] { A = 1, B = 100, K = 7; }, "A = 1, B = 100, K = 7");
+        addOfficialTestCase([=] { A = 100, B = 2000, K = 0; }, "A = 100, B = 2000, K = 0");
     }
 
     void TestGroup2() {
         assignToSubtasks({2});
 
-        addOfficialTestCase([this] { A = 1, B = 2, K = 1; }, "A = 1, B = 2, K = 1");
-        addOfficialTestCase([this] { A = 0, B = 0, K = 100; }, "A = 0, B = 0, K = 100");
+        addOfficialTestCase([=] { A = 1, B = 2, K = 1; }, "A = 1, B = 2, K = 1");
+        addOfficialTestCase([=] { A = 0, B = 0, K = 100; }, "A = 0, B = 0, K = 100");
     }
 
     void TestGroup3() {
         assignToSubtasks({1, 2});
 
-        addOfficialTestCase([this] { A = 1, B = 1, K = 1; }, "A = 1, B = 1, K = 1");
-        addOfficialTestCase([this] { A = 1, B = 1, K = 1; }, "A = 1, B = 1, K = 1");
-        addOfficialTestCase([this] { A = 1, B = 1, K = 1; }, "A = 1, B = 1, K = 1");
-        addOfficialTestCase([this] { A = 1, B = 1, K = 1; }, "A = 1, B = 1, K = 1");
+        addOfficialTestCase([=] { A = 1, B = 1, K = 1; }, "A = 1, B = 1, K = 1");
+        addOfficialTestCase([=] { A = 1, B = 1, K = 1; }, "A = 1, B = 1, K = 1");
+        addOfficialTestCase([=] { A = 1, B = 1, K = 1; }, "A = 1, B = 1, K = 1");
+        addOfficialTestCase([=] { A = 1, B = 1, K = 1; }, "A = 1, B = 1, K = 1");
     }
 
 public:
@@ -281,9 +281,9 @@ protected:
     }
 
     void Constraints() {
-        addConstraint([this] { return 1 <= A && A <= 1000; }, "1 <= A && A <= 1000");
-        addConstraint([this] { return 1 <= B && B <= 1000; }, "1 <= B && B <= 1000");
-        addConstraint([this] { return 0 <= K && K <= 100; }, "0 <= K && K <= 100");
+        addConstraint([=] { return 1 <= A && A <= 1000; }, "1 <= A && A <= 1000");
+        addConstraint([=] { return 1 <= B && B <= 1000; }, "1 <= B && B <= 1000");
+        addConstraint([=] { return 0 <= K && K <= 100; }, "0 <= K && K <= 100");
     }
 };
 
@@ -303,8 +303,8 @@ protected:
     }
 
     void TestCases() {
-        addOfficialTestCase([this] { A = 1, B = 100, K = 7; }, "A = 1, B = 100, K = 7");
-        addOfficialTestCase([this] { A = 100, B = 1000, K = 0; }, "A = 100, B = 1000, K = 0");
+        addOfficialTestCase([=] { A = 1, B = 100, K = 7; }, "A = 1, B = 100, K = 7");
+        addOfficialTestCase([=] { A = 100, B = 1000, K = 0; }, "A = 100, B = 1000, K = 0");
     }
 
 public:
@@ -323,8 +323,8 @@ protected:
     }
 
     void TestCases() {
-        addOfficialTestCase([this] { A = 1, B = 100, K = 7; }, "A = 1, B = 100, K = 7");
-        addOfficialTestCase([this] { A = 100, B = 2000, K = 0; }, "A = 100, B = 2000, K = 0");
+        addOfficialTestCase([=] { A = 1, B = 100, K = 7; }, "A = 1, B = 100, K = 7");
+        addOfficialTestCase([=] { A = 100, B = 2000, K = 0; }, "A = 100, B = 2000, K = 0");
     }
 
 public:
@@ -339,10 +339,10 @@ class InvalidGeneratorWithoutTestGroupsAndWithMultipleTestCasesPerFile : public 
 protected:
 
     void TestCases() {
-        addOfficialTestCase([this] { A = 1, B = 100, K = 1; }, "A = 1, B = 100, K = 1");
-        addOfficialTestCase([this] { A = 1, B = 100, K = 1; }, "A = 1, B = 100, K = 1");
-        addOfficialTestCase([this] { A = 1, B = 100, K = 1; }, "A = 1, B = 100, K = 1");
-        addOfficialTestCase([this] { A = 1, B = 100, K = 1; }, "A = 1, B = 100, K = 1");
+        addOfficialTestCase([=] { A = 1, B = 100, K = 1; }, "A = 1, B = 100, K = 1");
+        addOfficialTestCase([=] { A = 1, B = 100, K = 1; }, "A = 1, B = 100, K = 1");
+        addOfficialTestCase([=] { A = 1, B = 100, K = 1; }, "A = 1, B = 100, K = 1");
+        addOfficialTestCase([=] { A = 1, B = 100, K = 1; }, "A = 1, B = 100, K = 1");
     }
 
 public:
@@ -350,5 +350,21 @@ public:
             : BaseGenerator(new FakeGeneratorLogger(), new FakeGeneratorOperatingSystem()) { }
 
     InvalidGeneratorWithoutTestGroupsAndWithMultipleTestCasesPerFile(GeneratorLogger* logger, OperatingSystem* os)
+            : BaseGenerator(logger, os) { }
+};
+
+class GeneratorWithLoopVariableInsideLambda : public BaseGenerator<ProblemWithoutSubtasks> {
+protected:
+    void TestCases() {
+        for (int i = -1; i <= 0; i++) {
+            addOfficialTestCase([=] { A = 1, B = 1, K = i; }, "A = 1, B = 1, K = i");
+        }
+    }
+
+public:
+    GeneratorWithLoopVariableInsideLambda()
+            : BaseGenerator(new FakeGeneratorLogger(), new FakeGeneratorOperatingSystem()) { }
+
+    GeneratorWithLoopVariableInsideLambda(GeneratorLogger* logger, OperatingSystem* os)
             : BaseGenerator(logger, os) { }
 };

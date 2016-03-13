@@ -247,3 +247,21 @@ TEST(BaseGeneratorTest, GenerationWithFailedExecution) {
     EXPECT_EQ(Failure("Exit code: 1", 1), failures[1]);
     EXPECT_EQ(Failure("Standard error: Intentionally failed", 1), failures[2]);
 }
+
+TEST(BaseGeneratorTest, GenerationWithLoopVariableInsideLambda) {
+    FakeGeneratorLogger logger;
+    GeneratorWithLoopVariableInsideLambda generator(&logger, new FakeGeneratorOperatingSystem());
+
+    generator.applyProblemConfiguration();
+
+    int exitCode = generator.generate();
+
+    EXPECT_NE(0, exitCode);
+
+    auto failures_1 = logger.getFailures("problem_1");
+    ASSERT_EQ(2, failures_1.size());
+    EXPECT_EQ(Failure("Does not satisfy constraints, on:", 0), failures_1[0]);
+    EXPECT_EQ(Failure("0 <= K && K <= 100", 1), failures_1[1]);
+
+    EXPECT_EQ(0, logger.getFailures("problem_2").size());
+}

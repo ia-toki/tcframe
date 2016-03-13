@@ -54,6 +54,18 @@ For more complex assignment, such as constructing a tree, create a private :code
 
     The values of input variables before each test case are **undefined**, and may contain leftover computation from previous test cases. For example, for vectors, make sure that you initialize or clear them before adding values, as we did in the above example!
 
+You can also use for-loop construct for assigning some input variables. This is usually done if you want to exhaust all valid possibilities of some input variables. For example:
+
+.. sourcecode:: cpp
+
+    void TestCases() {
+        for (int i = 1; i <= 10; i++) {
+            CASE(N = i);
+        }
+    }
+
+We recommend not using this style unless absolutely necessary.
+
 Each test case definition will be realized as a pair of input/output files, with the following filenames: :code:`<slug>_<case-number>.in` and :code:`<slug>_<case-number>.out`. For example, :code:`aplusb_1.in`, :code:`aplusb_1.out`.
 
 ----
@@ -167,22 +179,3 @@ This can be achieved by writing a special method :code:`FinalizeInput()` in gene
             }
         }
     }
-
-----
-
-Notes
------
-
-Due to how currently the :code:`CASE()` macro is implemented, it is not possible for it to refer to a for-loop counter. For example, this is illegal:
-
-.. sourcecode:: cpp
-
-    void TestCases() {
-        for (int i = 1; i <= 100; i++) {
-            CASE(N = i);
-        }
-    }
-
-In fact, for now please do not use any block constructs at all inside :code:`TestCases()`. The :code:`CASE()` macros should be first-level statements.
-
-This may change in future versions.
