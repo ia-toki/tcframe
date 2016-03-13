@@ -283,7 +283,7 @@ protected:
     void Constraints() {
         addConstraint([this] { return 1 <= A && A <= 1000; }, "1 <= A && A <= 1000");
         addConstraint([this] { return 1 <= B && B <= 1000; }, "1 <= B && B <= 1000");
-        addConstraint([this] { return 0 <= K && K <= 100; }, "0 <= K <= 100");
+        addConstraint([this] { return 0 <= K && K <= 100; }, "0 <= K && K <= 100");
     }
 };
 

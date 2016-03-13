@@ -178,7 +178,7 @@ TEST(BaseGeneratorTest, FailedGenerationWithoutSubtasksAndWithoutTestGroups) {
     auto failures_sample_2 = logger.getFailures("problem_sample_2");
     ASSERT_EQ(2, failures_sample_2.size());
     EXPECT_EQ(Failure("Does not satisfy constraints, on:", 0), failures_sample_2[0]);
-    EXPECT_EQ(Failure("0 <= K <= 100", 1), failures_sample_2[1]);
+    EXPECT_EQ(Failure("0 <= K && K <= 100", 1), failures_sample_2[1]);
 
     auto failures_1 = logger.getFailures("problem_1");
     ASSERT_EQ(0, failures_1.size());
