@@ -8,11 +8,9 @@ install:
   - sudo apt-get -qq install g++-4.7
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.7 90
   - sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-4.7 90
-  - sudo apt-get install libgtest-dev
-  - cd /usr/src/gtest && sudo cmake . && sudo cmake --build . && sudo mv libg* /usr/local/lib/ ; cd -
 
 script:
-  - cmake . && cmake --build . && ctest
+  - cmake . && cmake --build . && ./all_tests
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

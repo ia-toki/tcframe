@@ -5,14 +5,42 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 --coverage")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
 set(CMAKE_CXX_COMPILER g++)
 
-enable_testing()
-
-include_directories(include)
-
-find_package(GTest REQUIRED)
+find_package(Git REQUIRED)
 find_package(Threads REQUIRED)
 
-include_directories(${GTEST_INCLUDE_DIRS})
+include(ExternalProject)
+
+ExternalProject_Add(googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG d225acc90bc3a8c420a9bcd1f033033c1ccd7fe0
+    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/googletest
+    CMAKE_ARGS ${CMAKE_ARGS} -DBUILD_GTEST=ON -DBUILD_GMOCK=ON -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS} -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+    INSTALL_COMMAND ""
+)
+
+ExternalProject_Get_Property(googletest source_dir binary_dir)
+
+add_library(gtest IMPORTED STATIC GLOBAL)
+add_library(gmock IMPORTED STATIC GLOBAL)
+
+set_target_properties(
+    gtest PROPERTIES
+    "IMPORTED_LOCATION" "${binary_dir}/googlemock/gtest/libgtest.a"
+    "IMPORTED_LINK_INTERFACE_LIBRARIES" "${CMAKE_THREAD_LIBS_INIT}"
+)
+set_target_properties(
+    gmock PROPERTIES
+    "IMPORTED_LOCATION" "${binary_dir}/googlemock/libgmock_main.a"
+    "IMPORTED_LINK_INTERFACE_LIBRARIES" "${CMAKE_THREAD_LIBS_INIT}"
+)
+
+add_dependencies(gtest googletest)
+add_dependencies(gmock googletest)
+
+include_directories("${source_dir}/googletest/include")
+include_directories("${source_dir}/googlemock/include")
+
+include_directories(include)
 
 set(SOURCE_FILES
     include/tcframe/core/Failure.hpp
@@ -96,6 +124,10 @@ set(SOURCE_FILES
 )
 
 add_executable(all_tests ${SOURCE_FILES})
-target_link_libraries(all_tests ${GTEST_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} gcov)
 
-GTEST_ADD_TESTS(all_tests "" ${SOURCE_FILES})
+target_link_libraries(all_tests
+    gtest
+    gmock
+    ${CMAKE_THREAD_LIBS_INIT}
+    gcov
+)
