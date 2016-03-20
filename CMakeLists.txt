@@ -42,6 +42,9 @@ include_directories("${source_dir}/googlemock/include")
 include_directories(include)
 
 set(SOURCE_FILES
+    include/tcframe/experimental/type/Scalar.hpp
+    test/tcframe/experimental/type/ScalarTests.cpp
+
     include/tcframe/core/Failure.hpp
     include/tcframe/core/NotImplementedException.hpp
     include/tcframe/core/Util.hpp
