@@ -40,7 +40,7 @@ public:
 
     template<typename T, typename = ScalarCompatible<T>>
     LineIOSegmentBuilder& addVariable(T& var, string name) {
-        return addScalarVariable(new ScalarImpl<T>(var, name));
+        return addScalarVariable(Scalar::create(var, name));
     }
 
     LineIOSegmentBuilder& addScalarVariable(Scalar* variable) {

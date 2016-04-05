@@ -10,34 +10,34 @@ using std::ostringstream;
 using ::testing::Eq;
 using ::testing::Test;
 
-using tcframe::experimental::ScalarImpl;
+using tcframe::experimental::Scalar;
 
-class ExperimentalScalarImplTest : public Test {
+class ExperimentalScalarTest : public Test {
 protected:
     int a;
-    ScalarImpl<int> A;
+    Scalar* A;
 
-    ExperimentalScalarImplTest()
-            : A(ScalarImpl<int>(a, "a"))
+    ExperimentalScalarTest()
+            : A(Scalar::create(a, "a"))
     {}
 };
 
-TEST_F(ExperimentalScalarImplTest, CanAccessName) {
-    EXPECT_THAT(A.getName(), Eq("a"));
+TEST_F(ExperimentalScalarTest, CanAccessName) {
+    EXPECT_THAT(A->getName(), Eq("a"));
 }
 
-TEST_F(ExperimentalScalarImplTest, CanParse) {
+TEST_F(ExperimentalScalarTest, CanParse) {
     istringstream sin("42");
-    A.parseFrom(sin);
+    A->parseFrom(sin);
 
     EXPECT_THAT(a, Eq(42));
 }
 
-TEST_F(ExperimentalScalarImplTest, CanPrint) {
+TEST_F(ExperimentalScalarTest, CanPrint) {
     a = 42;
 
     ostringstream sout;
-    A.printTo(sout);
+    A->printTo(sout);
 
     EXPECT_THAT(sout.str(), Eq("42"));
 }

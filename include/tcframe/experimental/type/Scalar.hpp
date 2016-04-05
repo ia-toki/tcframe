@@ -34,6 +34,9 @@ public:
     virtual const string& getName() const = 0;
     virtual void printTo(ostream& out) const = 0;
     virtual void parseFrom(istream& in) const = 0;
+
+    template<typename T>
+    static Scalar* create(T& var, string name);
 };
 
 template<typename T>
@@ -60,5 +63,10 @@ public:
         in >> var_;
     }
 };
+
+template<typename T>
+Scalar* Scalar::create(T& var, string name) {
+    return new ScalarImpl<T>(var, name);
+}
 
 }}
