@@ -42,7 +42,30 @@ include_directories("${source_dir}/googlemock/include")
 include_directories(include)
 
 set(SOURCE_FILES
+    include/tcframe/experimental/generation/TestSuiteGenerator.hpp
+    include/tcframe/experimental/generation/TestSuiteConfig.hpp
+    include/tcframe/experimental/io/IOFormat.hpp
+    include/tcframe/experimental/io/IOSegment.hpp
+    include/tcframe/experimental/io/IOSegmentVisitor.hpp
+    include/tcframe/experimental/io/LineIOSegment.hpp
+    include/tcframe/experimental/io/LineIOSegmentVariable.hpp
+    include/tcframe/experimental/io/LineIOSegmentScalarVariable.hpp
+    include/tcframe/experimental/os/ExecutionResult.hpp
+    include/tcframe/experimental/os/OperatingSystem.hpp
+    include/tcframe/experimental/os/UnixOperatingSystem.hpp
+    include/tcframe/experimental/runner.hpp
+    include/tcframe/experimental/runner/BaseProblem.hpp
+    include/tcframe/experimental/runner/BaseGenerator.hpp
+    include/tcframe/experimental/runner/GeneratorConfig.hpp
+    include/tcframe/experimental/runner/Magic.hpp
+    include/tcframe/experimental/runner/ProblemConfig.hpp
+    include/tcframe/experimental/runner/Runner.hpp
+    include/tcframe/experimental/testcase/TestCase.hpp
+    include/tcframe/experimental/testcase/TestSuite.hpp
+    include/tcframe/experimental/testcase/TestGroup.hpp
     include/tcframe/experimental/type/Scalar.hpp
+    include/tcframe/experimental/util/StringUtils.hpp
+    include/tcframe/experimental/variable/IOVariablePrinter.hpp
     test/tcframe/experimental/type/ScalarTests.cpp
 
     include/tcframe/core/Failure.hpp
