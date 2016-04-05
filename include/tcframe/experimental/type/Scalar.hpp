@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <exception>
 #include <functional>
 #include <istream>
@@ -8,49 +9,55 @@
 #include <type_traits>
 
 using std::enable_if;
-using std::exception;
-using std::function;
 using std::is_arithmetic;
 using std::is_reference;
 using std::is_same;
 using std::istream;
+using std::move;
 using std::ostream;
+using std::ref;
+using std::reference_wrapper;
 using std::string;
 
 namespace tcframe { namespace experimental {
 
 template<typename T>
-using RequiresScalar = typename enable_if<!is_reference<T>::value && (is_arithmetic<T>::value || is_same<string, T>::value)>::type;
+using ScalarCompatible = typename enable_if<!is_reference<T>::value && (is_arithmetic<T>::value || is_same<string, T>::value)>::type;
 
 template<typename T>
-using RequiresNotScalar = typename enable_if<is_reference<T>::value || (!is_arithmetic<T>::value && !is_same<string, T>::value)>::type;
+using NotScalarCompatible = typename enable_if<is_reference<T>::value || (!is_arithmetic<T>::value && !is_same<string, T>::value)>::type;
 
-struct Scalar {
+class Scalar {
+public:
+    virtual ~Scalar() {}
+
+    virtual const string& getName() const = 0;
+    virtual void printTo(ostream& out) const = 0;
+    virtual void parseFrom(istream& in) const = 0;
+};
+
+template<typename T>
+class ScalarImpl : public Scalar {
 private:
-    void* var_;
+    reference_wrapper<T> var_;
     string name_;
-    function<void(istream&)> parseFunction_;
-    function<void(ostream&)> printFunction_;
 
 public:
-    template<typename T, typename = RequiresScalar<T>>
-    Scalar(T& var, string name)
-            : var_(&var)
-            , name_(name)
-            , parseFunction_([this](istream& in) { in >> *reinterpret_cast<T*>(var_); })
-            , printFunction_([this](ostream& out) { out << *reinterpret_cast<T*>(var_); })
+    ScalarImpl(T& var, string name)
+            : var_(ref(var))
+            , name_(move(name))
     {}
 
-    string name() const {
+    const string& getName() const {
         return name_;
     }
 
-    function<void(istream&)> parseFunction() const {
-        return parseFunction_;
+    void printTo(ostream& out) const {
+        out << var_;
     }
 
-    function<void(ostream&)> printFunction() const {
-        return printFunction_;
+    void parseFrom(istream& in) const {
+        in >> var_;
     }
 };
 
