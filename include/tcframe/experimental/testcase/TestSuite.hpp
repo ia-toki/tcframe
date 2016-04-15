@@ -1,9 +1,9 @@
 #pragma once
 
-#include <algorithm>
 #include <initializer_list>
 #include <set>
 #include <string>
+#include <utility>
 
 #include "tcframe/experimental/testcase/TestCase.hpp"
 #include "tcframe/experimental/testcase/TestGroup.hpp"
@@ -64,10 +64,9 @@ public:
 
     TestSuiteBuilder& addTestCase(TestCase testCase) {
         if (!hasCurrentTestGroup_) {
-            hasCurrentTestGroup_ = true; // sample
+            hasCurrentTestGroup_ = true;
             currentTestGroupId_ = -1;
             currentConstraintGroupIds_ = {-1};
-            currentTestCases_.clear();
         }
 
         currentTestCases_.push_back(testCase);

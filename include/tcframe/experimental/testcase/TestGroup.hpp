@@ -1,7 +1,7 @@
 #pragma once
 
-#include <algorithm>
 #include <set>
+#include <utility>
 #include <vector>
 
 #include "tcframe/experimental/testcase/TestCase.hpp"

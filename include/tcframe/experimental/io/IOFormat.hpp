@@ -1,7 +1,7 @@
 #pragma once
 
-#include <algorithm>
 #include <vector>
+#include <utility>
 
 #include "tcframe/experimental/io/IOSegment.hpp"
 

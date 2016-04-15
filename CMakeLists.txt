@@ -42,8 +42,21 @@ include_directories("${source_dir}/googlemock/include")
 include_directories(include)
 
 set(SOURCE_FILES
+    include/tcframe/experimental/config/GeneratorConfig.hpp
+    include/tcframe/experimental/config/ProblemConfig.hpp
+    include/tcframe/experimental/constraint/Constraint.hpp
+    include/tcframe/experimental/constraint/ConstraintGroup.hpp
+    include/tcframe/experimental/constraint/ConstraintSuite.hpp
+    include/tcframe/experimental/generation/TestSuiteGenerationListener.hpp
+    include/tcframe/experimental/generation/TestCaseData.hpp
+    include/tcframe/experimental/generation/TestCaseNameCreator.hpp
+    include/tcframe/experimental/generation/TestCaseGenerator.hpp
+    include/tcframe/experimental/generation/TestCaseGenerationException.hpp
+    include/tcframe/experimental/generation/TestCaseGenerationFailure.hpp
+    include/tcframe/experimental/generation/TestCaseGenerationResult.hpp
     include/tcframe/experimental/generation/TestSuiteGenerator.hpp
-    include/tcframe/experimental/generation/TestSuiteConfig.hpp
+    include/tcframe/experimental/generation/TestSuiteGenerationResult.hpp
+    include/tcframe/experimental/generation/VerificationFailure.hpp
     include/tcframe/experimental/io/IOFormat.hpp
     include/tcframe/experimental/io/IOSegment.hpp
     include/tcframe/experimental/io/IOSegmentVisitor.hpp
@@ -56,9 +69,7 @@ set(SOURCE_FILES
     include/tcframe/experimental/runner.hpp
     include/tcframe/experimental/runner/BaseProblem.hpp
     include/tcframe/experimental/runner/BaseGenerator.hpp
-    include/tcframe/experimental/runner/GeneratorConfig.hpp
     include/tcframe/experimental/runner/Magic.hpp
-    include/tcframe/experimental/runner/ProblemConfig.hpp
     include/tcframe/experimental/runner/Runner.hpp
     include/tcframe/experimental/testcase/TestCase.hpp
     include/tcframe/experimental/testcase/TestSuite.hpp
@@ -66,6 +77,8 @@ set(SOURCE_FILES
     include/tcframe/experimental/type/Scalar.hpp
     include/tcframe/experimental/util/StringUtils.hpp
     include/tcframe/experimental/variable/IOVariablePrinter.hpp
+    include/tcframe/experimental/verification/ConstraintSuiteVerifier.hpp
+    include/tcframe/experimental/verification/ConstraintSuiteVerificationResult.hpp
     test/tcframe/experimental/type/ScalarTests.cpp
 
     include/tcframe/core/Failure.hpp

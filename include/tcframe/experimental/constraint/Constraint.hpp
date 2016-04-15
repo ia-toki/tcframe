@@ -10,19 +10,19 @@ using std::string;
 
 namespace tcframe { namespace experimental {
 
-struct TestCase {
+struct Constraint {
 private:
-    function<void()> closure_;
+    function<bool()> predicate_;
     string description_;
 
 public:
-    TestCase(function<void()> closure, string description)
-            : closure_(move(closure))
+    Constraint(function<bool()> predicate, string description)
+            : predicate_(move(predicate))
             , description_(move(description))
     {}
 
-    const function<void()>& closure() const {
-        return closure_;
+    const function<bool()>& predicate() const {
+        return predicate_;
     }
 
     const string& description() const {

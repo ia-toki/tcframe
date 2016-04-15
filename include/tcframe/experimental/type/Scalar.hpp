@@ -1,12 +1,12 @@
 #pragma once
 
-#include <algorithm>
 #include <exception>
 #include <functional>
 #include <istream>
 #include <ostream>
 #include <string>
 #include <type_traits>
+#include <utility>
 
 using std::enable_if;
 using std::is_arithmetic;

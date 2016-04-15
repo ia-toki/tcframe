@@ -1,84 +1,107 @@
 #pragma once
 
-#include <algorithm>
-#include <sstream>
+#include <functional>
+#include <map>
+#include <set>
 #include <string>
 
-#include "tcframe/experimental/generation/TestSuiteConfig.hpp"
+#include "tcframe/experimental/config/GeneratorConfig.hpp"
+#include "tcframe/experimental/config/ProblemConfig.hpp"
+#include "tcframe/experimental/generation/TestSuiteGenerationListener.hpp"
+#include "tcframe/experimental/generation/TestCaseNameCreator.hpp"
+#include "tcframe/experimental/generation/TestCaseGenerationResult.hpp"
+#include "tcframe/experimental/generation/TestCaseGenerator.hpp"
+#include "tcframe/experimental/generation/TestSuiteGenerationResult.hpp"
 #include "tcframe/experimental/os/OperatingSystem.hpp"
 #include "tcframe/experimental/testcase/TestCase.hpp"
 #include "tcframe/experimental/testcase/TestSuite.hpp"
 #include "tcframe/experimental/testcase/TestGroup.hpp"
-#include "tcframe/experimental/variable/IOVariablePrinter.hpp"
 
-using std::move;
-using std::ostringstream;
+using std::function;
+using std::map;
+using std::set;
 using std::string;
 
 namespace tcframe { namespace experimental {
 
 class TestSuiteGenerator {
 private:
-    IOVariablePrinter* ioVariablePrinter_;
+    TestCaseGenerator* testCaseGenerator_;
     OperatingSystem* os_;
-    TestSuiteConfig config_;
+    TestSuiteGenerationListener* generationListener_;
 
 public:
     virtual ~TestSuiteGenerator() {}
 
-    TestSuiteGenerator(IOVariablePrinter* ioVariablePrinter, OperatingSystem* os, TestSuiteConfig config)
-            : ioVariablePrinter_(ioVariablePrinter)
+    TestSuiteGenerator(
+            TestCaseGenerator* testCaseGenerator,
+            OperatingSystem* os,
+            TestSuiteGenerationListener* generationListener)
+            : testCaseGenerator_(testCaseGenerator)
             , os_(os)
-            , config_(move(config))
+            , generationListener_(generationListener)
     {}
 
-    void generate(const TestSuite& testCaseUnit) {
-        os_->forceMakeDir(config_.testCasesDir());
+    TestSuiteGenerationResult generate(
+            const TestSuite& testSuite,
+            const ProblemConfig& problemConfig,
+            const GeneratorConfig& generatorConfig) {
 
-        generateTestCases(testCaseUnit.testCases());
+        generationListener_->onIntroduction();
+
+        os_->forceMakeDir(generatorConfig.testCasesDir());
+
+        map<string, TestCaseGenerationResult> testCaseGenerationResultByTestCaseName;
+        generateTestCases(testSuite.testCases(), problemConfig, generatorConfig, testCaseGenerationResultByTestCaseName);
+        return TestSuiteGenerationResult(testCaseGenerationResultByTestCaseName);
     }
 
 private:
-    void generateTestCases(const vector<TestGroup>& testCases) {
+    void generateTestCases(
+            const vector<TestGroup>& testCases,
+            const ProblemConfig& problemConfig,
+            const GeneratorConfig& generatorConfig,
+            map<string, TestCaseGenerationResult>& testCaseGenerationResultByTestCaseName) {
+
         for (const TestGroup& testGroup : testCases) {
-            generateTestGroup(testGroup);
+            generateTestGroup(testGroup, problemConfig, generatorConfig, testCaseGenerationResultByTestCaseName);
         }
     }
 
-    void generateTestGroup(const TestGroup& testGroup) {
+    void generateTestGroup(
+            const TestGroup& testGroup,
+            const ProblemConfig& problemConfig,
+            const GeneratorConfig& generatorConfig,
+            map<string, TestCaseGenerationResult>& testCaseGenerationResultByTestCaseName) {
+
+        generationListener_->onTestGroupIntroduction(testGroup.id());
+
         for (int testCaseId = 1; testCaseId <= testGroup.testCases().size(); testCaseId++) {
             TestCase testCase = testGroup.testCases()[testCaseId - 1];
-            testCase.closure()();
-            string testCaseName = getTestCaseName(testGroup.id(), testCaseId);
-            generateTestCase(testCaseName);
+            TestCaseData testCaseData = TestCaseDataBuilder()
+                    .setName(TestCaseNameCreator::createTestCaseName(problemConfig.slug(), testGroup.id(), testCaseId))
+                    .setDescription(testCase.description())
+                    .setConstraintGroupIds(testGroup.constraintGroupIds())
+                    .build();
+
+            generateTestCase(testCaseData, testCase.closure(), generatorConfig, testCaseGenerationResultByTestCaseName);
         }
     }
 
-    void generateTestCase(const string& testCaseName) {
-        string testCaseInputFilename = config_.testCasesDir() + "/" + testCaseName + ".in";
-        string testCaseOutputFilename = config_.testCasesDir() + "/" + testCaseName + ".out";
-        generateTestCaseInput(testCaseInputFilename);
-        generateTestCaseOutput(testCaseInputFilename, testCaseOutputFilename);
-    }
+    TestCaseGenerationResult generateTestCase(
+            const TestCaseData& testCaseData,
+            const function<void()> testCaseClosure,
+            const GeneratorConfig& generatorConfig,
+            map<string, TestCaseGenerationResult>& testCaseGenerationResultByTestCaseName) {
 
-    void generateTestCaseInput(const string& testCaseInputFilename) {
-        ostream* testCaseInput = os_->openForWriting(testCaseInputFilename);
-        ioVariablePrinter_->printInput(testCaseInput);
-        os_->closeOpenedWritingStream(testCaseInput);
-    }
+        generationListener_->onTestCaseIntroduction(testCaseData.name());
 
-    void generateTestCaseOutput(const string& testCaseInputFilename, const string& testCaseOutputFilename) {
-        os_->execute(config_.solutionCommand(), testCaseInputFilename, testCaseOutputFilename, "_error.out");
-    }
+        TestCaseGenerationResult result = testCaseGenerator_->generate(testCaseData, testCaseClosure, generatorConfig);
+        testCaseGenerationResultByTestCaseName.emplace(testCaseData.name(), result);
 
-    string getTestCaseName(int testGroupId, int testCaseId) {
-        ostringstream sout;
-        sout << config_.slug() << "_";
-        if (testGroupId != -1) {
-            sout << testGroupId << "_";
-        }
-        sout << testCaseId;
-        return sout.str();
+        generationListener_->onTestCaseGenerationResult(testCaseData.description(), result);
+
+        return result;
     }
 };
 

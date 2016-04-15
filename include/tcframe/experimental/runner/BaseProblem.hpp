@@ -1,28 +1,39 @@
 #pragma once
 
+#include "tcframe/experimental/config/ProblemConfig.hpp"
+#include "tcframe/experimental/constraint/ConstraintSuite.hpp"
 #include "tcframe/experimental/io/IOFormat.hpp"
-#include "tcframe/experimental/runner/ProblemConfig.hpp"
 
 namespace tcframe { namespace experimental {
 
-class BaseProblem : protected ProblemConfigBuilder, protected IOFormatBuilder {
+class BaseProblem : protected ProblemConfigBuilder, protected IOFormatBuilder, protected ConstraintSuiteBuilder {
 public:
     virtual ~BaseProblem() {}
 
-    ProblemConfig buildProblemConfig() {
-        Config();
-        return this->ProblemConfigBuilder::build();
+    virtual ProblemConfig buildProblemConfig() {
+        applyProblemConfig();
+        return ProblemConfigBuilder::build();
     }
 
     IOFormat buildIOFormat() {
         prepareForInputFormat();
         InputFormat();
-        return this->IOFormatBuilder::build();
+        return IOFormatBuilder::build();
+    }
+
+    ConstraintSuite buildConstraintSuite() {
+        Constraints();
+        return ConstraintSuiteBuilder::build();
     }
 
 protected:
-    virtual void Config() {}
+    virtual void applyProblemConfig() {
+        Config();
+    }
+
+    virtual void Config() {};
     virtual void InputFormat() = 0;
+    virtual void Constraints() {}
 };
 
 }}

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "tcframe/experimental/runner/GeneratorConfig.hpp"
+#include "tcframe/experimental/config/GeneratorConfig.hpp"
 #include "tcframe/experimental/testcase/TestSuite.hpp"
 
 namespace tcframe { namespace experimental {
@@ -9,6 +9,10 @@ template<typename TProblem /* extends Problem */>
 class BaseGenerator : public TProblem, protected GeneratorConfigBuilder, protected TestSuiteBuilder {
 public:
     virtual ~BaseGenerator() {}
+
+    void applyProblemConfig() {
+        TProblem::Config();
+    }
 
     TestSuite buildTestSuite() {
         TestCases();
