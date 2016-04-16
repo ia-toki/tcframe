@@ -2,9 +2,11 @@
 
 #include <functional>
 #include <string>
+#include <tuple>
 
 using std::function;
 using std::string;
+using std::tie;
 
 namespace tcframe {
 
@@ -25,6 +27,10 @@ public:
 
     const string& description() const {
         return description_;
+    }
+
+    bool operator==(const Constraint& o) const {
+        return tie(description_) == tie(o.description_);
     }
 };
 

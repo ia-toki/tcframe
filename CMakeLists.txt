@@ -79,6 +79,7 @@ set(SOURCE_FILES
     include/tcframe/variable/IOVariablePrinter.hpp
     include/tcframe/verification/ConstraintSuiteVerifier.hpp
     include/tcframe/verification/ConstraintSuiteVerificationResult.hpp
+    test/tcframe/constraint/ConstraintSuiteBuilderTests.cpp
     test/tcframe/testcase/TestSuiteBuilderTests.cpp
     test/tcframe/type/ScalarTests.cpp
 

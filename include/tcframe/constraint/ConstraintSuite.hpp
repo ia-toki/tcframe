@@ -34,7 +34,7 @@ private:
 public:
     ConstraintSuiteBuilder()
             : hasCurrentConstraintGroup_(false)
-            , currentConstraintGroupId_(1)
+            , currentConstraintGroupId_(0)
     {}
 
     ConstraintSuiteBuilder& newConstraintGroup() {
