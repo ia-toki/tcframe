@@ -1,13 +1,13 @@
 #pragma once
 
-#include "tcframe/os/ExecutionResult.hpp"
-#include "tcframe/os/OperatingSystem.hpp"
-
 #include <fstream>
 #include <istream>
 #include <ostream>
 #include <sstream>
 #include <string>
+
+#include "tcframe/os/ExecutionResult.hpp"
+#include "tcframe/os/OperatingSystem.hpp"
 
 using std::ifstream;
 using std::istream;
@@ -17,17 +17,17 @@ using std::ostream;
 using std::ostringstream;
 using std::string;
 
-namespace tcframe {
+namespace tcframe { namespace experimental {
 
 class UnixOperatingSystem : public OperatingSystem {
 public:
-    istream* openForReading(string filename) {
+    istream* openForReading(const string& filename) {
         ifstream* file = new ifstream();
         file->open(filename);
         return file;
     }
 
-    ostream* openForWriting(string filename) {
+    ostream* openForWriting(const string& filename) {
         ofstream* file = new ofstream();
         file->open(filename);
         return file;
@@ -37,38 +37,24 @@ public:
         delete out;
     }
 
-    void forceMakeDir(string dirName) {
+    void forceMakeDir(const string& dirName) {
         system(("rm -rf " + dirName).c_str());
         system(("mkdir -p " + dirName).c_str());
     }
 
-    void removeFile(string filename) {
+    void removeFile(const string& filename) {
         system(("rm -f " + filename).c_str());
     }
 
-    void limitExecutionTime(int timeLimitInSeconds) {
-        this->timeLimitInSeconds = timeLimitInSeconds;
-    }
+    ExecutionResult execute(
+            const string& command,
+            const string& inputFilename,
+            const string& outputFilename,
+            const string& errorFilename) {
 
-    void limitExecutionMemory(int memoryLimitInMegabytes) {
-        this->memoryLimitInMegabytes = memoryLimitInMegabytes;
-    }
-
-    ExecutionResult execute(string, string command, string inputFilename, string outputFilename, string errorFilename) {
         ostringstream sout;
 
-        sout << "{ ";
-
-        if (timeLimitInSeconds != 0 || memoryLimitInMegabytes != 0) {
-            if (timeLimitInSeconds != 0) {
-                sout << "ulimit -S -t " << timeLimitInSeconds << "; ";
-            }
-            if (memoryLimitInMegabytes != 0) {
-                sout << "ulimit -S -v " << memoryLimitInMegabytes * 1024 << "; ";
-            }
-        }
-
-        sout << command << "; }";
+        sout << command;
 
         if (!inputFilename.empty()) {
             sout << " < " << inputFilename;
@@ -84,49 +70,29 @@ public:
             sout << " 2> " << errorFilename;
         }
 
-        ExecutionResult result;
-        int exitStatus = system(sout.str().c_str());
-        result.exitStatus = WEXITSTATUS(exitStatus);
+        int exitCode = system(sout.str().c_str());
+        int exitStatus = WEXITSTATUS(exitCode);
+
+        istream* outputStream;
+        istream* errorStream;
 
         if (outputFilename.empty()) {
-            result.outputStream = new istringstream();
+            outputStream = new istringstream();
         } else {
-            result.outputStream = openForReading(outputFilename);
+            outputStream = openForReading(outputFilename);
         }
 
         if (errorFilename.empty()) {
-            result.errorStream = new istringstream();
+            errorStream = new istringstream();
         } else {
-            result.errorStream = openForReadingAsStringStream(errorFilename);
+            errorStream = openForReadingAsStringStream(errorFilename);
         }
 
-        return result;
-    }
-
-    void combineMultipleTestCases(string testCaseBaseFilename, int testCasesCount) {
-        ostringstream sout;
-        sout << "echo " << testCasesCount << " > " << testCaseBaseFilename << ".in";
-        sout << " && touch " << testCaseBaseFilename << ".out";
-        system(sout.str().c_str());
-
-        for (int i = 1; i <= testCasesCount; i++) {
-            ostringstream sout2;
-            sout2 << "tail -n +2 " << testCaseBaseFilename << "_" << i << ".in >> " << testCaseBaseFilename << ".in";
-            sout2 << "&& cat " << testCaseBaseFilename << "_" << i << ".out >> " << testCaseBaseFilename << ".out";
-            system(sout2.str().c_str());
-
-            ostringstream sout3;
-            sout3 << "rm " << testCaseBaseFilename << "_" << i << ".in ";
-            sout3 << testCaseBaseFilename << "_" << i << ".out";
-            system(sout3.str().c_str());
-        }
+        return ExecutionResult(exitCode, outputStream, errorStream);
     }
 
 private:
-    int timeLimitInSeconds = 0;
-    int memoryLimitInMegabytes = 0;
-
-    istringstream* openForReadingAsStringStream(string filename) {
+    istringstream* openForReadingAsStringStream(const string& filename) {
         ifstream file(filename);
 
         ostringstream buffer;
@@ -138,4 +104,4 @@ private:
     }
 };
 
-}
+}}

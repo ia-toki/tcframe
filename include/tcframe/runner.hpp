@@ -1,9 +1,9 @@
 #pragma once
 
-#include "tcframe/generator/BaseGenerator.hpp"
-#include "tcframe/problem/BaseProblem.hpp"
+#include "tcframe/deprecated/generator/BaseGenerator.hpp"
+#include "tcframe/deprecated/problem/BaseProblem.hpp"
 
-#include "tcframe/random/Random.hpp"
+#include "tcframe/deprecated/random/Random.hpp"
 
-#include "tcframe/runner/Macro.hpp"
-#include "tcframe/runner/Runner.hpp"
+#include "tcframe/deprecated/runner/Macro.hpp"
+#include "tcframe/deprecated/runner/Runner.hpp"
