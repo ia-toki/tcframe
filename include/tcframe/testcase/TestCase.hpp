@@ -2,11 +2,11 @@
 
 #include <functional>
 #include <string>
-#include <utility>
+#include <tuple>
 
 using std::function;
-using std::move;
 using std::string;
+using std::tie;
 
 namespace tcframe {
 
@@ -16,9 +16,9 @@ private:
     string description_;
 
 public:
-    TestCase(function<void()> closure, string description)
-            : closure_(move(closure))
-            , description_(move(description))
+    TestCase(const function<void()>& closure, const string& description)
+            : closure_(closure)
+            , description_(description)
     {}
 
     const function<void()>& closure() const {
@@ -27,6 +27,10 @@ public:
 
     const string& description() const {
         return description_;
+    }
+
+    bool operator==(const TestCase& o) const {
+        return tie(description_) == tie(o.description_);
     }
 };
 

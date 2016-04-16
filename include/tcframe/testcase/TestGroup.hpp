@@ -1,13 +1,13 @@
 #pragma once
 
 #include <set>
-#include <utility>
+#include <tuple>
 #include <vector>
 
 #include "tcframe/testcase/TestCase.hpp"
 
-using std::move;
 using std::set;
+using std::tie;
 using std::vector;
 
 namespace tcframe {
@@ -19,10 +19,10 @@ private:
     vector<TestCase> testCases_;
 
 public:
-    TestGroup(int id, set<int> constraintGroupId, vector<TestCase> testCases)
+    TestGroup(int id, const set<int>& constraintGroupId, const vector<TestCase>& testCases)
             : id_(id)
-            , constraintGroupIds_(move(constraintGroupId))
-            , testCases_(move(testCases))
+            , constraintGroupIds_(constraintGroupId)
+            , testCases_(testCases)
     {}
 
     int id() const {
@@ -35,6 +35,10 @@ public:
 
     const vector<TestCase>& testCases() const {
         return testCases_;
+    }
+
+    bool operator==(const TestGroup& o) const {
+        return tie(id_, constraintGroupIds_, testCases_) == tie(o.id_, o.constraintGroupIds_, o.testCases_);
     }
 };
 
