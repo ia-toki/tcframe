@@ -83,6 +83,7 @@ set(SOURCE_FILES
     test/tcframe/io/LineIOSegmentBuilderTests.cpp
     test/tcframe/testcase/TestSuiteBuilderTests.cpp
     test/tcframe/type/ScalarTests.cpp
+    test/tcframe/verification/ConstraintSuiteVerifierTests.cpp
 
     include/tcframe/deprecated/core/Failure.hpp
     include/tcframe/deprecated/core/NotImplementedException.hpp
