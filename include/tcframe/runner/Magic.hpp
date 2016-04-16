@@ -16,7 +16,7 @@ using std::string;
 #define CASE(...) addTestCase(TestCase([=] {__VA_ARGS__;}, #__VA_ARGS__))
 #define LINE(...) addIOSegment((MagicLineIOSegmentBuilder(#__VA_ARGS__), __VA_ARGS__).build())
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 class MagicLineIOSegmentBuilder {
 private:
@@ -44,4 +44,4 @@ public:
     }
 };
 
-}}
+}

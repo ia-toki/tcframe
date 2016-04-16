@@ -4,7 +4,7 @@
 #include "tcframe/constraint/ConstraintSuite.hpp"
 #include "tcframe/io/IOFormat.hpp"
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 class BaseProblem : protected ProblemConfigBuilder, protected IOFormatBuilder, protected ConstraintSuiteBuilder {
 public:
@@ -36,4 +36,4 @@ protected:
     virtual void Constraints() {}
 };
 
-}}
+}

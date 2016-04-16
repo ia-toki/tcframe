@@ -18,7 +18,7 @@ using std::function;
 using std::set;
 using std::string;
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 class TestCaseGenerator {
 private:
@@ -89,4 +89,4 @@ private:
     }
 };
 
-}}
+}

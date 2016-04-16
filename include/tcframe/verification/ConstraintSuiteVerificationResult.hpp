@@ -12,7 +12,7 @@ using std::set;
 using std::string;
 using std::vector;
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 struct ConstraintSuiteVerificationResult {
 private:
@@ -41,4 +41,4 @@ public:
     }
 };
 
-}}
+}

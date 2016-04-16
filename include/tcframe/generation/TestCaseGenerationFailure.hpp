@@ -1,10 +1,10 @@
 #pragma once
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 class TestCaseGenerationFailure {
 public:
     virtual ~TestCaseGenerationFailure() {}
 };
 
-}}
+}

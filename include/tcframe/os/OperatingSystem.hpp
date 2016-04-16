@@ -10,7 +10,7 @@ using std::istream;
 using std::ostream;
 using std::string;
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 class OperatingSystem {
 public:
@@ -28,4 +28,4 @@ public:
             const string& errorFilename) = 0;
 };
 
-}}
+}

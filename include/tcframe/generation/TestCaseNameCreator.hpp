@@ -6,7 +6,7 @@
 using std::ostringstream;
 using std::string;
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 class TestCaseNameCreator {
 public:
@@ -30,4 +30,4 @@ private:
     }
 };
 
-}}
+}

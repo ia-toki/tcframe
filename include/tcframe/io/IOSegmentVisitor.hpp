@@ -1,6 +1,6 @@
 #pragma once
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 struct LineIOSegment;
 
@@ -11,4 +11,4 @@ public:
     virtual void visit(LineIOSegment* segment) const = 0;
 };
 
-}}
+}

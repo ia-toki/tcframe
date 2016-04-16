@@ -2,7 +2,7 @@
 
 #include "tcframe/generation/TestCaseGenerationFailure.hpp"
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 struct TestCaseGenerationResult {
 private:
@@ -31,4 +31,4 @@ public:
     }
 };
 
-}}
+}

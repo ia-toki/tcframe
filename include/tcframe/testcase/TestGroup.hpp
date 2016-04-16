@@ -10,7 +10,7 @@ using std::move;
 using std::set;
 using std::vector;
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 struct TestGroup {
 private:
@@ -38,4 +38,4 @@ public:
     }
 };
 
-}}
+}

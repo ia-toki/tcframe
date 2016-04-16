@@ -10,7 +10,7 @@ using std::move;
 using std::set;
 using std::string;
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 struct TestCaseData {
     friend class TestCaseDataBuilder;
@@ -59,4 +59,4 @@ public:
     }
 };
 
-}}
+}

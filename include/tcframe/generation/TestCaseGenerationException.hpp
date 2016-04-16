@@ -6,7 +6,7 @@
 
 using std::exception;
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 struct TestCaseGenerationException : public exception {
 private:
@@ -22,4 +22,4 @@ public:
     }
 };
 
-}}
+}

@@ -3,7 +3,7 @@
 #include "tcframe/generation/TestCaseGenerationFailure.hpp"
 #include "tcframe/verification/ConstraintSuiteVerificationResult.hpp"
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 class VerificationFailure : public TestCaseGenerationFailure {
 private:
@@ -19,4 +19,4 @@ public:
     }
 };
 
-}}
+}

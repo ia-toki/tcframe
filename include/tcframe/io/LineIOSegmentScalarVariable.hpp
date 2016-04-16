@@ -3,7 +3,7 @@
 #include "tcframe/io/LineIOSegmentVariable.hpp"
 #include "tcframe/type/Scalar.hpp"
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 struct LineIOSegmentScalarVariable : public LineIOSegmentVariable {
 private:
@@ -19,4 +19,4 @@ public:
     }
 };
 
-}}
+}

@@ -11,7 +11,7 @@
 
 using std::vector;
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 struct LineIOSegment : public IOSegment {
     friend class LineIOSegmentBuilder;
@@ -53,4 +53,4 @@ public:
     }
 };
 
-}}
+}

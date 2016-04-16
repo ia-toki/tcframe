@@ -17,7 +17,7 @@ using std::ostream;
 using std::ostringstream;
 using std::string;
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 class UnixOperatingSystem : public OperatingSystem {
 public:
@@ -104,4 +104,4 @@ private:
     }
 };
 
-}}
+}

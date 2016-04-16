@@ -9,7 +9,7 @@
 using std::move;
 using std::vector;
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 struct ConstraintSuite {
     friend class ConstraintSuiteBuilder;
@@ -68,4 +68,4 @@ public:
     }
 };
 
-}}
+}

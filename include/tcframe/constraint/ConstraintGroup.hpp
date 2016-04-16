@@ -6,7 +6,7 @@
 
 using std::vector;
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 class ConstraintGroup {
 private:
@@ -28,4 +28,4 @@ public:
     }
 };
 
-}}
+}

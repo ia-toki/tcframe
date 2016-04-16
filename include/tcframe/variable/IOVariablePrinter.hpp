@@ -12,7 +12,7 @@ using std::endl;
 using std::ostream;
 using std::vector;
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 class IOVariablePrinter {
 private:
@@ -65,4 +65,4 @@ private:
     };
 };
 
-}}
+}

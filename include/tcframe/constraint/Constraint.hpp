@@ -6,7 +6,7 @@
 using std::function;
 using std::string;
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 struct Constraint {
 private:
@@ -28,4 +28,4 @@ public:
     }
 };
 
-}}
+}

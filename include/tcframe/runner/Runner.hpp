@@ -12,7 +12,7 @@
 #include "tcframe/variable/IOVariablePrinter.hpp"
 #include "tcframe/verification/ConstraintSuiteVerifier.hpp"
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 template<typename TProblem>
 class Runner {
@@ -53,4 +53,4 @@ public:
     }
 };
 
-}}
+}

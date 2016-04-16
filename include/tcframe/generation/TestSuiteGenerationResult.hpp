@@ -10,7 +10,7 @@ using std::map;
 using std::move;
 using std::string;
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 struct TestSuiteGenerationResult {
 private:
@@ -35,4 +35,4 @@ public:
     }
 };
 
-}}
+}

@@ -17,7 +17,7 @@ using std::ref;
 using std::reference_wrapper;
 using std::string;
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 template<typename T>
 using ScalarCompatible = typename enable_if<!is_reference<T>::value && (is_arithmetic<T>::value || is_same<string, T>::value)>::type;
@@ -67,4 +67,4 @@ Scalar* Scalar::create(T& var, const string& name) {
     return new ScalarImpl<T>(var, name);
 }
 
-}}
+}

@@ -1,10 +1,10 @@
 #pragma once
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 struct LineIOSegmentVariable {
 public:
     virtual ~LineIOSegmentVariable() {}
 };
 
-}}
+}

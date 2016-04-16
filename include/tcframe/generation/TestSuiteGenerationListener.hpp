@@ -14,7 +14,7 @@ using std::flush;
 using std::string;
 using std::vector;
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 class TestSuiteGenerationListener {
 public:
@@ -81,4 +81,4 @@ private:
     }
  };
 
-}}
+}

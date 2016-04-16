@@ -10,7 +10,7 @@ using std::replace;
 using std::string;
 using std::vector;
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 class StringUtils {
 private:
@@ -31,4 +31,4 @@ public:
     }
 };
 
-}}
+}

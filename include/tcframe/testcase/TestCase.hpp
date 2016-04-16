@@ -8,7 +8,7 @@ using std::function;
 using std::move;
 using std::string;
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 struct TestCase {
 private:
@@ -30,4 +30,4 @@ public:
     }
 };
 
-}}
+}

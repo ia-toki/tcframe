@@ -15,7 +15,7 @@ using std::move;
 using std::string;
 using std::vector;
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 class ConstraintSuiteVerifier {
 private:
@@ -54,4 +54,4 @@ public:
     }
 };
 
-}}
+}

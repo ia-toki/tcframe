@@ -6,7 +6,7 @@
 using std::move;
 using std::string;
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 struct GeneratorConfig {
     friend class GeneratorConfigBuilder;
@@ -50,4 +50,4 @@ public:
     }
 };
 
-}}
+}

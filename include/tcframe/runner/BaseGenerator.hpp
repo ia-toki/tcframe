@@ -3,7 +3,7 @@
 #include "tcframe/config/GeneratorConfig.hpp"
 #include "tcframe/testcase/TestSuite.hpp"
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 template<typename TProblem /* extends Problem */>
 class BaseGenerator : public TProblem, protected GeneratorConfigBuilder, protected TestSuiteBuilder {
@@ -29,4 +29,4 @@ protected:
     virtual void TestCases() {}
 };
 
-}}
+}

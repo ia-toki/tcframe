@@ -22,7 +22,7 @@ using std::map;
 using std::set;
 using std::string;
 
-namespace tcframe { namespace experimental {
+namespace tcframe {
 
 class TestSuiteGenerator {
 private:
@@ -105,4 +105,4 @@ private:
     }
 };
 
-}}
+}
