@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tuple>
 #include <vector>
 
 #include "tcframe/io/LineIOSegmentScalarVariable.hpp"
@@ -9,6 +10,7 @@
 #include "tcframe/type/Scalar.hpp"
 #include "tcframe/util/StringUtils.hpp"
 
+using std::tie;
 using std::vector;
 
 namespace tcframe {
@@ -27,6 +29,10 @@ public:
     void accept(IOSegmentVisitor* visitor) {
         return visitor->visit(this);
     }
+
+    bool operator==(const LineIOSegment& o) const {
+        return tie(variables_) == tie(o.variables_);
+    }
 };
 
 class LineIOSegmentBuilder {
@@ -43,13 +49,14 @@ public:
         return addScalarVariable(Scalar::create(var, name));
     }
 
+    LineIOSegment* build() {
+        return subject_;
+    }
+
+private:
     LineIOSegmentBuilder& addScalarVariable(Scalar* variable) {
         subject_->variables_.push_back(new LineIOSegmentScalarVariable(variable));
         return *this;
-    }
-
-    LineIOSegment* build() {
-        return subject_;
     }
 };
 

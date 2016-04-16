@@ -1,7 +1,11 @@
 #pragma once
 
+#include <tuple>
+
 #include "tcframe/io/LineIOSegmentVariable.hpp"
 #include "tcframe/type/Scalar.hpp"
+
+using std::tie;
 
 namespace tcframe {
 
@@ -16,6 +20,10 @@ public:
 
     Scalar* variable() const {
         return variable_;
+    }
+
+    bool operator==(const LineIOSegmentScalarVariable& o) const {
+        return tie(*variable_) == tie(*o.variable_);
     }
 };
 

@@ -5,6 +5,7 @@
 #include <istream>
 #include <ostream>
 #include <string>
+#include <tuple>
 #include <type_traits>
 
 using std::enable_if;
@@ -16,6 +17,7 @@ using std::ostream;
 using std::ref;
 using std::reference_wrapper;
 using std::string;
+using std::tie;
 
 namespace tcframe {
 
@@ -32,6 +34,10 @@ public:
     virtual const string& getName() const = 0;
     virtual void printTo(ostream& out) const = 0;
     virtual void parseFrom(istream& in) const = 0;
+
+    bool operator==(const Scalar& o) const {
+        return tie(getName()) == tie(o.getName());
+    }
 
     template<typename T>
     static Scalar* create(T& var, const string& name);
