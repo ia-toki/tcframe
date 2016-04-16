@@ -7,11 +7,6 @@
 using ::testing::ElementsAre;
 using ::testing::Test;
 
-using tcframe::Constraint;
-using tcframe::ConstraintGroup;
-using tcframe::ConstraintSuite;
-using tcframe::ConstraintSuiteBuilder;
-
 namespace tcframe {
 
 class ConstraintSuiteBuilderTests : public Test {

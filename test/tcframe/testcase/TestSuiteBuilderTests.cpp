@@ -6,11 +6,6 @@
 using ::testing::ElementsAre;
 using ::testing::Test;
 
-using tcframe::TestCase;
-using tcframe::TestGroup;
-using tcframe::TestSuite;
-using tcframe::TestSuiteBuilder;
-
 namespace tcframe {
 
 class TestSuiteBuilderTests : public Test {
