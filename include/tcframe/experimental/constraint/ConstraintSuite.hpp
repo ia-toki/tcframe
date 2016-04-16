@@ -1,10 +1,12 @@
 #pragma once
 
+#include <utility>
 #include <vector>
 
 #include "tcframe/experimental/constraint/Constraint.hpp"
 #include "tcframe/experimental/constraint/ConstraintGroup.hpp"
 
+using std::move;
 using std::vector;
 
 namespace tcframe { namespace experimental {
@@ -62,7 +64,7 @@ public:
         if (hasCurrentConstraintGroup_) {
             subject_.individualConstraints_.push_back(ConstraintGroup(currentConstraintGroupId_, currentIndividualConstraints_));
         }
-        return subject_;
+        return move(subject_);
     }
 };
 

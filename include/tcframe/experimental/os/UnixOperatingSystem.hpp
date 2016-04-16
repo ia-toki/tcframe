@@ -21,13 +21,13 @@ namespace tcframe { namespace experimental {
 
 class UnixOperatingSystem : public OperatingSystem {
 public:
-    istream* openForReading(string filename) {
+    istream* openForReading(const string& filename) {
         ifstream* file = new ifstream();
         file->open(filename);
         return file;
     }
 
-    ostream* openForWriting(string filename) {
+    ostream* openForWriting(const string& filename) {
         ofstream* file = new ofstream();
         file->open(filename);
         return file;
@@ -37,16 +37,21 @@ public:
         delete out;
     }
 
-    void forceMakeDir(string dirName) {
+    void forceMakeDir(const string& dirName) {
         system(("rm -rf " + dirName).c_str());
         system(("mkdir -p " + dirName).c_str());
     }
 
-    void removeFile(string filename) {
+    void removeFile(const string& filename) {
         system(("rm -f " + filename).c_str());
     }
 
-    ExecutionResult execute(string command, string inputFilename, string outputFilename, string errorFilename) {
+    ExecutionResult execute(
+            const string& command,
+            const string& inputFilename,
+            const string& outputFilename,
+            const string& errorFilename) {
+
         ostringstream sout;
 
         sout << command;
@@ -87,7 +92,7 @@ public:
     }
 
 private:
-    istringstream* openForReadingAsStringStream(string filename) {
+    istringstream* openForReadingAsStringStream(const string& filename) {
         ifstream file(filename);
 
         ostringstream buffer;

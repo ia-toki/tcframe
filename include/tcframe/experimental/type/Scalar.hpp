@@ -34,7 +34,7 @@ public:
     virtual void parseFrom(istream& in) const = 0;
 
     template<typename T>
-    static Scalar* create(T& var, string name);
+    static Scalar* create(T& var, const string& name);
 };
 
 template<typename T>
@@ -63,7 +63,7 @@ public:
 };
 
 template<typename T>
-Scalar* Scalar::create(T& var, string name) {
+Scalar* Scalar::create(T& var, const string& name) {
     return new ScalarImpl<T>(var, name);
 }
 
