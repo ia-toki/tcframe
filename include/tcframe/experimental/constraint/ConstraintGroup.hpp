@@ -1,11 +1,9 @@
 #pragma once
 
-#include <utility>
 #include <vector>
 
 #include "tcframe/experimental/constraint/Constraint.hpp"
 
-using std::move;
 using std::vector;
 
 namespace tcframe { namespace experimental {
@@ -16,9 +14,9 @@ private:
     vector<Constraint> constraints_;
 
 public:
-    ConstraintGroup(int id, vector<Constraint> constraints)
+    ConstraintGroup(int id, const vector<Constraint>& constraints)
             : id_(id)
-            , constraints_(move(constraints))
+            , constraints_(constraints)
     {}
 
     int id() const {

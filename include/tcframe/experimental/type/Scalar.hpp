@@ -6,14 +6,12 @@
 #include <ostream>
 #include <string>
 #include <type_traits>
-#include <utility>
 
 using std::enable_if;
 using std::is_arithmetic;
 using std::is_reference;
 using std::is_same;
 using std::istream;
-using std::move;
 using std::ostream;
 using std::ref;
 using std::reference_wrapper;
@@ -46,9 +44,9 @@ private:
     string name_;
 
 public:
-    ScalarImpl(T& var, string name)
+    ScalarImpl(T& var, const string& name)
             : var_(ref(var))
-            , name_(move(name))
+            , name_(name)
     {}
 
     const string& getName() const {

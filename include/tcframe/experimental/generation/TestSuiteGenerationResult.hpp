@@ -17,7 +17,7 @@ private:
     map<string, TestCaseGenerationResult> testCaseGenerationResultByTestCaseName_;
 
 public:
-    TestSuiteGenerationResult(map<string, TestCaseGenerationResult> testCaseGenerationResultByTestCaseName)
+    TestSuiteGenerationResult(const map<string, TestCaseGenerationResult>& testCaseGenerationResultByTestCaseName)
             : testCaseGenerationResultByTestCaseName_(testCaseGenerationResultByTestCaseName)
     {}
 

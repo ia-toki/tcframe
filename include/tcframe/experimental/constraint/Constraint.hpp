@@ -2,10 +2,8 @@
 
 #include <functional>
 #include <string>
-#include <utility>
 
 using std::function;
-using std::move;
 using std::string;
 
 namespace tcframe { namespace experimental {
@@ -16,9 +14,9 @@ private:
     string description_;
 
 public:
-    Constraint(function<bool()> predicate, string description)
-            : predicate_(move(predicate))
-            , description_(move(description))
+    Constraint(const function<bool()>& predicate, const string& description)
+            : predicate_(predicate)
+            , description_(description)
     {}
 
     const function<bool()>& predicate() const {

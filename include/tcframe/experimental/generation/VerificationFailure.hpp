@@ -1,11 +1,7 @@
 #pragma once
 
-#include <utility>
-
 #include "tcframe/experimental/generation/TestCaseGenerationFailure.hpp"
 #include "tcframe/experimental/verification/ConstraintSuiteVerificationResult.hpp"
-
-using std::move;
 
 namespace tcframe { namespace experimental {
 
@@ -14,8 +10,8 @@ private:
     ConstraintSuiteVerificationResult verificationResult_;
 
 public:
-    VerificationFailure(ConstraintSuiteVerificationResult verificationResult)
-            : verificationResult_(move(verificationResult))
+    VerificationFailure(const ConstraintSuiteVerificationResult& verificationResult)
+            : verificationResult_(verificationResult)
     {}
 
     const ConstraintSuiteVerificationResult& verificationResult() const {

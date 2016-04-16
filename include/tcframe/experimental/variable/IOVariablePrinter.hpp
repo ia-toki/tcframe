@@ -3,14 +3,12 @@
 #include <iostream>
 #include <ostream>
 #include <vector>
-#include <utility>
 
 #include "tcframe/experimental/io/IOFormat.hpp"
 #include "tcframe/experimental/io/IOSegmentVisitor.hpp"
 #include "tcframe/experimental/io/LineIOSegment.hpp"
 
 using std::endl;
-using std::move;
 using std::ostream;
 using std::vector;
 
@@ -23,8 +21,8 @@ private:
 public:
     virtual ~IOVariablePrinter() {}
 
-    IOVariablePrinter(IOFormat ioFormat)
-            : ioFormat_(move(ioFormat))
+    IOVariablePrinter(const IOFormat& ioFormat)
+            : ioFormat_(ioFormat)
     {}
 
     void printInput(ostream* out) {

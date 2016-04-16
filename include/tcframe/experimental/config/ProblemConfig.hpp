@@ -1,7 +1,9 @@
 #pragma once
 
 #include <string>
+#include <utility>
 
+using std::move;
 using std::string;
 
 namespace tcframe { namespace experimental {
@@ -32,7 +34,7 @@ public:
     }
 
     ProblemConfig build() {
-        return subject_;
+        return move(subject_);
     }
 };
 

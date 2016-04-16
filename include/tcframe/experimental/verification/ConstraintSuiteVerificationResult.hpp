@@ -21,8 +21,8 @@ private:
 
 public:
     ConstraintSuiteVerificationResult(
-            map<int, vector<string>> unsatisfiedConstraintDescriptionsByConstraintGroupId,
-            set<int> satisfiedButNotAssignedConstraintGroupIds)
+            const map<int, vector<string>>& unsatisfiedConstraintDescriptionsByConstraintGroupId,
+            const set<int>& satisfiedButNotAssignedConstraintGroupIds)
             : unsatisfiedConstraintDescriptionsByConstraintGroupId_(unsatisfiedConstraintDescriptionsByConstraintGroupId)
             , satisfiedButNotAssignedConstraintGroupIds_(satisfiedButNotAssignedConstraintGroupIds)
     {}
