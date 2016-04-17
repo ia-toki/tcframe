@@ -6,7 +6,7 @@ namespace tcframe {
 
 struct IOSegment {
 public:
-    virtual ~IOSegment(){}
+    virtual ~IOSegment() {}
 
     virtual void accept(IOSegmentVisitor* visitor) = 0;
 };

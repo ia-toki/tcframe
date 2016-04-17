@@ -33,16 +33,19 @@ private:
     vector<IOSegment*>* currentFormat_;
 
 public:
-    void prepareForInputFormat() {
+    IOFormatBuilder& prepareForInputFormat() {
         currentFormat_ = &subject_.inputFormat_;
+        return *this;
     }
 
-    void prepareForOutputFormat() {
+    IOFormatBuilder& prepareForOutputFormat() {
         currentFormat_ = &subject_.outputFormat_;
+        return *this;
     }
 
-    void addIOSegment(IOSegment* segment) {
+    IOFormatBuilder& addIOSegment(IOSegment* segment) {
         currentFormat_->push_back(segment);
+        return *this;
     }
 
     IOFormat build() {

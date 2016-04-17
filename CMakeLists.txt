@@ -80,6 +80,7 @@ set(SOURCE_FILES
     include/tcframe/verification/ConstraintSuiteVerifier.hpp
     include/tcframe/verification/ConstraintSuiteVerificationResult.hpp
     test/tcframe/constraint/ConstraintSuiteBuilderTests.cpp
+    test/tcframe/io/IOFormatBuilderTests.cpp
     test/tcframe/io/LineIOSegmentBuilderTests.cpp
     test/tcframe/testcase/TestSuiteBuilderTests.cpp
     test/tcframe/type/ScalarTests.cpp
