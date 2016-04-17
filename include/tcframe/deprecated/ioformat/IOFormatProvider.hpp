@@ -31,20 +31,20 @@ public:
         this->lastSegment = nullptr;
     }
 
-    LineIOSegment& applyLineSegment(string names) {
-        LineIOSegment* segment = new LineIOSegment(names);
+    LineIOSegmentOld& applyLineSegment(string names) {
+        LineIOSegmentOld* segment = new LineIOSegmentOld(names);
         lastSegment = segment;
         return *segment;
     }
 
-    LinesIOSegment& applyLinesSegment(string names) {
-        LinesIOSegment* segment = new LinesIOSegment(names);
+    LinesIOSegmentOld& applyLinesSegment(string names) {
+        LinesIOSegmentOld* segment = new LinesIOSegmentOld(names);
         lastSegment = segment;
         return *segment;
     }
 
-    GridIOSegment& applyGridSegment(string name) {
-        GridIOSegment* segment = new GridIOSegment(name);
+    GridIOSegmentOld& applyGridSegment(string name) {
+        GridIOSegmentOld* segment = new GridIOSegmentOld(name);
         lastSegment = segment;
         return *segment;
     }

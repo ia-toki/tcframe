@@ -23,14 +23,14 @@ using std::vector;
 
 namespace tcframe {
 
-class LinesIOSegment : public IOSegment {
+class LinesIOSegmentOld : public IOSegment {
 public:
-    LinesIOSegment(string names) {
+    LinesIOSegmentOld(string names) {
         this->names = Util::split(names);
     }
 
     template<typename T, typename = RequiresScalar<T>>
-    LinesIOSegment& operator,(vector<T>& vektor) {
+    LinesIOSegmentOld& operator,(vector<T>& vektor) {
         checkJaggedVector();
 
         variables.push_back(new VerticalVector<T>(vektor, names[variables.size()]));
@@ -38,7 +38,7 @@ public:
     }
 
     template<typename T, typename = RequiresScalar<T>>
-    LinesIOSegment& operator,(vector<vector<T>>& matrix) {
+    LinesIOSegmentOld& operator,(vector<vector<T>>& matrix) {
         checkJaggedVector();
 
         jaggedVector = new Matrix<T>(matrix, names[variables.size()]);
@@ -46,11 +46,11 @@ public:
     }
 
     template<typename T>
-    LinesIOSegment& operator,(T) {
+    LinesIOSegmentOld& operator,(T) {
         throw IOFormatException("Variable type of `" + names[variables.size()] + "` unsatisfied. Expected: (jagged) vector of basic scalar or string type");
     }
 
-    LinesIOSegment& operator%(VectorSize vektorSize) {
+    LinesIOSegmentOld& operator%(VectorSize vektorSize) {
         setSize(vektorSize.getSize());
         return *this;
     }

@@ -13,16 +13,16 @@ using std::istringstream;
 using std::ostringstream;
 using std::vector;
 
-using tcframe::GridIOSegment;
+using tcframe::GridIOSegmentOld;
 using tcframe::IOFormatException;
 using tcframe::MatrixSizes;
 using tcframe::ParsingException;
 using tcframe::PrintingException;
 
-TEST(DeprecatedGridIOSegmentTest, UnsupportedTypes) {
+TEST(DeprecatedGridIOSegmentOldTest, UnsupportedTypes) {
     int X;
 
-    GridIOSegment segment("X");
+    GridIOSegmentOld segment("X");
 
     try {
         segment, X;
@@ -33,7 +33,7 @@ TEST(DeprecatedGridIOSegmentTest, UnsupportedTypes) {
 
     vector<vector<vector<int>>> V;
 
-    segment = GridIOSegment("V");
+    segment = GridIOSegmentOld("V");
 
     try {
         segment, V;
@@ -44,8 +44,8 @@ TEST(DeprecatedGridIOSegmentTest, UnsupportedTypes) {
 
 }
 
-TEST(DeprecatedGridIOSegmentTest, NonSingularVariables) {
-    GridIOSegment segment("");
+TEST(DeprecatedGridIOSegmentOldTest, NonSingularVariables) {
+    GridIOSegmentOld segment("");
 
     segment % MatrixSizes(2, 3);
 
@@ -58,7 +58,7 @@ TEST(DeprecatedGridIOSegmentTest, NonSingularVariables) {
 
     vector<vector<int>> V, W;
 
-    segment = GridIOSegment("V, W");
+    segment = GridIOSegmentOld("V, W");
 
     try {
         segment, V, W;
@@ -69,10 +69,10 @@ TEST(DeprecatedGridIOSegmentTest, NonSingularVariables) {
 
 }
 
-TEST(DeprecatedGridIOSegmentTest, NoMatrixSizes) {
+TEST(DeprecatedGridIOSegmentOldTest, NoMatrixSizes) {
     vector<vector<int>> G;
 
-    GridIOSegment segment("G");
+    GridIOSegmentOld segment("G");
     segment, G;
 
     try {
@@ -83,12 +83,12 @@ TEST(DeprecatedGridIOSegmentTest, NoMatrixSizes) {
     }
 }
 
-TEST(DeprecatedGridIOSegmentTest, FailedPrintingBecauseRowSizesMismatch) {
+TEST(DeprecatedGridIOSegmentOldTest, FailedPrintingBecauseRowSizesMismatch) {
     int N = 3;
     int M = 3;
     vector<vector<int>> G = { {1, 2}, {3, 4, 5} };
 
-    GridIOSegment segment("G");
+    GridIOSegmentOld segment("G");
     (segment, G) % MatrixSizes(N, M);
 
     ostringstream sout;
@@ -101,12 +101,12 @@ TEST(DeprecatedGridIOSegmentTest, FailedPrintingBecauseRowSizesMismatch) {
     }
 }
 
-TEST(DeprecatedGridIOSegmentTest, FailedPrintingBecauseColumnSizesMismatch) {
+TEST(DeprecatedGridIOSegmentOldTest, FailedPrintingBecauseColumnSizesMismatch) {
     int N = 2;
     int M = 3;
     vector<vector<int>> G = { {1, 2, 3}, {4, 5} };
 
-    GridIOSegment segment("G");
+    GridIOSegmentOld segment("G");
     (segment, G) % MatrixSizes(N, M);
 
     ostringstream sout;
@@ -119,10 +119,10 @@ TEST(DeprecatedGridIOSegmentTest, FailedPrintingBecauseColumnSizesMismatch) {
     }
 }
 
-TEST(DeprecatedGridIOSegmentTest, FailedParsingBecauseNoSpace) {
+TEST(DeprecatedGridIOSegmentOldTest, FailedParsingBecauseNoSpace) {
     vector<vector<int>> C;
 
-    GridIOSegment segment("C");
+    GridIOSegmentOld segment("C");
     (segment, C) % MatrixSizes(2, 2);
 
     istringstream sin("1 2\n3\n");
@@ -135,10 +135,10 @@ TEST(DeprecatedGridIOSegmentTest, FailedParsingBecauseNoSpace) {
     }
 }
 
-TEST(DeprecatedGridIOSegmentTest, FailedParsingBecauseNoNewLine) {
+TEST(DeprecatedGridIOSegmentOldTest, FailedParsingBecauseNoNewLine) {
     vector<vector<int>> C;
 
-    GridIOSegment segment("C");
+    GridIOSegmentOld segment("C");
     (segment, C) % MatrixSizes(2, 2);
 
     istringstream sin("1 2\n3 4");
@@ -151,10 +151,10 @@ TEST(DeprecatedGridIOSegmentTest, FailedParsingBecauseNoNewLine) {
     }
 }
 
-TEST(DeprecatedGridIOSegmentTest, CharPrinting) {
+TEST(DeprecatedGridIOSegmentOldTest, CharPrinting) {
     vector<vector<char>> C = { {'a', 'b'}, {'c', 'd'} };
 
-    GridIOSegment segment("C");
+    GridIOSegmentOld segment("C");
     (segment, C) % MatrixSizes(2, 2);
 
     ostringstream sout;
@@ -163,10 +163,10 @@ TEST(DeprecatedGridIOSegmentTest, CharPrinting) {
     EXPECT_EQ("ab\ncd\n", sout.str());
 }
 
-TEST(DeprecatedGridIOSegmentTest, CharParsing) {
+TEST(DeprecatedGridIOSegmentOldTest, CharParsing) {
     vector<vector<char>> C;
 
-    GridIOSegment segment("C");
+    GridIOSegmentOld segment("C");
     (segment, C) % MatrixSizes(2, 2);
 
     istringstream sin("ab\ncd\n");
@@ -175,10 +175,10 @@ TEST(DeprecatedGridIOSegmentTest, CharParsing) {
     EXPECT_EQ((vector<vector<char>>{ {'a', 'b'}, {'c', 'd'} }), C);
 }
 
-TEST(DeprecatedGridIOSegmentTest, NonCharPrinting) {
+TEST(DeprecatedGridIOSegmentOldTest, NonCharPrinting) {
     vector<vector<int>> C = { {1, 2}, {3, 4} };
 
-    GridIOSegment segment("C");
+    GridIOSegmentOld segment("C");
     (segment, C) % MatrixSizes(2, 2);
 
     ostringstream sout;
@@ -187,10 +187,10 @@ TEST(DeprecatedGridIOSegmentTest, NonCharPrinting) {
     EXPECT_EQ("1 2\n3 4\n", sout.str());
 }
 
-TEST(DeprecatedGridIOSegmentTest, NonCharParsing) {
+TEST(DeprecatedGridIOSegmentOldTest, NonCharParsing) {
     vector<vector<int>> C;
 
-    GridIOSegment segment("C");
+    GridIOSegmentOld segment("C");
     (segment, C) % MatrixSizes(2, 2);
 
     istringstream sin("1 2\n3 4\n");

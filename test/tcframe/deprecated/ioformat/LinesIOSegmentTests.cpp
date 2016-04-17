@@ -15,16 +15,16 @@ using std::ostringstream;
 using std::vector;
 
 using tcframe::IOFormatException;
-using tcframe::LinesIOSegment;
+using tcframe::LinesIOSegmentOld;
 using tcframe::ParsingException;
 using tcframe::PrintingException;
 using tcframe::VectorSize;
 using tcframe::VectorWithSize;
 
-TEST(DeprecatedLinesIOSegmentTest, UnsupportedTypes) {
+TEST(DeprecatedLinesIOSegmentOldTest, UnsupportedTypes) {
     int X;
 
-    LinesIOSegment segment("X");
+    LinesIOSegmentOld segment("X");
 
     try {
         segment, X;
@@ -34,8 +34,8 @@ TEST(DeprecatedLinesIOSegmentTest, UnsupportedTypes) {
     }
 }
 
-TEST(DeprecatedLinesIOSegmentTest, NoVariables) {
-    LinesIOSegment segment("");
+TEST(DeprecatedLinesIOSegmentOldTest, NoVariables) {
+    LinesIOSegmentOld segment("");
     segment % VectorSize(4);
 
     try {
@@ -46,10 +46,10 @@ TEST(DeprecatedLinesIOSegmentTest, NoVariables) {
     }
 }
 
-TEST(DeprecatedLinesIOSegmentTest, NoVectorSizes) {
+TEST(DeprecatedLinesIOSegmentOldTest, NoVectorSizes) {
     vector<int> V;
 
-    LinesIOSegment segment("V");
+    LinesIOSegmentOld segment("V");
     segment, V;
 
     try {
@@ -60,12 +60,12 @@ TEST(DeprecatedLinesIOSegmentTest, NoVectorSizes) {
     }
 }
 
-TEST(DeprecatedLinesIOSegmentTest, FailedPrintingBecauseVectorSizesMismatch) {
+TEST(DeprecatedLinesIOSegmentOldTest, FailedPrintingBecauseVectorSizesMismatch) {
     int N = 3;
     vector<int> V = vector<int>{1, 2, 3};
     vector<int> W = vector<int>{4, 5, 6, 7};
 
-    LinesIOSegment segment("V, W");
+    LinesIOSegmentOld segment("V, W");
     (segment, V, W) % VectorSize(N);
 
     ostringstream sout;
@@ -78,10 +78,10 @@ TEST(DeprecatedLinesIOSegmentTest, FailedPrintingBecauseVectorSizesMismatch) {
     }
 }
 
-TEST(DeprecatedLinesIOSegmentTest, FailedParsingBecauseNoSpace) {
+TEST(DeprecatedLinesIOSegmentOldTest, FailedParsingBecauseNoSpace) {
     vector<int> V, W;
 
-    LinesIOSegment segment("V, W");
+    LinesIOSegmentOld segment("V, W");
     (segment, V, W) % VectorSize(3);
 
     istringstream sin("1 2\n3\n5 6\n");
@@ -94,10 +94,10 @@ TEST(DeprecatedLinesIOSegmentTest, FailedParsingBecauseNoSpace) {
     }
 }
 
-TEST(DeprecatedLinesIOSegmentTest, FailedParsingBecauseNoNewLine) {
+TEST(DeprecatedLinesIOSegmentOldTest, FailedParsingBecauseNoNewLine) {
     vector<int> V, W;
 
-    LinesIOSegment segment("V, W");
+    LinesIOSegmentOld segment("V, W");
     (segment, V, W) % VectorSize(3);
 
     istringstream sin("1 2\n3 4\n5 6");
@@ -110,10 +110,10 @@ TEST(DeprecatedLinesIOSegmentTest, FailedParsingBecauseNoNewLine) {
     }
 }
 
-TEST(DeprecatedLinesIOSegmentTest, SingleVectorPrinting) {
+TEST(DeprecatedLinesIOSegmentOldTest, SingleVectorPrinting) {
     vector<int> V = {1, 2, 3};
 
-    LinesIOSegment segment("V");
+    LinesIOSegmentOld segment("V");
     (segment, V) % VectorSize(3);
 
     ostringstream sout;
@@ -122,10 +122,10 @@ TEST(DeprecatedLinesIOSegmentTest, SingleVectorPrinting) {
     EXPECT_EQ("1\n2\n3\n", sout.str());
 }
 
-TEST(DeprecatedLinesIOSegmentTest, SingleVectorParsing) {
+TEST(DeprecatedLinesIOSegmentOldTest, SingleVectorParsing) {
     vector<int> V;
 
-    LinesIOSegment segment("V");
+    LinesIOSegmentOld segment("V");
     (segment, V) % VectorSize(3);
 
     istringstream sin("1\n2\n3\n");
@@ -134,11 +134,11 @@ TEST(DeprecatedLinesIOSegmentTest, SingleVectorParsing) {
     EXPECT_EQ((vector<int>{1, 2, 3}), V);
 }
 
-TEST(DeprecatedLinesIOSegmentTest, MultipleVectorsPrinting) {
+TEST(DeprecatedLinesIOSegmentOldTest, MultipleVectorsPrinting) {
     vector<int> V = {1, 2, 3};
     vector<string> W = {"a", "bb", "ccc"};
 
-    LinesIOSegment segment("V, W");
+    LinesIOSegmentOld segment("V, W");
     (segment, V, W) % VectorSize(3);
 
     ostringstream sout;
@@ -147,11 +147,11 @@ TEST(DeprecatedLinesIOSegmentTest, MultipleVectorsPrinting) {
     EXPECT_EQ("1 a\n2 bb\n3 ccc\n", sout.str());
 }
 
-TEST(DeprecatedLinesIOSegmentTest, MultipleVectorsParsing) {
+TEST(DeprecatedLinesIOSegmentOldTest, MultipleVectorsParsing) {
     vector<int> V;
     vector<string> W;
 
-    LinesIOSegment segment("V, W");
+    LinesIOSegmentOld segment("V, W");
     (segment, V, W) % VectorSize(3);
 
     istringstream sin("1 a\n2 bb\n3 ccc\n");
@@ -161,10 +161,10 @@ TEST(DeprecatedLinesIOSegmentTest, MultipleVectorsParsing) {
     EXPECT_EQ((vector<string>{"a", "bb", "ccc"}), W);
 }
 
-TEST(DeprecatedLinesIOSegmentTest, JaggedVectorPrinting) {
+TEST(DeprecatedLinesIOSegmentOldTest, JaggedVectorPrinting) {
     vector<vector<int>> V = {{1}, {2, 3}, {4, 5, 6}};
 
-    LinesIOSegment segment("V");
+    LinesIOSegmentOld segment("V");
     (segment, V) % VectorSize(3);
 
     ostringstream sout;
@@ -173,10 +173,10 @@ TEST(DeprecatedLinesIOSegmentTest, JaggedVectorPrinting) {
     EXPECT_EQ("1\n2 3\n4 5 6\n", sout.str());
 }
 
-TEST(DeprecatedLinesIOSegmentTest, JaggedVectorParsing) {
+TEST(DeprecatedLinesIOSegmentOldTest, JaggedVectorParsing) {
     vector<vector<int>> V;
 
-    LinesIOSegment segment("V");
+    LinesIOSegmentOld segment("V");
     (segment, V) % VectorSize(3);
 
     istringstream sin("1\n2 3\n4 5 6\n");
@@ -185,10 +185,10 @@ TEST(DeprecatedLinesIOSegmentTest, JaggedVectorParsing) {
     EXPECT_EQ((vector<vector<int>>{{1}, {2, 3}, {4, 5, 6}}), V);
 }
 
-TEST(DeprecatedLinesIOSegmentTest, FailedParsingJaggedMatrixBecauseOfSpacePrefix) {
+TEST(DeprecatedLinesIOSegmentOldTest, FailedParsingJaggedMatrixBecauseOfSpacePrefix) {
     vector<vector<int>> V;
 
-    LinesIOSegment segment("V");
+    LinesIOSegmentOld segment("V");
     (segment, V) % VectorSize(3);
 
     istringstream sin("1 2 3\n 4 5 6\n");
@@ -201,10 +201,10 @@ TEST(DeprecatedLinesIOSegmentTest, FailedParsingJaggedMatrixBecauseOfSpacePrefix
     }
 }
 
-TEST(DeprecatedLinesIOSegmentTest, FailedParsingJaggedVectorBecauseOfStrangeCharBetweenElements) {
+TEST(DeprecatedLinesIOSegmentOldTest, FailedParsingJaggedVectorBecauseOfStrangeCharBetweenElements) {
     vector<vector<int>> V;
 
-    LinesIOSegment segment("V");
+    LinesIOSegmentOld segment("V");
     (segment, V) % VectorSize(2);
 
     istringstream sin("1 2\t3\n");
@@ -217,10 +217,10 @@ TEST(DeprecatedLinesIOSegmentTest, FailedParsingJaggedVectorBecauseOfStrangeChar
     }
 }
 
-TEST(DeprecatedLinesIOSegmentTest, FailedParsingJaggedVectorBecauseOfNoNewline) {
+TEST(DeprecatedLinesIOSegmentOldTest, FailedParsingJaggedVectorBecauseOfNoNewline) {
     vector<vector<int>> V;
 
-    LinesIOSegment segment("V");
+    LinesIOSegmentOld segment("V");
     (segment, V) % VectorSize(2);
 
     istringstream sin("1 2 3\n4 5 6");
@@ -233,10 +233,10 @@ TEST(DeprecatedLinesIOSegmentTest, FailedParsingJaggedVectorBecauseOfNoNewline) 
     }
 }
 
-TEST(DeprecatedLinesIOSegmentTest, FailedParsingJaggedVectorBecauseOfTrailingSpace) {
+TEST(DeprecatedLinesIOSegmentOldTest, FailedParsingJaggedVectorBecauseOfTrailingSpace) {
     vector<vector<int>> V;
 
-    LinesIOSegment segment("V");
+    LinesIOSegmentOld segment("V");
     (segment, V) % VectorSize(2);
 
     istringstream sin("1 2 3\n4 5 6 ");
@@ -249,11 +249,11 @@ TEST(DeprecatedLinesIOSegmentTest, FailedParsingJaggedVectorBecauseOfTrailingSpa
     }
 }
 
-TEST(DeprecatedLinesIOSegmentTest, FailedParsingJaggedVectorBecauseItIsNotLast) {
+TEST(DeprecatedLinesIOSegmentOldTest, FailedParsingJaggedVectorBecauseItIsNotLast) {
     vector<vector<int>> V;
     vector<int> W;
 
-    LinesIOSegment segment("V, W");
+    LinesIOSegmentOld segment("V, W");
 
     try {
         (segment, V, W) % VectorSize(4);
@@ -263,11 +263,11 @@ TEST(DeprecatedLinesIOSegmentTest, FailedParsingJaggedVectorBecauseItIsNotLast) 
     }
 }
 
-TEST(DeprecatedLinesIOSegmentTest, MixedWithJaggedVectorPrinting) {
+TEST(DeprecatedLinesIOSegmentOldTest, MixedWithJaggedVectorPrinting) {
     vector<int> V = vector<int>{1, 2, 3};
     vector<vector<int>> W = vector<vector<int>>{{4}, {5, 6}, {7, 8, 9}};
 
-    LinesIOSegment segment("V, W");
+    LinesIOSegmentOld segment("V, W");
     (segment, V, W) % VectorSize(3);
 
     ostringstream sout;
@@ -276,11 +276,11 @@ TEST(DeprecatedLinesIOSegmentTest, MixedWithJaggedVectorPrinting) {
     EXPECT_EQ("1 4\n2 5 6\n3 7 8 9\n", sout.str());
 }
 
-TEST(DeprecatedLinesIOSegmentTest, MixedWithJaggedVectorSizeParsing) {
+TEST(DeprecatedLinesIOSegmentOldTest, MixedWithJaggedVectorSizeParsing) {
     vector<int> V;
     vector<vector<int>> W;
 
-    LinesIOSegment segment("V, W");
+    LinesIOSegmentOld segment("V, W");
     (segment, V, W) % VectorSize(3);
 
     istringstream sin("1 4\n2 5 6\n3 7 8 9\n");

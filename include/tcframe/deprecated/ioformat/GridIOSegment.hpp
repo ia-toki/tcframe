@@ -18,13 +18,13 @@ using std::vector;
 
 namespace tcframe {
 
-class GridIOSegment : public IOSegment {
+class GridIOSegmentOld : public IOSegment {
 public:
-    GridIOSegment(string name)
+    GridIOSegmentOld(string name)
             : name(name) { }
 
     template<typename T, typename = RequiresScalar<T>>
-    GridIOSegment& operator,(vector<vector<T>>& matrix) {
+    GridIOSegmentOld& operator,(vector<vector<T>>& matrix) {
         if (variable != nullptr) {
             throw IOFormatException("Grid segment must have exactly one variable");
         }
@@ -35,11 +35,11 @@ public:
     }
 
     template<typename T>
-    GridIOSegment& operator,(T) {
+    GridIOSegmentOld& operator,(T) {
         throw IOFormatException("Variable type of `" + name + "` unsatisfied. Expected: matrix of basic scalar or string type");
     }
 
-    GridIOSegment& operator%(MatrixSizes sizes) {
+    GridIOSegmentOld& operator%(MatrixSizes sizes) {
         rowsSize = sizes.getRowsSize();
         columnsSize = sizes.getColumnsize();
         return *this;

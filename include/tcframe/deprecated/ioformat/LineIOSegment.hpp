@@ -21,14 +21,14 @@ using std::vector;
 
 namespace tcframe {
 
-class LineIOSegment : public IOSegment {
+class LineIOSegmentOld : public IOSegment {
 public:
-    LineIOSegment(string names) {
+    LineIOSegmentOld(string names) {
         this->names = Util::split(names);
     }
 
     template<typename T, typename = RequiresScalar<T>>
-    LineIOSegment& operator,(T& scalar) {
+    LineIOSegmentOld& operator,(T& scalar) {
         checkVectorWithoutSize();
 
         variables.push_back(new Scalar<T>(scalar, names[variables.size()]));
@@ -37,7 +37,7 @@ public:
     }
 
     template<typename T, typename = RequiresScalar<T>>
-    LineIOSegment& operator,(vector<T>& vektor) {
+    LineIOSegmentOld& operator,(vector<T>& vektor) {
         checkVectorWithoutSize();
 
         variables.push_back(new HorizontalVector<T>(vektor, names[variables.size()]));
@@ -46,7 +46,7 @@ public:
     }
 
     template<typename T, typename = RequiresScalar<T>>
-    LineIOSegment& operator,(VectorWithSize<T> vektorWithSize) {
+    LineIOSegmentOld& operator,(VectorWithSize<T> vektorWithSize) {
         checkVectorWithoutSize();
 
         variables.push_back(new HorizontalVector<T>(*vektorWithSize.vektor, names[variables.size()]));
@@ -55,7 +55,7 @@ public:
     }
 
     template<typename T, typename = RequiresNotScalar <T>>
-    LineIOSegment& operator,(T) {
+    LineIOSegmentOld& operator,(T) {
         throw IOFormatException("Variable type of `" + names[variables.size()] +
                                 "` unsatisfied. Expected: basic scalar or string type, or vector of those types");
     }
