@@ -11,7 +11,7 @@
 #include "tcframe/generation/VerificationFailure.hpp"
 #include "tcframe/os/OperatingSystem.hpp"
 #include "tcframe/testcase/TestCase.hpp"
-#include "tcframe/variable/IOVariablePrinter.hpp"
+#include "tcframe/variable/IOVariablesPrinter.hpp"
 #include "tcframe/verification/ConstraintSuiteVerifier.hpp"
 
 using std::function;
@@ -23,13 +23,13 @@ namespace tcframe {
 class TestCaseGenerator {
 private:
     ConstraintSuiteVerifier* constraintSuiteVerifier_;
-    IOVariablePrinter* ioVariablePrinter_;
+    IOVariablesPrinter* ioVariablePrinter_;
     OperatingSystem* os_;
 
 public:
     TestCaseGenerator(
             ConstraintSuiteVerifier* constraintSuiteVerifier,
-            IOVariablePrinter* ioVariablePrinter,
+            IOVariablesPrinter* ioVariablePrinter,
             OperatingSystem* os)
             : constraintSuiteVerifier_(constraintSuiteVerifier)
             , ioVariablePrinter_(ioVariablePrinter)

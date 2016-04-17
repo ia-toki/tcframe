@@ -6,7 +6,6 @@
 #include "tcframe/io/LineIOSegmentScalarVariable.hpp"
 #include "tcframe/io/LineIOSegmentVariable.hpp"
 #include "tcframe/io/IOSegment.hpp"
-#include "tcframe/io/IOSegmentVisitor.hpp"
 #include "tcframe/type/Scalar.hpp"
 #include "tcframe/util/StringUtils.hpp"
 
@@ -22,12 +21,12 @@ private:
     vector<LineIOSegmentVariable*> variables_;
 
 public:
-    const vector<LineIOSegmentVariable*>& variables() const {
-        return variables_;
+    IOSegmentType type() {
+        return IOSegmentType::LINE;
     }
 
-    void accept(IOSegmentVisitor* visitor) {
-        return visitor->visit(this);
+    const vector<LineIOSegmentVariable*>& variables() const {
+        return variables_;
     }
 
     bool operator==(const LineIOSegment& o) const {

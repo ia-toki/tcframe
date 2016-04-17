@@ -18,6 +18,10 @@ public:
             : variable_(variable)
     {}
 
+    LineIOSegmentVariableType type() {
+        return LineIOSegmentVariableType::SCALAR;
+    }
+
     Scalar* variable() const {
         return variable_;
     }

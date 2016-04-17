@@ -5,11 +5,12 @@
 #include "tcframe/generation/TestSuiteGenerationListener.hpp"
 #include "tcframe/generation/TestSuiteGenerator.hpp"
 #include "tcframe/generation/TestCaseGenerator.hpp"
+#include "tcframe/io/LineIOSegmentPrinter.hpp"
 #include "tcframe/os/OperatingSystem.hpp"
 #include "tcframe/os/UnixOperatingSystem.hpp"
 #include "tcframe/runner/BaseGenerator.hpp"
 #include "tcframe/runner/BaseProblem.hpp"
-#include "tcframe/variable/IOVariablePrinter.hpp"
+#include "tcframe/variable/IOVariablesPrinter.hpp"
 #include "tcframe/verification/ConstraintSuiteVerifier.hpp"
 
 namespace tcframe {
@@ -43,10 +44,11 @@ public:
         auto testSuite = generator_->buildTestSuite();
 
         auto os = new UnixOperatingSystem();
-        auto ioVariablePrinter = new IOVariablePrinter(ioFormat);
+        auto lineIOSegmentPrinter = new LineIOSegmentPrinter();
+        auto ioVariablesPrinter = new IOVariablesPrinter(lineIOSegmentPrinter, ioFormat);
         auto constraintSuiteVerifier = new ConstraintSuiteVerifier(constraintSuite);
         auto generationListener = new TestSuiteGenerationListener();
-        auto testCaseGenerator = new TestCaseGenerator(constraintSuiteVerifier, ioVariablePrinter, os);
+        auto testCaseGenerator = new TestCaseGenerator(constraintSuiteVerifier, ioVariablesPrinter, os);
         auto testSuiteGenerator = new TestSuiteGenerator(testCaseGenerator, os, generationListener);
 
         return testSuiteGenerator->generate(testSuite, problemConfig, generatorConfig).isSuccessful() ? 0 : 1;

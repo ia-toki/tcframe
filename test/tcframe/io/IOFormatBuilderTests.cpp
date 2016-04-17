@@ -10,7 +10,9 @@ namespace tcframe {
 
 struct FakeIOSegment : public IOSegment {
 public:
-    void accept(IOSegmentVisitor* visitor) {}
+    IOSegmentType type() {
+        return IOSegmentType::LINE;
+    }
 };
 
 class IOFormatBuilderTests : public Test {

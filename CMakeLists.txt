@@ -59,8 +59,8 @@ set(SOURCE_FILES
     include/tcframe/generation/VerificationFailure.hpp
     include/tcframe/io/IOFormat.hpp
     include/tcframe/io/IOSegment.hpp
-    include/tcframe/io/IOSegmentVisitor.hpp
     include/tcframe/io/LineIOSegment.hpp
+    include/tcframe/io/LineIOSegmentPrinter.hpp
     include/tcframe/io/LineIOSegmentVariable.hpp
     include/tcframe/io/LineIOSegmentScalarVariable.hpp
     include/tcframe/os/ExecutionResult.hpp
@@ -76,7 +76,7 @@ set(SOURCE_FILES
     include/tcframe/testcase/TestGroup.hpp
     include/tcframe/type/Scalar.hpp
     include/tcframe/util/StringUtils.hpp
-    include/tcframe/variable/IOVariablePrinter.hpp
+    include/tcframe/variable/IOVariablesPrinter.hpp
     include/tcframe/verification/ConstraintSuiteVerifier.hpp
     include/tcframe/verification/ConstraintSuiteVerificationResult.hpp
     test/tcframe/constraint/ConstraintSuiteBuilderTests.cpp
