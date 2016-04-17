@@ -7,7 +7,7 @@
 using std::istringstream;
 using std::ostringstream;
 
-using tcframe::IOFormatProvider;
+using tcframe_old::IOFormatProvider;
 
 TEST(DeprecatedIOFormatProviderTest, Printing) {
     int A = 1;

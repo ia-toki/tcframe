@@ -7,8 +7,8 @@
 
 using std::vector;
 
-using tcframe::Failure;
-using tcframe::PrintingException;
+using tcframe_old::Failure;
+using tcframe_old::PrintingException;
 
 TEST(DeprecatedPrintingException, Construction) {
     PrintingException e("foo");

@@ -8,7 +8,7 @@
 using std::vector;
 using std::string;
 
-using tcframe::Util;
+using tcframe_old::Util;
 
 TEST(DeprecatedUtilTest, ToString) {
     EXPECT_EQ("42", Util::toString(42));

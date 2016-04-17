@@ -2,7 +2,7 @@
 
 #include "tcframe/deprecated/generator/TestCaseException.hpp"
 
-namespace tcframe {
+namespace tcframe_old {
 
 class IOFormatException : public TestCaseException {
 public:

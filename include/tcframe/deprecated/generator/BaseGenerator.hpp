@@ -35,7 +35,7 @@ using std::set;
 using std::string;
 using std::vector;
 
-namespace tcframe {
+namespace tcframe_old {
 
 template<typename TProblem>
 class BaseGenerator : public TProblem, protected TestCasesCollector {

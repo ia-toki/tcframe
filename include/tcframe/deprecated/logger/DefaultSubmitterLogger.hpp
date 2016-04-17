@@ -13,7 +13,7 @@ using std::endl;
 using std::map;
 using std::vector;
 
-namespace tcframe {
+namespace tcframe_old {
 
 class DefaultSubmitterLogger : public SubmitterLogger {
 public:

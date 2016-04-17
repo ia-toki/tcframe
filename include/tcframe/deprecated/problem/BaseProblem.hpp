@@ -13,7 +13,7 @@
 using std::string;
 using std::vector;
 
-namespace tcframe {
+namespace tcframe_old {
 
 class BaseProblem : protected ConstraintsCollector, protected IOFormatProvider {
 public:

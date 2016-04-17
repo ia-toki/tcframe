@@ -3,8 +3,8 @@
 #include "tcframe/deprecated/core/Failure.hpp"
 #include "tcframe/deprecated/os/ExecutionException.hpp"
 
-using tcframe::ExecutionException;
-using tcframe::Failure;
+using tcframe_old::ExecutionException;
+using tcframe_old::Failure;
 
 TEST(DeprecatedExecutionException, Construction) {
     ExecutionException e({Failure("foo", 0)});

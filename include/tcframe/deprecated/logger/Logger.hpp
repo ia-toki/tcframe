@@ -8,7 +8,7 @@
 using std::string;
 using std::vector;
 
-namespace tcframe {
+namespace tcframe_old {
 
 class Logger {
 public:

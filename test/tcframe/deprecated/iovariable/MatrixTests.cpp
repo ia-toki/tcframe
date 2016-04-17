@@ -10,8 +10,8 @@ using std::istringstream;
 using std::ostringstream;
 using std::vector;
 
-using tcframe::Matrix;
-using tcframe::ParsingException;
+using tcframe_old::Matrix;
+using tcframe_old::ParsingException;
 
 TEST(DeprecatedMatrixTest, Construction) {
     vector<vector<int>> G;

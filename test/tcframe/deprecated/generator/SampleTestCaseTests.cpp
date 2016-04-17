@@ -6,7 +6,7 @@
 
 using std::set;
 
-using tcframe::SampleTestCase;
+using tcframe_old::SampleTestCase;
 
 TEST(DeprecatedSampleTestCaseTest, Construction) {
     SampleTestCase testCase("7 42\n", {1});

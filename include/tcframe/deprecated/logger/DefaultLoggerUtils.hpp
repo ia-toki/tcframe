@@ -10,7 +10,7 @@ using std::endl;
 using std::flush;
 using std::vector;
 
-namespace tcframe {
+namespace tcframe_old {
 
 class DefaultLoggerUtils {
 public:

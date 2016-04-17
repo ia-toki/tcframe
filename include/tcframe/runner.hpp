@@ -7,3 +7,5 @@
 
 #include "tcframe/deprecated/runner/Macro.hpp"
 #include "tcframe/deprecated/runner/Runner.hpp"
+
+namespace tcframe = tcframe_old;

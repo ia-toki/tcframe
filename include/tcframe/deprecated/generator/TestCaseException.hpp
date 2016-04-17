@@ -8,7 +8,7 @@
 using std::exception;
 using std::vector;
 
-namespace tcframe {
+namespace tcframe_old {
 
 class TestCaseException : public exception {
 public:

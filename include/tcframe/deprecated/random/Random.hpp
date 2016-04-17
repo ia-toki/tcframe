@@ -8,7 +8,7 @@ using std::random_shuffle;
 using std::uniform_real_distribution;
 using std::uniform_int_distribution;
 
-namespace tcframe {
+namespace tcframe_old {
 
 class Random {
 public:

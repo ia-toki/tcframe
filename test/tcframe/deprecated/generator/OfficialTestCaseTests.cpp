@@ -6,7 +6,7 @@
 
 using std::set;
 
-using tcframe::OfficialTestCase;
+using tcframe_old::OfficialTestCase;
 
 TEST(DeprecatedOfficialTestCaseTest, Construction) {
     int X;

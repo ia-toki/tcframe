@@ -14,7 +14,7 @@ using std::initializer_list;
 using std::set;
 using std::vector;
 
-namespace tcframe {
+namespace tcframe_old {
 
 class TestCasesCollector {
 public:

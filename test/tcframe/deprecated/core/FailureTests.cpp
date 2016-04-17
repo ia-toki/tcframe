@@ -2,7 +2,7 @@
 
 #include "tcframe/deprecated/core/Failure.hpp"
 
-using tcframe::Failure;
+using tcframe_old::Failure;
 
 TEST(DeprecatedFailureTest, Construction) {
     Failure failure("some text", 7);

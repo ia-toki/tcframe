@@ -8,8 +8,8 @@
 using std::istringstream;
 using std::ostringstream;
 
-using tcframe::ParsingException;
-using tcframe::Scalar;
+using tcframe_old::ParsingException;
+using tcframe_old::Scalar;
 
 TEST(DeprecatedScalarTest, Construction) {
     int X;

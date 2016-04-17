@@ -13,11 +13,11 @@ using std::istringstream;
 using std::ostringstream;
 using std::vector;
 
-using tcframe::GridIOSegmentOld;
-using tcframe::IOFormatException;
-using tcframe::MatrixSizes;
-using tcframe::ParsingException;
-using tcframe::PrintingException;
+using tcframe_old::GridIOSegmentOld;
+using tcframe_old::IOFormatException;
+using tcframe_old::MatrixSizes;
+using tcframe_old::ParsingException;
+using tcframe_old::PrintingException;
 
 TEST(DeprecatedGridIOSegmentOldTest, UnsupportedTypes) {
     int X;

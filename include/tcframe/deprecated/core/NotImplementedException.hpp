@@ -4,7 +4,7 @@
 
 using std::exception;
 
-namespace tcframe {
+namespace tcframe_old {
 
 class NotImplementedException : public exception { };
 

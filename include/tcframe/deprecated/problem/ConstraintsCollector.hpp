@@ -11,7 +11,7 @@ using std::function;
 using std::string;
 using std::vector;
 
-namespace tcframe {
+namespace tcframe_old {
 
 class ConstraintsCollector {
 public:

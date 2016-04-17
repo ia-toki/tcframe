@@ -4,7 +4,7 @@
 
 using std::istream;
 
-namespace tcframe {
+namespace tcframe_old {
 
 struct ExecutionResult {
     int exitStatus;

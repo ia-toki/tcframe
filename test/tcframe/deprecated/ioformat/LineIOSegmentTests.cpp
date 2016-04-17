@@ -16,12 +16,12 @@ using std::ostringstream;
 using std::set;
 using std::vector;
 
-using tcframe::IOFormatException;
-using tcframe::LineIOSegmentOld;
-using tcframe::ParsingException;
-using tcframe::PrintingException;
-using tcframe::VectorSize;
-using tcframe::VectorWithSize;
+using tcframe_old::IOFormatException;
+using tcframe_old::LineIOSegmentOld;
+using tcframe_old::ParsingException;
+using tcframe_old::PrintingException;
+using tcframe_old::VectorSize;
+using tcframe_old::VectorWithSize;
 
 TEST(DeprecatedLineIOSegmentOldTest, UnsupportedType) {
     set<int> S;

@@ -7,8 +7,8 @@
 
 using std::vector;
 
-using tcframe::TestCasesCollector;
-using tcframe::TestGroup;
+using tcframe_old::TestCasesCollector;
+using tcframe_old::TestGroup;
 
 TEST(DeprecatedTestCasesCollectorTest, WithTestGroups) {
     TestCasesCollector collector;

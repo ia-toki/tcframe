@@ -7,9 +7,9 @@
 
 using std::vector;
 
-using tcframe::Constraint;
-using tcframe::ConstraintsCollector;
-using tcframe::Subtask;
+using tcframe_old::Constraint;
+using tcframe_old::ConstraintsCollector;
+using tcframe_old::Subtask;
 
 TEST(DeprecatedConstraintsCollectorTest, WithSubtasks) {
     ConstraintsCollector collector;

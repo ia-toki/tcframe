@@ -13,7 +13,7 @@ using std::istream;
 using std::ostream;
 using std::string;
 
-namespace tcframe {
+namespace tcframe_old {
 
 class Variable {
 public:

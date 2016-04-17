@@ -3,7 +3,7 @@
 #include "../commons/Commons.hpp"
 #include "tcframe/deprecated/problem/BaseProblem.hpp"
 
-using tcframe::BaseProblem;
+using tcframe_old::BaseProblem;
 
 class MyProblem : public BaseProblem {
 protected:

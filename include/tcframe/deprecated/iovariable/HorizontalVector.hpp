@@ -11,7 +11,7 @@ using std::istream;
 using std::ostream;
 using std::string;
 
-namespace tcframe {
+namespace tcframe_old {
 
 template<typename T>
 class HorizontalVector : public VectorHorizontalVariable {

@@ -23,13 +23,13 @@ using std::ostringstream;
 using std::string;
 using std::vector;
 
-using tcframe::BaseGenerator;
-using tcframe::BaseProblem;
-using tcframe::ExecutionResult;
-using tcframe::Failure;
-using tcframe::GeneratorLogger;
-using tcframe::OperatingSystem;
-using tcframe::Util;
+using tcframe_old::BaseGenerator;
+using tcframe_old::BaseProblem;
+using tcframe_old::ExecutionResult;
+using tcframe_old::Failure;
+using tcframe_old::GeneratorLogger;
+using tcframe_old::OperatingSystem;
+using tcframe_old::Util;
 
 class FakeGeneratorLogger : public GeneratorLogger {
 public:

@@ -22,10 +22,10 @@ using std::ostringstream;
 using std::string;
 using std::vector;
 
-using tcframe::ExecutionResult;
-using tcframe::Submitter;
-using tcframe::SubmitterLogger;
-using tcframe::Verdict;
+using tcframe_old::ExecutionResult;
+using tcframe_old::Submitter;
+using tcframe_old::SubmitterLogger;
+using tcframe_old::Verdict;
 
 class FakeSubmitterLogger : public SubmitterLogger {
 public:

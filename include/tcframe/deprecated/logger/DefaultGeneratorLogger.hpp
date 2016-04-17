@@ -11,7 +11,7 @@ using std::cout;
 using std::endl;
 using std::vector;
 
-namespace tcframe {
+namespace tcframe_old {
 
 class DefaultGeneratorLogger : public GeneratorLogger {
 public:

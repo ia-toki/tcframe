@@ -8,7 +8,7 @@
 using std::set;
 using std::string;
 
-namespace tcframe {
+namespace tcframe_old {
 
 class SampleTestCase : public TestCase {
 public:

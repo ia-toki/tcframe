@@ -10,8 +10,8 @@ using std::istringstream;
 using std::ostringstream;
 using std::vector;
 
-using tcframe::ParsingException;
-using tcframe::VerticalVector;
+using tcframe_old::ParsingException;
+using tcframe_old::VerticalVector;
 
 TEST(DeprecatedVerticalVectorTest, Construction) {
     vector<int> V;

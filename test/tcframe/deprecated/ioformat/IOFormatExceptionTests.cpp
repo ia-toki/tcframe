@@ -7,8 +7,8 @@
 
 using std::vector;
 
-using tcframe::Failure;
-using tcframe::IOFormatException;
+using tcframe_old::Failure;
+using tcframe_old::IOFormatException;
 
 TEST(DeprecatedIOFormatException, Construction) {
     IOFormatException e("foo");

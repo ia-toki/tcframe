@@ -15,7 +15,7 @@ using std::istream;
 using std::ostream;
 using std::string;
 
-namespace tcframe {
+namespace tcframe_old {
 
 template<typename T>
 using RequiresScalar = typename enable_if<!is_reference<T>::value && (is_arithmetic<T>::value || is_same<string, T>::value)>::type;

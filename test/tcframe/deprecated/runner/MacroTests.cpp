@@ -14,14 +14,14 @@
 
 using std::vector;
 
-using tcframe::Constraint;
-using tcframe::ConstraintsCollector;
-using tcframe::IOFormatProvider;
-using tcframe::MatrixSizes;
-using tcframe::Subtask;
-using tcframe::TestCasesCollector;
-using tcframe::TestGroup;
-using tcframe::VectorSize;
+using tcframe_old::Constraint;
+using tcframe_old::ConstraintsCollector;
+using tcframe_old::IOFormatProvider;
+using tcframe_old::MatrixSizes;
+using tcframe_old::Subtask;
+using tcframe_old::TestCasesCollector;
+using tcframe_old::TestGroup;
+using tcframe_old::VectorSize;
 
 TEST(DeprecatedMacroTest, SIZE_IMPL1) {
     VectorSize vs = SIZE(2);

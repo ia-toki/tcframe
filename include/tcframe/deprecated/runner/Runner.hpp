@@ -11,7 +11,7 @@ using std::cout;
 using std::endl;
 using std::string;
 
-namespace tcframe {
+namespace tcframe_old {
 
 enum RunnerMode {
     GENERATION,

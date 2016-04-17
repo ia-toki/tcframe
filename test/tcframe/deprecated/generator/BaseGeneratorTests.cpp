@@ -10,8 +10,8 @@
 using std::map;
 using std::string;
 
-using tcframe::BaseGenerator;
-using tcframe::ExecutionResult;
+using tcframe_old::BaseGenerator;
+using tcframe_old::ExecutionResult;
 
 class MyGenerator : public BaseGenerator<DefaultProblem> {
     void Config() {

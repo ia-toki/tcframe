@@ -17,7 +17,7 @@ using std::ostream;
 using std::ostringstream;
 using std::string;
 
-namespace tcframe {
+namespace tcframe_old {
 
 class UnixOperatingSystem : public OperatingSystem {
 public:

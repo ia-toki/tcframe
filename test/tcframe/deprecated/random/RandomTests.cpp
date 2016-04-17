@@ -6,7 +6,7 @@
 
 using std::vector;
 
-using tcframe::Random;
+using tcframe_old::Random;
 
 TEST(DeprecatedRandomTest, NextNumberSingleArgument) {
     Random rnd;

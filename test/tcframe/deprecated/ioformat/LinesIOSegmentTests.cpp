@@ -14,12 +14,12 @@ using std::istringstream;
 using std::ostringstream;
 using std::vector;
 
-using tcframe::IOFormatException;
-using tcframe::LinesIOSegmentOld;
-using tcframe::ParsingException;
-using tcframe::PrintingException;
-using tcframe::VectorSize;
-using tcframe::VectorWithSize;
+using tcframe_old::IOFormatException;
+using tcframe_old::LinesIOSegmentOld;
+using tcframe_old::ParsingException;
+using tcframe_old::PrintingException;
+using tcframe_old::VectorSize;
+using tcframe_old::VectorWithSize;
 
 TEST(DeprecatedLinesIOSegmentOldTest, UnsupportedTypes) {
     int X;

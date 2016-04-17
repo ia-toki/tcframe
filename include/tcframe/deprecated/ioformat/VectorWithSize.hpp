@@ -6,7 +6,7 @@
 
 using std::vector;
 
-namespace tcframe {
+namespace tcframe_old {
 
 template<typename T>
 struct VectorWithSize {

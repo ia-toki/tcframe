@@ -6,7 +6,7 @@
 
 using std::string;
 
-namespace tcframe {
+namespace tcframe_old {
 
 class PrintingException : public TestCaseException {
 public:

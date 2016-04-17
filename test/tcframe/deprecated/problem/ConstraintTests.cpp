@@ -2,7 +2,7 @@
 
 #include "tcframe/deprecated/problem/Constraint.hpp"
 
-using tcframe::Constraint;
+using tcframe_old::Constraint;
 
 TEST(DeprecatedConstraintTest, Construction) {
     int X;

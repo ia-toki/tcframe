@@ -7,8 +7,8 @@
 
 using std::vector;
 
-using tcframe::Failure;
-using tcframe::ParsingException;
+using tcframe_old::Failure;
+using tcframe_old::ParsingException;
 
 TEST(DeprecatedParsingException, Construction) {
     ParsingException e("foo");

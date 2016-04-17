@@ -7,7 +7,7 @@
 
 using std::vector;
 
-namespace tcframe {
+namespace tcframe_old {
 
 class SubtaskSatisfiabilityException : public TestCaseException {
 public:

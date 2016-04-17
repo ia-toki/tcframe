@@ -7,7 +7,7 @@
 
 using std::map;
 
-namespace tcframe {
+namespace tcframe_old {
 
 class SubmitterLogger : public Logger {
 public:
