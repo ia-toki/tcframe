@@ -5,6 +5,7 @@
 #include "tcframe/io/LineIOSegment.hpp"
 #include "tcframe/io/LineIOSegmentVariable.hpp"
 #include "tcframe/io/LineIOSegmentScalarVariable.hpp"
+#include "tcframe/io/WhitespacePrinter.hpp"
 
 using std::endl;
 using std::ostream;
@@ -12,12 +13,19 @@ using std::ostream;
 namespace tcframe {
 
 class LineIOSegmentPrinter {
+private:
+    WhitespacePrinter* whitespacePrinter_;
+
 public:
+    LineIOSegmentPrinter(WhitespacePrinter* whitespacePrinter)
+            : whitespacePrinter_(whitespacePrinter)
+    {}
+
     void print(LineIOSegment* segment, ostream* out) {
         bool first = true;
         for (LineIOSegmentVariable* segmentVariable : segment->variables()) {
             if (!first) {
-                *out << " ";
+                whitespacePrinter_->printSpace(out);
             }
             first = false;
 
@@ -26,7 +34,7 @@ public:
                 scalarVariable->variable()->printTo(*out);
             }
         }
-        *out << endl;
+        whitespacePrinter_->printNewline(out);
     }
 };
 

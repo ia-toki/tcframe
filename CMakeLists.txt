@@ -63,6 +63,7 @@ set(SOURCE_FILES
     include/tcframe/io/LineIOSegmentPrinter.hpp
     include/tcframe/io/LineIOSegmentVariable.hpp
     include/tcframe/io/LineIOSegmentScalarVariable.hpp
+    include/tcframe/io/WhitespacePrinter.hpp
     include/tcframe/os/ExecutionResult.hpp
     include/tcframe/os/OperatingSystem.hpp
     include/tcframe/os/UnixOperatingSystem.hpp

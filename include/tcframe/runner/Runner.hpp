@@ -44,7 +44,8 @@ public:
         auto testSuite = generator_->buildTestSuite();
 
         auto os = new UnixOperatingSystem();
-        auto lineIOSegmentPrinter = new LineIOSegmentPrinter();
+        auto whitespacePrinter = new WhitespacePrinter();
+        auto lineIOSegmentPrinter = new LineIOSegmentPrinter(whitespacePrinter);
         auto ioVariablesPrinter = new IOVariablesPrinter(lineIOSegmentPrinter, ioFormat);
         auto constraintSuiteVerifier = new ConstraintSuiteVerifier(constraintSuite);
         auto generationListener = new TestSuiteGenerationListener();
