@@ -83,7 +83,10 @@ set(SOURCE_FILES
     test/tcframe/constraint/ConstraintSuiteBuilderTests.cpp
     test/tcframe/io/IOFormatBuilderTests.cpp
     test/tcframe/io/LineIOSegmentBuilderTests.cpp
+    test/tcframe/io/LineIOSegmentPrinterTests.cpp
+    test/tcframe/io/MockWhitespacePrinter.hpp
     test/tcframe/testcase/TestSuiteBuilderTests.cpp
+    test/tcframe/type/MockScalar.hpp
     test/tcframe/type/ScalarTests.cpp
     test/tcframe/verification/ConstraintSuiteVerifierTests.cpp
 

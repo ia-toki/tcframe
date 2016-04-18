@@ -48,14 +48,13 @@ public:
         return addScalarVariable(Scalar::create(var, name));
     }
 
-    LineIOSegment* build() {
-        return subject_;
-    }
-
-private:
     LineIOSegmentBuilder& addScalarVariable(Scalar* variable) {
         subject_->variables_.push_back(new LineIOSegmentScalarVariable(variable));
         return *this;
+    }
+
+    LineIOSegment* build() {
+        return subject_;
     }
 };
 
