@@ -31,7 +31,7 @@ public:
 
             if (segmentVariable->type() == LineIOSegmentVariableType:: SCALAR) {
                 auto scalarVariable = (LineIOSegmentScalarVariable*) segmentVariable;
-                scalarVariable->variable()->printTo(*out);
+                scalarVariable->variable()->printTo(out);
             }
         }
         whitespacePrinter_->printNewline(out);

@@ -28,7 +28,7 @@ TEST_F(ScalarTests, CanAccessName) {
 
 TEST_F(ScalarTests, CanParse) {
     istringstream sin("42");
-    A->parseFrom(sin);
+    A->parseFrom(&sin);
 
     EXPECT_THAT(a, Eq(42));
 }
@@ -37,7 +37,7 @@ TEST_F(ScalarTests, CanPrint) {
     a = 42;
 
     ostringstream sout;
-    A->printTo(sout);
+    A->printTo(&sout);
 
     EXPECT_THAT(sout.str(), Eq("42"));
 }

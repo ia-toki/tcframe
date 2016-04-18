@@ -32,8 +32,8 @@ public:
     virtual ~Scalar() {}
 
     virtual const string& getName() const = 0;
-    virtual void printTo(ostream& out) const = 0;
-    virtual void parseFrom(istream& in) const = 0;
+    virtual void printTo(ostream* out) = 0;
+    virtual void parseFrom(istream* in) = 0;
 
     bool operator==(const Scalar& o) const {
         return tie(getName()) == tie(o.getName());
@@ -59,12 +59,12 @@ public:
         return name_;
     }
 
-    void printTo(ostream& out) const {
-        out << var_;
+    void printTo(ostream* out) {
+        *out << var_;
     }
 
-    void parseFrom(istream& in) const {
-        in >> var_;
+    void parseFrom(istream* in) {
+        *in >> var_;
     }
 };
 
