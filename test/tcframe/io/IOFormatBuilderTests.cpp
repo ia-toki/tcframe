@@ -3,17 +3,12 @@
 #include "tcframe/io/IOFormat.hpp"
 #include "tcframe/io/IOSegment.hpp"
 
+#include "../io/FakeIOSegment.hpp"
+
 using ::testing::ElementsAre;
 using ::testing::Test;
 
 namespace tcframe {
-
-struct FakeIOSegment : public IOSegment {
-public:
-    IOSegmentType type() {
-        return IOSegmentType::LINE;
-    }
-};
 
 class IOFormatBuilderTests : public Test {
 protected:

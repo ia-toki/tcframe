@@ -17,11 +17,13 @@ private:
     WhitespacePrinter* whitespacePrinter_;
 
 public:
+    virtual ~LineIOSegmentPrinter() {}
+
     LineIOSegmentPrinter(WhitespacePrinter* whitespacePrinter)
             : whitespacePrinter_(whitespacePrinter)
     {}
 
-    void print(LineIOSegment* segment, ostream* out) {
+    virtual void print(LineIOSegment* segment, ostream* out) {
         bool first = true;
         for (LineIOSegmentVariable* segmentVariable : segment->variables()) {
             if (!first) {

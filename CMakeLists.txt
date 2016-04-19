@@ -82,12 +82,15 @@ set(SOURCE_FILES
     include/tcframe/verification/ConstraintSuiteVerificationResult.hpp
     test/tcframe/constraint/ConstraintSuiteBuilderTests.cpp
     test/tcframe/io/IOFormatBuilderTests.cpp
+    test/tcframe/io/FakeIOSegment.hpp
     test/tcframe/io/LineIOSegmentBuilderTests.cpp
     test/tcframe/io/LineIOSegmentPrinterTests.cpp
+    test/tcframe/io/MockLineIOSegmentPrinter.hpp
     test/tcframe/io/MockWhitespacePrinter.hpp
     test/tcframe/testcase/TestSuiteBuilderTests.cpp
     test/tcframe/type/MockScalar.hpp
     test/tcframe/type/ScalarTests.cpp
+    test/tcframe/variable/IOVariablePrinterTests.cpp
     test/tcframe/verification/ConstraintSuiteVerifierTests.cpp
 
     include/tcframe/deprecated/core/Failure.hpp
