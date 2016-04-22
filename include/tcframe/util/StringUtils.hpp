@@ -13,9 +13,9 @@ using std::vector;
 namespace tcframe {
 
 class StringUtils {
-private:
-    StringUtils() {}
 public:
+    StringUtils() = delete;
+
     static vector<string> split(string s) {
         replace(s.begin(), s.end(), ',', ' ');
         istringstream sin(s);

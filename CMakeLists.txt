@@ -100,6 +100,7 @@ set(SOURCE_FILES
     test/tcframe/testcase/TestSuiteBuilderTests.cpp
     test/tcframe/type/MockScalar.hpp
     test/tcframe/type/ScalarTests.cpp
+    test/tcframe/util/StringUtilsTests.cpp
     test/tcframe/variable/IOVariablePrinterTests.cpp
     test/tcframe/verification/ConstraintSuiteVerifierTests.cpp
 
