@@ -18,18 +18,16 @@ bool b5;
 
 class ConstraintSuiteVerifierTests : public Test {
 protected:
-    const Constraint constraint1 = Constraint([=]{return b1;}, "1 <= A && A <= 10");
-    const Constraint constraint2 = Constraint([=]{return b2;}, "1 <= B && B <= 10");
-    const Constraint constraint3 = Constraint([=]{return b3;}, "1 <= C && C <= 10");
-    const Constraint constraint4 = Constraint([=]{return b4;}, "1 <= D && D <= 10");
-    const Constraint constraint5 = Constraint([=]{return b5;}, "1 <= E && E <= 10");
-
-    const ConstraintSuite constraintSuiteWithoutConstraintGroups = ConstraintSuiteBuilder()
+    Constraint constraint1 = Constraint([=]{return b1;}, "1 <= A && A <= 10");
+    Constraint constraint2 = Constraint([=]{return b2;}, "1 <= B && B <= 10");
+    Constraint constraint3 = Constraint([=]{return b3;}, "1 <= C && C <= 10");
+    Constraint constraint4 = Constraint([=]{return b4;}, "1 <= D && D <= 10");
+    Constraint constraint5 = Constraint([=]{return b5;}, "1 <= E && E <= 10");
+    ConstraintSuite constraintSuiteWithoutConstraintGroups = ConstraintSuiteBuilder()
             .addConstraint(constraint1)
             .addConstraint(constraint2)
             .build();
-
-    const ConstraintSuite constraintSuiteWithConstraintGroups = ConstraintSuiteBuilder()
+    ConstraintSuite constraintSuiteWithConstraintGroups = ConstraintSuiteBuilder()
             .newConstraintGroup()
             .addConstraint(constraint1)
             .addConstraint(constraint2)
@@ -39,14 +37,15 @@ protected:
             .newConstraintGroup()
             .addConstraint(constraint5)
             .build();
+
+    ConstraintSuiteVerifier verifierWithoutConstraintGroups = ConstraintSuiteVerifier(constraintSuiteWithoutConstraintGroups);
+    ConstraintSuiteVerifier verifierWithConstraintGroups = ConstraintSuiteVerifier(constraintSuiteWithConstraintGroups);
 };
 
 TEST_F(ConstraintSuiteVerifierTests, VerificationWithoutConstraintGroupsValidWhenAllConstraintsValid) {
-    ConstraintSuiteVerifier verifier(constraintSuiteWithoutConstraintGroups);
-
     b1 = true;
     b2 = true;
-    ConstraintSuiteVerificationResult result = verifier.verify({-1});
+    ConstraintSuiteVerificationResult result = verifierWithoutConstraintGroups.verify({-1});
 
     EXPECT_THAT(result.isValid(), Eq(true));
     EXPECT_THAT(result.satisfiedButNotAssignedConstraintGroupIds(), IsEmpty());
@@ -54,11 +53,9 @@ TEST_F(ConstraintSuiteVerifierTests, VerificationWithoutConstraintGroupsValidWhe
 }
 
 TEST_F(ConstraintSuiteVerifierTests, VerificationWithoutConstraintGroupsInvalidWhenSomeConstraintsInvalid) {
-    ConstraintSuiteVerifier verifier(constraintSuiteWithoutConstraintGroups);
-
     b1 = true;
     b2 = false;
-    ConstraintSuiteVerificationResult result = verifier.verify({-1});
+    ConstraintSuiteVerificationResult result = verifierWithoutConstraintGroups.verify({-1});
 
     EXPECT_THAT(result.isValid(), Eq(false));
     EXPECT_THAT(result.satisfiedButNotAssignedConstraintGroupIds(), IsEmpty());
@@ -66,32 +63,26 @@ TEST_F(ConstraintSuiteVerifierTests, VerificationWithoutConstraintGroupsInvalidW
             Pair(-1, ElementsAre(constraint2.description()))));
 }
 
-
 TEST_F(ConstraintSuiteVerifierTests, VerificationWithConstraintGroupsValidWhenAllConstraintsValid) {
-    ConstraintSuiteVerifier verifier(constraintSuiteWithConstraintGroups);
-
     b1 = true;
     b2 = true;
     b3 = true;
     b4 = true;
     b5 = true;
-    ConstraintSuiteVerificationResult result = verifier.verify({1, 2, 3});
+    ConstraintSuiteVerificationResult result = verifierWithConstraintGroups.verify({1, 2, 3});
 
     EXPECT_THAT(result.isValid(), Eq(true));
     EXPECT_THAT(result.satisfiedButNotAssignedConstraintGroupIds(), IsEmpty());
     EXPECT_THAT(result.unsatisfiedConstraintDescriptionsByConstraintGroupId(), IsEmpty());
 }
 
-
 TEST_F(ConstraintSuiteVerifierTests, VerificationWithConstraintGroupsValidWhenAllAssignedConstraintGroupsValid) {
-    ConstraintSuiteVerifier verifier(constraintSuiteWithConstraintGroups);
-
     b1 = true;
     b2 = true;
     b3 = true;
     b4 = false;
     b5 = true;
-    ConstraintSuiteVerificationResult result = verifier.verify({1, 3});
+    ConstraintSuiteVerificationResult result = verifierWithConstraintGroups.verify({1, 3});
 
     EXPECT_THAT(result.isValid(), Eq(true));
     EXPECT_THAT(result.satisfiedButNotAssignedConstraintGroupIds(), IsEmpty());
@@ -99,14 +90,12 @@ TEST_F(ConstraintSuiteVerifierTests, VerificationWithConstraintGroupsValidWhenAl
 }
 
 TEST_F(ConstraintSuiteVerifierTests, VerificationWithConstraintGroupsInvalidWhenSomeConstraintsInvalid) {
-    ConstraintSuiteVerifier verifier(constraintSuiteWithConstraintGroups);
-
     b1 = true;
     b2 = true;
     b3 = true;
     b4 = false;
     b5 = true;
-    ConstraintSuiteVerificationResult result = verifier.verify({2, 3});
+    ConstraintSuiteVerificationResult result = verifierWithConstraintGroups.verify({2, 3});
 
     EXPECT_THAT(result.isValid(), Eq(false));
     EXPECT_THAT(result.satisfiedButNotAssignedConstraintGroupIds(), ElementsAre(1));

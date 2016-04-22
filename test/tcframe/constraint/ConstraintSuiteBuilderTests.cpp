@@ -9,10 +9,10 @@ namespace tcframe {
 
 class ConstraintSuiteBuilderTests : public Test {
 protected:
-    const Constraint constraint1 = Constraint([]{return true;}, "1 <= A && A <= 10");
-    const Constraint constraint2 = Constraint([]{return true;}, "1 <= B && B <= 10");
-    const Constraint constraint3 = Constraint([]{return true;}, "1 <= C && C <= 10");
-    const Constraint constraint4 = Constraint([]{return true;}, "1 <= D && D <= 10");
+    Constraint constraint1 = Constraint([]{return true;}, "1 <= A && A <= 10");
+    Constraint constraint2 = Constraint([]{return true;}, "1 <= B && B <= 10");
+    Constraint constraint3 = Constraint([]{return true;}, "1 <= C && C <= 10");
+    Constraint constraint4 = Constraint([]{return true;}, "1 <= D && D <= 10");
 
     ConstraintSuiteBuilder builder;
 };

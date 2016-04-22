@@ -20,14 +20,9 @@ protected:
     NiceMock<MockScalar> scalarB;
     NiceMock<MockScalar> scalarC;
     NiceMock<MockWhitespacePrinter> whitespacePrinter;
-    ostream* out;
+    ostream* out = new ostringstream();
 
-    LineIOSegmentPrinter printer;
-
-    LineIOSegmentPrinterTests()
-            : out(new ostringstream())
-            , printer(&whitespacePrinter)
-    {}
+    LineIOSegmentPrinter printer = LineIOSegmentPrinter(&whitespacePrinter);
 };
 
 TEST_F(LineIOSegmentPrinterTests, Scalars) {

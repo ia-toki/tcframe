@@ -15,11 +15,8 @@ using tcframe::Scalar;
 class ScalarTests : public Test {
 protected:
     int a;
-    Scalar* A;
 
-    ScalarTests()
-            : A(Scalar::create(a, "a"))
-    {}
+    Scalar* A = Scalar::create(a, "a");
 };
 
 TEST_F(ScalarTests, CanAccessName) {

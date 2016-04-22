@@ -13,6 +13,7 @@ class LineIOSegmentBuilderTests : public Test {
 protected:
     int a;
     int b;
+
     LineIOSegmentBuilder builder;
 };
 

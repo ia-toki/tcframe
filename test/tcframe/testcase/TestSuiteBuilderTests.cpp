@@ -9,10 +9,10 @@ namespace tcframe {
 
 class TestSuiteBuilderTests : public Test {
 protected:
-    const TestCase tc1 = TestCase([]{}, "N = 1");
-    const TestCase tc2 = TestCase([]{}, "N = 2");
-    const TestCase tc3 = TestCase([]{}, "N = 3");
-    const TestCase tc4 = TestCase([]{}, "N = 4");
+    TestCase tc1 = TestCase([]{}, "N = 1");
+    TestCase tc2 = TestCase([]{}, "N = 2");
+    TestCase tc3 = TestCase([]{}, "N = 3");
+    TestCase tc4 = TestCase([]{}, "N = 4");
 
     TestSuiteBuilder builder;
 };

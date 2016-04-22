@@ -18,8 +18,8 @@ class IOVariablePrinterTests : public Test {
 protected:
     IOSegment* segmentA = new FakeIOSegment(IOSegmentType::LINE);
     IOSegment* segmentB = new FakeIOSegment(IOSegmentType::LINE);
-
-    const IOFormat ioFormat = IOFormatBuilder()
+    NiceMock<MockLineIOSegmentPrinter> lineIOSegmentPrinter;
+    IOFormat ioFormat = IOFormatBuilder()
             .prepareForInputFormat()
             .addIOSegment(segmentA)
             .addIOSegment(segmentB)
@@ -27,13 +27,7 @@ protected:
 
     ostream* out = new ostringstream();
 
-    NiceMock<MockLineIOSegmentPrinter> lineIOSegmentPrinter;
-
-    IOVariablesPrinter printer;
-
-    IOVariablePrinterTests()
-            : printer(&lineIOSegmentPrinter, ioFormat)
-    {}
+    IOVariablesPrinter printer = IOVariablesPrinter(&lineIOSegmentPrinter, ioFormat);
 };
 
 TEST_F(IOVariablePrinterTests, CanPrint) {

@@ -10,17 +10,11 @@ namespace tcframe {
 
 class IOFormatBuilderTests : public Test {
 protected:
-    FakeIOSegment* segment1;
-    FakeIOSegment* segment2;
-    FakeIOSegment* segment3;
+    FakeIOSegment* segment1 = new FakeIOSegment();
+    FakeIOSegment* segment2 = new FakeIOSegment();
+    FakeIOSegment* segment3 = new FakeIOSegment();
 
     IOFormatBuilder builder;
-
-    IOFormatBuilderTests()
-            : segment1(new FakeIOSegment())
-            , segment2(new FakeIOSegment())
-            , segment3(new FakeIOSegment())
-    {}
 };
 
 TEST_F(IOFormatBuilderTests, CanBuild) {
