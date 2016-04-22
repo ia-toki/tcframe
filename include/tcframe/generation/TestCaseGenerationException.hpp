@@ -2,7 +2,7 @@
 
 #include <exception>
 
-#include "tcframe/generation/TestCaseGenerationFailure.hpp"
+#include "TestCaseGenerationFailure.hpp"
 
 using std::exception;
 

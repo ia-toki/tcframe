@@ -4,7 +4,7 @@
 #include <string>
 #include <utility>
 
-#include "tcframe/generation/TestCaseGenerationResult.hpp"
+#include "TestCaseGenerationResult.hpp"
 
 using std::map;
 using std::move;

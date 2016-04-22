@@ -42,11 +42,22 @@ include_directories("${source_dir}/googlemock/include")
 include_directories(include)
 
 set(SOURCE_FILES
+    include/tcframe/config.hpp
     include/tcframe/config/GeneratorConfig.hpp
     include/tcframe/config/ProblemConfig.hpp
+    include/tcframe/constraint.hpp
     include/tcframe/constraint/Constraint.hpp
     include/tcframe/constraint/ConstraintGroup.hpp
     include/tcframe/constraint/ConstraintSuite.hpp
+    include/tcframe/format.hpp
+    include/tcframe/format/IOFormat.hpp
+    include/tcframe/format/IOSegment.hpp
+    include/tcframe/format/LineIOSegment.hpp
+    include/tcframe/format/LineIOSegmentPrinter.hpp
+    include/tcframe/format/LineIOSegmentVariable.hpp
+    include/tcframe/format/LineIOSegmentScalarVariable.hpp
+    include/tcframe/format/WhitespacePrinter.hpp
+    include/tcframe/generation.hpp
     include/tcframe/generation/TestSuiteGenerationListener.hpp
     include/tcframe/generation/TestCaseData.hpp
     include/tcframe/generation/TestCaseNameCreator.hpp
@@ -57,13 +68,7 @@ set(SOURCE_FILES
     include/tcframe/generation/TestSuiteGenerator.hpp
     include/tcframe/generation/TestSuiteGenerationResult.hpp
     include/tcframe/generation/VerificationFailure.hpp
-    include/tcframe/io/IOFormat.hpp
-    include/tcframe/io/IOSegment.hpp
-    include/tcframe/io/LineIOSegment.hpp
-    include/tcframe/io/LineIOSegmentPrinter.hpp
-    include/tcframe/io/LineIOSegmentVariable.hpp
-    include/tcframe/io/LineIOSegmentScalarVariable.hpp
-    include/tcframe/io/WhitespacePrinter.hpp
+    include/tcframe/os.hpp
     include/tcframe/os/ExecutionResult.hpp
     include/tcframe/os/OperatingSystem.hpp
     include/tcframe/os/UnixOperatingSystem.hpp
@@ -72,21 +77,26 @@ set(SOURCE_FILES
     include/tcframe/runner/BaseGenerator.hpp
     include/tcframe/runner/Magic.hpp
     include/tcframe/runner/Runner.hpp
+    include/tcframe/testcase.hpp
     include/tcframe/testcase/TestCase.hpp
     include/tcframe/testcase/TestSuite.hpp
     include/tcframe/testcase/TestGroup.hpp
+    include/tcframe/type.hpp
     include/tcframe/type/Scalar.hpp
+    include/tcframe/util.hpp
     include/tcframe/util/StringUtils.hpp
+    include/tcframe/variable.hpp
     include/tcframe/variable/IOVariablesPrinter.hpp
+    include/tcframe/verification.hpp
     include/tcframe/verification/ConstraintSuiteVerifier.hpp
     include/tcframe/verification/ConstraintSuiteVerificationResult.hpp
     test/tcframe/constraint/ConstraintSuiteBuilderTests.cpp
-    test/tcframe/io/IOFormatBuilderTests.cpp
-    test/tcframe/io/FakeIOSegment.hpp
-    test/tcframe/io/LineIOSegmentBuilderTests.cpp
-    test/tcframe/io/LineIOSegmentPrinterTests.cpp
-    test/tcframe/io/MockLineIOSegmentPrinter.hpp
-    test/tcframe/io/MockWhitespacePrinter.hpp
+    test/tcframe/format/FakeIOSegment.hpp
+    test/tcframe/format/IOFormatBuilderTests.cpp
+    test/tcframe/format/LineIOSegmentBuilderTests.cpp
+    test/tcframe/format/LineIOSegmentPrinterTests.cpp
+    test/tcframe/format/MockLineIOSegmentPrinter.hpp
+    test/tcframe/format/MockWhitespacePrinter.hpp
     test/tcframe/testcase/TestSuiteBuilderTests.cpp
     test/tcframe/type/MockScalar.hpp
     test/tcframe/type/ScalarTests.cpp

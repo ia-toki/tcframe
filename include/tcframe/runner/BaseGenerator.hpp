@@ -1,7 +1,7 @@
 #pragma once
 
-#include "tcframe/config/GeneratorConfig.hpp"
-#include "tcframe/testcase/TestSuite.hpp"
+#include "tcframe/config.hpp"
+#include "tcframe/testcase.hpp"
 
 namespace tcframe {
 

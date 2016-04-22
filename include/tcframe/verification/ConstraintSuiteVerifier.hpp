@@ -5,10 +5,8 @@
 #include <string>
 #include <utility>
 
-#include "tcframe/constraint/Constraint.hpp"
-#include "tcframe/constraint/ConstraintGroup.hpp"
-#include "tcframe/constraint/ConstraintSuite.hpp"
-#include "tcframe/verification/ConstraintSuiteVerificationResult.hpp"
+#include "ConstraintSuiteVerificationResult.hpp"
+#include "tcframe/constraint.hpp"
 
 using std::map;
 using std::move;

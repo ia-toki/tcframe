@@ -1,9 +1,5 @@
 #include "gmock/gmock.h"
 
-#include "tcframe/constraint/Constraint.hpp"
-#include "tcframe/constraint/ConstraintGroup.hpp"
-#include "tcframe/constraint/ConstraintSuite.hpp"
-#include "tcframe/verification/ConstraintSuiteVerificationResult.hpp"
 #include "tcframe/verification/ConstraintSuiteVerifier.hpp"
 
 using ::testing::ElementsAre;

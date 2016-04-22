@@ -1,21 +1,15 @@
 #include "gmock/gmock.h"
 
-#include <ostream>
 #include <sstream>
 
-#include "tcframe/io/IOFormat.hpp"
-#include "tcframe/io/IOSegment.hpp"
-#include "tcframe/io/LineIOSegment.hpp"
+#include "../format/FakeIOSegment.hpp"
+#include "../format/MockLineIOSegmentPrinter.hpp"
 #include "tcframe/variable/IOVariablesPrinter.hpp"
-
-#include "../io/FakeIOSegment.hpp"
-#include "../io/MockLineIOSegmentPrinter.hpp"
 
 using ::testing::InSequence;
 using ::testing::NiceMock;
 using ::testing::Test;
 
-using std::ostream;
 using std::ostringstream;
 
 namespace tcframe {

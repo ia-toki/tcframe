@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include "tcframe/constraint/Constraint.hpp"
+#include "tcframe/constraint.hpp"
 
 using std::map;
 using std::set;

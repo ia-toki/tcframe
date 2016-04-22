@@ -2,13 +2,7 @@
 
 #include "gmock/gmock.h"
 
-#include <istream>
-#include <ostream>
-
 #include "tcframe/type/Scalar.hpp"
-
-using std::istream;
-using std::ostream;
 
 namespace tcframe {
 

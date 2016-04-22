@@ -1,7 +1,7 @@
 #pragma once
 
-#include "tcframe/generation/TestCaseGenerationFailure.hpp"
-#include "tcframe/verification/ConstraintSuiteVerificationResult.hpp"
+#include "TestCaseGenerationFailure.hpp"
+#include "tcframe/verification.hpp"
 
 namespace tcframe {
 

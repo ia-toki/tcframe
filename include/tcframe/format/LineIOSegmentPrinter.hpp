@@ -2,10 +2,10 @@
 
 #include <ostream>
 
-#include "tcframe/io/LineIOSegment.hpp"
-#include "tcframe/io/LineIOSegmentVariable.hpp"
-#include "tcframe/io/LineIOSegmentScalarVariable.hpp"
-#include "tcframe/io/WhitespacePrinter.hpp"
+#include "LineIOSegment.hpp"
+#include "LineIOSegmentVariable.hpp"
+#include "LineIOSegmentScalarVariable.hpp"
+#include "WhitespacePrinter.hpp"
 
 using std::endl;
 using std::ostream;

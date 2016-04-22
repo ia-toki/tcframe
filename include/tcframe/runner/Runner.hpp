@@ -1,17 +1,13 @@
 #pragma once
 
-#include "tcframe/config/GeneratorConfig.hpp"
-#include "tcframe/config/ProblemConfig.hpp"
-#include "tcframe/generation/TestSuiteGenerationListener.hpp"
-#include "tcframe/generation/TestSuiteGenerator.hpp"
-#include "tcframe/generation/TestCaseGenerator.hpp"
-#include "tcframe/io/LineIOSegmentPrinter.hpp"
-#include "tcframe/os/OperatingSystem.hpp"
-#include "tcframe/os/UnixOperatingSystem.hpp"
-#include "tcframe/runner/BaseGenerator.hpp"
-#include "tcframe/runner/BaseProblem.hpp"
-#include "tcframe/variable/IOVariablesPrinter.hpp"
-#include "tcframe/verification/ConstraintSuiteVerifier.hpp"
+#include "BaseGenerator.hpp"
+#include "BaseProblem.hpp"
+#include "tcframe/config.hpp"
+#include "tcframe/format.hpp"
+#include "tcframe/generation.hpp"
+#include "tcframe/os.hpp"
+#include "tcframe/variable.hpp"
+#include "tcframe/verification.hpp"
 
 namespace tcframe {
 

@@ -5,8 +5,8 @@
 #include <string>
 #include <utility>
 
-#include "tcframe/testcase/TestCase.hpp"
-#include "tcframe/testcase/TestGroup.hpp"
+#include "TestCase.hpp"
+#include "TestGroup.hpp"
 
 using std::initializer_list;
 using std::move;

@@ -1,21 +1,15 @@
 #include "gmock/gmock.h"
 
-#include <ostream>
 #include <sstream>
-
-#include "tcframe/io/LineIOSegment.hpp"
-#include "tcframe/io/LineIOSegmentPrinter.hpp"
-#include "tcframe/io/WhitespacePrinter.hpp"
-#include "tcframe/type/Scalar.hpp"
 
 #include "../type/MockScalar.hpp"
 #include "MockWhitespacePrinter.hpp"
+#include "tcframe/format/LineIOSegmentPrinter.hpp"
 
 using ::testing::InSequence;
 using ::testing::NiceMock;
 using ::testing::Test;
 
-using std::ostream;
 using std::ostringstream;
 
 namespace tcframe {

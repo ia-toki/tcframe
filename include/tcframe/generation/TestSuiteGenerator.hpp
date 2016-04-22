@@ -5,17 +5,14 @@
 #include <set>
 #include <string>
 
-#include "tcframe/config/GeneratorConfig.hpp"
-#include "tcframe/config/ProblemConfig.hpp"
-#include "tcframe/generation/TestSuiteGenerationListener.hpp"
-#include "tcframe/generation/TestCaseNameCreator.hpp"
-#include "tcframe/generation/TestCaseGenerationResult.hpp"
-#include "tcframe/generation/TestCaseGenerator.hpp"
-#include "tcframe/generation/TestSuiteGenerationResult.hpp"
-#include "tcframe/os/OperatingSystem.hpp"
-#include "tcframe/testcase/TestCase.hpp"
-#include "tcframe/testcase/TestSuite.hpp"
-#include "tcframe/testcase/TestGroup.hpp"
+#include "TestSuiteGenerationListener.hpp"
+#include "TestCaseNameCreator.hpp"
+#include "TestCaseGenerationResult.hpp"
+#include "TestCaseGenerator.hpp"
+#include "TestSuiteGenerationResult.hpp"
+#include "tcframe/config.hpp"
+#include "tcframe/os.hpp"
+#include "tcframe/testcase.hpp"
 
 using std::function;
 using std::map;

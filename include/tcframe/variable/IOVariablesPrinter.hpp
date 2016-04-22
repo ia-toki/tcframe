@@ -4,9 +4,7 @@
 #include <ostream>
 #include <vector>
 
-#include "tcframe/io/IOFormat.hpp"
-#include "tcframe/io/LineIOSegment.hpp"
-#include "tcframe/io/LineIOSegmentPrinter.hpp"
+#include "tcframe/format.hpp"
 
 using std::endl;
 using std::ostream;

@@ -3,7 +3,7 @@
 #include <tuple>
 #include <vector>
 
-#include "tcframe/constraint/Constraint.hpp"
+#include "Constraint.hpp"
 
 using std::tie;
 using std::vector;

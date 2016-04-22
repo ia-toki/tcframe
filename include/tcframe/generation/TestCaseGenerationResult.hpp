@@ -1,6 +1,6 @@
 #pragma once
 
-#include "tcframe/generation/TestCaseGenerationFailure.hpp"
+#include "TestCaseGenerationFailure.hpp"
 
 namespace tcframe {
 

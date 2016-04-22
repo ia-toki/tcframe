@@ -2,8 +2,8 @@
 
 #include <tuple>
 
-#include "tcframe/io/LineIOSegmentVariable.hpp"
-#include "tcframe/type/Scalar.hpp"
+#include "LineIOSegmentVariable.hpp"
+#include "tcframe/type.hpp"
 
 using std::tie;
 

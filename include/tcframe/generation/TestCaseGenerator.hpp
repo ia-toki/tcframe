@@ -4,15 +4,15 @@
 #include <set>
 #include <string>
 
-#include "tcframe/config/GeneratorConfig.hpp"
-#include "tcframe/generation/TestCaseData.hpp"
-#include "tcframe/generation/TestCaseGenerationException.hpp"
-#include "tcframe/generation/TestCaseGenerationResult.hpp"
-#include "tcframe/generation/VerificationFailure.hpp"
-#include "tcframe/os/OperatingSystem.hpp"
-#include "tcframe/testcase/TestCase.hpp"
-#include "tcframe/variable/IOVariablesPrinter.hpp"
-#include "tcframe/verification/ConstraintSuiteVerifier.hpp"
+#include "TestCaseData.hpp"
+#include "TestCaseGenerationException.hpp"
+#include "TestCaseGenerationResult.hpp"
+#include "VerificationFailure.hpp"
+#include "tcframe/config.hpp"
+#include "tcframe/os.hpp"
+#include "tcframe/testcase.hpp"
+#include "tcframe/variable.hpp"
+#include "tcframe/verification.hpp"
 
 using std::function;
 using std::set;

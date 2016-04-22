@@ -1,6 +1,5 @@
 #include "gmock/gmock.h"
 
-#include "tcframe/testcase/TestCase.hpp"
 #include "tcframe/testcase/TestSuite.hpp"
 
 using ::testing::ElementsAre;

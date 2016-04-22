@@ -1,8 +1,6 @@
 #include "gmock/gmock.h"
 
-#include "tcframe/io/LineIOSegment.hpp"
-#include "tcframe/io/LineIOSegmentScalarVariable.hpp"
-#include "tcframe/type/Scalar.hpp"
+#include "tcframe/format/LineIOSegment.hpp"
 
 using ::testing::ElementsAre;
 using ::testing::Pointee;

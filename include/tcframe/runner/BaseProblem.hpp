@@ -1,8 +1,8 @@
 #pragma once
 
-#include "tcframe/config/ProblemConfig.hpp"
-#include "tcframe/constraint/ConstraintSuite.hpp"
-#include "tcframe/io/IOFormat.hpp"
+#include "tcframe/config.hpp"
+#include "tcframe/constraint.hpp"
+#include "tcframe/format.hpp"
 
 namespace tcframe {
 

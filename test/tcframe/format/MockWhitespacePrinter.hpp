@@ -2,11 +2,7 @@
 
 #include "gmock/gmock.h"
 
-#include <ostream>
-
-#include "tcframe/io/WhitespacePrinter.hpp"
-
-using std::ostream;
+#include "tcframe/format/WhitespacePrinter.hpp"
 
 namespace tcframe {
 

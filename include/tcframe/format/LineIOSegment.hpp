@@ -3,11 +3,11 @@
 #include <tuple>
 #include <vector>
 
-#include "tcframe/io/LineIOSegmentScalarVariable.hpp"
-#include "tcframe/io/LineIOSegmentVariable.hpp"
-#include "tcframe/io/IOSegment.hpp"
-#include "tcframe/type/Scalar.hpp"
-#include "tcframe/util/StringUtils.hpp"
+#include "IOSegment.hpp"
+#include "LineIOSegmentScalarVariable.hpp"
+#include "LineIOSegmentVariable.hpp"
+#include "tcframe/type.hpp"
+#include "tcframe/util.hpp"
 
 using std::tie;
 using std::vector;

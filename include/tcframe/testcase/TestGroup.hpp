@@ -4,7 +4,7 @@
 #include <tuple>
 #include <vector>
 
-#include "tcframe/testcase/TestCase.hpp"
+#include "TestCase.hpp"
 
 using std::set;
 using std::tie;

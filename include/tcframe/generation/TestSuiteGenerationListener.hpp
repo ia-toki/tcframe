@@ -4,9 +4,9 @@
 #include <string>
 #include <vector>
 
-#include "tcframe/generation/TestCaseGenerationResult.hpp"
-#include "tcframe/generation/VerificationFailure.hpp"
-#include "tcframe/verification/ConstraintSuiteVerificationResult.hpp"
+#include "TestCaseGenerationResult.hpp"
+#include "VerificationFailure.hpp"
+#include "tcframe/verification.hpp"
 
 using std::cout;
 using std::endl;

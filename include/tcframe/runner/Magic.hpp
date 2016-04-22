@@ -4,9 +4,9 @@
 #include <queue>
 #include <string>
 
-#include "tcframe/io/LineIOSegment.hpp"
-#include "tcframe/type/Scalar.hpp"
-#include "tcframe/util/StringUtils.hpp"
+#include "tcframe/format.hpp"
+#include "tcframe/type.hpp"
+#include "tcframe/util.hpp"
 
 using std::forward;
 using std::queue;

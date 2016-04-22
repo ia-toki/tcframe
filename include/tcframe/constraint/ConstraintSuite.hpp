@@ -3,8 +3,8 @@
 #include <utility>
 #include <vector>
 
-#include "tcframe/constraint/Constraint.hpp"
-#include "tcframe/constraint/ConstraintGroup.hpp"
+#include "Constraint.hpp"
+#include "ConstraintGroup.hpp"
 
 using std::move;
 using std::vector;
