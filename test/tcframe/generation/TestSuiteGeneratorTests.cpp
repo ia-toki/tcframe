@@ -1,4 +1,5 @@
 #include "gmock/gmock.h"
+#include "../mock.hpp"
 
 #include "../os/MockOperatingSystem.hpp"
 #include "FakeTestCaseGenerationFailure.hpp"
@@ -10,7 +11,6 @@ using ::testing::_;
 using ::testing::ElementsAre;
 using ::testing::Eq;
 using ::testing::InSequence;
-using ::testing::NiceMock;
 using ::testing::Pair;
 using ::testing::Property;
 using ::testing::Return;
@@ -20,9 +20,9 @@ namespace tcframe {
 
 class TestSuiteGeneratorTests : public Test {
 protected:
-    NiceMock<MockTestCaseGenerator> testCaseGenerator;
-    NiceMock<MockOperatingSystem> os;
-    NiceMock<MockTestSuiteGenerationListener> listener;
+    Mock(TestCaseGenerator) testCaseGenerator;
+    Mock(OperatingSystem) os;
+    Mock(TestSuiteGenerationListener) listener;
 
     OfficialTestCase tc1 = OfficialTestCase([]{}, "N = 1");
     OfficialTestCase tc2 = OfficialTestCase([]{}, "N = 2");

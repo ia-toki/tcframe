@@ -1,4 +1,5 @@
 #include "gmock/gmock.h"
+#include "../mock.hpp"
 
 #include <sstream>
 
@@ -7,7 +8,6 @@
 #include "tcframe/variable/IOVariablesPrinter.hpp"
 
 using ::testing::InSequence;
-using ::testing::NiceMock;
 using ::testing::Test;
 
 using std::ostringstream;
@@ -16,9 +16,9 @@ namespace tcframe {
 
 class IOVariablesPrinterTests : public Test {
 protected:
+    Mock(LineIOSegmentPrinter) lineIOSegmentPrinter;
     IOSegment* segmentA = new FakeIOSegment(IOSegmentType::LINE);
     IOSegment* segmentB = new FakeIOSegment(IOSegmentType::LINE);
-    NiceMock<MockLineIOSegmentPrinter> lineIOSegmentPrinter;
     IOFormat ioFormat = IOFormatBuilder()
             .prepareForInputFormat()
             .addIOSegment(segmentA)

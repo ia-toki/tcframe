@@ -1,4 +1,5 @@
 #include "gmock/gmock.h"
+#include "../mock.hpp"
 
 #include <sstream>
 
@@ -13,7 +14,6 @@ using ::testing::_;
 using ::testing::Eq;
 using ::testing::InSequence;
 using ::testing::IsNull;
-using ::testing::NiceMock;
 using ::testing::Pointee;
 using ::testing::Return;
 using ::testing::Test;
@@ -25,9 +25,9 @@ bool applied;
 
 class TestCaseGeneratorTests : public Test {
 protected:
-    NiceMock<MockConstraintSuiteVerifier> constraintSuiteVerifier;
-    NiceMock<MockIOVariablesPrinter> ioVariablesPrinter;
-    NiceMock<MockOperatingSystem> os;
+    Mock(ConstraintSuiteVerifier) constraintSuiteVerifier;
+    Mock(IOVariablesPrinter) ioVariablesPrinter;
+    Mock(OperatingSystem) os;
 
     function<void()> closure = [&](){applied = true;};
     TestCaseData data = TestCaseDataBuilder()

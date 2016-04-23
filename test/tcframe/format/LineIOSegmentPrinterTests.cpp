@@ -1,4 +1,5 @@
 #include "gmock/gmock.h"
+#include "../mock.hpp"
 
 #include <sstream>
 
@@ -7,7 +8,6 @@
 #include "tcframe/format/LineIOSegmentPrinter.hpp"
 
 using ::testing::InSequence;
-using ::testing::NiceMock;
 using ::testing::Test;
 
 using std::ostringstream;
@@ -16,10 +16,10 @@ namespace tcframe {
 
 class LineIOSegmentPrinterTests : public Test {
 protected:
-    NiceMock<MockScalar> scalarA;
-    NiceMock<MockScalar> scalarB;
-    NiceMock<MockScalar> scalarC;
-    NiceMock<MockWhitespacePrinter> whitespacePrinter;
+    Mock(Scalar) scalarA;
+    Mock(Scalar) scalarB;
+    Mock(Scalar) scalarC;
+    Mock(WhitespacePrinter) whitespacePrinter;
     ostream* out = new ostringstream();
 
     LineIOSegmentPrinter printer = LineIOSegmentPrinter(&whitespacePrinter);

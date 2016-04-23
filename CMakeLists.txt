@@ -90,6 +90,7 @@ set(SOURCE_FILES
     include/tcframe/verification.hpp
     include/tcframe/verification/ConstraintSuiteVerifier.hpp
     include/tcframe/verification/ConstraintSuiteVerificationResult.hpp
+    test/tcframe/mock.hpp
     test/tcframe/constraint/ConstraintSuiteBuilderTests.cpp
     test/tcframe/format/FakeIOSegment.hpp
     test/tcframe/format/IOFormatBuilderTests.cpp
