@@ -18,6 +18,10 @@ public:
             : verificationResult_(verificationResult)
     {}
 
+    FailureType type() const {
+        return FailureType::VERIFICATION;
+    }
+
     const ConstraintSuiteVerificationResult& verificationResult() const {
         return verificationResult_;
     }

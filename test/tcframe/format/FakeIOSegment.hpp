@@ -17,8 +17,13 @@ public:
             : type_(type)
     {}
 
-    IOSegmentType type() {
+    IOSegmentType type() const {
         return type_;
+    }
+
+protected:
+    bool equals(const IOSegment& o) const {
+        return this == &o;
     }
 };
 

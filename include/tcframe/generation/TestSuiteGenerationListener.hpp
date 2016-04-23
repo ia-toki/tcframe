@@ -54,9 +54,8 @@ public:
 
 private:
     void printTestCaseGenerationFailure(TestCaseGenerationFailure* failure) {
-        // TODO: use visitor pattern?
-        if (VerificationFailure* verificationFailure = dynamic_cast<VerificationFailure*>(failure)) {
-            printVerificationFailure(verificationFailure->verificationResult());
+        if (failure->type() == FailureType::VERIFICATION) {
+            printVerificationFailure(((VerificationFailure*) failure)->verificationResult());
         }
     }
 

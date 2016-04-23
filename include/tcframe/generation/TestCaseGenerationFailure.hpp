@@ -2,12 +2,18 @@
 
 namespace tcframe {
 
-class TestCaseGenerationFailure {
+enum FailureType {
+    VERIFICATION
+};
+
+struct TestCaseGenerationFailure {
 public:
     virtual ~TestCaseGenerationFailure() {}
 
+    virtual FailureType type() const = 0;
+
     bool operator==(const TestCaseGenerationFailure& o) const {
-        return typeid(*this) == typeid(o) && equals(o);
+        return type() == o.type() && equals(o);
     }
 
 protected:

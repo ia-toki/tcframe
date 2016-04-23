@@ -21,7 +21,7 @@ private:
     vector<LineIOSegmentVariable*> variables_;
 
 public:
-    IOSegmentType type() {
+    IOSegmentType type() const {
         return IOSegmentType::LINE;
     }
 
@@ -31,6 +31,11 @@ public:
 
     bool operator==(const LineIOSegment& o) const {
         return tie(variables_) == tie(o.variables_);
+    }
+
+protected:
+    virtual bool equals(const IOSegment& o) const {
+        return *this == (LineIOSegment&) o;
     }
 };
 

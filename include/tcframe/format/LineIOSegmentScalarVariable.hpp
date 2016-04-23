@@ -18,7 +18,7 @@ public:
             : variable_(variable)
     {}
 
-    LineIOSegmentVariableType type() {
+    LineIOSegmentVariableType type() const {
         return LineIOSegmentVariableType::SCALAR;
     }
 
@@ -28,6 +28,11 @@ public:
 
     bool operator==(const LineIOSegmentScalarVariable& o) const {
         return tie(*variable_) == tie(*o.variable_);
+    }
+
+protected:
+    bool equals(const LineIOSegmentVariable& o) const {
+        return *this == (LineIOSegmentScalarVariable&) o;
     }
 };
 
