@@ -17,7 +17,7 @@ protected:
     TestSuiteBuilder builder;
 };
 
-TEST_F(TestSuiteBuilderTests, CanBuildWithoutTestGroups) {
+TEST_F(TestSuiteBuilderTests, WithoutGroups_Building) {
     TestSuite testSuite = builder
             .addOfficialTestCase(tc1)
             .addOfficialTestCase(tc2)
@@ -27,7 +27,7 @@ TEST_F(TestSuiteBuilderTests, CanBuildWithoutTestGroups) {
             TestGroup(-1, {-1}, {tc1, tc2})));
 }
 
-TEST_F(TestSuiteBuilderTests, CanBuildWithTestGroups) {
+TEST_F(TestSuiteBuilderTests, WithGroups_Building) {
     TestSuite testSuite = builder
             .newTestGroup()
             .setConstraintGroupIds({1, 2})

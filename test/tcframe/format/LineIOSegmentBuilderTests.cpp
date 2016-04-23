@@ -17,7 +17,7 @@ protected:
     LineIOSegmentBuilder builder;
 };
 
-TEST_F(LineIOSegmentBuilderTests, CanBuild) {
+TEST_F(LineIOSegmentBuilderTests, Building) {
     LineIOSegment* segment = builder
             .addVariable(a, "a")
             .addVariable(b, "b")

@@ -72,7 +72,7 @@ TEST_F(TestCaseGeneratorTests, SuccessfulGeneration) {
     EXPECT_THAT(result.failure(), IsNull());
 }
 
-TEST_F(TestCaseGeneratorTests, FailedGenerationBecauseVerificationFailure) {
+TEST_F(TestCaseGeneratorTests, FailedGeneration_VerificationFailure) {
     ConstraintSuiteVerificationResult verificationResult({{1, {"1 <= N <= 10"}}}, {});
     ON_CALL(constraintSuiteVerifier, verify(set<int>{1, 2}))
             .WillByDefault(Return(verificationResult));

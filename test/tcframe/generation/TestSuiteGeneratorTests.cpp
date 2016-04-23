@@ -89,7 +89,7 @@ TEST_F(TestSuiteGeneratorTests, WithoutGroups_SuccessfulGeneration) {
             Pair("foo_2", TestCaseGenerationResult::successfulResult())));
 }
 
-TEST_F(TestSuiteGeneratorTests, WithoutGroups_UnsuccessfulGeneration) {
+TEST_F(TestSuiteGeneratorTests, WithoutGroups_FailedGeneration) {
     TestCaseGenerationFailure* failure_2 = new FakeTestCaseGenerationFailure();
     ON_CALL(testCaseGenerator, generate(Property(&TestCaseData::name, "foo_2"), _, generatorConfig))
             .WillByDefault(Return(TestCaseGenerationResult::failedResult(failure_2)));
@@ -165,7 +165,7 @@ TEST_F(TestSuiteGeneratorTests, WithGroups_SuccessfulGeneration) {
             Pair("foo_2_1", TestCaseGenerationResult::successfulResult())));
 }
 
-TEST_F(TestSuiteGeneratorTests, WithGroups_UnsuccessfulGeneration) {
+TEST_F(TestSuiteGeneratorTests, WithGroups_FailedGeneration) {
     TestCaseGenerationFailure* failure_1_2 = new FakeTestCaseGenerationFailure();
     ON_CALL(testCaseGenerator, generate(Property(&TestCaseData::name, "foo_1_2"), _, generatorConfig))
             .WillByDefault(Return(TestCaseGenerationResult::failedResult(failure_1_2)));

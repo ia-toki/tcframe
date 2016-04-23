@@ -42,7 +42,7 @@ protected:
     ConstraintSuiteVerifier verifierWithConstraintGroups = ConstraintSuiteVerifier(constraintSuiteWithConstraintGroups);
 };
 
-TEST_F(ConstraintSuiteVerifierTests, VerificationWithoutConstraintGroupsValidWhenAllConstraintsValid) {
+TEST_F(ConstraintSuiteVerifierTests, WithoutGroups_VerificationValid_WhenAllConstraintsValid) {
     b1 = true;
     b2 = true;
     ConstraintSuiteVerificationResult result = verifierWithoutConstraintGroups.verify({-1});
@@ -52,7 +52,7 @@ TEST_F(ConstraintSuiteVerifierTests, VerificationWithoutConstraintGroupsValidWhe
     EXPECT_THAT(result.unsatisfiedConstraintDescriptionsByConstraintGroupId(), IsEmpty());
 }
 
-TEST_F(ConstraintSuiteVerifierTests, VerificationWithoutConstraintGroupsInvalidWhenSomeConstraintsInvalid) {
+TEST_F(ConstraintSuiteVerifierTests, WithoutGroups_VerificationInvalid_SomeConstraintsInvalid) {
     b1 = true;
     b2 = false;
     ConstraintSuiteVerificationResult result = verifierWithoutConstraintGroups.verify({-1});
@@ -63,7 +63,7 @@ TEST_F(ConstraintSuiteVerifierTests, VerificationWithoutConstraintGroupsInvalidW
             Pair(-1, ElementsAre(constraint2.description()))));
 }
 
-TEST_F(ConstraintSuiteVerifierTests, VerificationWithConstraintGroupsValidWhenAllConstraintsValid) {
+TEST_F(ConstraintSuiteVerifierTests, WithGroups_VerificationValid_AllConstraintsValid) {
     b1 = true;
     b2 = true;
     b3 = true;
@@ -76,7 +76,7 @@ TEST_F(ConstraintSuiteVerifierTests, VerificationWithConstraintGroupsValidWhenAl
     EXPECT_THAT(result.unsatisfiedConstraintDescriptionsByConstraintGroupId(), IsEmpty());
 }
 
-TEST_F(ConstraintSuiteVerifierTests, VerificationWithConstraintGroupsValidWhenAllAssignedConstraintGroupsValid) {
+TEST_F(ConstraintSuiteVerifierTests, WithGroups_VerificationValid_AllAssignedConstraintGroupsValid) {
     b1 = true;
     b2 = true;
     b3 = true;
@@ -89,7 +89,7 @@ TEST_F(ConstraintSuiteVerifierTests, VerificationWithConstraintGroupsValidWhenAl
     EXPECT_THAT(result.unsatisfiedConstraintDescriptionsByConstraintGroupId(), IsEmpty());
 }
 
-TEST_F(ConstraintSuiteVerifierTests, VerificationWithConstraintGroupsInvalidWhenSomeConstraintsInvalid) {
+TEST_F(ConstraintSuiteVerifierTests, WithGroups_VerificationInvalid_SomeConstraintsInvalid) {
     b1 = true;
     b2 = true;
     b3 = true;

@@ -25,7 +25,7 @@ protected:
     LineIOSegmentPrinter printer = LineIOSegmentPrinter(&whitespacePrinter);
 };
 
-TEST_F(LineIOSegmentPrinterTests, Scalars) {
+TEST_F(LineIOSegmentPrinterTests, ScalarsPrinting) {
     LineIOSegment* segment = LineIOSegmentBuilder()
             .addScalarVariable(&scalarA)
             .addScalarVariable(&scalarB)

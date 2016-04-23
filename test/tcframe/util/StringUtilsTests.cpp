@@ -9,12 +9,12 @@ namespace tcframe {
 
 class StringUtilsTests : public Test {};
 
-TEST_F(StringUtilsTests, SplitSingleString) {
+TEST_F(StringUtilsTests, SingleStringSplit) {
     EXPECT_THAT(StringUtils::split(" A "), ElementsAre(
             "A"));
 }
 
-TEST_F(StringUtilsTests, SplitCommaSeparatedStrings) {
+TEST_F(StringUtilsTests, CommaSeparatedStringsSplit) {
     EXPECT_THAT(StringUtils::split(" A,B, C,   D "), ElementsAre(
             "A", "B", "C", "D"));
 }

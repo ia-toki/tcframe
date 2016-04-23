@@ -17,7 +17,7 @@ protected:
     IOFormatBuilder builder;
 };
 
-TEST_F(IOFormatBuilderTests, CanBuild) {
+TEST_F(IOFormatBuilderTests, Building) {
     IOFormat ioFormat = builder
             .prepareForInputFormat()
             .addIOSegment(segment1)

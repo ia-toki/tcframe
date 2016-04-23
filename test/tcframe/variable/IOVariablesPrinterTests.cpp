@@ -30,7 +30,7 @@ protected:
     IOVariablesPrinter printer = IOVariablesPrinter(&lineIOSegmentPrinter, ioFormat);
 };
 
-TEST_F(IOVariablesPrinterTests, CanPrint) {
+TEST_F(IOVariablesPrinterTests, Printing) {
     {
         InSequence sequence;
 

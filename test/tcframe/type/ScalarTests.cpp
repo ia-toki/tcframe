@@ -19,18 +19,18 @@ protected:
     Scalar* A = Scalar::create(a, "a");
 };
 
-TEST_F(ScalarTests, CanAccessName) {
+TEST_F(ScalarTests, GettingName) {
     EXPECT_THAT(A->getName(), Eq("a"));
 }
 
-TEST_F(ScalarTests, CanParse) {
+TEST_F(ScalarTests, Parsing) {
     istringstream sin("42");
     A->parseFrom(&sin);
 
     EXPECT_THAT(a, Eq(42));
 }
 
-TEST_F(ScalarTests, CanPrint) {
+TEST_F(ScalarTests, Printing) {
     a = 42;
 
     ostringstream sout;

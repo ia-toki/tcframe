@@ -17,7 +17,7 @@ protected:
     ConstraintSuiteBuilder builder;
 };
 
-TEST_F(ConstraintSuiteBuilderTests, CanBuildWithoutConstraintGroups) {
+TEST_F(ConstraintSuiteBuilderTests, WithoutGroups_Building) {
     ConstraintSuite constraintSuite = builder
             .addConstraint(constraint1)
             .addConstraint(constraint2)
@@ -27,7 +27,7 @@ TEST_F(ConstraintSuiteBuilderTests, CanBuildWithoutConstraintGroups) {
             ConstraintGroup(-1, {constraint1, constraint2})));
 }
 
-TEST_F(ConstraintSuiteBuilderTests, CanBuildWithConstraintGroups) {
+TEST_F(ConstraintSuiteBuilderTests, WithGroups_Building) {
     ConstraintSuite constraintSuite = builder
             .newConstraintGroup()
             .addConstraint(constraint1)
