@@ -27,8 +27,8 @@ public:
     {}
 
     virtual ConstraintSuiteVerificationResult verify(const set<int>& constraintGroupIds) {
-        map<int, vector<string>> unsatisfiedConstraintDescriptionsByConstraintGroupId;
-        set<int> satisfiedButNotAssignedConstraintGroupIds;
+        map<int, vector<string>> unsatisfiedConstraintDescriptionsByGroupId;
+        set<int> satisfiedButNotAssignedGroupIds;
 
         for (const ConstraintGroup& constraintGroup : constraintSuite_.individualConstraints()) {
             vector<string> unsatisfiedConstraintDescriptions;
@@ -40,15 +40,15 @@ public:
 
             if (constraintGroupIds.count(constraintGroup.id())) {
                 if (!unsatisfiedConstraintDescriptions.empty()) {
-                    unsatisfiedConstraintDescriptionsByConstraintGroupId[constraintGroup.id()] = unsatisfiedConstraintDescriptions;
+                    unsatisfiedConstraintDescriptionsByGroupId[constraintGroup.id()] = unsatisfiedConstraintDescriptions;
                 }
             } else {
                 if (unsatisfiedConstraintDescriptions.empty()) {
-                    satisfiedButNotAssignedConstraintGroupIds.insert(constraintGroup.id());
+                    satisfiedButNotAssignedGroupIds.insert(constraintGroup.id());
                 }
             }
         }
-        return ConstraintSuiteVerificationResult(unsatisfiedConstraintDescriptionsByConstraintGroupId, satisfiedButNotAssignedConstraintGroupIds);
+        return ConstraintSuiteVerificationResult(unsatisfiedConstraintDescriptionsByGroupId, satisfiedButNotAssignedGroupIds);
     }
 };
 

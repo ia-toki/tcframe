@@ -18,15 +18,15 @@ namespace tcframe {
 
 struct ConstraintSuiteVerificationResult {
 private:
-    map<int, vector<string>> unsatisfiedConstraintDescriptionsByConstraintGroupId_;
-    set<int> satisfiedButNotAssignedConstraintGroupIds_;
+    map<int, vector<string>> unsatisfiedConstraintDescriptionsByGroupId_;
+    set<int> satisfiedButNotAssignedGroupIds_;
 
 public:
     ConstraintSuiteVerificationResult(
-            const map<int, vector<string>>& unsatisfiedConstraintDescriptionsByConstraintGroupId,
-            const set<int>& satisfiedButNotAssignedConstraintGroupIds)
-            : unsatisfiedConstraintDescriptionsByConstraintGroupId_(unsatisfiedConstraintDescriptionsByConstraintGroupId)
-            , satisfiedButNotAssignedConstraintGroupIds_(satisfiedButNotAssignedConstraintGroupIds)
+            const map<int, vector<string>>& unsatisfiedConstraintDescriptionsByGroupId,
+            const set<int>& satisfiedButNotAssignedGroupIds)
+            : unsatisfiedConstraintDescriptionsByGroupId_(unsatisfiedConstraintDescriptionsByGroupId)
+            , satisfiedButNotAssignedGroupIds_(satisfiedButNotAssignedGroupIds)
     {}
 
     static ConstraintSuiteVerificationResult validResult() {
@@ -34,21 +34,21 @@ public:
     }
 
     bool isValid() const {
-        return unsatisfiedConstraintDescriptionsByConstraintGroupId_.empty() &&
-               satisfiedButNotAssignedConstraintGroupIds_.empty();
+        return unsatisfiedConstraintDescriptionsByGroupId_.empty() &&
+               satisfiedButNotAssignedGroupIds_.empty();
     }
 
     const map<int, vector<string>>& unsatisfiedConstraintDescriptionsByConstraintGroupId() const {
-        return unsatisfiedConstraintDescriptionsByConstraintGroupId_;
+        return unsatisfiedConstraintDescriptionsByGroupId_;
     }
 
-    const set<int>& satisfiedButNotAssignedConstraintGroupIds() const {
-        return satisfiedButNotAssignedConstraintGroupIds_;
+    const set<int>& satisfiedButNotAssignedGroupIds() const {
+        return satisfiedButNotAssignedGroupIds_;
     }
 
     bool operator==(const ConstraintSuiteVerificationResult& o) const {
-        return tie(unsatisfiedConstraintDescriptionsByConstraintGroupId_, satisfiedButNotAssignedConstraintGroupIds_)
-                == tie(o.unsatisfiedConstraintDescriptionsByConstraintGroupId_, o.satisfiedButNotAssignedConstraintGroupIds_);
+        return tie(unsatisfiedConstraintDescriptionsByGroupId_, satisfiedButNotAssignedGroupIds_)
+                == tie(o.unsatisfiedConstraintDescriptionsByGroupId_, o.satisfiedButNotAssignedGroupIds_);
     }
 };
 

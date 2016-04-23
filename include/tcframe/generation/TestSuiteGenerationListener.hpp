@@ -74,7 +74,7 @@ private:
                 cout << "       - " << unsatisfiedConstraintDescription << endl;
             }
         }
-        for (int constraintGroupId : result.satisfiedButNotAssignedConstraintGroupIds()) {
+        for (int constraintGroupId : result.satisfiedButNotAssignedGroupIds()) {
             cout << "    * Satisfies subtask " << constraintGroupId << " but is not assigned to it" << endl;
         }
     }
