@@ -58,8 +58,37 @@ protected:
     }
 };
 
+class GeneratorWithTestGroups : public BaseGenerator<ProblemWithConstraintGroups> {
+protected:
+    void Config() {
+        setSolutionCommand("python Sol.py");
+        setTestCasesDir("dir");
+    }
+
+    void TestGroup1() {
+        assignToSubtasks({1, 2});
+
+        CASE(A = 1, B = 2);
+        CASE(A = 3, B = 4);
+    }
+
+
+    void TestGroup2() {
+        assignToSubtasks({2});
+
+        CASE(A = 101, B = 201);
+        CASE(A = 301, B = 401);
+    }
+};
+
 TEST(RunnerTests, WithoutGroups_MagicValid) {
     Runner<ProblemWithoutConstraintGroups> runner(1, NULL);
 
     runner.setGenerator(new GeneratorWithoutTestGroups());
+}
+
+TEST(RunnerTests, WithGroups_MagicValid) {
+    Runner<ProblemWithConstraintGroups> runner(1, NULL);
+
+    runner.setGenerator(new GeneratorWithTestGroups());
 }

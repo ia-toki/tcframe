@@ -66,6 +66,10 @@ public:
         }
         return move(subject_);
     }
+
+    ConstraintSuite buildWithoutLastConstraintGroup() {
+        return move(subject_);
+    }
 };
 
 }

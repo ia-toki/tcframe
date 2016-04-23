@@ -76,6 +76,7 @@ set(SOURCE_FILES
     include/tcframe/runner/BaseProblem.hpp
     include/tcframe/runner/BaseGenerator.hpp
     include/tcframe/runner/Magic.hpp
+    include/tcframe/runner/NotImplementedException.hpp
     include/tcframe/runner/Runner.hpp
     include/tcframe/testcase.hpp
     include/tcframe/testcase/OfficialTestCase.hpp

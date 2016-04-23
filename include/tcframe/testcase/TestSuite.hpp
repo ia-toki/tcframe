@@ -78,7 +78,11 @@ public:
         if (hasCurrentTestGroup_) {
             subject_.officialTests_.push_back(TestGroup(currentTestGroupId_, currentConstraintGroupIds_, currentOfficialTestCases_));
         }
-        return subject_;
+        return move(subject_);
+    }
+
+    TestSuite buildWithoutLastTestGroup() {
+        return move(subject_);
     }
 };
 
