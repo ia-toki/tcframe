@@ -25,6 +25,11 @@ public:
     bool operator==(const VerificationFailure& o) const {
         return tie(verificationResult_) == tie(o.verificationResult_);
     }
+
+protected:
+    bool equals(const TestCaseGenerationFailure& o) const {
+        return *this == (VerificationFailure&) o;
+    }
 };
 
 }

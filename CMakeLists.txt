@@ -97,8 +97,12 @@ set(SOURCE_FILES
     test/tcframe/format/LineIOSegmentPrinterTests.cpp
     test/tcframe/format/MockLineIOSegmentPrinter.hpp
     test/tcframe/format/MockWhitespacePrinter.hpp
+    test/tcframe/generation/FakeTestCaseGenerationFailure.hpp
+    test/tcframe/generation/MockTestCaseGenerator.hpp
+    test/tcframe/generation/MockTestSuiteGenerationListener.hpp
     test/tcframe/generation/TestCaseNameCreatorTests.cpp
     test/tcframe/generation/TestCaseGeneratorTests.cpp
+    test/tcframe/generation/TestSuiteGeneratorTests.cpp
     test/tcframe/os/MockOperatingSystem.hpp
     test/tcframe/testcase/TestSuiteBuilderTests.cpp
     test/tcframe/type/MockScalar.hpp

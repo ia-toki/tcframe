@@ -20,11 +20,11 @@ class TestSuiteGenerationListener {
 public:
     virtual ~TestSuiteGenerationListener() {}
 
-    void onIntroduction() {
+    virtual void onIntroduction() {
         cout << "Generating test cases..." << endl;
     }
 
-    void onTestGroupIntroduction(int testGroupId) {
+    virtual void onTestGroupIntroduction(int testGroupId) {
         cout << endl;
 
         if (testGroupId == 0) {
@@ -36,11 +36,11 @@ public:
         }
     }
 
-    void onTestCaseIntroduction(string testCaseName) {
+    virtual void onTestCaseIntroduction(string testCaseName) {
         cout << "  " << testCaseName << ": " << flush;
     }
 
-    void onTestCaseGenerationResult(const string& constraintDescription, const TestCaseGenerationResult& result) {
+    virtual void onTestCaseGenerationResult(const string& constraintDescription, const TestCaseGenerationResult& result) {
         if (result.isSuccessful()) {
             cout << "OK" << endl;
         } else {

@@ -3,12 +3,14 @@
 #include <functional>
 #include <set>
 #include <string>
+#include <tuple>
 #include <utility>
 
 using std::function;
 using std::move;
 using std::set;
 using std::string;
+using std::tie;
 
 namespace tcframe {
 
@@ -31,6 +33,10 @@ public:
 
     const set<int>& constraintGroupIds() const {
         return constraintGroupIds_;
+    }
+
+    bool operator==(const TestCaseData& o) const {
+        return tie(name_, description_, constraintGroupIds_) == tie(o.name_, o.description_, o.constraintGroupIds_);
     }
 };
 

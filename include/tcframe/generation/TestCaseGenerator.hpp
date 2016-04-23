@@ -27,6 +27,8 @@ private:
     OperatingSystem* os_;
 
 public:
+    virtual ~TestCaseGenerator() {}
+
     TestCaseGenerator(
             ConstraintSuiteVerifier* constraintSuiteVerifier,
             IOVariablesPrinter* ioVariablePrinter,
@@ -36,7 +38,7 @@ public:
             ,  os_(os)
     {}
 
-    TestCaseGenerationResult generate(
+    virtual TestCaseGenerationResult generate(
             const TestCaseData& data,
             const function<void()>& closure,
             const GeneratorConfig& config) {

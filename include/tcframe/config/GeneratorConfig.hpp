@@ -1,10 +1,12 @@
 #pragma once
 
 #include <string>
+#include <tuple>
 #include <utility>
 
 using std::move;
 using std::string;
+using std::tuple;
 
 namespace tcframe {
 
@@ -22,6 +24,10 @@ public:
 
     const string& testCasesDir() const {
         return testCasesDir_;
+    }
+
+    bool operator==(const GeneratorConfig& o) const {
+        return tie(solutionCommand_, testCasesDir_) == tie(o.solutionCommand_, o.testCasesDir_);
     }
 };
 

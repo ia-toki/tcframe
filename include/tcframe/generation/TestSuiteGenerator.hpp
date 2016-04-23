@@ -94,7 +94,7 @@ private:
         generationListener_->onTestCaseIntroduction(testCaseData.name());
 
         TestCaseGenerationResult result = testCaseGenerator_->generate(testCaseData, testCaseClosure, generatorConfig);
-        testCaseGenerationResultByTestCaseName.emplace(testCaseData.name(), result);
+        testCaseGenerationResultByTestCaseName[testCaseData.name()] = result;
 
         generationListener_->onTestCaseGenerationResult(testCaseData.description(), result);
 

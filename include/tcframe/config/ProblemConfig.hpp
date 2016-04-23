@@ -1,10 +1,12 @@
 #pragma once
 
 #include <string>
+#include <tuple>
 #include <utility>
 
 using std::move;
 using std::string;
+using std::tie;
 
 namespace tcframe {
 
@@ -18,6 +20,10 @@ public:
     const string& slug() const {
         return slug_;
     }
+
+    bool operator==(const ProblemConfig& o) const {
+        return tie(slug_) == tie(o.slug_);
+    }
 };
 
 class ProblemConfigBuilder {
@@ -29,12 +35,13 @@ public:
         subject_.slug_ = "problem";
     }
 
-    void setSlug(string slug) {
+    ProblemConfigBuilder& setSlug(string slug) {
         subject_.slug_ = slug;
+        return *this;
     }
 
     ProblemConfig build() {
-        return move(subject_);
+        return subject_;
     }
 };
 
