@@ -105,6 +105,7 @@ set(SOURCE_FILES
     test/tcframe/generation/TestCaseGeneratorTests.cpp
     test/tcframe/generation/TestSuiteGeneratorTests.cpp
     test/tcframe/os/MockOperatingSystem.hpp
+    test/tcframe/runner/RunnerTests.cpp
     test/tcframe/testcase/TestSuiteBuilderTests.cpp
     test/tcframe/type/MockScalar.hpp
     test/tcframe/type/ScalarTests.cpp
