@@ -98,12 +98,16 @@ set(SOURCE_FILES
     test/tcframe/format/MockLineIOSegmentPrinter.hpp
     test/tcframe/format/MockWhitespacePrinter.hpp
     test/tcframe/generation/TestCaseNameCreatorTests.cpp
+    test/tcframe/generation/TestCaseGeneratorTests.cpp
+    test/tcframe/os/MockOperatingSystem.hpp
     test/tcframe/testcase/TestSuiteBuilderTests.cpp
     test/tcframe/type/MockScalar.hpp
     test/tcframe/type/ScalarTests.cpp
     test/tcframe/util/StringUtilsTests.cpp
     test/tcframe/variable/IOVariablePrinterTests.cpp
+    test/tcframe/variable/MockIOVariablesPrinter.hpp
     test/tcframe/verification/ConstraintSuiteVerifierTests.cpp
+    test/tcframe/verification/MockConstraintSuiteVerifier.hpp
 
     include/tcframe/deprecated/core/Failure.hpp
     include/tcframe/deprecated/core/NotImplementedException.hpp

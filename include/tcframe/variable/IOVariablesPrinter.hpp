@@ -27,7 +27,7 @@ public:
             , ioFormat_(ioFormat)
     {}
 
-    void printInput(ostream* out) {
+    virtual void printInput(ostream* out) {
         print(ioFormat_.inputFormat(), out);
     }
 

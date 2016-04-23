@@ -3,6 +3,7 @@
 #include <map>
 #include <set>
 #include <string>
+#include <tuple>
 #include <vector>
 
 #include "tcframe/constraint.hpp"
@@ -10,6 +11,7 @@
 using std::map;
 using std::set;
 using std::string;
+using std::tie;
 using std::vector;
 
 namespace tcframe {
@@ -27,6 +29,10 @@ public:
             , satisfiedButNotAssignedConstraintGroupIds_(satisfiedButNotAssignedConstraintGroupIds)
     {}
 
+    static ConstraintSuiteVerificationResult validResult() {
+        return ConstraintSuiteVerificationResult({}, {});
+    }
+
     bool isValid() const {
         return unsatisfiedConstraintDescriptionsByConstraintGroupId_.empty() &&
                satisfiedButNotAssignedConstraintGroupIds_.empty();
@@ -38,6 +44,11 @@ public:
 
     const set<int>& satisfiedButNotAssignedConstraintGroupIds() const {
         return satisfiedButNotAssignedConstraintGroupIds_;
+    }
+
+    bool operator==(const ConstraintSuiteVerificationResult& o) const {
+        return tie(unsatisfiedConstraintDescriptionsByConstraintGroupId_, satisfiedButNotAssignedConstraintGroupIds_)
+                == tie(o.unsatisfiedConstraintDescriptionsByConstraintGroupId_, o.satisfiedButNotAssignedConstraintGroupIds_);
     }
 };
 

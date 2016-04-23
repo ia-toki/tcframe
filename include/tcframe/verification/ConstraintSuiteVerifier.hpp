@@ -26,7 +26,7 @@ public:
             : constraintSuite_(move(constraintSuite))
     {}
 
-    ConstraintSuiteVerificationResult verify(const set<int>& constraintGroupIds) const {
+    virtual ConstraintSuiteVerificationResult verify(const set<int>& constraintGroupIds) {
         map<int, vector<string>> unsatisfiedConstraintDescriptionsByConstraintGroupId;
         set<int> satisfiedButNotAssignedConstraintGroupIds;
 
