@@ -4,8 +4,6 @@
 #include <string>
 #include <utility>
 
-#include "TestCaseGenerationResult.hpp"
-
 using std::map;
 using std::move;
 using std::string;
@@ -14,19 +12,19 @@ namespace tcframe {
 
 struct TestSuiteGenerationResult {
 private:
-    map<string, TestCaseGenerationResult> testCaseGenerationResultByTestCaseName_;
+    map<string, TestCaseGenerationResult> resultsByName_;
 
 public:
-    TestSuiteGenerationResult(const map<string, TestCaseGenerationResult>& testCaseGenerationResultByTestCaseName)
-            : testCaseGenerationResultByTestCaseName_(testCaseGenerationResultByTestCaseName)
+    TestSuiteGenerationResult(const map<string, TestCaseGenerationResult>& resultsByName)
+            : resultsByName_(resultsByName)
     {}
 
-    const map<string, TestCaseGenerationResult>& testCaseGenerationResultByTestCaseName() const {
-        return testCaseGenerationResultByTestCaseName_;
+    const map<string, TestCaseGenerationResult>& resultsByName() const {
+        return resultsByName_;
     }
 
     bool isSuccessful() const {
-        for (auto entry : testCaseGenerationResultByTestCaseName_) {
+        for (auto entry : resultsByName_) {
             if (!entry.second.isSuccessful()) {
                 return false;
             }

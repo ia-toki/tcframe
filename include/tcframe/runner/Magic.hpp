@@ -13,7 +13,7 @@ using std::queue;
 using std::string;
 
 #define CONS(predicate) addConstraint(Constraint([=] {return predicate;}, #predicate))
-#define CASE(...) addTestCase(TestCase([=] {__VA_ARGS__;}, #__VA_ARGS__))
+#define CASE(...) addOfficialTestCase(OfficialTestCase([=] {__VA_ARGS__;}, #__VA_ARGS__))
 #define LINE(...) addIOSegment((MagicLineIOSegmentBuilder(#__VA_ARGS__), __VA_ARGS__).build())
 
 namespace tcframe {

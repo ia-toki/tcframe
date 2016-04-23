@@ -78,7 +78,7 @@ set(SOURCE_FILES
     include/tcframe/runner/Magic.hpp
     include/tcframe/runner/Runner.hpp
     include/tcframe/testcase.hpp
-    include/tcframe/testcase/TestCase.hpp
+    include/tcframe/testcase/OfficialTestCase.hpp
     include/tcframe/testcase/TestSuite.hpp
     include/tcframe/testcase/TestGroup.hpp
     include/tcframe/type.hpp
@@ -108,7 +108,7 @@ set(SOURCE_FILES
     test/tcframe/type/MockScalar.hpp
     test/tcframe/type/ScalarTests.cpp
     test/tcframe/util/StringUtilsTests.cpp
-    test/tcframe/variable/IOVariablePrinterTests.cpp
+    test/tcframe/variable/IOVariablesPrinterTests.cpp
     test/tcframe/variable/MockIOVariablesPrinter.hpp
     test/tcframe/verification/ConstraintSuiteVerifierTests.cpp
     test/tcframe/verification/MockConstraintSuiteVerifier.hpp

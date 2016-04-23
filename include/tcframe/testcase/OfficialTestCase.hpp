@@ -10,13 +10,13 @@ using std::tie;
 
 namespace tcframe {
 
-struct TestCase {
+struct OfficialTestCase {
 private:
     function<void()> closure_;
     string description_;
 
 public:
-    TestCase(const function<void()>& closure, const string& description)
+    OfficialTestCase(const function<void()>& closure, const string& description)
             : closure_(closure)
             , description_(description)
     {}
@@ -29,7 +29,7 @@ public:
         return description_;
     }
 
-    bool operator==(const TestCase& o) const {
+    bool operator==(const OfficialTestCase& o) const {
         return tie(description_) == tie(o.description_);
     }
 };

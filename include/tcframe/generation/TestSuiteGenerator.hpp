@@ -5,10 +5,10 @@
 #include <set>
 #include <string>
 
-#include "TestSuiteGenerationListener.hpp"
 #include "TestCaseNameCreator.hpp"
 #include "TestCaseGenerationResult.hpp"
 #include "TestCaseGenerator.hpp"
+#include "TestSuiteGenerationListener.hpp"
 #include "TestSuiteGenerationResult.hpp"
 #include "tcframe/config.hpp"
 #include "tcframe/os.hpp"
@@ -25,7 +25,7 @@ class TestSuiteGenerator {
 private:
     TestCaseGenerator* testCaseGenerator_;
     OperatingSystem* os_;
-    TestSuiteGenerationListener* generationListener_;
+    TestSuiteGenerationListener* listener_;
 
 public:
     virtual ~TestSuiteGenerator() {}
@@ -33,10 +33,10 @@ public:
     TestSuiteGenerator(
             TestCaseGenerator* testCaseGenerator,
             OperatingSystem* os,
-            TestSuiteGenerationListener* generationListener)
+            TestSuiteGenerationListener* listener)
             : testCaseGenerator_(testCaseGenerator)
             , os_(os)
-            , generationListener_(generationListener)
+            , listener_(listener)
     {}
 
     TestSuiteGenerationResult generate(
@@ -44,21 +44,21 @@ public:
             const ProblemConfig& problemConfig,
             const GeneratorConfig& generatorConfig) {
 
-        generationListener_->onIntroduction();
+        listener_->onIntroduction();
 
         os_->forceMakeDir(generatorConfig.testCasesDir());
 
-        map<string, TestCaseGenerationResult> testCaseGenerationResultByTestCaseName;
-        generateTestCases(testSuite.testCases(), problemConfig, generatorConfig, testCaseGenerationResultByTestCaseName);
-        return TestSuiteGenerationResult(testCaseGenerationResultByTestCaseName);
+        map<string, TestCaseGenerationResult> resultsByTestCaseName;
+        generateOfficialTests(testSuite.officialTests(), problemConfig, generatorConfig, resultsByTestCaseName);
+        return TestSuiteGenerationResult(resultsByTestCaseName);
     }
 
 private:
-    void generateTestCases(
-            const vector<TestGroup>& testCases,
-            const ProblemConfig& problemConfig,
-            const GeneratorConfig& generatorConfig,
-            map<string, TestCaseGenerationResult>& testCaseGenerationResultByTestCaseName) {
+    void generateOfficialTests(
+            const vector<TestGroup> &testCases,
+            const ProblemConfig &problemConfig,
+            const GeneratorConfig &generatorConfig,
+            map<string, TestCaseGenerationResult> &testCaseGenerationResultByTestCaseName) {
 
         for (const TestGroup& testGroup : testCases) {
             generateTestGroup(testGroup, problemConfig, generatorConfig, testCaseGenerationResultByTestCaseName);
@@ -71,10 +71,10 @@ private:
             const GeneratorConfig& generatorConfig,
             map<string, TestCaseGenerationResult>& testCaseGenerationResultByTestCaseName) {
 
-        generationListener_->onTestGroupIntroduction(testGroup.id());
+        listener_->onTestGroupIntroduction(testGroup.id());
 
-        for (int testCaseId = 1; testCaseId <= testGroup.testCases().size(); testCaseId++) {
-            TestCase testCase = testGroup.testCases()[testCaseId - 1];
+        for (int testCaseId = 1; testCaseId <= testGroup.officialTestCases().size(); testCaseId++) {
+            OfficialTestCase testCase = testGroup.officialTestCases()[testCaseId - 1];
             TestCaseData testCaseData = TestCaseDataBuilder()
                     .setName(TestCaseNameCreator::createTestCaseName(problemConfig.slug(), testGroup.id(), testCaseId))
                     .setDescription(testCase.description())
@@ -89,14 +89,14 @@ private:
             const TestCaseData& testCaseData,
             const function<void()> testCaseClosure,
             const GeneratorConfig& generatorConfig,
-            map<string, TestCaseGenerationResult>& testCaseGenerationResultByTestCaseName) {
+            map<string, TestCaseGenerationResult>& testCaseGenerationResultsByName) {
 
-        generationListener_->onTestCaseIntroduction(testCaseData.name());
+        listener_->onTestCaseIntroduction(testCaseData.name());
 
         TestCaseGenerationResult result = testCaseGenerator_->generate(testCaseData, testCaseClosure, generatorConfig);
-        testCaseGenerationResultByTestCaseName[testCaseData.name()] = result;
+        testCaseGenerationResultsByName[testCaseData.name()] = result;
 
-        generationListener_->onTestCaseGenerationResult(testCaseData.description(), result);
+        listener_->onTestCaseGenerationResult(testCaseData.description(), result);
 
         return result;
     }

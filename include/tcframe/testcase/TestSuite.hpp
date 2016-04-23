@@ -5,7 +5,7 @@
 #include <string>
 #include <utility>
 
-#include "TestCase.hpp"
+#include "OfficialTestCase.hpp"
 #include "TestGroup.hpp"
 
 using std::initializer_list;
@@ -19,11 +19,11 @@ struct TestSuite {
     friend class TestSuiteBuilder;
 
 private:
-    vector<TestGroup> testCases_;
+    vector<TestGroup> officialTests_;
 
 public:
-    const vector<TestGroup>& testCases() const {
-        return testCases_;
+    const vector<TestGroup>& officialTests() const {
+        return officialTests_;
     }
 };
 
@@ -34,7 +34,7 @@ private:
     bool hasCurrentTestGroup_;
     int currentTestGroupId_;
     set<int> currentConstraintGroupIds_;
-    vector<TestCase> currentTestCases_;
+    vector<OfficialTestCase> currentOfficialTestCases_;
 
 public:
     TestSuiteBuilder()
@@ -45,13 +45,13 @@ public:
 
     TestSuiteBuilder& newTestGroup() {
         if (hasCurrentTestGroup_) {
-            subject_.testCases_.push_back(TestGroup(currentTestGroupId_, currentConstraintGroupIds_, currentTestCases_));
+            subject_.officialTests_.push_back(TestGroup(currentTestGroupId_, currentConstraintGroupIds_, currentOfficialTestCases_));
         }
 
         hasCurrentTestGroup_ = true;
         currentTestGroupId_++;
         currentConstraintGroupIds_ = {-1};
-        currentTestCases_.clear();
+        currentOfficialTestCases_.clear();
 
         return *this;
     }
@@ -62,21 +62,21 @@ public:
         return *this;
     }
 
-    TestSuiteBuilder& addTestCase(TestCase testCase) {
+    TestSuiteBuilder& addOfficialTestCase(OfficialTestCase testCase) {
         if (!hasCurrentTestGroup_) {
             hasCurrentTestGroup_ = true;
             currentTestGroupId_ = -1;
             currentConstraintGroupIds_ = {-1};
         }
 
-        currentTestCases_.push_back(testCase);
+        currentOfficialTestCases_.push_back(testCase);
 
         return *this;
     }
 
     TestSuite build() {
         if (hasCurrentTestGroup_) {
-            subject_.testCases_.push_back(TestGroup(currentTestGroupId_, currentConstraintGroupIds_, currentTestCases_));
+            subject_.officialTests_.push_back(TestGroup(currentTestGroupId_, currentConstraintGroupIds_, currentOfficialTestCases_));
         }
         return subject_;
     }

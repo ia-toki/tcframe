@@ -4,7 +4,7 @@
 #include <tuple>
 #include <vector>
 
-#include "TestCase.hpp"
+#include "OfficialTestCase.hpp"
 
 using std::set;
 using std::tie;
@@ -16,13 +16,13 @@ struct TestGroup {
 private:
     int id_;
     set<int> constraintGroupIds_;
-    vector<TestCase> testCases_;
+    vector<OfficialTestCase> officialTestCases_;
 
 public:
-    TestGroup(int id, const set<int>& constraintGroupId, const vector<TestCase>& testCases)
+    TestGroup(int id, const set<int>& constraintGroupId, const vector<OfficialTestCase>& testCases)
             : id_(id)
             , constraintGroupIds_(constraintGroupId)
-            , testCases_(testCases)
+            , officialTestCases_(testCases)
     {}
 
     int id() const {
@@ -33,12 +33,12 @@ public:
         return constraintGroupIds_;
     }
 
-    const vector<TestCase>& testCases() const {
-        return testCases_;
+    const vector<OfficialTestCase>& officialTestCases() const {
+        return officialTestCases_;
     }
 
     bool operator==(const TestGroup& o) const {
-        return tie(id_, constraintGroupIds_, testCases_) == tie(o.id_, o.constraintGroupIds_, o.testCases_);
+        return tie(id_, constraintGroupIds_, officialTestCases_) == tie(o.id_, o.constraintGroupIds_, o.officialTestCases_);
     }
 };
 

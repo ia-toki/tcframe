@@ -14,7 +14,7 @@ using std::ostringstream;
 
 namespace tcframe {
 
-class IOVariablePrinterTests : public Test {
+class IOVariablesPrinterTests : public Test {
 protected:
     IOSegment* segmentA = new FakeIOSegment(IOSegmentType::LINE);
     IOSegment* segmentB = new FakeIOSegment(IOSegmentType::LINE);
@@ -30,7 +30,7 @@ protected:
     IOVariablesPrinter printer = IOVariablesPrinter(&lineIOSegmentPrinter, ioFormat);
 };
 
-TEST_F(IOVariablePrinterTests, CanPrint) {
+TEST_F(IOVariablesPrinterTests, CanPrint) {
     {
         InSequence sequence;
 

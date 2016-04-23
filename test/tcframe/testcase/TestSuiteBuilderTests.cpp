@@ -9,21 +9,21 @@ namespace tcframe {
 
 class TestSuiteBuilderTests : public Test {
 protected:
-    TestCase tc1 = TestCase([]{}, "N = 1");
-    TestCase tc2 = TestCase([]{}, "N = 2");
-    TestCase tc3 = TestCase([]{}, "N = 3");
-    TestCase tc4 = TestCase([]{}, "N = 4");
+    OfficialTestCase tc1 = OfficialTestCase([]{}, "N = 1");
+    OfficialTestCase tc2 = OfficialTestCase([]{}, "N = 2");
+    OfficialTestCase tc3 = OfficialTestCase([]{}, "N = 3");
+    OfficialTestCase tc4 = OfficialTestCase([]{}, "N = 4");
 
     TestSuiteBuilder builder;
 };
 
 TEST_F(TestSuiteBuilderTests, CanBuildWithoutTestGroups) {
     TestSuite testSuite = builder
-            .addTestCase(tc1)
-            .addTestCase(tc2)
+            .addOfficialTestCase(tc1)
+            .addOfficialTestCase(tc2)
             .build();
 
-    EXPECT_THAT(testSuite.testCases(), ElementsAre(
+    EXPECT_THAT(testSuite.officialTests(), ElementsAre(
             TestGroup(-1, {-1}, {tc1, tc2})));
 }
 
@@ -31,15 +31,15 @@ TEST_F(TestSuiteBuilderTests, CanBuildWithTestGroups) {
     TestSuite testSuite = builder
             .newTestGroup()
             .setConstraintGroupIds({1, 2})
-            .addTestCase(tc1)
-            .addTestCase(tc2)
+            .addOfficialTestCase(tc1)
+            .addOfficialTestCase(tc2)
             .newTestGroup()
             .setConstraintGroupIds({2})
-            .addTestCase(tc3)
-            .addTestCase(tc4)
+            .addOfficialTestCase(tc3)
+            .addOfficialTestCase(tc4)
             .build();
 
-    EXPECT_THAT(testSuite.testCases(), ElementsAre(
+    EXPECT_THAT(testSuite.officialTests(), ElementsAre(
             TestGroup(1, {1, 2}, {tc1, tc2}),
             TestGroup(2, {2}, {tc3, tc4})));
 }
