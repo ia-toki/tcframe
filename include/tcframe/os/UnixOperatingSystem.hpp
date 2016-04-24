@@ -38,12 +38,12 @@ public:
     }
 
     void forceMakeDir(const string& dirName) {
-        system(("rm -rf " + dirName).c_str());
-        system(("mkdir -p " + dirName).c_str());
+        runCommand("rm -rf " + dirName);
+        runCommand("mkdir -p " + dirName);
     }
 
     void removeFile(const string& filename) {
-        system(("rm -f " + filename).c_str());
+        runCommand("rm -rf " + filename);
     }
 
     ExecutionResult execute(
@@ -101,6 +101,10 @@ private:
         removeFile(filename);
 
         return new istringstream(buffer.str());
+    }
+
+    void runCommand(const string& command) {
+        system(command.c_str());
     }
 };
 
