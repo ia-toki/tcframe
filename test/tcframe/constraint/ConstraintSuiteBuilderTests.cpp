@@ -42,4 +42,20 @@ TEST_F(ConstraintSuiteBuilderTests, WithGroups_Building) {
             ConstraintGroup(2, {constraint3, constraint4})));
 }
 
+TEST_F(ConstraintSuiteBuilderTests, WithGroups_BuildingWithoutLastGroup) {
+    ConstraintSuite constraintSuite = builder
+            .newConstraintGroup()
+            .addConstraint(constraint1)
+            .addConstraint(constraint2)
+            .newConstraintGroup()
+            .addConstraint(constraint3)
+            .addConstraint(constraint4)
+            .newConstraintGroup()
+            .buildWithoutLastConstraintGroup();
+
+    EXPECT_THAT(constraintSuite.individualConstraints(), ElementsAre(
+            ConstraintGroup(1, {constraint1, constraint2}),
+            ConstraintGroup(2, {constraint3, constraint4})));
+}
+
 }

@@ -44,4 +44,22 @@ TEST_F(TestSuiteBuilderTests, WithGroups_Building) {
             TestGroup(2, {2}, {tc3, tc4})));
 }
 
+TEST_F(TestSuiteBuilderTests, WithGroups_BuildingWithoutLastGroup) {
+    TestSuite testSuite = builder
+            .newTestGroup()
+            .setConstraintGroupIds({1, 2})
+            .addOfficialTestCase(tc1)
+            .addOfficialTestCase(tc2)
+            .newTestGroup()
+            .setConstraintGroupIds({2})
+            .addOfficialTestCase(tc3)
+            .addOfficialTestCase(tc4)
+            .newTestGroup()
+            .buildWithoutLastTestGroup();
+
+    EXPECT_THAT(testSuite.officialTests(), ElementsAre(
+            TestGroup(1, {1, 2}, {tc1, tc2}),
+            TestGroup(2, {2}, {tc3, tc4})));
+}
+
 }
