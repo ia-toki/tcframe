@@ -30,8 +30,8 @@ protected:
 class GeneratorWithoutTestGroups : public FakeGenerator {
 protected:
     void TestCases() {
-        CASE(A = 1, B = 2);
-        CASE(A = 3, B = 4);
+        addOfficialTestCase(OfficialTestCase([=] {A = 1, B = 2;}, "A = 1, B = 2"));
+        addOfficialTestCase(OfficialTestCase([=] {A = 3, B = 4;}, "A = 3, B = 4"));
     }
 };
 
@@ -40,17 +40,17 @@ protected:
     void TestGroup1() {
         assignToSubtasks({1, 2});
 
-        CASE(A = 1, B = 2);
-        CASE(A = 3, B = 4);
-        CASE(A = 5, B = 6);
+        addOfficialTestCase(OfficialTestCase([=] {A = 1, B = 2;}, "A = 1, B = 2"));
+        addOfficialTestCase(OfficialTestCase([=] {A = 3, B = 4;}, "A = 3, B = 4"));
+        addOfficialTestCase(OfficialTestCase([=] {A = 5, B = 6;}, "A = 5, B = 6"));
     }
 
 
     void TestGroup2() {
         assignToSubtasks({2});
 
-        CASE(A = 101, B = 201);
-        CASE(A = 301, B = 401);
+        addOfficialTestCase(OfficialTestCase([=] {A = 101, B = 201;}, "A = 101, B = 201"));
+        addOfficialTestCase(OfficialTestCase([=] {A = 301, B = 401;}, "A = 301, B = 401"));
     }
 };
 

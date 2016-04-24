@@ -21,29 +21,29 @@ protected:
     }
 
     void InputFormat() {
-        LINE(A, B);
+        addIOSegment((MagicLineIOSegmentBuilder("A, B"), A, B).build());
     }
 };
 
 class ProblemWithoutConstraintGroups : public Problem {
 protected:
     void Constraints() {
-        CONS(1 <= A && A <= 100);
-        CONS(1 <= B && B <= 100);
+        addConstraint(Constraint([=] {return 1 <= A && A <= 100;}, "1 <= A && A <= 100"));
+        addConstraint(Constraint([=] {return 1 <= B && B <= 100;}, "1 <= B && B <= 100"));
     }
 };
 
 class ProblemWithConstraintGroups : public Problem {
 protected:
     void Subtask1() {
-        CONS(1 <= A && A <= 100);
-        CONS(1 <= B && B <= 100);
-        CONS(A != B);
+        addConstraint(Constraint([=] {return 1 <= A && A <= 100;}, "1 <= A && A <= 100"));
+        addConstraint(Constraint([=] {return 1 <= B && B <= 100;}, "1 <= B && B <= 100"));
+        addConstraint(Constraint([=] {return A != B;}, "A != B"));
     }
 
     void Subtask2() {
-        CONS(1 <= A && A <= 1000);
-        CONS(1 <= B && B <= 1000);
+        addConstraint(Constraint([=] {return 1 <= A && A <= 1000;}, "1 <= A && A <= 1000"));
+        addConstraint(Constraint([=] {return 1 <= B && B <= 1000;}, "1 <= B && B <= 1000"));
     }
 };
 
