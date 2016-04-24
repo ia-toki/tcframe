@@ -108,6 +108,7 @@ set(SOURCE_FILES
     test/tcframe/os/MockOperatingSystem.hpp
     test/tcframe/runner/BaseGeneratorTests.cpp
     test/tcframe/runner/BaseProblemTests.cpp
+    test/tcframe/runner/MagicTests.cpp
     test/tcframe/runner/RunnerTests.cpp
     test/tcframe/testcase/TestSuiteBuilderTests.cpp
     test/tcframe/type/MockScalar.hpp
