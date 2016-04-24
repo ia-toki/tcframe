@@ -23,7 +23,6 @@ protected:
 
 TEST_F(RunnerTests, CompilationSuccessful) {
     runner.setGenerator(new FakeGenerator());
-    runner.run();
 }
 
 }
