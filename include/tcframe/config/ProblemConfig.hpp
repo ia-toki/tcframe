@@ -31,6 +31,8 @@ private:
     ProblemConfig subject_;
 
 public:
+    virtual ~ProblemConfigBuilder() {}
+
     ProblemConfigBuilder() {
         subject_.slug_ = "problem";
     }

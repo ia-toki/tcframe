@@ -32,6 +32,8 @@ private:
     vector<Constraint> currentIndividualConstraints_;
 
 public:
+    virtual ~ConstraintSuiteBuilder() {}
+
     ConstraintSuiteBuilder()
             : hasCurrentConstraintGroup_(false)
             , currentConstraintGroupId_(0)

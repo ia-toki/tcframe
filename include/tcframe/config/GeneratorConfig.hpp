@@ -36,6 +36,8 @@ private:
     GeneratorConfig subject_;
 
 public:
+    virtual ~GeneratorConfigBuilder() {}
+
     GeneratorConfigBuilder() {
         subject_.solutionCommand_ = "./solution";
         subject_.testCasesDir_ = "tc";

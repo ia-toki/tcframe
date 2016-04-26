@@ -37,6 +37,8 @@ private:
     vector<OfficialTestCase> currentOfficialTestCases_;
 
 public:
+    virtual ~TestSuiteBuilder() {}
+
     TestSuiteBuilder()
             : hasCurrentTestGroup_(false)
             , currentTestGroupId_(0)

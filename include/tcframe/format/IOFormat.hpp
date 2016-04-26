@@ -33,6 +33,8 @@ private:
     vector<IOSegment*>* currentFormat_;
 
 public:
+    virtual ~IOFormatBuilder() {}
+
     IOFormatBuilder& prepareForInputFormat() {
         currentFormat_ = &subject_.inputFormat_;
         return *this;
