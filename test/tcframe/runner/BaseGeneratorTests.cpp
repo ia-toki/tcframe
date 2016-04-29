@@ -12,50 +12,50 @@ using ::testing::Test;
 
 namespace tcframe {
 
-class FakeProblem : public BaseProblem {
-protected:
-    int A, B;
-
-    void InputFormat() {}
-};
-
-class FakeGenerator : public BaseGenerator<FakeProblem> {
-protected:
-    void Config() {
-        setSolutionCommand("python Sol.py");
-        setTestCasesDir("dir");
-    }
-};
-
-class GeneratorWithoutTestGroups : public FakeGenerator {
-protected:
-    void TestCases() {
-        addOfficialTestCase(OfficialTestCase([=] {A = 1, B = 2;}, "A = 1, B = 2"));
-        addOfficialTestCase(OfficialTestCase([=] {A = 3, B = 4;}, "A = 3, B = 4"));
-    }
-};
-
-class GeneratorWithTestGroups : public FakeGenerator {
-protected:
-    void TestGroup1() {
-        assignToSubtasks({1, 2});
-
-        addOfficialTestCase(OfficialTestCase([=] {A = 1, B = 2;}, "A = 1, B = 2"));
-        addOfficialTestCase(OfficialTestCase([=] {A = 3, B = 4;}, "A = 3, B = 4"));
-        addOfficialTestCase(OfficialTestCase([=] {A = 5, B = 6;}, "A = 5, B = 6"));
-    }
-
-
-    void TestGroup2() {
-        assignToSubtasks({2});
-
-        addOfficialTestCase(OfficialTestCase([=] {A = 101, B = 201;}, "A = 101, B = 201"));
-        addOfficialTestCase(OfficialTestCase([=] {A = 301, B = 401;}, "A = 301, B = 401"));
-    }
-};
-
 class BaseGeneratorTests : public Test {
 protected:
+    class FakeProblem : public BaseProblem {
+    protected:
+        int A, B;
+
+        void InputFormat() {}
+    };
+
+    class FakeGenerator : public BaseGenerator<FakeProblem> {
+    protected:
+        void Config() {
+            setSolutionCommand("python Sol.py");
+            setTestCasesDir("dir");
+        }
+    };
+
+    class GeneratorWithoutTestGroups : public FakeGenerator {
+    protected:
+        void TestCases() {
+            addOfficialTestCase(OfficialTestCase([=] {A = 1, B = 2;}, "A = 1, B = 2"));
+            addOfficialTestCase(OfficialTestCase([=] {A = 3, B = 4;}, "A = 3, B = 4"));
+        }
+    };
+
+    class GeneratorWithTestGroups : public FakeGenerator {
+    protected:
+        void TestGroup1() {
+            assignToSubtasks({1, 2});
+
+            addOfficialTestCase(OfficialTestCase([=] {A = 1, B = 2;}, "A = 1, B = 2"));
+            addOfficialTestCase(OfficialTestCase([=] {A = 3, B = 4;}, "A = 3, B = 4"));
+            addOfficialTestCase(OfficialTestCase([=] {A = 5, B = 6;}, "A = 5, B = 6"));
+        }
+
+
+        void TestGroup2() {
+            assignToSubtasks({2});
+
+            addOfficialTestCase(OfficialTestCase([=] {A = 101, B = 201;}, "A = 101, B = 201"));
+            addOfficialTestCase(OfficialTestCase([=] {A = 301, B = 401;}, "A = 301, B = 401"));
+        }
+    };
+
     FakeGenerator generator;
     GeneratorWithoutTestGroups generatorWithoutTestGroups;
     GeneratorWithTestGroups generatorWithTestGroups;

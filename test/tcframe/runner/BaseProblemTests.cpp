@@ -12,43 +12,43 @@ using ::testing::Test;
 
 namespace tcframe {
 
-class Problem : public BaseProblem {
-protected:
-    int A, B;
-
-    void Config() {
-        setSlug("ab");
-    }
-
-    void InputFormat() {
-        addIOSegment((MagicLineIOSegmentBuilder("A, B"), A, B).build());
-    }
-};
-
-class ProblemWithoutConstraintGroups : public Problem {
-protected:
-    void Constraints() {
-        addConstraint(Constraint([=] {return 1 <= A && A <= 100;}, "1 <= A && A <= 100"));
-        addConstraint(Constraint([=] {return 1 <= B && B <= 100;}, "1 <= B && B <= 100"));
-    }
-};
-
-class ProblemWithConstraintGroups : public Problem {
-protected:
-    void Subtask1() {
-        addConstraint(Constraint([=] {return 1 <= A && A <= 100;}, "1 <= A && A <= 100"));
-        addConstraint(Constraint([=] {return 1 <= B && B <= 100;}, "1 <= B && B <= 100"));
-        addConstraint(Constraint([=] {return A != B;}, "A != B"));
-    }
-
-    void Subtask2() {
-        addConstraint(Constraint([=] {return 1 <= A && A <= 1000;}, "1 <= A && A <= 1000"));
-        addConstraint(Constraint([=] {return 1 <= B && B <= 1000;}, "1 <= B && B <= 1000"));
-    }
-};
-
 class BaseProblemTests : public Test {
 protected:
+    class Problem : public BaseProblem {
+    protected:
+        int A, B;
+
+        void Config() {
+            setSlug("ab");
+        }
+
+        void InputFormat() {
+            addIOSegment((MagicLineIOSegmentBuilder("A, B"), A, B).build());
+        }
+    };
+
+    class ProblemWithoutConstraintGroups : public Problem {
+    protected:
+        void Constraints() {
+            addConstraint(Constraint([=] {return 1 <= A && A <= 100;}, "1 <= A && A <= 100"));
+            addConstraint(Constraint([=] {return 1 <= B && B <= 100;}, "1 <= B && B <= 100"));
+        }
+    };
+
+    class ProblemWithConstraintGroups : public Problem {
+    protected:
+        void Subtask1() {
+            addConstraint(Constraint([=] {return 1 <= A && A <= 100;}, "1 <= A && A <= 100"));
+            addConstraint(Constraint([=] {return 1 <= B && B <= 100;}, "1 <= B && B <= 100"));
+            addConstraint(Constraint([=] {return A != B;}, "A != B"));
+        }
+
+        void Subtask2() {
+            addConstraint(Constraint([=] {return 1 <= A && A <= 1000;}, "1 <= A && A <= 1000"));
+            addConstraint(Constraint([=] {return 1 <= B && B <= 1000;}, "1 <= B && B <= 1000"));
+        }
+    };
+    
     Problem problem;
     ProblemWithoutConstraintGroups problemWithoutConstraintGroups;
     ProblemWithConstraintGroups problemWithConstraintGroups;

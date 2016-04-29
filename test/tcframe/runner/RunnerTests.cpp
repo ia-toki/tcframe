@@ -6,24 +6,21 @@ using ::testing::Test;
 
 namespace tcframe {
 
-class FakeProblem : public BaseProblem {
-protected:
-    void InputFormat() {}
-};
-
-class FakeGenerator : public BaseGenerator<FakeProblem> {};
-
 class RunnerTests : public Test {
 protected:
-    int argc = 1;
-    char* argv[1] = {(char*) "./runner"};
+    class FakeProblem : public BaseProblem {
+    protected:
+        void InputFormat() {}
+    };
 
-    Runner<FakeProblem> runner = Runner<FakeProblem>(argc, argv);
+    class FakeGenerator : public BaseGenerator<FakeProblem> {};
 };
 
 TEST_F(RunnerTests, CompilationSuccessful) {
-    FakeGenerator generator;
-    runner.setGenerator(&generator);
+    int argc = 1;
+    char* argv[1] = {(char*) "./runner"};
+    Runner<FakeProblem> runner = Runner<FakeProblem>(argc, argv);
+    runner.setGenerator(new FakeGenerator());
 }
 
 }
