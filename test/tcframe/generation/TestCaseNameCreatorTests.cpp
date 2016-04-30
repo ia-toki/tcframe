@@ -9,12 +9,16 @@ namespace tcframe {
 
 class TestCaseNameCreatorTests : public Test {};
 
-TEST_F(TestCaseNameCreatorTests, WithoutGroups_Creation) {
-    EXPECT_THAT(TestCaseNameCreator::createTestCaseName("foo", -1, 42), Eq("foo_42"));
+TEST_F(TestCaseNameCreatorTests, SampleTestCaseNameCreation) {
+    EXPECT_THAT(TestCaseNameCreator::createSampleTestCaseName("foo", 42), Eq("foo_sample_42"));
 }
 
-TEST_F(TestCaseNameCreatorTests, WithGroups_Creation) {
-    EXPECT_THAT(TestCaseNameCreator::createTestCaseName("foo", 7, 42), Eq("foo_7_42"));
+TEST_F(TestCaseNameCreatorTests, WithoutGroups_OfficialTestCaseNameCreation) {
+    EXPECT_THAT(TestCaseNameCreator::createOfficialTestCaseName("foo", -1, 42), Eq("foo_42"));
+}
+
+TEST_F(TestCaseNameCreatorTests, WithGroups_OfficialTestCaseNameCreation) {
+    EXPECT_THAT(TestCaseNameCreator::createOfficialTestCaseName("foo", 7, 42), Eq("foo_7_42"));
 }
 
 }

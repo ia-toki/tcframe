@@ -1,6 +1,8 @@
 #include "gmock/gmock.h"
 #include "../mock.hpp"
 
+#include <vector>
+
 #include "../os/MockOperatingSystem.hpp"
 #include "FakeTestCaseGenerationFailure.hpp"
 #include "MockTestCaseGenerator.hpp"
@@ -16,6 +18,8 @@ using ::testing::Property;
 using ::testing::Return;
 using ::testing::Test;
 
+using std::vector;
+
 namespace tcframe {
 
 class TestSuiteGeneratorTests : public Test {
@@ -24,15 +28,22 @@ protected:
     Mock(OperatingSystem) os;
     Mock(TestSuiteGenerationListener) listener;
 
+    vector<string> stc1 = {"10", "20"};
+    vector<string> stc2 = {"30"};
+
     OfficialTestCase tc1 = OfficialTestCase([]{}, "N = 1");
     OfficialTestCase tc2 = OfficialTestCase([]{}, "N = 2");
     OfficialTestCase tc3 = OfficialTestCase([]{}, "N = 3");
 
     TestSuite testSuiteWithoutGroups = TestSuiteBuilder()
+            .addSampleTestCase(stc1)
+            .addSampleTestCase(stc2)
             .addOfficialTestCase(tc1)
             .addOfficialTestCase(tc2)
             .build();
     TestSuite testSuiteWithGroups = TestSuiteBuilder()
+            .addSampleTestCase(stc1, {1, 2})
+            .addSampleTestCase(stc2, {2})
             .newTestGroup()
             .setConstraintGroupIds({1, 2})
             .addOfficialTestCase(tc1)
@@ -64,6 +75,23 @@ TEST_F(TestSuiteGeneratorTests, WithoutGroups_SuccessfulGeneration) {
         EXPECT_CALL(listener, onIntroduction());
         EXPECT_CALL(os, forceMakeDir("dir"));
 
+        EXPECT_CALL(listener, onSampleTestCasesIntroduction());
+
+        EXPECT_CALL(listener, onTestCaseIntroduction("foo_sample_1"));
+        EXPECT_CALL(testCaseGenerator, generate(
+                TestCaseDataBuilder().setName("foo_sample_1").setConstraintGroupIds({-1}).build(),
+                _,
+                generatorConfig));
+        EXPECT_CALL(listener, onTestCaseGenerationResult("", TestCaseGenerationResult::successfulResult()));
+
+        EXPECT_CALL(listener, onTestCaseIntroduction("foo_sample_2"));
+        EXPECT_CALL(testCaseGenerator, generate(
+                TestCaseDataBuilder().setName("foo_sample_2").setConstraintGroupIds({-1}).build(),
+                _,
+                generatorConfig));
+        EXPECT_CALL(listener, onTestCaseGenerationResult("", TestCaseGenerationResult::successfulResult()));
+
+
         EXPECT_CALL(listener, onTestGroupIntroduction(-1));
 
         EXPECT_CALL(listener, onTestCaseIntroduction("foo_1"));
@@ -86,10 +114,15 @@ TEST_F(TestSuiteGeneratorTests, WithoutGroups_SuccessfulGeneration) {
     EXPECT_THAT(result.isSuccessful(), Eq(true));
     EXPECT_THAT(result.resultsByName(), ElementsAre(
             Pair("foo_1", TestCaseGenerationResult::successfulResult()),
-            Pair("foo_2", TestCaseGenerationResult::successfulResult())));
+            Pair("foo_2", TestCaseGenerationResult::successfulResult()),
+            Pair("foo_sample_1", TestCaseGenerationResult::successfulResult()),
+            Pair("foo_sample_2", TestCaseGenerationResult::successfulResult())));
 }
 
 TEST_F(TestSuiteGeneratorTests, WithoutGroups_FailedGeneration) {
+    TestCaseGenerationFailure* failure_sample_1 = new FakeTestCaseGenerationFailure();
+    ON_CALL(testCaseGenerator, generate(Property(&TestCaseData::name, "foo_sample_1"), _, generatorConfig))
+            .WillByDefault(Return(TestCaseGenerationResult::failedResult(failure_sample_1)));
     TestCaseGenerationFailure* failure_2 = new FakeTestCaseGenerationFailure();
     ON_CALL(testCaseGenerator, generate(Property(&TestCaseData::name, "foo_2"), _, generatorConfig))
             .WillByDefault(Return(TestCaseGenerationResult::failedResult(failure_2)));
@@ -97,6 +130,23 @@ TEST_F(TestSuiteGeneratorTests, WithoutGroups_FailedGeneration) {
         InSequence sequence;
         EXPECT_CALL(listener, onIntroduction());
         EXPECT_CALL(os, forceMakeDir("dir"));
+
+        EXPECT_CALL(listener, onSampleTestCasesIntroduction());
+
+        EXPECT_CALL(listener, onTestCaseIntroduction("foo_sample_1"));
+        EXPECT_CALL(testCaseGenerator, generate(
+                TestCaseDataBuilder().setName("foo_sample_1").setConstraintGroupIds({-1}).build(),
+                _,
+                generatorConfig));
+        EXPECT_CALL(listener, onTestCaseGenerationResult("", TestCaseGenerationResult::failedResult(failure_sample_1)));
+
+        EXPECT_CALL(listener, onTestCaseIntroduction("foo_sample_2"));
+        EXPECT_CALL(testCaseGenerator, generate(
+                TestCaseDataBuilder().setName("foo_sample_2").setConstraintGroupIds({-1}).build(),
+                _,
+                generatorConfig));
+        EXPECT_CALL(listener, onTestCaseGenerationResult("", TestCaseGenerationResult::successfulResult()));
+
 
         EXPECT_CALL(listener, onTestGroupIntroduction(-1));
 
@@ -120,7 +170,9 @@ TEST_F(TestSuiteGeneratorTests, WithoutGroups_FailedGeneration) {
     EXPECT_THAT(result.isSuccessful(), Eq(false));
     EXPECT_THAT(result.resultsByName(), ElementsAre(
             Pair("foo_1", TestCaseGenerationResult::successfulResult()),
-            Pair("foo_2", TestCaseGenerationResult::failedResult(failure_2))));
+            Pair("foo_2", TestCaseGenerationResult::failedResult(failure_2)),
+            Pair("foo_sample_1", TestCaseGenerationResult::failedResult(failure_sample_1)),
+            Pair("foo_sample_2", TestCaseGenerationResult::successfulResult())));
 }
 
 TEST_F(TestSuiteGeneratorTests, WithGroups_SuccessfulGeneration) {
@@ -128,6 +180,23 @@ TEST_F(TestSuiteGeneratorTests, WithGroups_SuccessfulGeneration) {
         InSequence sequence;
         EXPECT_CALL(listener, onIntroduction());
         EXPECT_CALL(os, forceMakeDir("dir"));
+
+        EXPECT_CALL(listener, onSampleTestCasesIntroduction());
+
+        EXPECT_CALL(listener, onTestCaseIntroduction("foo_sample_1"));
+        EXPECT_CALL(testCaseGenerator, generate(
+                TestCaseDataBuilder().setName("foo_sample_1").setConstraintGroupIds({1, 2}).build(),
+                _,
+                generatorConfig));
+        EXPECT_CALL(listener, onTestCaseGenerationResult("", TestCaseGenerationResult::successfulResult()));
+
+        EXPECT_CALL(listener, onTestCaseIntroduction("foo_sample_2"));
+        EXPECT_CALL(testCaseGenerator, generate(
+                TestCaseDataBuilder().setName("foo_sample_2").setConstraintGroupIds({2}).build(),
+                _,
+                generatorConfig));
+        EXPECT_CALL(listener, onTestCaseGenerationResult("", TestCaseGenerationResult::successfulResult()));
+
 
         EXPECT_CALL(listener, onTestGroupIntroduction(1));
 
@@ -162,10 +231,15 @@ TEST_F(TestSuiteGeneratorTests, WithGroups_SuccessfulGeneration) {
     EXPECT_THAT(result.resultsByName(), ElementsAre(
             Pair("foo_1_1", TestCaseGenerationResult::successfulResult()),
             Pair("foo_1_2", TestCaseGenerationResult::successfulResult()),
-            Pair("foo_2_1", TestCaseGenerationResult::successfulResult())));
+            Pair("foo_2_1", TestCaseGenerationResult::successfulResult()),
+            Pair("foo_sample_1", TestCaseGenerationResult::successfulResult()),
+            Pair("foo_sample_2", TestCaseGenerationResult::successfulResult())));
 }
 
 TEST_F(TestSuiteGeneratorTests, WithGroups_FailedGeneration) {
+    TestCaseGenerationFailure* failure_sample_1 = new FakeTestCaseGenerationFailure();
+    ON_CALL(testCaseGenerator, generate(Property(&TestCaseData::name, "foo_sample_1"), _, generatorConfig))
+            .WillByDefault(Return(TestCaseGenerationResult::failedResult(failure_sample_1)));
     TestCaseGenerationFailure* failure_1_2 = new FakeTestCaseGenerationFailure();
     ON_CALL(testCaseGenerator, generate(Property(&TestCaseData::name, "foo_1_2"), _, generatorConfig))
             .WillByDefault(Return(TestCaseGenerationResult::failedResult(failure_1_2)));
@@ -176,6 +250,23 @@ TEST_F(TestSuiteGeneratorTests, WithGroups_FailedGeneration) {
         InSequence sequence;
         EXPECT_CALL(listener, onIntroduction());
         EXPECT_CALL(os, forceMakeDir("dir"));
+
+        EXPECT_CALL(listener, onSampleTestCasesIntroduction());
+
+        EXPECT_CALL(listener, onTestCaseIntroduction("foo_sample_1"));
+        EXPECT_CALL(testCaseGenerator, generate(
+                TestCaseDataBuilder().setName("foo_sample_1").setConstraintGroupIds({1, 2}).build(),
+                _,
+                generatorConfig));
+        EXPECT_CALL(listener, onTestCaseGenerationResult("", TestCaseGenerationResult::failedResult(failure_sample_1)));
+
+        EXPECT_CALL(listener, onTestCaseIntroduction("foo_sample_2"));
+        EXPECT_CALL(testCaseGenerator, generate(
+                TestCaseDataBuilder().setName("foo_sample_2").setConstraintGroupIds({2}).build(),
+                _,
+                generatorConfig));
+        EXPECT_CALL(listener, onTestCaseGenerationResult("", TestCaseGenerationResult::successfulResult()));
+
 
         EXPECT_CALL(listener, onTestGroupIntroduction(1));
 
@@ -210,7 +301,9 @@ TEST_F(TestSuiteGeneratorTests, WithGroups_FailedGeneration) {
     EXPECT_THAT(result.resultsByName(), ElementsAre(
             Pair("foo_1_1", TestCaseGenerationResult::successfulResult()),
             Pair("foo_1_2", TestCaseGenerationResult::failedResult(failure_1_2)),
-            Pair("foo_2_1", TestCaseGenerationResult::failedResult(failure_2_1))));
+            Pair("foo_2_1", TestCaseGenerationResult::failedResult(failure_2_1)),
+            Pair("foo_sample_1", TestCaseGenerationResult::failedResult(failure_sample_1)),
+            Pair("foo_sample_2", TestCaseGenerationResult::successfulResult())));
 }
 
 }

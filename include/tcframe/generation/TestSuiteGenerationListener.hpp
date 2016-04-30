@@ -24,12 +24,15 @@ public:
         cout << "Generating test cases..." << endl;
     }
 
+    virtual void onSampleTestCasesIntroduction() {
+        cout << endl;
+        cout << "[ SAMPLE TEST CASES ]" << endl;
+    }
+
     virtual void onTestGroupIntroduction(int testGroupId) {
         cout << endl;
 
-        if (testGroupId == 0) {
-            cout << "[ SAMPLE TEST CASES ]" << endl;
-        } else if (testGroupId == -1) {
+        if (testGroupId == -1) {
             cout << "[ OFFICIAL TEST CASES ]" << endl;
         } else {
             cout << "[ TEST GROUP " << testGroupId << " ]" << endl;

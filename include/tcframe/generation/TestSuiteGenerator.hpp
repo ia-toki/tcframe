@@ -48,20 +48,40 @@ public:
 
         os_->forceMakeDir(generatorConfig.testCasesDir());
 
-        map<string, TestCaseGenerationResult> resultsByTestCaseName;
-        generateOfficialTests(testSuite.officialTests(), problemConfig, generatorConfig, resultsByTestCaseName);
-        return TestSuiteGenerationResult(resultsByTestCaseName);
+        map<string, TestCaseGenerationResult> resultsByName;
+        generateSampleTests(testSuite.sampleTests(), problemConfig, generatorConfig, resultsByName);
+        generateOfficialTests(testSuite.officialTests(), problemConfig, generatorConfig, resultsByName);
+        return TestSuiteGenerationResult(resultsByName);
     }
 
 private:
-    void generateOfficialTests(
-            const vector<TestGroup> &testCases,
-            const ProblemConfig &problemConfig,
-            const GeneratorConfig &generatorConfig,
-            map<string, TestCaseGenerationResult> &testCaseGenerationResultByTestCaseName) {
+    void generateSampleTests(
+            const vector<SampleTestCase>& sampleTests,
+            const ProblemConfig& problemConfig,
+            const GeneratorConfig& generatorConfig,
+            map<string, TestCaseGenerationResult>& resultsByName) {
 
-        for (const TestGroup& testGroup : testCases) {
-            generateTestGroup(testGroup, problemConfig, generatorConfig, testCaseGenerationResultByTestCaseName);
+        listener_->onSampleTestCasesIntroduction();
+
+        for (int testCaseId = 1; testCaseId <= sampleTests.size(); testCaseId++) {
+            SampleTestCase testCase = sampleTests[testCaseId - 1];
+            TestCaseData testCaseData = TestCaseDataBuilder()
+                    .setName(TestCaseNameCreator::createSampleTestCaseName(problemConfig.slug(), testCaseId))
+                    .setConstraintGroupIds(testCase.constraintGroupIds())
+                    .build();
+
+            generateTestCase(testCaseData, []{}, generatorConfig, resultsByName);
+        }
+    }
+
+    void generateOfficialTests(
+            const vector<TestGroup>& officialTests,
+            const ProblemConfig& problemConfig,
+            const GeneratorConfig& generatorConfig,
+            map<string, TestCaseGenerationResult>& resultsByName) {
+
+        for (const TestGroup& testGroup : officialTests) {
+            generateTestGroup(testGroup, problemConfig, generatorConfig, resultsByName);
         }
     }
 
@@ -69,19 +89,19 @@ private:
             const TestGroup& testGroup,
             const ProblemConfig& problemConfig,
             const GeneratorConfig& generatorConfig,
-            map<string, TestCaseGenerationResult>& testCaseGenerationResultByTestCaseName) {
+            map<string, TestCaseGenerationResult>& resultsByName) {
 
         listener_->onTestGroupIntroduction(testGroup.id());
 
         for (int testCaseId = 1; testCaseId <= testGroup.officialTestCases().size(); testCaseId++) {
             OfficialTestCase testCase = testGroup.officialTestCases()[testCaseId - 1];
             TestCaseData testCaseData = TestCaseDataBuilder()
-                    .setName(TestCaseNameCreator::createTestCaseName(problemConfig.slug(), testGroup.id(), testCaseId))
+                    .setName(TestCaseNameCreator::createOfficialTestCaseName(problemConfig.slug(), testGroup.id(), testCaseId))
                     .setDescription(testCase.description())
                     .setConstraintGroupIds(testGroup.constraintGroupIds())
                     .build();
 
-            generateTestCase(testCaseData, testCase.closure(), generatorConfig, testCaseGenerationResultByTestCaseName);
+            generateTestCase(testCaseData, testCase.closure(), generatorConfig, resultsByName);
         }
     }
 

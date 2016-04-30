@@ -9,6 +9,7 @@ namespace tcframe {
 class MockTestSuiteGenerationListener : public TestSuiteGenerationListener {
 public:
     MOCK_METHOD0(onIntroduction, void());
+    MOCK_METHOD0(onSampleTestCasesIntroduction, void());
     MOCK_METHOD1(onTestGroupIntroduction, void(int));
     MOCK_METHOD1(onTestCaseIntroduction, void(string));
     MOCK_METHOD2(onTestCaseGenerationResult, void(const string&, const TestCaseGenerationResult&));

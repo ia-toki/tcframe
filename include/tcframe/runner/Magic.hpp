@@ -14,6 +14,7 @@ using std::string;
 
 #define CONS(predicate) addConstraint(Constraint([=] {return predicate;}, #predicate))
 #define CASE(...) addOfficialTestCase(OfficialTestCase([=] {__VA_ARGS__;}, #__VA_ARGS__))
+#define SAMPLE_CASE(...) addSampleTestCase(__VA_ARGS__)
 #define LINE(...) addIOSegment((MagicLineIOSegmentBuilder(#__VA_ARGS__), __VA_ARGS__).build())
 
 namespace tcframe {

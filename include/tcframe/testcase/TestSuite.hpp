@@ -1,14 +1,14 @@
 #pragma once
 
-#include <initializer_list>
 #include <set>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "OfficialTestCase.hpp"
+#include "SampleTestCase.hpp"
 #include "TestGroup.hpp"
 
-using std::initializer_list;
 using std::move;
 using std::set;
 using std::string;
@@ -19,9 +19,14 @@ struct TestSuite {
     friend class TestSuiteBuilder;
 
 private:
+    vector<SampleTestCase> sampleTests_;
     vector<TestGroup> officialTests_;
 
 public:
+    const vector<SampleTestCase> sampleTests() const {
+        return sampleTests_;
+    }
+
     const vector<TestGroup>& officialTests() const {
         return officialTests_;
     }
@@ -45,6 +50,20 @@ public:
             , currentConstraintGroupIds_({-1})
     {}
 
+    TestSuiteBuilder& addSampleTestCase(const vector<string>& lines, const set<int>& constraintGroupIds) {
+        string content;
+        for (const string& line : lines) {
+            content += line + "\n";
+        }
+        subject_.sampleTests_.push_back(SampleTestCase(content, constraintGroupIds));
+
+        return *this;
+    }
+
+    TestSuiteBuilder& addSampleTestCase(const vector<string>& lines) {
+        return addSampleTestCase(lines, {-1});
+    }
+
     TestSuiteBuilder& newTestGroup() {
         if (hasCurrentTestGroup_) {
             subject_.officialTests_.push_back(TestGroup(currentTestGroupId_, currentConstraintGroupIds_, currentOfficialTestCases_));
@@ -58,20 +77,20 @@ public:
         return *this;
     }
 
-    TestSuiteBuilder& setConstraintGroupIds(initializer_list<int> constraintGroupIds) {
+    TestSuiteBuilder& setConstraintGroupIds(const set<int>& constraintGroupIds) {
         currentConstraintGroupIds_ = constraintGroupIds;
 
         return *this;
     }
 
-    TestSuiteBuilder& addOfficialTestCase(OfficialTestCase testCase) {
+    TestSuiteBuilder& addOfficialTestCase(OfficialTestCase officialTestCase) {
         if (!hasCurrentTestGroup_) {
             hasCurrentTestGroup_ = true;
             currentTestGroupId_ = -1;
             currentConstraintGroupIds_ = {-1};
         }
 
-        currentOfficialTestCases_.push_back(testCase);
+        currentOfficialTestCases_.push_back(officialTestCase);
 
         return *this;
     }

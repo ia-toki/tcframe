@@ -31,6 +31,11 @@ protected:
 
     class GeneratorWithoutTestGroups : public FakeGenerator {
     protected:
+        void SampleTestCases() {
+            addSampleTestCase({"10", "20"});
+            addSampleTestCase({"30", "40"});
+        }
+
         void TestCases() {
             addOfficialTestCase(OfficialTestCase([=] {A = 1, B = 2;}, "A = 1, B = 2"));
             addOfficialTestCase(OfficialTestCase([=] {A = 3, B = 4;}, "A = 3, B = 4"));
@@ -39,6 +44,11 @@ protected:
 
     class GeneratorWithTestGroups : public FakeGenerator {
     protected:
+        void SampleTestCases() {
+            addSampleTestCase({"10", "20"}, {1, 2});
+            addSampleTestCase({"30", "40"}, {2});
+        }
+
         void TestGroup1() {
             assignToSubtasks({1, 2});
 
@@ -46,7 +56,6 @@ protected:
             addOfficialTestCase(OfficialTestCase([=] {A = 3, B = 4;}, "A = 3, B = 4"));
             addOfficialTestCase(OfficialTestCase([=] {A = 5, B = 6;}, "A = 5, B = 6"));
         }
-
 
         void TestGroup2() {
             assignToSubtasks({2});
@@ -67,14 +76,16 @@ TEST_F(BaseGeneratorTests, Config) {
     EXPECT_THAT(config.testCasesDir(), Eq("dir"));
 }
 
-TEST_F(BaseGeneratorTests, TestCases) {
+TEST_F(BaseGeneratorTests, WithoutGroups_TestSuite) {
     TestSuite testSuite = generatorWithoutTestGroups.buildTestSuite();
+    EXPECT_THAT(testSuite.sampleTests(), SizeIs(2));
     EXPECT_THAT(testSuite.officialTests(), ElementsAre(
             AllOf(Property(&TestGroup::id, -1), Property(&TestGroup::officialTestCases, SizeIs(2)))));
 }
 
-TEST_F(BaseGeneratorTests, TestGroups) {
+TEST_F(BaseGeneratorTests, WithGroups_TestSuite) {
     TestSuite testSuite = generatorWithTestGroups.buildTestSuite();
+    EXPECT_THAT(testSuite.sampleTests(), SizeIs(2));
     EXPECT_THAT(testSuite.officialTests(), ElementsAre(
             AllOf(Property(&TestGroup::id, 1), Property(&TestGroup::officialTestCases, SizeIs(3))),
             AllOf(Property(&TestGroup::id, 2), Property(&TestGroup::officialTestCases, SizeIs(2)))));

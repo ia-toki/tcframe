@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include <vector>
 
 #include "NotImplementedException.hpp"
@@ -7,10 +8,11 @@
 #include "tcframe/testcase.hpp"
 
 using std::vector;
+using std::set;
 
 namespace tcframe {
 
-template<typename TProblem /* extends Problem */>
+template<typename TProblem /* extends BaseProblem */>
 class BaseGenerator : public TProblem, protected GeneratorConfigBuilder, protected TestSuiteBuilder {
 private:
     vector<void(BaseGenerator::*)()> testGroups_ = {
@@ -33,6 +35,8 @@ public:
     }
 
     TestSuite buildTestSuite() {
+        SampleTestCases();
+
         try {
             TestCases();
             return TestSuiteBuilder::build();
@@ -56,6 +60,7 @@ public:
 
 protected:
     virtual void Config() {}
+    virtual void SampleTestCases() {}
     virtual void TestCases() {throw NotImplementedException();}
     virtual void TestGroup1() {throw NotImplementedException();}
     virtual void TestGroup2() {throw NotImplementedException();}
@@ -68,7 +73,7 @@ protected:
     virtual void TestGroup9() {throw NotImplementedException();}
     virtual void TestGroup10() {throw NotImplementedException();}
 
-    void assignToSubtasks(initializer_list<int> subtaskIds) {
+    void assignToSubtasks(const set<int>& subtaskIds) {
         TestSuiteBuilder::setConstraintGroupIds(subtaskIds);
     }
 };

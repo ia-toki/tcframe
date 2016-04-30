@@ -80,6 +80,7 @@ set(SOURCE_FILES
     include/tcframe/runner/Runner.hpp
     include/tcframe/testcase.hpp
     include/tcframe/testcase/OfficialTestCase.hpp
+    include/tcframe/testcase/SampleTestCase.hpp
     include/tcframe/testcase/TestSuite.hpp
     include/tcframe/testcase/TestGroup.hpp
     include/tcframe/type.hpp

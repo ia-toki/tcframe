@@ -12,7 +12,13 @@ class TestCaseNameCreator {
 public:
     TestCaseNameCreator() = delete;
 
-    static string createTestCaseName(const string& slug, int testGroupId, int testCaseId) {
+    static string createSampleTestCaseName(const string &slug, int testCaseId) {
+        ostringstream sout;
+        sout << slug << "_sample_" << testCaseId;
+        return sout.str();
+    }
+
+    static string createOfficialTestCaseName(const string &slug, int testGroupId, int testCaseId) {
         ostringstream sout;
         sout << createTestCaseBaseName(slug, testGroupId);
         sout << "_" << testCaseId;
