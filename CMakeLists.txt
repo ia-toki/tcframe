@@ -49,14 +49,6 @@ set(SOURCE_FILES
     include/tcframe/constraint/Constraint.hpp
     include/tcframe/constraint/ConstraintGroup.hpp
     include/tcframe/constraint/ConstraintSuite.hpp
-    include/tcframe/format.hpp
-    include/tcframe/format/IOFormat.hpp
-    include/tcframe/format/IOSegment.hpp
-    include/tcframe/format/LineIOSegment.hpp
-    include/tcframe/format/LineIOSegmentPrinter.hpp
-    include/tcframe/format/LineIOSegmentVariable.hpp
-    include/tcframe/format/LineIOSegmentScalarVariable.hpp
-    include/tcframe/format/WhitespacePrinter.hpp
     include/tcframe/generation.hpp
     include/tcframe/generation/TestSuiteGenerationListener.hpp
     include/tcframe/generation/TestCaseData.hpp
@@ -68,6 +60,13 @@ set(SOURCE_FILES
     include/tcframe/generation/TestSuiteGenerator.hpp
     include/tcframe/generation/TestSuiteGenerationResult.hpp
     include/tcframe/generation/VerificationFailure.hpp
+    include/tcframe/io.hpp
+    include/tcframe/io/IOFormat.hpp
+    include/tcframe/io/IOManipulator.hpp
+    include/tcframe/io/IOSegment.hpp
+    include/tcframe/io/LineIOSegment.hpp
+    include/tcframe/io/LineIOSegmentManipulator.hpp
+    include/tcframe/io/WhitespaceManipulator.hpp
     include/tcframe/os.hpp
     include/tcframe/os/ExecutionResult.hpp
     include/tcframe/os/OperatingSystem.hpp
@@ -83,40 +82,40 @@ set(SOURCE_FILES
     include/tcframe/testcase/SampleTestCase.hpp
     include/tcframe/testcase/TestSuite.hpp
     include/tcframe/testcase/TestGroup.hpp
-    include/tcframe/type.hpp
-    include/tcframe/type/Scalar.hpp
     include/tcframe/util.hpp
     include/tcframe/util/StringUtils.hpp
     include/tcframe/variable.hpp
-    include/tcframe/variable/IOVariablesPrinter.hpp
+    include/tcframe/variable/Scalar.hpp
+    include/tcframe/variable/Variable.hpp
     include/tcframe/verification.hpp
     include/tcframe/verification/ConstraintSuiteVerifier.hpp
     include/tcframe/verification/ConstraintSuiteVerificationResult.hpp
     test/tcframe/mock.hpp
     test/tcframe/constraint/ConstraintSuiteBuilderTests.cpp
-    test/tcframe/format/FakeIOSegment.hpp
-    test/tcframe/format/IOFormatBuilderTests.cpp
-    test/tcframe/format/LineIOSegmentBuilderTests.cpp
-    test/tcframe/format/LineIOSegmentPrinterTests.cpp
-    test/tcframe/format/MockLineIOSegmentPrinter.hpp
-    test/tcframe/format/MockWhitespacePrinter.hpp
     test/tcframe/generation/FakeTestCaseGenerationFailure.hpp
     test/tcframe/generation/MockTestCaseGenerator.hpp
     test/tcframe/generation/MockTestSuiteGenerationListener.hpp
     test/tcframe/generation/TestCaseNameCreatorTests.cpp
     test/tcframe/generation/TestCaseGeneratorTests.cpp
     test/tcframe/generation/TestSuiteGeneratorTests.cpp
+    test/tcframe/io/FakeIOSegment.hpp
+    test/tcframe/io/IOFormatBuilderTests.cpp
+    test/tcframe/io/IOManipulatorTests.cpp
+    test/tcframe/io/LineIOSegmentBuilderTests.cpp
+    test/tcframe/io/LineIOSegmentManipulatorTests.cpp
+    test/tcframe/io/MockIOManipulator.hpp
+    test/tcframe/io/MockLineIOSegmentManipulator.hpp
+    test/tcframe/io/MockWhitespaceManipulator.hpp
     test/tcframe/os/MockOperatingSystem.hpp
     test/tcframe/runner/BaseGeneratorTests.cpp
     test/tcframe/runner/BaseProblemTests.cpp
     test/tcframe/runner/MagicTests.cpp
     test/tcframe/runner/RunnerTests.cpp
     test/tcframe/testcase/TestSuiteBuilderTests.cpp
-    test/tcframe/type/MockScalar.hpp
-    test/tcframe/type/ScalarTests.cpp
     test/tcframe/util/StringUtilsTests.cpp
-    test/tcframe/variable/IOVariablesPrinterTests.cpp
-    test/tcframe/variable/MockIOVariablesPrinter.hpp
+    test/tcframe/variable/FakeVariable.hpp
+    test/tcframe/variable/MockScalar.hpp
+    test/tcframe/variable/ScalarTests.cpp
     test/tcframe/verification/ConstraintSuiteVerifierTests.cpp
     test/tcframe/verification/MockConstraintSuiteVerifier.hpp
 

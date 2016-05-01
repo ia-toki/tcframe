@@ -3,8 +3,8 @@
 
 #include <sstream>
 
+#include "../io/MockIOManipulator.hpp"
 #include "../os/MockOperatingSystem.hpp"
-#include "../variable/MockIOVariablesPrinter.hpp"
 #include "../verification/MockConstraintSuiteVerifier.hpp"
 #include "tcframe/generation/TestCaseGenerator.hpp"
 
@@ -26,7 +26,7 @@ bool applied;
 class TestCaseGeneratorTests : public Test {
 protected:
     Mock(ConstraintSuiteVerifier) constraintSuiteVerifier;
-    Mock(IOVariablesPrinter) ioVariablesPrinter;
+    Mock(IOManipulator) ioManipulator;
     Mock(OperatingSystem) os;
 
     function<void()> closure = [&](){applied = true;};
@@ -43,7 +43,7 @@ protected:
 
     TestCaseGenerator generator = TestCaseGenerator(
             &constraintSuiteVerifier,
-            &ioVariablesPrinter,
+            &ioManipulator,
             &os);
 
     void SetUp() {
@@ -60,7 +60,7 @@ TEST_F(TestCaseGeneratorTests, SuccessfulGeneration) {
     {
         InSequence sequence;
         EXPECT_CALL(os, openForWriting("dir/foo_1.in"));
-        EXPECT_CALL(ioVariablesPrinter, printInput(out));
+        EXPECT_CALL(ioManipulator, printInput(out));
         EXPECT_CALL(os, closeOpenedWritingStream(out));
         EXPECT_CALL(os, execute("python Sol.py", "dir/foo_1.in", "dir/foo_1.out", _));
     }

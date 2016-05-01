@@ -1,14 +1,14 @@
 #pragma once
 
-#include <ostream>
+#include <iostream>
 
 using std::ostream;
 
 namespace tcframe {
 
-class WhitespacePrinter {
+class WhitespaceManipulator {
 public:
-    virtual ~WhitespacePrinter() {}
+    virtual ~WhitespaceManipulator() {}
 
     virtual void printSpace(ostream* out) {
         *out << ' ';

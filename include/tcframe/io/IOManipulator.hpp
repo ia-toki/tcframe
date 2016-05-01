@@ -4,7 +4,8 @@
 #include <ostream>
 #include <vector>
 
-#include "tcframe/format.hpp"
+#include "LineIOSegmentManipulator.hpp"
+#include "tcframe/io.hpp"
 
 using std::endl;
 using std::ostream;
@@ -12,18 +13,18 @@ using std::vector;
 
 namespace tcframe {
 
-class IOVariablesPrinter {
+class IOManipulator {
 private:
-    LineIOSegmentPrinter* lineIOSegmentPrinter_;
+    LineIOSegmentManipulator* lineIOSegmentManipulator_;
     IOFormat ioFormat_;
 
 public:
-    virtual ~IOVariablesPrinter() {}
+    virtual ~IOManipulator() {}
 
-    IOVariablesPrinter(
-            LineIOSegmentPrinter* lineIOSegmentPrinter,
+    IOManipulator(
+            LineIOSegmentManipulator* lineIOSegmentManipulator,
             const IOFormat& ioFormat)
-            : lineIOSegmentPrinter_(lineIOSegmentPrinter)
+            : lineIOSegmentManipulator_(lineIOSegmentManipulator)
             , ioFormat_(ioFormat)
     {}
 
@@ -35,7 +36,7 @@ private:
     void print(const vector<IOSegment*>& segments, ostream* out) {
         for (IOSegment* segment : segments) {
             if (segment->type() == IOSegmentType::LINE) {
-                lineIOSegmentPrinter_->print((LineIOSegment*) segment, out);
+                lineIOSegmentManipulator_->print((LineIOSegment*) segment, out);
             }
         }
     }

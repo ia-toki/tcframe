@@ -1,11 +1,9 @@
 #include "gmock/gmock.h"
 
-#include "tcframe/format/LineIOSegment.hpp"
+#include "tcframe/io/LineIOSegment.hpp"
 
 using ::testing::ElementsAre;
-using ::testing::Pointee;
 using ::testing::Test;
-using ::testing::WhenDynamicCastTo;
 
 namespace tcframe {
 
@@ -24,10 +22,8 @@ TEST_F(LineIOSegmentBuilderTests, Building) {
             .build();
 
     EXPECT_THAT(segment->variables(), ElementsAre(
-            WhenDynamicCastTo<LineIOSegmentScalarVariable*>(
-                    Pointee(LineIOSegmentScalarVariable(Scalar::create(a, "a")))),
-            WhenDynamicCastTo<LineIOSegmentScalarVariable*>(
-                    Pointee(LineIOSegmentScalarVariable(Scalar::create(b, "b"))))));
+            LineIOSegmentVariable(Scalar::create(a, "a")),
+            LineIOSegmentVariable(Scalar::create(a, "b"))));
 }
 
 }

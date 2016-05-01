@@ -1,6 +1,6 @@
 #include "gmock/gmock.h"
 
-#include "tcframe/type/Scalar.hpp"
+#include "tcframe/variable/Scalar.hpp"
 
 #include <sstream>
 
@@ -10,18 +10,14 @@ using std::ostringstream;
 using ::testing::Eq;
 using ::testing::Test;
 
-using tcframe::Scalar;
+namespace tcframe {
 
 class ScalarTests : public Test {
 protected:
     int a;
 
-    Scalar* A = Scalar::create(a, "a");
+    Scalar *A = Scalar::create(a, "a");
 };
-
-TEST_F(ScalarTests, GettingName) {
-    EXPECT_THAT(A->getName(), Eq("a"));
-}
 
 TEST_F(ScalarTests, Parsing) {
     istringstream sin("42");
@@ -37,4 +33,6 @@ TEST_F(ScalarTests, Printing) {
     A->printTo(&sout);
 
     EXPECT_THAT(sout.str(), Eq("42"));
+}
+
 }

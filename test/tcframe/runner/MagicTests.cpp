@@ -1,7 +1,9 @@
 #include "gmock/gmock.h"
 
+#include "../variable/FakeVariable.hpp"
 #include "tcframe/experimental/runner.hpp"
 
+using ::testing::ElementsAre;
 using ::testing::Eq;
 using ::testing::SizeIs;
 using ::testing::Test;
@@ -128,19 +130,13 @@ TEST_F(MagicTests, LINE_Valid) {
     ASSERT_THAT(segments, SizeIs(2));
     ASSERT_THAT(segments[0]->type(), Eq(IOSegmentType::LINE));
     LineIOSegment* segment0 = (LineIOSegment*) segments[0];
-    ASSERT_THAT(segment0->variables(), SizeIs(1));
-    ASSERT_THAT(segment0->variables()[0]->type(), Eq(LineIOSegmentVariableType::SCALAR));
-    LineIOSegmentScalarVariable* variable00 = (LineIOSegmentScalarVariable*) segment0->variables()[0];
-    EXPECT_THAT(variable00->variable()->getName(), Eq("A"));
+    EXPECT_THAT(segment0->variables(), ElementsAre(
+            LineIOSegmentVariable(new FakeVariable("A", VariableType::SCALAR))));
     ASSERT_THAT(segments[1]->type(), Eq(IOSegmentType::LINE));
     LineIOSegment* segment1 = (LineIOSegment*) segments[1];
-    ASSERT_THAT(segment1->variables(), SizeIs(2));
-    ASSERT_THAT(segment1->variables()[0]->type(), Eq(LineIOSegmentVariableType::SCALAR));
-    LineIOSegmentScalarVariable* variable10 = (LineIOSegmentScalarVariable*) segment1->variables()[0];
-    EXPECT_THAT(variable10->variable()->getName(), Eq("A"));
-    ASSERT_THAT(segment1->variables()[1]->type(), Eq(LineIOSegmentVariableType::SCALAR));
-    LineIOSegmentScalarVariable* variable11 = (LineIOSegmentScalarVariable*) segment1->variables()[1];
-    EXPECT_THAT(variable11->variable()->getName(), Eq("B"));
+    EXPECT_THAT(segment1->variables(), ElementsAre(
+            LineIOSegmentVariable(new FakeVariable("A", VariableType::SCALAR)),
+            LineIOSegmentVariable(new FakeVariable("B", VariableType::SCALAR))));
 }
 
 }

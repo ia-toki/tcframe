@@ -4,28 +4,54 @@
 #include <vector>
 
 #include "IOSegment.hpp"
-#include "LineIOSegmentScalarVariable.hpp"
-#include "LineIOSegmentVariable.hpp"
-#include "tcframe/type.hpp"
-#include "tcframe/util.hpp"
+#include "tcframe/variable.hpp"
 
 using std::tie;
 using std::vector;
 
 namespace tcframe {
 
+struct LineIOSegmentVariable {
+private:
+    Variable* variable_;
+    int size_;
+
+public:
+    LineIOSegmentVariable(Variable* variable, int size)
+            : variable_(variable)
+            , size_(size)
+    {}
+
+    LineIOSegmentVariable(Variable* variable)
+            : variable_(variable)
+            , size_(-1)
+    {}
+
+    Variable* variable() const {
+        return variable_;
+    }
+
+    int size() const {
+        return size_;
+    }
+
+    bool operator==(const LineIOSegmentVariable& o) const {
+        return variable_->equals(o.variable_) && size_ == o.size_;
+    }
+};
+
 struct LineIOSegment : public IOSegment {
     friend class LineIOSegmentBuilder;
 
 private:
-    vector<LineIOSegmentVariable*> variables_;
+    vector<LineIOSegmentVariable> variables_;
 
 public:
     IOSegmentType type() const {
         return IOSegmentType::LINE;
     }
 
-    const vector<LineIOSegmentVariable*>& variables() const {
+    const vector<LineIOSegmentVariable>& variables() const {
         return variables_;
     }
 
@@ -54,7 +80,7 @@ public:
     }
 
     LineIOSegmentBuilder& addScalarVariable(Scalar* variable) {
-        subject_->variables_.push_back(new LineIOSegmentScalarVariable(variable));
+        subject_->variables_.push_back(LineIOSegmentVariable(variable));
         return *this;
     }
 

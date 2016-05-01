@@ -9,9 +9,9 @@
 #include "TestCaseGenerationResult.hpp"
 #include "VerificationFailure.hpp"
 #include "tcframe/config.hpp"
+#include "tcframe/io.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/testcase.hpp"
-#include "tcframe/variable.hpp"
 #include "tcframe/verification.hpp"
 
 using std::function;
@@ -23,7 +23,7 @@ namespace tcframe {
 class TestCaseGenerator {
 private:
     ConstraintSuiteVerifier* constraintSuiteVerifier_;
-    IOVariablesPrinter* ioVariablePrinter_;
+    IOManipulator* ioManipulator_;
     OperatingSystem* os_;
 
 public:
@@ -31,10 +31,10 @@ public:
 
     TestCaseGenerator(
             ConstraintSuiteVerifier* constraintSuiteVerifier,
-            IOVariablesPrinter* ioVariablePrinter,
+            IOManipulator* ioManipulator,
             OperatingSystem* os)
             : constraintSuiteVerifier_(constraintSuiteVerifier)
-            , ioVariablePrinter_(ioVariablePrinter)
+            , ioManipulator_(ioManipulator)
             ,  os_(os)
     {}
 
@@ -82,7 +82,7 @@ private:
 
     void generateInput(const string& inputFilename) {
         ostream* testCaseInput = os_->openForWriting(inputFilename);
-        ioVariablePrinter_->printInput(testCaseInput);
+        ioManipulator_->printInput(testCaseInput);
         os_->closeOpenedWritingStream(testCaseInput);
     }
 

@@ -1,7 +1,7 @@
 #include "gmock/gmock.h"
 
 #include "FakeIOSegment.hpp"
-#include "tcframe/format/IOFormat.hpp"
+#include "tcframe/io/IOFormat.hpp"
 
 using ::testing::ElementsAre;
 using ::testing::Test;

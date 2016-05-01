@@ -4,8 +4,7 @@
 #include <queue>
 #include <string>
 
-#include "tcframe/format.hpp"
-#include "tcframe/type.hpp"
+#include "tcframe/io.hpp"
 #include "tcframe/util.hpp"
 
 using std::forward;

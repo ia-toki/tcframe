@@ -2,11 +2,11 @@
 
 #include "gmock/gmock.h"
 
-#include "tcframe/format/WhitespacePrinter.hpp"
+#include "tcframe/io/WhitespaceManipulator.hpp"
 
 namespace tcframe {
 
-class MockWhitespacePrinter : public WhitespacePrinter {
+class MockWhitespaceManipulator : public WhitespaceManipulator {
 public:
     MOCK_METHOD1(printSpace, void(ostream*));
     MOCK_METHOD1(printNewline, void(ostream*));

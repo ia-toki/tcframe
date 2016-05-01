@@ -5,8 +5,9 @@
 #include <istream>
 #include <ostream>
 #include <string>
-#include <tuple>
 #include <type_traits>
+
+#include "Variable.hpp"
 
 using std::enable_if;
 using std::is_arithmetic;
@@ -17,7 +18,6 @@ using std::ostream;
 using std::ref;
 using std::reference_wrapper;
 using std::string;
-using std::tie;
 
 namespace tcframe {
 
@@ -27,17 +27,16 @@ using ScalarCompatible = typename enable_if<!is_reference<T>::value && (is_arith
 template<typename T>
 using NotScalarCompatible = typename enable_if<is_reference<T>::value || (!is_arithmetic<T>::value && !is_same<string, T>::value)>::type;
 
-class Scalar {
+class Scalar : public Variable {
 public:
     virtual ~Scalar() {}
 
-    virtual const string& getName() const = 0;
+    Scalar(const string& name)
+            : Variable(name, VariableType::SCALAR)
+    {}
+
     virtual void printTo(ostream* out) = 0;
     virtual void parseFrom(istream* in) = 0;
-
-    bool operator==(const Scalar& o) const {
-        return tie(getName()) == tie(o.getName());
-    }
 
     template<typename T>
     static Scalar* create(T& var, const string& name);
@@ -47,17 +46,12 @@ template<typename T>
 class ScalarImpl : public Scalar {
 private:
     reference_wrapper<T> var_;
-    string name_;
 
 public:
     ScalarImpl(T& var, const string& name)
-            : var_(ref(var))
-            , name_(name)
+            : Scalar(name)
+            , var_(ref(var))
     {}
-
-    const string& getName() const {
-        return name_;
-    }
 
     void printTo(ostream* out) {
         *out << var_;

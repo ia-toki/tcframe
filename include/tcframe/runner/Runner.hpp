@@ -3,7 +3,7 @@
 #include "BaseGenerator.hpp"
 #include "BaseProblem.hpp"
 #include "tcframe/config.hpp"
-#include "tcframe/format.hpp"
+#include "tcframe/io.hpp"
 #include "tcframe/generation.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/variable.hpp"
@@ -40,12 +40,12 @@ public:
         auto testSuite = generator_->buildTestSuite();
 
         auto os = new UnixOperatingSystem();
-        auto whitespacePrinter = new WhitespacePrinter();
-        auto lineIOSegmentPrinter = new LineIOSegmentPrinter(whitespacePrinter);
-        auto ioVariablesPrinter = new IOVariablesPrinter(lineIOSegmentPrinter, ioFormat);
+        auto whitespaceManipulator = new WhitespaceManipulator();
+        auto lineIOSegmentManipulator = new LineIOSegmentManipulator(whitespaceManipulator);
+        auto ioManipulator = new IOManipulator(lineIOSegmentManipulator, ioFormat);
         auto constraintSuiteVerifier = new ConstraintSuiteVerifier(constraintSuite);
         auto generationListener = new TestSuiteGenerationListener();
-        auto testCaseGenerator = new TestCaseGenerator(constraintSuiteVerifier, ioVariablesPrinter, os);
+        auto testCaseGenerator = new TestCaseGenerator(constraintSuiteVerifier, ioManipulator, os);
         auto testSuiteGenerator = new TestSuiteGenerator(testCaseGenerator, os, generationListener);
 
         return testSuiteGenerator->generate(testSuite, problemConfig, generatorConfig).isSuccessful() ? 0 : 1;
