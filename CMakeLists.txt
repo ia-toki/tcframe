@@ -106,6 +106,7 @@ set(SOURCE_FILES
     test/tcframe/io/MockIOManipulator.hpp
     test/tcframe/io/MockLineIOSegmentManipulator.hpp
     test/tcframe/io/MockWhitespaceManipulator.hpp
+    test/tcframe/io/WhitespaceManipulatorTests.cpp
     test/tcframe/os/MockOperatingSystem.hpp
     test/tcframe/runner/BaseGeneratorTests.cpp
     test/tcframe/runner/BaseProblemTests.cpp
@@ -116,6 +117,7 @@ set(SOURCE_FILES
     test/tcframe/variable/FakeVariable.hpp
     test/tcframe/variable/MockScalar.hpp
     test/tcframe/variable/ScalarTests.cpp
+    test/tcframe/variable/VariableTests.cpp
     test/tcframe/verification/ConstraintSuiteVerifierTests.cpp
     test/tcframe/verification/MockConstraintSuiteVerifier.hpp
 

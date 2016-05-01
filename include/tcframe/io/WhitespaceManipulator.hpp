@@ -6,6 +6,7 @@
 #include <string>
 #include <type_traits>
 
+using std::char_traits;
 using std::istream;
 using std::ostream;
 using std::runtime_error;
@@ -25,10 +26,10 @@ public:
 
     virtual void parseNewline(istream* in, const string& context) {
         if (in->get() != '\n') {
-            throw runtime_error("Expected: <new line> after '" + context + "'");
+            throw runtime_error("Expected: <newline> after '" + context + "'");
         }
     }
-    
+
     virtual void ensureEof(istream* in) {
         if (in->peek() != char_traits<char>::eof()) {
             throw runtime_error("Expected: <EOF>");
