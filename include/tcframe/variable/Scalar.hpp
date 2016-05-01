@@ -58,7 +58,7 @@ public:
     }
 
     void parseFrom(istream* in) {
-        *in >> var_;
+        Variable::parseValue(in, var_, name());
     }
 };
 

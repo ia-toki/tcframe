@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include "../io/MockIOManipulator.hpp"
 #include "../os/MockOperatingSystem.hpp"
 #include "FakeTestCaseGenerationFailure.hpp"
 #include "MockTestCaseGenerator.hpp"
@@ -25,6 +26,7 @@ namespace tcframe {
 class TestSuiteGeneratorTests : public Test {
 protected:
     Mock(TestCaseGenerator) testCaseGenerator;
+    Mock(IOManipulator) ioManipulator;
     Mock(OperatingSystem) os;
     Mock(TestSuiteGenerationListener) listener;
 
@@ -61,7 +63,7 @@ protected:
             .setTestCasesDir("dir")
             .build();
 
-    TestSuiteGenerator generator = TestSuiteGenerator(&testCaseGenerator, &os, &listener);
+    TestSuiteGenerator generator = TestSuiteGenerator(&testCaseGenerator, &ioManipulator, &os, &listener);
 
     void SetUp() {
         ON_CALL(testCaseGenerator, generate(_, _, generatorConfig))

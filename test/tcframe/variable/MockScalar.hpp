@@ -12,6 +12,7 @@ public:
             : Scalar("mock")
     {}
 
+    MOCK_CONST_METHOD0(name, const string&());
     MOCK_METHOD1(parseFrom, void(istream*));
     MOCK_METHOD1(printTo, void(ostream*));
 };

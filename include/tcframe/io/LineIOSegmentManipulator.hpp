@@ -22,6 +22,25 @@ public:
             : whitespaceManipulator_(whitespaceManipulator)
     {}
 
+    virtual void parse(LineIOSegment* segment, istream* in) {
+        string lastVariableName;
+        for (const LineIOSegmentVariable& segmentVariable : segment->variables()) {
+            if (!lastVariableName.empty()) {
+                whitespaceManipulator_->parseSpace(in, lastVariableName);
+            }
+
+            Variable* variable = segmentVariable.variable();
+            int size = segmentVariable.size();
+
+            if (variable->type() == VariableType::SCALAR) {
+                parseScalar((Scalar*) variable, in);
+            }
+
+            lastVariableName = variable->name();
+        }
+        whitespaceManipulator_->parseNewline(in, lastVariableName);
+    }
+
     virtual void print(LineIOSegment* segment, ostream* out) {
         bool first = true;
         for (const LineIOSegmentVariable& segmentVariable : segment->variables()) {
@@ -30,12 +49,23 @@ public:
             }
             first = false;
 
-            if (segmentVariable.variable()->type() == VariableType::SCALAR) {
-                auto scalar = (Scalar*) segmentVariable.variable();
-                scalar->printTo(out);
+            Variable* variable = segmentVariable.variable();
+            int size = segmentVariable.size();
+
+            if (variable->type() == VariableType::SCALAR) {
+                printScalar((Scalar*) variable, out);
             }
         }
         whitespaceManipulator_->printNewline(out);
+    }
+
+private:
+    void parseScalar(Scalar* scalar, istream* in) {
+        scalar->parseFrom(in);
+    }
+
+    void printScalar(Scalar* scalar, ostream* out) {
+        scalar->printTo(out);
     }
 };
 

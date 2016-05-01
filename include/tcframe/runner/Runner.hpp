@@ -42,11 +42,11 @@ public:
         auto os = new UnixOperatingSystem();
         auto whitespaceManipulator = new WhitespaceManipulator();
         auto lineIOSegmentManipulator = new LineIOSegmentManipulator(whitespaceManipulator);
-        auto ioManipulator = new IOManipulator(lineIOSegmentManipulator, ioFormat);
+        auto ioManipulator = new IOManipulator(lineIOSegmentManipulator, whitespaceManipulator, ioFormat);
         auto constraintSuiteVerifier = new ConstraintSuiteVerifier(constraintSuite);
         auto generationListener = new TestSuiteGenerationListener();
         auto testCaseGenerator = new TestCaseGenerator(constraintSuiteVerifier, ioManipulator, os);
-        auto testSuiteGenerator = new TestSuiteGenerator(testCaseGenerator, os, generationListener);
+        auto testSuiteGenerator = new TestSuiteGenerator(testCaseGenerator, ioManipulator, os, generationListener);
 
         return testSuiteGenerator->generate(testSuite, problemConfig, generatorConfig).isSuccessful() ? 0 : 1;
     }

@@ -12,6 +12,7 @@ public:
             : LineIOSegmentManipulator(nullptr)
     {}
 
+    MOCK_METHOD2(parse, void(LineIOSegment*, istream*));
     MOCK_METHOD2(print, void(LineIOSegment*, ostream*));
 };
 

@@ -1,13 +1,14 @@
 #pragma once
 
 #include <iostream>
-#include <ostream>
 #include <vector>
 
+#include "IOFormat.hpp"
 #include "LineIOSegmentManipulator.hpp"
-#include "tcframe/io.hpp"
+#include "WhitespaceManipulator.hpp"
 
 using std::endl;
+using std::istream;
 using std::ostream;
 using std::vector;
 
@@ -16,6 +17,7 @@ namespace tcframe {
 class IOManipulator {
 private:
     LineIOSegmentManipulator* lineIOSegmentManipulator_;
+    WhitespaceManipulator* whitespaceManipulator_;
     IOFormat ioFormat_;
 
 public:
@@ -23,13 +25,19 @@ public:
 
     IOManipulator(
             LineIOSegmentManipulator* lineIOSegmentManipulator,
+            WhitespaceManipulator* whitespaceManipulator,
             const IOFormat& ioFormat)
             : lineIOSegmentManipulator_(lineIOSegmentManipulator)
+            , whitespaceManipulator_(whitespaceManipulator)
             , ioFormat_(ioFormat)
     {}
 
     virtual void printInput(ostream* out) {
         print(ioFormat_.inputFormat(), out);
+    }
+
+    virtual void parseInput(istream* in) {
+        parse(ioFormat_.inputFormat(), in);
     }
 
 private:
@@ -39,6 +47,15 @@ private:
                 lineIOSegmentManipulator_->print((LineIOSegment*) segment, out);
             }
         }
+    }
+
+    void parse(const vector<IOSegment*>& segments, istream* in) {
+        for (IOSegment* segment : segments) {
+            if (segment->type() == IOSegmentType::LINE) {
+                lineIOSegmentManipulator_->parse((LineIOSegment*) segment, in);
+            }
+        }
+        whitespaceManipulator_->ensureEof(in);
     }
 };
 

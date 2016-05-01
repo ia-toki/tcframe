@@ -3,6 +3,7 @@
 #include <functional>
 #include <map>
 #include <set>
+#include <sstream>
 #include <string>
 
 #include "TestCaseNameCreator.hpp"
@@ -11,10 +12,12 @@
 #include "TestSuiteGenerationListener.hpp"
 #include "TestSuiteGenerationResult.hpp"
 #include "tcframe/config.hpp"
+#include "tcframe/io.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/testcase.hpp"
 
 using std::function;
+using std::istringstream;
 using std::map;
 using std::set;
 using std::string;
@@ -24,6 +27,7 @@ namespace tcframe {
 class TestSuiteGenerator {
 private:
     TestCaseGenerator* testCaseGenerator_;
+    IOManipulator* ioManipulator_;
     OperatingSystem* os_;
     TestSuiteGenerationListener* listener_;
 
@@ -32,9 +36,11 @@ public:
 
     TestSuiteGenerator(
             TestCaseGenerator* testCaseGenerator,
+            IOManipulator* ioManipulator,
             OperatingSystem* os,
             TestSuiteGenerationListener* listener)
             : testCaseGenerator_(testCaseGenerator)
+            , ioManipulator_(ioManipulator)
             , os_(os)
             , listener_(listener)
     {}
@@ -70,7 +76,12 @@ private:
                     .setConstraintGroupIds(testCase.constraintGroupIds())
                     .build();
 
-            generateTestCase(testCaseData, []{}, generatorConfig, resultsByName);
+            function<void()> closure = [=] {
+                istream* in = new istringstream(testCase.content());
+                ioManipulator_->parseInput(in);
+            };
+
+            generateTestCase(testCaseData, closure, generatorConfig, resultsByName);
         }
     }
 
