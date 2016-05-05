@@ -24,7 +24,7 @@ In this type type of problem, you won't be writing a :code:`Constraints()` metho
 
 .. note::
 
-    As of this version, you can define up to 10 subtasks: **Subtask1()** .. **Subtask10()**.
+    As of this version, you can define up to 25 subtasks: **Subtask1()** .. **Subtask25()**.
 
 ----
 

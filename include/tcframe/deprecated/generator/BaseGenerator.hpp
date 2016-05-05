@@ -190,6 +190,21 @@ protected:
     virtual void TestGroup8() { throw NotImplementedException(); }
     virtual void TestGroup9() { throw NotImplementedException(); }
     virtual void TestGroup10() { throw NotImplementedException(); }
+    virtual void TestGroup11() { throw NotImplementedException(); }
+    virtual void TestGroup12() { throw NotImplementedException(); }
+    virtual void TestGroup13() { throw NotImplementedException(); }
+    virtual void TestGroup14() { throw NotImplementedException(); }
+    virtual void TestGroup15() { throw NotImplementedException(); }
+    virtual void TestGroup16() { throw NotImplementedException(); }
+    virtual void TestGroup17() { throw NotImplementedException(); }
+    virtual void TestGroup18() { throw NotImplementedException(); }
+    virtual void TestGroup19() { throw NotImplementedException(); }
+    virtual void TestGroup20() { throw NotImplementedException(); }
+    virtual void TestGroup21() { throw NotImplementedException(); }
+    virtual void TestGroup22() { throw NotImplementedException(); }
+    virtual void TestGroup23() { throw NotImplementedException(); }
+    virtual void TestGroup24() { throw NotImplementedException(); }
+    virtual void TestGroup25() { throw NotImplementedException(); }
 
     void setTestCasesDir(string testCasesDir) {
         this->testCasesDir = testCasesDir;
@@ -222,7 +237,22 @@ private:
             &BaseGenerator::TestGroup7,
             &BaseGenerator::TestGroup8,
             &BaseGenerator::TestGroup9,
-            &BaseGenerator::TestGroup10
+            &BaseGenerator::TestGroup10,
+            &BaseGenerator::TestGroup11,
+            &BaseGenerator::TestGroup12,
+            &BaseGenerator::TestGroup13,
+            &BaseGenerator::TestGroup14,
+            &BaseGenerator::TestGroup15,
+            &BaseGenerator::TestGroup16,
+            &BaseGenerator::TestGroup17,
+            &BaseGenerator::TestGroup18,
+            &BaseGenerator::TestGroup19,
+            &BaseGenerator::TestGroup20,
+            &BaseGenerator::TestGroup21,
+            &BaseGenerator::TestGroup22,
+            &BaseGenerator::TestGroup23,
+            &BaseGenerator::TestGroup24,
+            &BaseGenerator::TestGroup25,
     };
 
     bool generateTestCase(int testGroupId, int testCaseId) {

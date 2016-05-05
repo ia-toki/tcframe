@@ -68,7 +68,7 @@ To define test groups, write each of the methods :code:`TestGroupX()`, where :co
 
 .. note::
 
-    As of this version, you can define up to 10 test groups: **TestGroup1()** .. **TestGroup10()**.
+    As of this version, you can define up to 25 test groups: **TestGroup1()** .. **TestGroup25()**.
 
 Each test case definition will be realized as a pair of input/output files, with the following filenames: :code:`<slug>_<group-number>_<case-number>.in` and :code:`<slug>_<group-number>_<case-number>.out`. For example, :code:`aplusb_2_3.in`, :code:`aplusb_2_3.out`.
 

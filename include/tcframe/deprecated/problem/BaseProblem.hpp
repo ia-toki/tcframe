@@ -125,6 +125,21 @@ protected:
     virtual void Subtask8() { throw NotImplementedException(); }
     virtual void Subtask9() { throw NotImplementedException(); }
     virtual void Subtask10() { throw NotImplementedException(); }
+    virtual void Subtask11() { throw NotImplementedException(); }
+    virtual void Subtask12() { throw NotImplementedException(); }
+    virtual void Subtask13() { throw NotImplementedException(); }
+    virtual void Subtask14() { throw NotImplementedException(); }
+    virtual void Subtask15() { throw NotImplementedException(); }
+    virtual void Subtask16() { throw NotImplementedException(); }
+    virtual void Subtask17() { throw NotImplementedException(); }
+    virtual void Subtask18() { throw NotImplementedException(); }
+    virtual void Subtask19() { throw NotImplementedException(); }
+    virtual void Subtask20() { throw NotImplementedException(); }
+    virtual void Subtask21() { throw NotImplementedException(); }
+    virtual void Subtask22() { throw NotImplementedException(); }
+    virtual void Subtask23() { throw NotImplementedException(); }
+    virtual void Subtask24() { throw NotImplementedException(); }
+    virtual void Subtask25() { throw NotImplementedException(); }
 
     void setSlug(string slug) {
         this->slug = slug;
@@ -158,7 +173,22 @@ private:
             &BaseProblem::Subtask7,
             &BaseProblem::Subtask8,
             &BaseProblem::Subtask9,
-            &BaseProblem::Subtask10
+            &BaseProblem::Subtask10,
+            &BaseProblem::Subtask11,
+            &BaseProblem::Subtask12,
+            &BaseProblem::Subtask13,
+            &BaseProblem::Subtask14,
+            &BaseProblem::Subtask15,
+            &BaseProblem::Subtask16,
+            &BaseProblem::Subtask17,
+            &BaseProblem::Subtask18,
+            &BaseProblem::Subtask19,
+            &BaseProblem::Subtask20,
+            &BaseProblem::Subtask21,
+            &BaseProblem::Subtask22,
+            &BaseProblem::Subtask23,
+            &BaseProblem::Subtask24,
+            &BaseProblem::Subtask25
     };
 };
 
