@@ -66,7 +66,6 @@ set(SOURCE_FILES
     include/tcframe/io/IOSegment.hpp
     include/tcframe/io/LineIOSegment.hpp
     include/tcframe/io/LineIOSegmentManipulator.hpp
-    include/tcframe/io/WhitespaceManipulator.hpp
     include/tcframe/os.hpp
     include/tcframe/os/ExecutionResult.hpp
     include/tcframe/os/OperatingSystem.hpp
@@ -84,6 +83,7 @@ set(SOURCE_FILES
     include/tcframe/testcase/TestGroup.hpp
     include/tcframe/util.hpp
     include/tcframe/util/StringUtils.hpp
+    include/tcframe/util/WhitespaceUtils.hpp
     include/tcframe/variable.hpp
     include/tcframe/variable/Scalar.hpp
     include/tcframe/variable/Variable.hpp
@@ -98,15 +98,11 @@ set(SOURCE_FILES
     test/tcframe/generation/TestCaseNameCreatorTests.cpp
     test/tcframe/generation/TestCaseGeneratorTests.cpp
     test/tcframe/generation/TestSuiteGeneratorTests.cpp
-    test/tcframe/io/FakeIOSegment.hpp
     test/tcframe/io/IOFormatBuilderTests.cpp
     test/tcframe/io/IOManipulatorTests.cpp
     test/tcframe/io/LineIOSegmentBuilderTests.cpp
     test/tcframe/io/LineIOSegmentManipulatorTests.cpp
     test/tcframe/io/MockIOManipulator.hpp
-    test/tcframe/io/MockLineIOSegmentManipulator.hpp
-    test/tcframe/io/MockWhitespaceManipulator.hpp
-    test/tcframe/io/WhitespaceManipulatorTests.cpp
     test/tcframe/os/MockOperatingSystem.hpp
     test/tcframe/runner/BaseGeneratorTests.cpp
     test/tcframe/runner/BaseProblemTests.cpp
@@ -114,8 +110,8 @@ set(SOURCE_FILES
     test/tcframe/runner/RunnerTests.cpp
     test/tcframe/testcase/TestSuiteBuilderTests.cpp
     test/tcframe/util/StringUtilsTests.cpp
+    test/tcframe/util/WhitespaceUtilsTests.cpp
     test/tcframe/variable/FakeVariable.hpp
-    test/tcframe/variable/MockScalar.hpp
     test/tcframe/variable/ScalarTests.cpp
     test/tcframe/variable/VariableTests.cpp
     test/tcframe/verification/ConstraintSuiteVerifierTests.cpp

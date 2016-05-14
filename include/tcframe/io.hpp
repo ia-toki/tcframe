@@ -5,4 +5,4 @@
 #include "tcframe/io/IOSegment.hpp"
 #include "tcframe/io/LineIOSegment.hpp"
 #include "tcframe/io/LineIOSegmentManipulator.hpp"
-#include "tcframe/io/WhitespaceManipulator.hpp"
+#include "tcframe/util/WhitespaceUtils.hpp"

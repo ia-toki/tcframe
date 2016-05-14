@@ -40,9 +40,7 @@ public:
         auto testSuite = generator_->buildTestSuite();
 
         auto os = new UnixOperatingSystem();
-        auto whitespaceManipulator = new WhitespaceManipulator();
-        auto lineIOSegmentManipulator = new LineIOSegmentManipulator(whitespaceManipulator);
-        auto ioManipulator = new IOManipulator(lineIOSegmentManipulator, whitespaceManipulator, ioFormat);
+        auto ioManipulator = new IOManipulator(ioFormat);
         auto constraintSuiteVerifier = new ConstraintSuiteVerifier(constraintSuite);
         auto generationListener = new TestSuiteGenerationListener();
         auto testCaseGenerator = new TestCaseGenerator(constraintSuiteVerifier, ioManipulator, os);

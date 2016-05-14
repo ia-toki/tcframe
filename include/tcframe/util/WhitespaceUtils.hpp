@@ -14,34 +14,36 @@ using std::string;
 
 namespace tcframe {
 
-class WhitespaceManipulator {
+class WhitespaceUtils {
 public:
-    virtual ~WhitespaceManipulator() {}
-
-    virtual void parseSpace(istream* in, const string& context) {
+    static void parseSpace(istream* in, const string& context) {
         if (in->get() != ' ') {
             throw runtime_error("Expected: <space> after '" + context + "'");
         }
     }
 
-    virtual void parseNewline(istream* in, const string& context) {
+    static void parseNewline(istream* in, const string& context) {
         if (in->get() != '\n') {
             throw runtime_error("Expected: <newline> after '" + context + "'");
         }
     }
 
-    virtual void ensureEof(istream* in) {
+    static void ensureEof(istream* in) {
         if (in->peek() != char_traits<char>::eof()) {
             throw runtime_error("Expected: <EOF>");
         }
     }
 
-    virtual void printSpace(ostream* out) {
-        *out << ' ';
+    static void ensureNoEof(istream* in, const string& context) {
+        if (in->peek() == char_traits<char>::eof()) {
+            throw runtime_error("Cannot parse for '" + context + "'. Found: <EOF>");
+        }
     }
 
-    virtual void printNewline(ostream* out) {
-        *out << '\n';
+    static void ensureNoWhitespace(istream* in, const string& context) {
+        if (isspace(in->peek())) {
+            throw runtime_error("Cannot parse for '" + context + "'. Found: <whitespace>");
+        }
     }
 };
 

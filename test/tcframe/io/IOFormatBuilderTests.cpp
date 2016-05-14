@@ -1,7 +1,7 @@
 #include "gmock/gmock.h"
 
-#include "FakeIOSegment.hpp"
 #include "tcframe/io/IOFormat.hpp"
+#include "tcframe/io/LineIOSegment.hpp"
 
 using ::testing::ElementsAre;
 using ::testing::Test;
@@ -10,9 +10,9 @@ namespace tcframe {
 
 class IOFormatBuilderTests : public Test {
 protected:
-    FakeIOSegment* segment1 = new FakeIOSegment();
-    FakeIOSegment* segment2 = new FakeIOSegment();
-    FakeIOSegment* segment3 = new FakeIOSegment();
+    LineIOSegment* segment1 = LineIOSegmentBuilder().build();
+    LineIOSegment* segment2 = LineIOSegmentBuilder().build();
+    LineIOSegment* segment3 = LineIOSegmentBuilder().build();
 
     IOFormatBuilder builder;
 };

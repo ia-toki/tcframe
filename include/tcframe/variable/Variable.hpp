@@ -6,6 +6,8 @@
 #include <tuple>
 #include <type_traits>
 
+#include "tcframe/util.hpp"
+
 using std::char_traits;
 using std::istream;
 using std::ostream;
@@ -49,8 +51,8 @@ protected:
 
     template<typename T>
     static void parseValue(istream* in, T& val, const string& context) {
-        ensureNoEof(in, context);
-        ensureNoWhitespace(in, context);
+        WhitespaceUtils::ensureNoEof(in, context);
+        WhitespaceUtils::ensureNoWhitespace(in, context);
 
         long long currentPos = in->tellg();
         *in >> val;
@@ -63,19 +65,6 @@ protected:
             *in >> found;
 
             throw runtime_error("Cannot parse for '" + context + "'. Found: '" + found + "'");
-        }
-    }
-
-private:
-    static void ensureNoEof(istream* in, const string& context) {
-        if (in->peek() == char_traits<char>::eof()) {
-            throw runtime_error("Cannot parse for '" + context + "'. Found: <EOF>");
-        }
-    }
-
-    static void ensureNoWhitespace(istream* in, const string& context) {
-        if (isspace(in->peek())) {
-            throw runtime_error("Cannot parse for '" + context + "'. Found: <whitespace>");
         }
     }
 };
