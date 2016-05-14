@@ -18,13 +18,13 @@ class WhitespaceUtils {
 public:
     static void parseSpace(istream* in, const string& context) {
         if (in->get() != ' ') {
-            throw runtime_error("Expected: <space> after '" + context + "'");
+            throw runtime_error("Expected: <space> after " + context);
         }
     }
 
     static void parseNewline(istream* in, const string& context) {
         if (in->get() != '\n') {
-            throw runtime_error("Expected: <newline> after '" + context + "'");
+            throw runtime_error("Expected: <newline> after " + context);
         }
     }
 
@@ -36,13 +36,13 @@ public:
 
     static void ensureNoEof(istream* in, const string& context) {
         if (in->peek() == char_traits<char>::eof()) {
-            throw runtime_error("Cannot parse for '" + context + "'. Found: <EOF>");
+            throw runtime_error("Cannot parse for " + context + ". Found: <EOF>");
         }
     }
 
     static void ensureNoWhitespace(istream* in, const string& context) {
         if (isspace(in->peek())) {
-            throw runtime_error("Cannot parse for '" + context + "'. Found: <whitespace>");
+            throw runtime_error("Cannot parse for " + context + ". Found: <whitespace>");
         }
     }
 };

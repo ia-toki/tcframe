@@ -1,7 +1,6 @@
 #include "gmock/gmock.h"
 
 #include <sstream>
-#include <stdexcept>
 
 #include "tcframe/util/WhitespaceUtils.hpp"
 
@@ -33,7 +32,7 @@ TEST_F(WhitespaceUtilsTests, FailedParsingSpace) {
         WhitespaceUtils::parseSpace(&in, "N");
         FAIL();
     } catch (runtime_error& e) {
-        EXPECT_THAT(e.what(), StrEq("Expected: <space> after 'N'"));
+        EXPECT_THAT(e.what(), StrEq("Expected: <space> after N"));
     }
 }
 
@@ -53,7 +52,7 @@ TEST_F(WhitespaceUtilsTests, FailedParsingNewline) {
         WhitespaceUtils::parseNewline(in, "N");
         FAIL();
     } catch (runtime_error& e) {
-        EXPECT_THAT(e.what(), StrEq("Expected: <newline> after 'N'"));
+        EXPECT_THAT(e.what(), StrEq("Expected: <newline> after N"));
     }
 }
 
