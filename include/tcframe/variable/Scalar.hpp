@@ -2,17 +2,11 @@
 
 #include <exception>
 #include <functional>
-#include <istream>
-#include <ostream>
+#include <iostream>
 #include <string>
-#include <type_traits>
 
 #include "Variable.hpp"
 
-using std::enable_if;
-using std::is_arithmetic;
-using std::is_reference;
-using std::is_same;
 using std::istream;
 using std::ostream;
 using std::ref;
@@ -20,12 +14,6 @@ using std::reference_wrapper;
 using std::string;
 
 namespace tcframe {
-
-template<typename T>
-using ScalarCompatible = typename enable_if<!is_reference<T>::value && (is_arithmetic<T>::value || is_same<string, T>::value)>::type;
-
-template<typename T>
-using NotScalarCompatible = typename enable_if<is_reference<T>::value || (!is_arithmetic<T>::value && !is_same<string, T>::value)>::type;
 
 class Scalar : public Variable {
 public:

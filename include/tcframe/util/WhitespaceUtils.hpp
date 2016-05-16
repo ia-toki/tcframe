@@ -22,6 +22,16 @@ public:
         }
     }
 
+    static void parseSpaceAfterMissingNewline(istream *in, const string &context) {
+        if (in->get() != ' ') {
+            throw runtime_error("Expected: <space> or <newline> after " + context);
+        }
+    }
+
+    static bool canParseNewline(istream* in) {
+        return in->peek() == '\n';
+    }
+
     static void parseNewline(istream* in, const string& context) {
         if (in->get() != '\n') {
             throw runtime_error("Expected: <newline> after " + context);

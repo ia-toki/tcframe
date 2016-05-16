@@ -88,6 +88,7 @@ set(SOURCE_FILES
     include/tcframe/variable/Scalar.hpp
     include/tcframe/variable/Variable.hpp
     include/tcframe/variable/VariableNameCreator.hpp
+    include/tcframe/variable/Vector.hpp
     include/tcframe/verification.hpp
     include/tcframe/verification/ConstraintSuiteVerifier.hpp
     include/tcframe/verification/ConstraintSuiteVerificationResult.hpp
@@ -116,6 +117,7 @@ set(SOURCE_FILES
     test/tcframe/variable/ScalarTests.cpp
     test/tcframe/variable/VariableNameCreatorTests.cpp
     test/tcframe/variable/VariableTests.cpp
+    test/tcframe/variable/VectorTests.cpp
     test/tcframe/verification/ConstraintSuiteVerifierTests.cpp
     test/tcframe/verification/MockConstraintSuiteVerifier.hpp
 

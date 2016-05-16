@@ -1,11 +1,13 @@
 #pragma once
 
+#include <stdexcept>
 #include <tuple>
 #include <vector>
 
 #include "IOSegment.hpp"
 #include "tcframe/variable.hpp"
 
+using std::runtime_error;
 using std::tie;
 using std::vector;
 
@@ -68,24 +70,42 @@ protected:
 class LineIOSegmentBuilder {
 private:
     LineIOSegment* subject_;
+    bool hasVectorWithoutSize_;
 
 public:
     LineIOSegmentBuilder()
             : subject_(new LineIOSegment())
+            , hasVectorWithoutSize_(false)
     {}
 
-    template<typename T, typename = ScalarCompatible<T>>
-    LineIOSegmentBuilder& addVariable(T& var, string name) {
-        return addScalarVariable(Scalar::create(var, name));
+    LineIOSegmentBuilder& addScalarVariable(Scalar* variable) {
+        checkVectorWithoutSize();
+        subject_->variables_.push_back(LineIOSegmentVariable(variable));
+        return *this;
     }
 
-    LineIOSegmentBuilder& addScalarVariable(Scalar* variable) {
+    LineIOSegmentBuilder& addVectorVariable(Vector* variable) {
+        checkVectorWithoutSize();
+        hasVectorWithoutSize_ = true;
         subject_->variables_.push_back(LineIOSegmentVariable(variable));
+        return *this;
+    }
+
+    LineIOSegmentBuilder& addVectorVariable(Vector* variable, int size) {
+        checkVectorWithoutSize();
+        subject_->variables_.push_back(LineIOSegmentVariable(variable, size));
         return *this;
     }
 
     LineIOSegment* build() {
         return subject_;
+    }
+
+private:
+    void checkVectorWithoutSize() {
+        if (hasVectorWithoutSize_) {
+            throw runtime_error("Vector without size can only be the last variable in a line segment");
+        }
     }
 };
 

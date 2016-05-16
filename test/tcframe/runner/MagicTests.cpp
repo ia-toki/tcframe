@@ -62,11 +62,13 @@ protected:
     class LINE_Tester : public IOFormatBuilder {
     protected:
         int A, B;
+        vector<int> C, D;
 
     public:
         void testValid() {
             LINE(A);
             LINE(A, B);
+            LINE(A, B, C % SIZE(3), D);
         }
     };
 };
@@ -127,7 +129,7 @@ TEST_F(MagicTests, LINE_Valid) {
 
     vector<IOSegment*> segments = ioFormat.inputFormat();
 
-    ASSERT_THAT(segments, SizeIs(2));
+    ASSERT_THAT(segments, SizeIs(3));
     ASSERT_THAT(segments[0]->type(), Eq(IOSegmentType::LINE));
     LineIOSegment* segment0 = (LineIOSegment*) segments[0];
     EXPECT_THAT(segment0->variables(), ElementsAre(
@@ -137,6 +139,12 @@ TEST_F(MagicTests, LINE_Valid) {
     EXPECT_THAT(segment1->variables(), ElementsAre(
             LineIOSegmentVariable(new FakeVariable("A", VariableType::SCALAR)),
             LineIOSegmentVariable(new FakeVariable("B", VariableType::SCALAR))));
+    LineIOSegment* segment2 = (LineIOSegment*) segments[2];
+    EXPECT_THAT(segment2->variables(), ElementsAre(
+            LineIOSegmentVariable(new FakeVariable("A", VariableType::SCALAR)),
+            LineIOSegmentVariable(new FakeVariable("B", VariableType::SCALAR)),
+            LineIOSegmentVariable(new FakeVariable("C", VariableType::VECTOR), 3),
+            LineIOSegmentVariable(new FakeVariable("D", VariableType::VECTOR))));
 }
 
 }

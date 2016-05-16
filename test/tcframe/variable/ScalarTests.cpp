@@ -15,24 +15,22 @@ namespace tcframe {
 class ScalarTests : public Test {
 protected:
     int a;
-
     Scalar *A = Scalar::create(a, "a");
 };
 
 TEST_F(ScalarTests, Parsing) {
-    istringstream sin("42");
-    A->parseFrom(&sin);
+    istringstream in("42");
+    A->parseFrom(&in);
 
     EXPECT_THAT(a, Eq(42));
 }
 
 TEST_F(ScalarTests, Printing) {
     a = 42;
+    ostringstream out;
+    A->printTo(&out);
 
-    ostringstream sout;
-    A->printTo(&sout);
-
-    EXPECT_THAT(sout.str(), Eq("42"));
+    EXPECT_THAT(out.str(), Eq("42"));
 }
 
 }

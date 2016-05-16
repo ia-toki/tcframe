@@ -6,6 +6,7 @@
 #include <vector>
 
 using std::istringstream;
+using std::ostringstream;
 using std::replace;
 using std::string;
 using std::vector;
@@ -16,15 +17,32 @@ class StringUtils {
 public:
     StringUtils() = delete;
 
-    static vector<string> split(string s) {
-        replace(s.begin(), s.end(), ',', ' ');
-        istringstream sin(s);
-        string t;
+    template<typename T>
+    static string toString(T obj) {
+        ostringstream out;
+        out << obj;
+        return out.str();
+    }
 
+    static vector<string> split(string s, char delimiter) {
         vector<string> result;
 
-        while (sin >> t) {
-            result.push_back(t);
+        istringstream in(s);
+        string token;
+        while (getline(in, token, delimiter)) {
+            result.push_back(token);
+        }
+
+        return result;
+    }
+
+    static vector<string> splitAndTrimBySpace(string s) {
+        vector<string> result;
+
+        istringstream in(s);
+        string token;
+        while (in >> token) {
+            result.push_back(token);
         }
 
         return result;

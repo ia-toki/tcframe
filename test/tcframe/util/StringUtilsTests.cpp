@@ -9,14 +9,14 @@ namespace tcframe {
 
 class StringUtilsTests : public Test {};
 
-TEST_F(StringUtilsTests, SingleStringSplit) {
-    EXPECT_THAT(StringUtils::split(" A "), ElementsAre(
-            "A"));
+TEST_F(StringUtilsTests, SplitAndTrimBySpace) {
+    EXPECT_THAT(StringUtils::splitAndTrimBySpace(" A B C   D "), ElementsAre(
+            "A", "B", "C", "D"));
 }
 
-TEST_F(StringUtilsTests, CommaSeparatedStringsSplit) {
-    EXPECT_THAT(StringUtils::split(" A,B, C,   D "), ElementsAre(
-            "A", "B", "C", "D"));
+TEST_F(StringUtilsTests, Split_CommaSeparated) {
+    EXPECT_THAT(StringUtils::split(" A,B, C,   D ", ','), ElementsAre(
+            " A", "B", " C", "   D "));
 }
 
 }

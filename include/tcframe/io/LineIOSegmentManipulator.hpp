@@ -1,14 +1,16 @@
 #pragma once
 
 #include <iostream>
+#include <stdexcept>
 
 #include "LineIOSegment.hpp"
-#include "tcframe/util/WhitespaceUtils.hpp"
+#include "tcframe/util.hpp"
 #include "tcframe/variable.hpp"
 
 using std::endl;
 using std::istream;
 using std::ostream;
+using std::runtime_error;
 
 namespace tcframe {
 
@@ -26,6 +28,8 @@ public:
 
             if (variable->type() == VariableType::SCALAR) {
                 parseScalar((Scalar*) variable, in);
+            } else {
+                parseVector((Vector*) variable, size, in);
             }
 
             lastVariableName = variable->name();
@@ -46,18 +50,42 @@ public:
 
             if (variable->type() == VariableType::SCALAR) {
                 printScalar((Scalar*) variable, out);
+            } else if (variable->type() == VariableType::VECTOR) {
+                printVector((Vector*) variable, size, out);
             }
         }
         *out << endl;
     }
 
 private:
+    static void checkVectorSize(Vector* vektor, int size) {
+        if (size != -1 && vektor->size() != size) {
+            throw runtime_error("Number of elements of vector " + VariableNameCreator::createName(vektor->name())
+                                + " unsatisfied. Expected: " + StringUtils::toString(size) + ", actual: "
+                                + StringUtils::toString(vektor->size()));
+        }
+    }
+
     static void parseScalar(Scalar* scalar, istream* in) {
         scalar->parseFrom(in);
     }
 
+    static void parseVector(Vector* vektor, int size, istream* in) {
+        vektor->clear();
+        if (size == -1) {
+            vektor->parseFrom(in);
+        } else {
+            vektor->parseFrom(in, size);
+        }
+    }
+
     static void printScalar(Scalar* scalar, ostream* out) {
         scalar->printTo(out);
+    }
+
+    static void printVector(Vector* vektor, int size, ostream* out) {
+        checkVectorSize(vektor, size);
+        vektor->printTo(out);
     }
 };
 
