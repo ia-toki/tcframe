@@ -22,7 +22,7 @@ using std::vector;
 #define CONS(predicate) addConstraint(Constraint([=] {return predicate;}, #predicate))
 #define CASE(...) addOfficialTestCase(OfficialTestCase([=] {__VA_ARGS__;}, #__VA_ARGS__))
 #define SAMPLE_CASE(...) addSampleTestCase(__VA_ARGS__)
-#define LINE(...) addIOSegment((MagicLineIOSegmentBuilder(#__VA_ARGS__), __VA_ARGS__).build())
+#define LINE(...) MagicLineIOSegmentBuilder(newLineIOSegment(), #__VA_ARGS__), __VA_ARGS__
 
 #define SIZE_IMPL1(size) VectorSize{size}
 #define SIZE_WITH_COUNT(_1, _2, N, ...) SIZE_IMPL ## N
@@ -54,11 +54,12 @@ VectorWithSize<T> operator%(vector<T>& vektor, VectorSize size) {
 
 class MagicLineIOSegmentBuilder {
 private:
-    LineIOSegmentBuilder builder_;
+    LineIOSegmentBuilder* builder_;
     queue<string> names_;
 
 public:
-    MagicLineIOSegmentBuilder(string names) {
+    MagicLineIOSegmentBuilder(LineIOSegmentBuilder& builder, string names) {
+        builder_ = &builder;
         for (string name : extractVariableNames(names)) {
             names_.push(name);
         }
@@ -66,24 +67,20 @@ public:
 
     template<typename T, typename = ScalarCompatible<T>>
     MagicLineIOSegmentBuilder& operator,(T& var) {
-        builder_.addScalarVariable(Scalar::create(var, nextName()));
+        builder_->addScalarVariable(Scalar::create(var, nextName()));
         return *this;
     }
 
     template<typename T, typename = ScalarCompatible<T>>
     MagicLineIOSegmentBuilder& operator,(vector<T>& var) {
-        builder_.addVectorVariable(Vector::create(var, nextName()));
+        builder_->addVectorVariable(Vector::create(var, nextName()));
         return *this;
     }
 
     template<typename T, typename = ScalarCompatible<T>>
     MagicLineIOSegmentBuilder& operator,(VectorWithSize<T> var) {
-        builder_.addVectorVariable(Vector::create(*var.vektor, nextName()), var.size.size);
+        builder_->addVectorVariable(Vector::create(*var.vektor, nextName()), var.size.size);
         return *this;
-    }
-
-    LineIOSegment* build() {
-        return builder_.build();
     }
 
 private:

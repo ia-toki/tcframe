@@ -23,7 +23,9 @@ protected:
         }
 
         void InputFormat() {
-            addIOSegment((MagicLineIOSegmentBuilder("A, B"), A, B).build());
+            newLineIOSegment()
+                    .addScalarVariable(Scalar::create(A, "A"))
+                    .addScalarVariable(Scalar::create(B, "B"));
         }
     };
 

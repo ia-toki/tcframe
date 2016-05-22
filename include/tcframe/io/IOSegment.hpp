@@ -20,4 +20,11 @@ protected:
     virtual bool equals(const IOSegment& o) const = 0;
 };
 
+class IOSegmentBuilder {
+public:
+    virtual ~IOSegmentBuilder() {}
+
+    virtual IOSegment* build() = 0;
+};
+
 }

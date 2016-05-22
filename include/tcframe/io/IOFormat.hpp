@@ -4,6 +4,7 @@
 #include <utility>
 
 #include "IOSegment.hpp"
+#include "LineIOSegment.hpp"
 
 using std::move;
 using std::vector;
@@ -31,27 +32,46 @@ class IOFormatBuilder {
 private:
     IOFormat subject_;
     vector<IOSegment*>* currentFormat_;
+    IOSegmentBuilder* lastBuilder_;
 
 public:
+    IOFormatBuilder()
+            : lastBuilder_(nullptr)
+    {}
+
     virtual ~IOFormatBuilder() {}
 
-    IOFormatBuilder& prepareForInputFormat() {
+    void prepareForInputFormat() {
+        addLastSegment();
         currentFormat_ = &subject_.inputFormat_;
-        return *this;
     }
 
-    IOFormatBuilder& prepareForOutputFormat() {
+    void prepareForOutputFormat() {
+        addLastSegment();
         currentFormat_ = &subject_.outputFormat_;
-        return *this;
     }
 
-    IOFormatBuilder& addIOSegment(IOSegment* segment) {
-        currentFormat_->push_back(segment);
-        return *this;
+    LineIOSegmentBuilder& newLineIOSegment() {
+        addLastSegment();
+        LineIOSegmentBuilder* builder = new LineIOSegmentBuilder();
+        lastBuilder_ = builder;
+        return *builder;
+    }
     }
 
     IOFormat build() {
+        addLastSegment();
         return move(subject_);
+    }
+
+private:
+    void addLastSegment() {
+        if (lastBuilder_ != nullptr) {
+            if (currentFormat_ != nullptr) {
+                currentFormat_->push_back(lastBuilder_->build());
+            }
+            lastBuilder_ = nullptr;
+        }
     }
 };
 

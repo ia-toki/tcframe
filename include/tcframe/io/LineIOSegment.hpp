@@ -67,7 +67,7 @@ protected:
     }
 };
 
-class LineIOSegmentBuilder {
+class LineIOSegmentBuilder : public IOSegmentBuilder {
 private:
     LineIOSegment* subject_;
     bool hasVectorWithoutSize_;
