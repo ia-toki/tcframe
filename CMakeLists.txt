@@ -86,6 +86,7 @@ set(SOURCE_FILES
     include/tcframe/util/WhitespaceUtils.hpp
     include/tcframe/variable.hpp
     include/tcframe/variable/Scalar.hpp
+    include/tcframe/variable/Matrix.hpp
     include/tcframe/variable/Variable.hpp
     include/tcframe/variable/VariableNameCreator.hpp
     include/tcframe/variable/Vector.hpp
@@ -114,6 +115,7 @@ set(SOURCE_FILES
     test/tcframe/util/StringUtilsTests.cpp
     test/tcframe/util/WhitespaceUtilsTests.cpp
     test/tcframe/variable/FakeVariable.hpp
+    test/tcframe/variable/MatrixTests.cpp
     test/tcframe/variable/ScalarTests.cpp
     test/tcframe/variable/VariableNameCreatorTests.cpp
     test/tcframe/variable/VariableTests.cpp

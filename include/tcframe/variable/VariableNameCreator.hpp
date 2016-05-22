@@ -21,6 +21,12 @@ public:
         sout << "'" << name << "[" << index << "]'";
         return sout.str();
     }
+
+    static string createMatrixElementName(const string& name, int rowIndex, int colIndex) {
+        ostringstream sout;
+        sout << "'" << name << "[" << rowIndex << "][" << colIndex << "]'";
+        return sout.str();
+    }
 };
 
 }
