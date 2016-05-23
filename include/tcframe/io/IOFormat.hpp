@@ -57,7 +57,6 @@ public:
         lastBuilder_ = builder;
         return *builder;
     }
-    }
 
     IOFormat build() {
         addLastSegment();

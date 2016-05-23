@@ -73,6 +73,14 @@ protected:
     };
 };
 
+TEST_F(MagicTests, VariableNamesExtractor) {
+    VariableNamesExtractor extractor("A, B, C % SIZE(3), D");
+    EXPECT_THAT(extractor.nextName(), Eq("A"));
+    EXPECT_THAT(extractor.nextName(), Eq("B"));
+    EXPECT_THAT(extractor.nextName(), Eq("C"));
+    EXPECT_THAT(extractor.nextName(), Eq("D"));
+}
+
 TEST_F(MagicTests, CONS_Valid) {
     CONS_Tester tester;
     tester.testValid();

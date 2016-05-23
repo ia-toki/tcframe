@@ -52,44 +52,24 @@ VectorWithSize<T> operator%(vector<T>& vektor, VectorSize size) {
     return VectorWithSize<T>{&vektor, size};
 }
 
-class MagicLineIOSegmentBuilder {
+class VariableNamesExtractor {
 private:
-    LineIOSegmentBuilder* builder_;
     queue<string> names_;
 
 public:
-    MagicLineIOSegmentBuilder(LineIOSegmentBuilder& builder, string names) {
-        builder_ = &builder;
+    VariableNamesExtractor(string names) {
         for (string name : extractVariableNames(names)) {
             names_.push(name);
         }
     }
 
-    template<typename T, typename = ScalarCompatible<T>>
-    MagicLineIOSegmentBuilder& operator,(T& var) {
-        builder_->addScalarVariable(Scalar::create(var, nextName()));
-        return *this;
-    }
-
-    template<typename T, typename = ScalarCompatible<T>>
-    MagicLineIOSegmentBuilder& operator,(vector<T>& var) {
-        builder_->addVectorVariable(Vector::create(var, nextName()));
-        return *this;
-    }
-
-    template<typename T, typename = ScalarCompatible<T>>
-    MagicLineIOSegmentBuilder& operator,(VectorWithSize<T> var) {
-        builder_->addVectorVariable(Vector::create(*var.vektor, nextName()), var.size.size);
-        return *this;
-    }
-
-private:
     string nextName() {
         string name = names_.front();
         names_.pop();
         return name;
     }
 
+private:
     static vector<string> extractVariableNames(const string& s) {
         vector<string> names;
         for (string namePossiblyWithSize : StringUtils::split(s, ',')) {
@@ -98,7 +78,36 @@ private:
         }
         return names;
     }
+};
 
+class MagicLineIOSegmentBuilder {
+private:
+    LineIOSegmentBuilder* builder_;
+    VariableNamesExtractor extractor_;
+
+public:
+    MagicLineIOSegmentBuilder(LineIOSegmentBuilder& builder, string names)
+            : builder_(&builder)
+            , extractor_(VariableNamesExtractor(names))
+    {}
+
+    template<typename T, typename = ScalarCompatible<T>>
+    MagicLineIOSegmentBuilder& operator,(T& var) {
+        builder_->addScalarVariable(Scalar::create(var, extractor_.nextName()));
+        return *this;
+    }
+
+    template<typename T, typename = ScalarCompatible<T>>
+    MagicLineIOSegmentBuilder& operator,(vector<T>& var) {
+        builder_->addVectorVariable(Vector::create(var, extractor_.nextName()));
+        return *this;
+    }
+
+    template<typename T, typename = ScalarCompatible<T>>
+    MagicLineIOSegmentBuilder& operator,(VectorWithSize<T> var) {
+        builder_->addVectorVariable(Vector::create(*var.vektor, extractor_.nextName()), var.size.size);
+        return *this;
+    }
 };
 
 }
