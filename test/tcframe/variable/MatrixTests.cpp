@@ -71,8 +71,11 @@ TEST_F(MatrixTests, Parsing_WithSize_Failed_ExtraWhitespace) {
 TEST_F(MatrixTests, Parsing_WithoutSize_Rows_Successful) {
     istringstream in("1 2\n3 4 5\n6\n");
     M->parseAndAddRowFrom(&in, 0);
+    WhitespaceUtils::parseNewline(&in, "");
     M->parseAndAddRowFrom(&in, 1);
+    WhitespaceUtils::parseNewline(&in, "");
     M->parseAndAddRowFrom(&in, 2);
+    WhitespaceUtils::parseNewline(&in, "");
 
     EXPECT_THAT(m, Eq(vector<vector<int>>{{1, 2}, {3, 4, 5}, {6}}));
 }
@@ -111,7 +114,9 @@ TEST_F(MatrixTests, Printing_WithoutSize_Rows) {
     m = {{1, 2, 3}, {4, 5, 6}};
     ostringstream out;
     M->printRowTo(0, &out);
+    out << endl;
     M->printRowTo(1, &out);
+    out << endl;
 
     EXPECT_THAT(out.str(), Eq("1 2 3\n4 5 6\n"));
 }

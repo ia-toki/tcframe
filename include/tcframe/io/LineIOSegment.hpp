@@ -61,9 +61,8 @@ public:
         return tie(variables_) == tie(o.variables_);
     }
 
-protected:
-    virtual bool equals(const IOSegment& o) const {
-        return *this == (LineIOSegment&) o;
+    bool equals(IOSegment* o) const {
+        return o->type() == IOSegmentType::LINE && *this == (LineIOSegment&) *o;
     }
 };
 

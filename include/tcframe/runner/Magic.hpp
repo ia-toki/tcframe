@@ -23,6 +23,7 @@ using std::vector;
 #define CASE(...) addOfficialTestCase(OfficialTestCase([=] {__VA_ARGS__;}, #__VA_ARGS__))
 #define SAMPLE_CASE(...) addSampleTestCase(__VA_ARGS__)
 #define LINE(...) MagicLineIOSegmentBuilder(newLineIOSegment(), #__VA_ARGS__), __VA_ARGS__
+#define LINES(...) (MagicLinesIOSegmentBuilder(newLinesIOSegment(), #__VA_ARGS__), __VA_ARGS__)
 
 #define SIZE_IMPL1(size) VectorSize{size}
 #define SIZE_WITH_COUNT(_1, _2, N, ...) SIZE_IMPL ## N
@@ -106,6 +107,35 @@ public:
     template<typename T, typename = ScalarCompatible<T>>
     MagicLineIOSegmentBuilder& operator,(VectorWithSize<T> var) {
         builder_->addVectorVariable(Vector::create(*var.vektor, extractor_.nextName()), var.size.size);
+        return *this;
+    }
+};
+
+class MagicLinesIOSegmentBuilder {
+private:
+    LinesIOSegmentBuilder* builder_;
+    VariableNamesExtractor extractor_;
+
+public:
+    MagicLinesIOSegmentBuilder(LinesIOSegmentBuilder& builder, string names)
+            : builder_(&builder)
+            , extractor_(VariableNamesExtractor(names))
+    {}
+
+    template<typename T, typename = ScalarCompatible<T>>
+    MagicLinesIOSegmentBuilder& operator,(vector<T>& var) {
+        builder_->addVectorVariable(Vector::create(var, extractor_.nextName()));
+        return *this;
+    }
+
+    template<typename T, typename = ScalarCompatible<T>>
+    MagicLinesIOSegmentBuilder& operator,(vector<vector<T>>& var) {
+        builder_->addJaggedVectorVariable(Matrix::create(var, extractor_.nextName()));
+        return *this;
+    }
+
+    MagicLinesIOSegmentBuilder& operator%(VectorSize size) {
+        builder_->setSize(size.size);
         return *this;
     }
 };

@@ -71,6 +71,19 @@ protected:
             LINE(A, B, C % SIZE(3), D);
         }
     };
+
+    class LINES_Tester : public IOFormatBuilder {
+    protected:
+        vector<int> X, Y;
+        vector<vector<int>> Z;
+
+    public:
+        void testValid() {
+            LINES(X) % SIZE(2);
+            LINES(X, Y) % SIZE(3);
+            LINES(X, Y, Z) % SIZE(4);
+        }
+    };
 };
 
 TEST_F(MagicTests, VariableNamesExtractor) {
@@ -153,6 +166,32 @@ TEST_F(MagicTests, LINE_Valid) {
             LineIOSegmentVariable(new FakeVariable("B", VariableType::SCALAR)),
             LineIOSegmentVariable(new FakeVariable("C", VariableType::VECTOR), 3),
             LineIOSegmentVariable(new FakeVariable("D", VariableType::VECTOR))));
+}
+
+TEST_F(MagicTests, LINES_Valid) {
+    LINES_Tester tester;
+    tester.prepareForInputFormat();
+    tester.testValid();
+    IOFormat ioFormat = tester.build();
+
+    vector<int> dummy;
+    vector<vector<int>> dummy2;
+    IOFormatBuilder builder;
+    builder.prepareForInputFormat();
+    builder.newLinesIOSegment()
+            .addVectorVariable(Vector::create(dummy, "X"))
+            .setSize(2);
+    builder.newLinesIOSegment()
+            .addVectorVariable(Vector::create(dummy, "X"))
+            .addVectorVariable(Vector::create(dummy, "Y"))
+            .setSize(3);
+    builder.newLinesIOSegment()
+            .addVectorVariable(Vector::create(dummy, "X"))
+            .addVectorVariable(Vector::create(dummy, "Y"))
+            .addJaggedVectorVariable(Matrix::create(dummy2, "Z"))
+            .setSize(4);
+
+    EXPECT_THAT(ioFormat, Eq(builder.build()));
 }
 
 }

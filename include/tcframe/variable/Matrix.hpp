@@ -67,6 +67,7 @@ public:
     void printTo(ostream* out) {
         for (int row = 0; row < var_.get().size(); row++) {
             printRowTo(row, out);
+            *out << endl;
         }
     }
 
@@ -77,7 +78,6 @@ public:
             }
             *out << var_.get()[rowIndex][c];
         }
-        *out << endl;
     }
 
     void parseFrom(istream* in, int rows, int columns) {
@@ -113,7 +113,6 @@ public:
             row.push_back(element);
         }
         var_.get().push_back(row);
-        WhitespaceUtils::parseNewline(in, VariableNameCreator::createMatrixElementName(name(), rowIndex, c - 1));
     }
 };
 

@@ -17,6 +17,7 @@ protected:
     class Problem : public BaseProblem {
     protected:
         int A, B;
+        vector<int> X;
 
         void Config() {
             setSlug("ab");
@@ -26,6 +27,9 @@ protected:
             newLineIOSegment()
                     .addScalarVariable(Scalar::create(A, "A"))
                     .addScalarVariable(Scalar::create(B, "B"));
+            newLinesIOSegment()
+                    .addVectorVariable(Vector::create(X, "X"))
+                    .setSize(3);
         }
     };
 
@@ -64,7 +68,8 @@ TEST_F(BaseProblemTests, Config) {
 TEST_F(BaseProblemTests, IOFormat) {
     IOFormat ioFormat = problem.buildIOFormat();
     EXPECT_THAT(ioFormat.inputFormat(), ElementsAre(
-        A<LineIOSegment*>()));
+        A<LineIOSegment*>(),
+        A<LinesIOSegment*>()));
 }
 
 TEST_F(BaseProblemTests, Constraints) {

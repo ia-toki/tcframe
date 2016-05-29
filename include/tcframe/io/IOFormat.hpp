@@ -5,6 +5,7 @@
 
 #include "IOSegment.hpp"
 #include "LineIOSegment.hpp"
+#include "LinesIOSegment.hpp"
 
 using std::move;
 using std::vector;
@@ -25,6 +26,23 @@ public:
 
     const vector<IOSegment*>& outputFormat() const {
         return outputFormat_;
+    }
+
+    bool operator==(const IOFormat& o) const {
+        return equals(inputFormat_, o.inputFormat_) && equals(outputFormat_, o.outputFormat_);
+    }
+
+private:
+    bool equals(const vector<IOSegment*>& a, const vector<IOSegment*>& b) const {
+        if (a.size() != b.size()) {
+            return false;
+        }
+        for (int i = 0; i < a.size(); i++) {
+            if (!a[i]->equals(b[i])) {
+                return false;
+            }
+        }
+        return true;
     }
 };
 
@@ -54,6 +72,13 @@ public:
     LineIOSegmentBuilder& newLineIOSegment() {
         addLastSegment();
         LineIOSegmentBuilder* builder = new LineIOSegmentBuilder();
+        lastBuilder_ = builder;
+        return *builder;
+    }
+
+    LinesIOSegmentBuilder& newLinesIOSegment() {
+        addLastSegment();
+        LinesIOSegmentBuilder* builder = new LinesIOSegmentBuilder();
         lastBuilder_ = builder;
         return *builder;
     }

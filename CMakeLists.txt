@@ -66,6 +66,8 @@ set(SOURCE_FILES
     include/tcframe/io/IOSegment.hpp
     include/tcframe/io/LineIOSegment.hpp
     include/tcframe/io/LineIOSegmentManipulator.hpp
+    include/tcframe/io/LinesIOSegment.hpp
+    include/tcframe/io/LinesIOSegmentManipulator.hpp
     include/tcframe/os.hpp
     include/tcframe/os/ExecutionResult.hpp
     include/tcframe/os/OperatingSystem.hpp
@@ -105,6 +107,8 @@ set(SOURCE_FILES
     test/tcframe/io/IOManipulatorTests.cpp
     test/tcframe/io/LineIOSegmentBuilderTests.cpp
     test/tcframe/io/LineIOSegmentManipulatorTests.cpp
+    test/tcframe/io/LinesIOSegmentBuilderTests.cpp
+    test/tcframe/io/LinesIOSegmentManipulatorTests.cpp
     test/tcframe/io/MockIOManipulator.hpp
     test/tcframe/os/MockOperatingSystem.hpp
     test/tcframe/runner/BaseGeneratorTests.cpp
