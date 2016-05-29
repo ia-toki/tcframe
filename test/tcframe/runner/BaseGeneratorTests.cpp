@@ -76,14 +76,14 @@ TEST_F(BaseGeneratorTests, Config) {
     EXPECT_THAT(config.testCasesDir(), Eq("dir"));
 }
 
-TEST_F(BaseGeneratorTests, WithoutGroups_TestSuite) {
+TEST_F(BaseGeneratorTests, TestSuite) {
     TestSuite testSuite = generatorWithoutTestGroups.buildTestSuite();
     EXPECT_THAT(testSuite.sampleTests(), SizeIs(2));
     EXPECT_THAT(testSuite.officialTests(), ElementsAre(
             AllOf(Property(&TestGroup::id, -1), Property(&TestGroup::officialTestCases, SizeIs(2)))));
 }
 
-TEST_F(BaseGeneratorTests, WithGroups_TestSuite) {
+TEST_F(BaseGeneratorTests, TestSuite_WithGroups) {
     TestSuite testSuite = generatorWithTestGroups.buildTestSuite();
     EXPECT_THAT(testSuite.sampleTests(), SizeIs(2));
     EXPECT_THAT(testSuite.officialTests(), ElementsAre(

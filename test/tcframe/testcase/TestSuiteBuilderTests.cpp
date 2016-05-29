@@ -24,7 +24,7 @@ protected:
     TestSuiteBuilder builder;
 };
 
-TEST_F(TestSuiteBuilderTests, WithoutGroups_Building) {
+TEST_F(TestSuiteBuilderTests, Building) {
     TestSuite testSuite = builder
             .addSampleTestCase(stc1)
             .addSampleTestCase(stc2)
@@ -38,7 +38,7 @@ TEST_F(TestSuiteBuilderTests, WithoutGroups_Building) {
             TestGroup(-1, {-1}, {tc1, tc2})));
 }
 
-TEST_F(TestSuiteBuilderTests, WithGroups_Building) {
+TEST_F(TestSuiteBuilderTests, Building_WithGroups) {
     TestSuite testSuite = builder
             .newTestGroup()
             .addSampleTestCase(stc1, {1, 2})
@@ -59,7 +59,7 @@ TEST_F(TestSuiteBuilderTests, WithGroups_Building) {
             TestGroup(2, {2}, {tc3, tc4})));
 }
 
-TEST_F(TestSuiteBuilderTests, WithGroups_BuildingWithoutLastGroup) {
+TEST_F(TestSuiteBuilderTests, Building_WithGroups_WithoutLastGroup) {
     TestSuite testSuite = builder
             .newTestGroup()
             .addSampleTestCase(stc1, {1, 2})

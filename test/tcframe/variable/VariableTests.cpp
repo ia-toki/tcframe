@@ -20,46 +20,46 @@ protected:
 };
 
 
-TEST_F(VariableTests, SuccessfulParsing) {
-    istream* in = new istringstream("123");
-    var.parseValue(in, X, "'X'");
+TEST_F(VariableTests, Parsing_Successful) {
+    istringstream in("123");
+    var.parseValue(&in, X, "'X'");
     EXPECT_THAT(X, Eq(123));
 }
 
-TEST_F(VariableTests, FailedParsingBecauseWhitespace) {
-    istream* in = new istringstream(" 123");
+TEST_F(VariableTests, Parsing_Failed_FoundWhitespace) {
+    istringstream in(" 123");
     try {
-        var.parseValue(in, X, "'X'");
+        var.parseValue(&in, X, "'X'");
         FAIL();
     } catch (runtime_error& e) {
         EXPECT_THAT(e.what(), StrEq("Cannot parse for 'X'. Found: <whitespace>"));
     }
 }
 
-TEST_F(VariableTests, FailedParsingBecauseEof) {
-    istream* in = new istringstream("");
+TEST_F(VariableTests, Parsing_Failed_FoundEof) {
+    istringstream in("");
     try {
-        var.parseValue(in, X, "'X'");
+        var.parseValue(&in, X, "'X'");
         FAIL();
     } catch (runtime_error& e) {
         EXPECT_THAT(e.what(), StrEq("Cannot parse for 'X'. Found: <EOF>"));
     }
 }
 
-TEST_F(VariableTests, FailedParsingBecauseOverflow) {
-    istream* in = new istringstream("12345678901234567890");
+TEST_F(VariableTests, Parsing_Failed_Overflow) {
+    istringstream in("12345678901234567890");
     try {
-        var.parseValue(in, X, "'X'");
+        var.parseValue(&in, X, "'X'");
         FAIL();
     } catch (runtime_error& e) {
         EXPECT_THAT(e.what(), StrEq("Cannot parse for 'X'. Found: '12345678901234567890'"));
     }
 }
 
-TEST_F(VariableTests, FailedParsingBecauseTypeMismatch) {
-    istream* in = new istringstream("abc123");
+TEST_F(VariableTests, Parsing_Failed_TypeMismatch) {
+    istringstream in("abc123");
     try {
-        var.parseValue(in, X, "'X'");
+        var.parseValue(&in, X, "'X'");
         FAIL();
     } catch (runtime_error& e) {
         EXPECT_THAT(e.what(), StrEq("Cannot parse for 'X'. Found: 'abc123'"));

@@ -17,7 +17,7 @@ protected:
     LineIOSegmentBuilder builder;
 };
 
-TEST_F(LineIOSegmentBuilderTests, Building) {
+TEST_F(LineIOSegmentBuilderTests, Building_Successful) {
     LineIOSegment* segment = builder
             .addScalarVariable(Scalar::create(A, "A"))
             .addVectorVariable(Vector::create(B, "B"), 7)

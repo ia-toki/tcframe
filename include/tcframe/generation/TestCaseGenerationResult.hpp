@@ -1,10 +1,6 @@
 #pragma once
 
-#include <tuple>
-
 #include "TestCaseGenerationFailure.hpp"
-
-using std::tie;
 
 namespace tcframe {
 
@@ -38,7 +34,7 @@ public:
 
     bool operator==(const TestCaseGenerationResult& o) const {
         if (failure_ != nullptr && o.failure_ != nullptr) {
-            return tie(*failure_) == tie(*o.failure_);
+            return failure_->equals(o.failure_);
         }
         return failure_ == o.failure_;
     }

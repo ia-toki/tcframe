@@ -56,7 +56,7 @@ protected:
     }
 };
 
-TEST_F(TestCaseGeneratorTests, SuccessfulGeneration) {
+TEST_F(TestCaseGeneratorTests, Generation_Successful) {
     {
         InSequence sequence;
         EXPECT_CALL(os, openForWriting("dir/foo_1.in"));
@@ -67,20 +67,20 @@ TEST_F(TestCaseGeneratorTests, SuccessfulGeneration) {
 
     TestCaseGenerationResult result = generator.generate(data, closure, config);
 
-    EXPECT_THAT(applied, Eq(true));
-    EXPECT_THAT(result.isSuccessful(), Eq(true));
+    EXPECT_TRUE(applied);
+    EXPECT_TRUE(result.isSuccessful());
     EXPECT_THAT(result.failure(), IsNull());
 }
 
-TEST_F(TestCaseGeneratorTests, FailedGeneration_VerificationFailure) {
+TEST_F(TestCaseGeneratorTests, Generation_Failed_VerificationFailure) {
     ConstraintSuiteVerificationResult verificationResult({{1, {"1 <= N <= 10"}}}, {});
     ON_CALL(constraintSuiteVerifier, verify(set<int>{1, 2}))
             .WillByDefault(Return(verificationResult));
 
     TestCaseGenerationResult result = generator.generate(data, closure, config);
 
-    EXPECT_THAT(applied, Eq(true));
-    EXPECT_THAT(result.isSuccessful(), Eq(false));
+    EXPECT_TRUE(applied);
+    EXPECT_FALSE(result.isSuccessful());
     EXPECT_THAT(result.failure(), WhenDynamicCastTo<VerificationFailure*>(
                     Pointee(VerificationFailure(verificationResult))));
 }

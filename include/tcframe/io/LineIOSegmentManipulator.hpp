@@ -32,7 +32,7 @@ public:
                 parseVector((Vector*) variable, size, in);
             }
 
-            lastVariableName = variable->name();
+            lastVariableName = VariableNameCreator::createName(variable->name());
         }
         WhitespaceUtils::parseNewline(in, lastVariableName);
     }

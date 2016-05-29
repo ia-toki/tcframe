@@ -21,21 +21,21 @@ protected:
     Matrix* C = Matrix::create(c, "C");
 };
 
-TEST_F(MatrixTests, Parsing_WithSize_Successful) {
+TEST_F(MatrixTests, Parsing_Successful) {
     istringstream in("1 2 3\n4 5 6\n");
     M->parseFrom(&in, 2, 3);
 
     EXPECT_THAT(m, Eq(vector<vector<int>>{{1, 2, 3}, {4, 5, 6}}));
 }
 
-TEST_F(MatrixTests, Parsing_WithSize_Char) {
+TEST_F(MatrixTests, Parsing_Char) {
     istringstream in("abc\ndef\n");
     C->parseFrom(&in, 2, 3);
 
     EXPECT_THAT(c, Eq(vector<vector<char>>{{'a', 'b', 'c'}, {'d', 'e', 'f'}}));
 }
 
-TEST_F(MatrixTests, Parsing_WithSize_Failed_MissingSpace) {
+TEST_F(MatrixTests, Parsing_Failed_MissingSpace) {
     istringstream in("1 2 3\n4\n");
 
     try {
@@ -46,7 +46,7 @@ TEST_F(MatrixTests, Parsing_WithSize_Failed_MissingSpace) {
     }
 }
 
-TEST_F(MatrixTests, Parsing_WithSize_Failed_MissingNewline) {
+TEST_F(MatrixTests, Parsing_Failed_MissingNewline) {
     istringstream in("1 2 3 4 5 6\n");
 
     try {
@@ -57,7 +57,7 @@ TEST_F(MatrixTests, Parsing_WithSize_Failed_MissingNewline) {
     }
 }
 
-TEST_F(MatrixTests, Parsing_WithSize_Failed_ExtraWhitespace) {
+TEST_F(MatrixTests, Parsing_Failed_ExtraWhitespace) {
     istringstream in("1 2 3\n 4 5 6\n");
 
     try {

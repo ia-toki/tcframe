@@ -6,6 +6,7 @@
 #include <string>
 
 #include "Variable.hpp"
+#include "VariableNameCreator.hpp"
 
 using std::istream;
 using std::ostream;
@@ -46,7 +47,7 @@ public:
     }
 
     void parseFrom(istream* in) {
-        Variable::parseValue(in, var_, name());
+        Variable::parseValue(in, var_, VariableNameCreator::createName(name()));
     }
 };
 

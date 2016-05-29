@@ -30,9 +30,8 @@ public:
         return tie(verificationResult_) == tie(o.verificationResult_);
     }
 
-protected:
-    bool equals(const TestCaseGenerationFailure& o) const {
-        return *this == (VerificationFailure&) o;
+    bool equals(TestCaseGenerationFailure* o) const {
+        return type() == o->type() && *this == *((VerificationFailure *) o);
     }
 };
 

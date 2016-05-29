@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -7,6 +8,7 @@
 #include "ConstraintGroup.hpp"
 
 using std::move;
+using std::tie;
 using std::vector;
 
 namespace tcframe {
@@ -20,6 +22,10 @@ private:
 public:
     const vector<ConstraintGroup>& individualConstraints() const {
         return individualConstraints_;
+    }
+
+    bool operator==(const ConstraintSuite& o) const {
+        return tie(individualConstraints_) == tie(o.individualConstraints_);
     }
 };
 

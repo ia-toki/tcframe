@@ -1,11 +1,11 @@
 #include "gmock/gmock.h"
-#include "../mock.hpp"
 
 #include <sstream>
 
 #include "tcframe/io/IOManipulator.hpp"
 
 using ::testing::Eq;
+using ::testing::StrEq;
 using ::testing::Test;
 
 using std::istringstream;
@@ -40,9 +40,14 @@ TEST_F(IOManipulatorTests, Parsing_Successful) {
     EXPECT_THAT(B, Eq(42));
 }
 
-TEST_F(IOManipulatorTests, Parsing_FailedBecauseNoEof) {
+TEST_F(IOManipulatorTests, Parsing_Failed_MissingEof) {
     istringstream in("123\n42\nbogus");
-    EXPECT_THROW({manipulator->parseInput(&in);}, runtime_error);
+    try {
+        manipulator->parseInput(&in);
+        FAIL();
+    } catch(runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Expected: <EOF>"));
+    }
 }
 
 TEST_F(IOManipulatorTests, Printing_Successful) {

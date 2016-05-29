@@ -71,7 +71,7 @@ protected:
     }
 };
 
-TEST_F(TestSuiteGeneratorTests, WithoutGroups_SuccessfulGeneration) {
+TEST_F(TestSuiteGeneratorTests, Generation_Successful) {
     {
         InSequence sequence;
         EXPECT_CALL(listener, onIntroduction());
@@ -113,7 +113,7 @@ TEST_F(TestSuiteGeneratorTests, WithoutGroups_SuccessfulGeneration) {
 
     TestSuiteGenerationResult result = generator.generate(testSuiteWithoutGroups, problemConfig, generatorConfig);
 
-    EXPECT_THAT(result.isSuccessful(), Eq(true));
+    EXPECT_TRUE(result.isSuccessful());
     EXPECT_THAT(result.resultsByName(), ElementsAre(
             Pair("foo_1", TestCaseGenerationResult::successfulResult()),
             Pair("foo_2", TestCaseGenerationResult::successfulResult()),
@@ -121,7 +121,7 @@ TEST_F(TestSuiteGeneratorTests, WithoutGroups_SuccessfulGeneration) {
             Pair("foo_sample_2", TestCaseGenerationResult::successfulResult())));
 }
 
-TEST_F(TestSuiteGeneratorTests, WithoutGroups_FailedGeneration) {
+TEST_F(TestSuiteGeneratorTests, Generation_Failed) {
     TestCaseGenerationFailure* failure_sample_1 = new FakeTestCaseGenerationFailure();
     ON_CALL(testCaseGenerator, generate(Property(&TestCaseData::name, "foo_sample_1"), _, generatorConfig))
             .WillByDefault(Return(TestCaseGenerationResult::failedResult(failure_sample_1)));
@@ -169,7 +169,7 @@ TEST_F(TestSuiteGeneratorTests, WithoutGroups_FailedGeneration) {
 
     TestSuiteGenerationResult result = generator.generate(testSuiteWithoutGroups, problemConfig, generatorConfig);
 
-    EXPECT_THAT(result.isSuccessful(), Eq(false));
+    EXPECT_FALSE(result.isSuccessful());
     EXPECT_THAT(result.resultsByName(), ElementsAre(
             Pair("foo_1", TestCaseGenerationResult::successfulResult()),
             Pair("foo_2", TestCaseGenerationResult::failedResult(failure_2)),
@@ -177,7 +177,7 @@ TEST_F(TestSuiteGeneratorTests, WithoutGroups_FailedGeneration) {
             Pair("foo_sample_2", TestCaseGenerationResult::successfulResult())));
 }
 
-TEST_F(TestSuiteGeneratorTests, WithGroups_SuccessfulGeneration) {
+TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Successful) {
     {
         InSequence sequence;
         EXPECT_CALL(listener, onIntroduction());
@@ -229,7 +229,7 @@ TEST_F(TestSuiteGeneratorTests, WithGroups_SuccessfulGeneration) {
 
     TestSuiteGenerationResult result = generator.generate(testSuiteWithGroups, problemConfig, generatorConfig);
 
-    EXPECT_THAT(result.isSuccessful(), Eq(true));
+    EXPECT_TRUE(result.isSuccessful());
     EXPECT_THAT(result.resultsByName(), ElementsAre(
             Pair("foo_1_1", TestCaseGenerationResult::successfulResult()),
             Pair("foo_1_2", TestCaseGenerationResult::successfulResult()),
@@ -238,7 +238,7 @@ TEST_F(TestSuiteGeneratorTests, WithGroups_SuccessfulGeneration) {
             Pair("foo_sample_2", TestCaseGenerationResult::successfulResult())));
 }
 
-TEST_F(TestSuiteGeneratorTests, WithGroups_FailedGeneration) {
+TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Failed) {
     TestCaseGenerationFailure* failure_sample_1 = new FakeTestCaseGenerationFailure();
     ON_CALL(testCaseGenerator, generate(Property(&TestCaseData::name, "foo_sample_1"), _, generatorConfig))
             .WillByDefault(Return(TestCaseGenerationResult::failedResult(failure_sample_1)));
@@ -299,7 +299,7 @@ TEST_F(TestSuiteGeneratorTests, WithGroups_FailedGeneration) {
 
     TestSuiteGenerationResult result = generator.generate(testSuiteWithGroups, problemConfig, generatorConfig);
 
-    EXPECT_THAT(result.isSuccessful(), Eq(false));
+    EXPECT_FALSE(result.isSuccessful());
     EXPECT_THAT(result.resultsByName(), ElementsAre(
             Pair("foo_1_1", TestCaseGenerationResult::successfulResult()),
             Pair("foo_1_2", TestCaseGenerationResult::failedResult(failure_1_2)),

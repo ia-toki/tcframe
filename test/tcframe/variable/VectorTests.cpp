@@ -16,17 +16,17 @@ namespace tcframe {
 class VectorTests : public Test {
 protected:
     vector<int> v;
-    Vector *V = Vector::create(v, "V");
+    Vector* V = Vector::create(v, "V");
 };
 
-TEST_F(VectorTests, Parsing_WithSize_Successful) {
+TEST_F(VectorTests, Parsing_Successful) {
     istringstream in("1 2 3");
     V->parseFrom(&in, 3);
 
     EXPECT_THAT(v, Eq(vector<int>{1, 2, 3}));
 }
 
-TEST_F(VectorTests, Parsing_WithSize_Failed_MissingSpace) {
+TEST_F(VectorTests, Parsing_Failed_MissingSpace) {
     istringstream in("1 2");
 
     try {
@@ -37,7 +37,7 @@ TEST_F(VectorTests, Parsing_WithSize_Failed_MissingSpace) {
     }
 }
 
-TEST_F(VectorTests, Parsing_WithSize_Failed_LeadingWhitepace) {
+TEST_F(VectorTests, Parsing_Failed_LeadingWhitepace) {
     istringstream in(" 1 2 3");
 
     try {
@@ -48,7 +48,7 @@ TEST_F(VectorTests, Parsing_WithSize_Failed_LeadingWhitepace) {
     }
 }
 
-TEST_F(VectorTests, Parsing_WithSize_Failed_ExtraWhitepace) {
+TEST_F(VectorTests, Parsing_Failed_ExtraWhitepace) {
     istringstream in("1 2  3");
 
     try {

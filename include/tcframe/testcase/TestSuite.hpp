@@ -2,6 +2,7 @@
 
 #include <set>
 #include <string>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -12,6 +13,7 @@
 using std::move;
 using std::set;
 using std::string;
+using std::tie;
 
 namespace tcframe {
 
@@ -29,6 +31,10 @@ public:
 
     const vector<TestGroup>& officialTests() const {
         return officialTests_;
+    }
+
+    bool operator==(const TestSuite& o) const {
+        return tie(sampleTests_, officialTests_) == tie(o.sampleTests_, o.officialTests_);
     }
 };
 

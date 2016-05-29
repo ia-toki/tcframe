@@ -12,12 +12,7 @@ public:
 
     virtual FailureType type() const = 0;
 
-    bool operator==(const TestCaseGenerationFailure& o) const {
-        return type() == o.type() && equals(o);
-    }
-
-protected:
-    virtual bool equals(const TestCaseGenerationFailure& o) const = 0;
+    virtual bool equals(TestCaseGenerationFailure* o) const = 0;
 };
 
 }

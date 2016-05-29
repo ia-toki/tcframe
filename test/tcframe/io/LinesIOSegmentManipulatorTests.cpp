@@ -31,7 +31,7 @@ protected:
             .build();
 };
 
-TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithoutJaggedVector_Successful) {
+TEST_F(LinesIOSegmentManipulatorTests, Parsing_Successful) {
     istringstream in("1 2\n3 4\n5 6\n");
 
     LinesIOSegmentManipulator::parse(segment, &in);
@@ -39,7 +39,7 @@ TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithoutJaggedVector_Successful) {
     EXPECT_THAT(Y, Eq(vector<int>{2, 4, 6}));
 }
 
-TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithoutJaggedVector_Failed_MissingVariable) {
+TEST_F(LinesIOSegmentManipulatorTests, Parsing_Failed_MissingVariable) {
     istringstream in("1 2\n3  ");
 
     try {
@@ -50,7 +50,7 @@ TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithoutJaggedVector_Failed_Missin
     }
 }
 
-TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithoutJaggedVector_Failed_MissingWhitespace) {
+TEST_F(LinesIOSegmentManipulatorTests, Parsing_Failed_MissingWhitespace) {
     istringstream in("1 2\n3");
 
     try {
@@ -61,7 +61,7 @@ TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithoutJaggedVector_Failed_Missin
     }
 }
 
-TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithoutJaggedVector_Failed_MissingNewline) {
+TEST_F(LinesIOSegmentManipulatorTests, Parsing_Failed_MissingNewline) {
     istringstream in("1 2\n3 4 ");
 
     try {
@@ -92,7 +92,7 @@ TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithJaggedVector_Failed_MissingSp
     }
 }
 
-TEST_F(LinesIOSegmentManipulatorTests, Printing_WithoutJaggedVector_Successful) {
+TEST_F(LinesIOSegmentManipulatorTests, Printing_Successful) {
     ostringstream out;
 
     X = {1, 3, 5};
@@ -102,7 +102,7 @@ TEST_F(LinesIOSegmentManipulatorTests, Printing_WithoutJaggedVector_Successful) 
     EXPECT_THAT(out.str(), Eq("1 2\n3 4\n5 6\n"));
 }
 
-TEST_F(LinesIOSegmentManipulatorTests, Printing_WithoutJaggedVector_Failed_SizeMismatch) {
+TEST_F(LinesIOSegmentManipulatorTests, Printing_Failed_SizeMismatch) {
     ostringstream out;
 
     X = {1, 3, 5};

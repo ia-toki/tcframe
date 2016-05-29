@@ -17,7 +17,7 @@ protected:
     ConstraintSuiteBuilder builder;
 };
 
-TEST_F(ConstraintSuiteBuilderTests, WithoutGroups_Building) {
+TEST_F(ConstraintSuiteBuilderTests, Building) {
     ConstraintSuite constraintSuite = builder
             .addConstraint(constraint1)
             .addConstraint(constraint2)
@@ -27,7 +27,7 @@ TEST_F(ConstraintSuiteBuilderTests, WithoutGroups_Building) {
             ConstraintGroup(-1, {constraint1, constraint2})));
 }
 
-TEST_F(ConstraintSuiteBuilderTests, WithGroups_Building) {
+TEST_F(ConstraintSuiteBuilderTests, Building_WithGroups) {
     ConstraintSuite constraintSuite = builder
             .newConstraintGroup()
             .addConstraint(constraint1)
@@ -42,7 +42,7 @@ TEST_F(ConstraintSuiteBuilderTests, WithGroups_Building) {
             ConstraintGroup(2, {constraint3, constraint4})));
 }
 
-TEST_F(ConstraintSuiteBuilderTests, WithGroups_BuildingWithoutLastGroup) {
+TEST_F(ConstraintSuiteBuilderTests, Building_WithGroups_WithoutLastGroup) {
     ConstraintSuite constraintSuite = builder
             .newConstraintGroup()
             .addConstraint(constraint1)

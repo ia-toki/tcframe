@@ -14,7 +14,7 @@ TEST_F(StringUtilsTests, SplitAndTrimBySpace) {
             "A", "B", "C", "D"));
 }
 
-TEST_F(StringUtilsTests, Split_CommaSeparated) {
+TEST_F(StringUtilsTests, Split) {
     EXPECT_THAT(StringUtils::split(" A,B, C,   D ", ','), ElementsAre(
             " A", "B", " C", "   D "));
 }

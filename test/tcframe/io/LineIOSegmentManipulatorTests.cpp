@@ -4,7 +4,6 @@
 
 #include "tcframe/io/LineIOSegmentManipulator.hpp"
 
-using ::testing::ElementsAre;
 using ::testing::Eq;
 using ::testing::StrEq;
 using ::testing::Test;
@@ -14,91 +13,112 @@ using std::ostringstream;
 
 namespace tcframe {
 
-class LineIOSegmentManipulatorTests : public Test {};
-
-TEST_F(LineIOSegmentManipulatorTests, Parsing_SingleVariable_Successful) {
-    int X;
-    LineIOSegment *segment = LineIOSegmentBuilder()
-            .addScalarVariable(Scalar::create(X, "X"))
-            .build();
-    istringstream in("42\n");
-
-    LineIOSegmentManipulator::parse(segment, &in);
-    EXPECT_THAT(X, Eq(42));
-}
-
-TEST_F(LineIOSegmentManipulatorTests, Parsing_SingleVariable_Failed_MissingNewline) {
-    int X;
-    LineIOSegment *segment = LineIOSegmentBuilder()
-            .addScalarVariable(Scalar::create(X, "X"))
-            .build();
-    istringstream in("42");
-
-    EXPECT_THROW({LineIOSegmentManipulator::parse(segment, &in);}, runtime_error);
-}
-
-TEST_F(LineIOSegmentManipulatorTests, Parsing_MultipleVariables_Successful) {
+class LineIOSegmentManipulatorTests : public Test {
+protected:
     int A, B;
     vector<int> C, D;
-    LineIOSegment *segment = LineIOSegmentBuilder()
+
+    LineIOSegment* segment = LineIOSegmentBuilder()
+            .addScalarVariable(Scalar::create(A, "A"))
+            .addScalarVariable(Scalar::create(B, "B"))
+            .addVectorVariable(Vector::create(C, "C"), 2)
+            .build();
+    LineIOSegment* segmentWithVectorWithoutSize = LineIOSegmentBuilder()
             .addScalarVariable(Scalar::create(A, "A"))
             .addScalarVariable(Scalar::create(B, "B"))
             .addVectorVariable(Vector::create(C, "C"), 2)
             .addVectorVariable(Vector::create(D, "D"))
             .build();
-    istringstream in("42 123 1 2 3 4 5\n");
+};
+
+TEST_F(LineIOSegmentManipulatorTests, Parsing_Successful) {
+    istringstream in("42 123 1 2\n");
 
     LineIOSegmentManipulator::parse(segment, &in);
     EXPECT_THAT(A, Eq(42));
     EXPECT_THAT(B, Eq(123));
-    EXPECT_THAT(C, ElementsAre(1, 2));
-    EXPECT_THAT(D, ElementsAre(3, 4, 5));
+    EXPECT_THAT(C, Eq(vector<int>{1, 2}));
 }
 
-TEST_F(LineIOSegmentManipulatorTests, Parsing_MultipleVariables_Failed_MissingSpace) {
-    int A, B;
-    LineIOSegment *segment = LineIOSegmentBuilder()
-            .addScalarVariable(Scalar::create(A, "A"))
-            .addScalarVariable(Scalar::create(B, "B"))
-            .build();
-    istringstream in("42");
+TEST_F(LineIOSegmentManipulatorTests, Parsing_Failed_MissingVariable) {
+    istringstream in("42  ");
 
-    EXPECT_THROW({LineIOSegmentManipulator::parse(segment, &in);}, runtime_error);
+    try {
+        LineIOSegmentManipulator::parse(segment, &in);
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Cannot parse for 'B'. Found: <whitespace>"));
+    }
 }
 
-TEST_F(LineIOSegmentManipulatorTests, Parsing_MultipleVariables_Failed_MissingVariable) {
-    int A, B;
-    LineIOSegment *segment = LineIOSegmentBuilder()
-            .addScalarVariable(Scalar::create(A, "A"))
-            .addScalarVariable(Scalar::create(B, "B"))
-            .build();
-    istringstream in("42 ");
+TEST_F(LineIOSegmentManipulatorTests, Parsing_Failed_MissingWhitespace) {
+    istringstream in("42 123\n");
 
-    EXPECT_THROW({LineIOSegmentManipulator::parse(segment, &in);}, runtime_error);
+    try {
+        LineIOSegmentManipulator::parse(segment, &in);
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Expected: <space> after 'B'"));
+    }
 }
 
-TEST_F(LineIOSegmentManipulatorTests, Printing_SingleVariable) {
-    int X;
-    LineIOSegment *segment = LineIOSegmentBuilder()
-            .addScalarVariable(Scalar::create(X, "X"))
-            .build();
+TEST_F(LineIOSegmentManipulatorTests, Parsing_Failed_MissingNewline) {
+    istringstream in("42 123 1 2");
+
+    try {
+        LineIOSegmentManipulator::parse(segment, &in);
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Expected: <newline> after 'C'"));
+    }
+}
+
+TEST_F(LineIOSegmentManipulatorTests, Parsing_WithVectorWithoutSize_Successful) {
+    istringstream in("42 123 1 2 3 4 5\n");
+
+    LineIOSegmentManipulator::parse(segmentWithVectorWithoutSize, &in);
+    EXPECT_THAT(A, Eq(42));
+    EXPECT_THAT(B, Eq(123));
+    EXPECT_THAT(C, Eq(vector<int>{1, 2}));
+    EXPECT_THAT(D, Eq(vector<int>{3, 4, 5}));
+}
+
+TEST_F(LineIOSegmentManipulatorTests, Parsing_WithVectorWithoutSize_Failed_MissingSpaceOrNewline) {
+    istringstream in("42 123 1 2 3 4 5");
+
+    try {
+        LineIOSegmentManipulator::parse(segmentWithVectorWithoutSize, &in);
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Expected: <space> or <newline> after 'D[2]'"));
+    }
+}
+
+TEST_F(LineIOSegmentManipulatorTests, Printing_Successful) {
     ostringstream out;
 
-    X = 42;
+    A = 42;
+    B = 123;
+    C = {1, 2};
 
     LineIOSegmentManipulator::print(segment, &out);
-    EXPECT_THAT(out.str(), Eq("42\n"));
+    EXPECT_THAT(out.str(), Eq("42 123 1 2\n"));
 }
 
-TEST_F(LineIOSegmentManipulatorTests, Printing_MultipleVariables) {
-    int A, B;
-    vector<int> C, D;
-    LineIOSegment *segment = LineIOSegmentBuilder()
-            .addScalarVariable(Scalar::create(A, "A"))
-            .addScalarVariable(Scalar::create(B, "B"))
-            .addVectorVariable(Vector::create(C, "C"), 2)
-            .addVectorVariable(Vector::create(D, "D"))
-            .build();
+TEST_F(LineIOSegmentManipulatorTests, Printing_Failed_SizeMismatch) {
+    ostringstream out;
+
+    C = {1, 2, 3};
+
+    try {
+        LineIOSegmentManipulator::print(segment, &out);
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Number of elements of vector 'C' unsatisfied. Expected: 2, actual: 3"));
+    }
+}
+
+TEST_F(LineIOSegmentManipulatorTests, Printing_WithVectorWithoutSize_Successful) {
     ostringstream out;
 
     A = 42;
@@ -106,26 +126,8 @@ TEST_F(LineIOSegmentManipulatorTests, Printing_MultipleVariables) {
     C = {1, 2};
     D = {3, 4, 5};
 
-    LineIOSegmentManipulator::print(segment, &out);
+    LineIOSegmentManipulator::print(segmentWithVectorWithoutSize, &out);
     EXPECT_THAT(out.str(), Eq("42 123 1 2 3 4 5\n"));
-}
-
-TEST_F(LineIOSegmentManipulatorTests, Printing_Vector_Failed_SizeMismatch) {
-    vector<int> V;
-
-    LineIOSegment *segment = LineIOSegmentBuilder()
-            .addVectorVariable(Vector::create(V, "V"), 2)
-            .build();
-    ostringstream out;
-
-    V = {1, 2, 3};
-
-    try {
-        LineIOSegmentManipulator::print(segment, &out);
-        FAIL();
-    } catch (runtime_error& e) {
-        EXPECT_THAT(e.what(), StrEq("Number of elements of vector 'V' unsatisfied. Expected: 2, actual: 3"));
-    }
 }
 
 }

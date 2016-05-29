@@ -10,9 +10,12 @@ public:
         return FailureType::VERIFICATION;
     }
 
-protected:
-    bool equals(const TestCaseGenerationFailure& o) const {
-        return this == &o;
+    bool operator==(const FakeTestCaseGenerationFailure& o) const {
+        return type() == o.type();
+    }
+
+    bool equals(TestCaseGenerationFailure* o) const {
+        return type() == o->type();
     }
 };
 

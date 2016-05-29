@@ -16,7 +16,7 @@ protected:
     class FakeGenerator : public BaseGenerator<FakeProblem> {};
 };
 
-TEST_F(RunnerTests, CompilationSuccessful) {
+TEST_F(RunnerTests, Compilation) {
     int argc = 1;
     char* argv[1] = {(char*) "./runner"};
     Runner<FakeProblem> runner = Runner<FakeProblem>(argc, argv);
