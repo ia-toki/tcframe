@@ -55,7 +55,7 @@ public:
     }
 
     bool equals(IOSegment* o) const {
-        return o->type() == IOSegmentType::GRID && *this == (GridIOSegment&) *o;
+        return o->type() == IOSegmentType::GRID && *this == *((GridIOSegment*) o);
     }
 };
 

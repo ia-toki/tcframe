@@ -49,7 +49,7 @@ public:
     }
 
     bool equals(IOSegment* o) const {
-        return o->type() == IOSegmentType::LINES && *this == (LinesIOSegment&) *o;
+        return o->type() == IOSegmentType::LINES && *this == *((LinesIOSegment*) o);
     }
 };
 
