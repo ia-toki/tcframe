@@ -4,6 +4,7 @@
 #include "tcframe/experimental/runner.hpp"
 
 using ::testing::Eq;
+using ::testing::StrEq;
 using ::testing::Test;
 
 namespace tcframe {
@@ -62,11 +63,17 @@ protected:
         int A, B;
         vector<int> C, D;
 
+        vector<vector<int>> bogus;
+
     public:
         void testValid() {
             LINE(A);
             LINE(A, B);
             LINE(A, B, C % SIZE(3), D);
+        }
+
+        void testInvalid() {
+            LINE(bogus);
         }
     };
 
@@ -75,11 +82,17 @@ protected:
         vector<int> X, Y;
         vector<vector<int>> Z;
 
+        int bogus;
+
     public:
         void testValid() {
             LINES(X) % SIZE(2);
             LINES(X, Y) % SIZE(3);
             LINES(X, Y, Z) % SIZE(4);
+        }
+
+        void testInvalid() {
+            LINES(bogus);
         }
     };
 
@@ -87,9 +100,15 @@ protected:
     protected:
         vector<vector<int>> M;
 
+        int bogus;
+
     public:
         void testValid() {
             GRID(M) % SIZE(2, 3);
+        }
+
+        void testInvalid() {
+            GRID(bogus);
         }
     };
 };
@@ -170,6 +189,19 @@ TEST_F(MagicTests, LINE_Valid) {
     EXPECT_THAT(ioFormat, Eq(builder.build()));
 }
 
+TEST_F(MagicTests, LINE_Invalid) {
+    LINE_Tester tester;
+    tester.prepareForInputFormat();
+
+    try {
+        tester.testInvalid();
+        tester.build();
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("The type of variable 'bogus' is not supported for a line segment"));
+    }
+}
+
 TEST_F(MagicTests, LINES_Valid) {
     LINES_Tester tester;
     tester.prepareForInputFormat();
@@ -196,6 +228,19 @@ TEST_F(MagicTests, LINES_Valid) {
     EXPECT_THAT(ioFormat, Eq(builder.build()));
 }
 
+TEST_F(MagicTests, LINES_Invalid) {
+    LINES_Tester tester;
+    tester.prepareForInputFormat();
+
+    try {
+        tester.testInvalid();
+        tester.build();
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("The type of variable 'bogus' is not supported for a lines segment"));
+    }
+}
+
 TEST_F(MagicTests, GRID_Valid) {
     GRID_Tester tester;
     tester.prepareForInputFormat();
@@ -210,6 +255,19 @@ TEST_F(MagicTests, GRID_Valid) {
             .setSize(2, 3);
 
     EXPECT_THAT(ioFormat, Eq(builder.build()));
+}
+
+TEST_F(MagicTests, GRID_Invalid) {
+    GRID_Tester tester;
+    tester.prepareForInputFormat();
+
+    try {
+        tester.testInvalid();
+        tester.build();
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("The type of variable 'bogus' is not supported for a grid segment"));
+    }
 }
 
 }

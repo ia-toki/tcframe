@@ -27,11 +27,11 @@ public:
     virtual void printTo(ostream* out) = 0;
     virtual void parseFrom(istream* in) = 0;
 
-    template<typename T>
+    template<typename T, typename = ScalarCompatible<T>>
     static Scalar* create(T& var, const string& name);
 };
 
-template<typename T>
+template<typename T, typename = ScalarCompatible<T>>
 class ScalarImpl : public Scalar {
 private:
     reference_wrapper<T> var_;
@@ -51,7 +51,7 @@ public:
     }
 };
 
-template<typename T>
+template<typename T, typename>
 Scalar* Scalar::create(T& var, const string& name) {
     return new ScalarImpl<T>(var, name);
 }

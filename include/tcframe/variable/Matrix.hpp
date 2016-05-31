@@ -35,11 +35,11 @@ public:
     virtual void parseFrom(istream* in, int rows, int columns) = 0;
     virtual void parseAndAddRowFrom(istream* in, int rowIndex) = 0;
 
-    template<typename T>
+    template<typename T, typename = ScalarCompatible<T>>
     static Matrix* create(vector<vector<T>>& var, const string& name);
 };
 
-template<typename T>
+template<typename T, typename = ScalarCompatible<T>>
 class MatrixImpl : public Matrix {
 private:
     reference_wrapper<vector<vector<T>>> var_;
@@ -116,10 +116,9 @@ public:
     }
 };
 
-template<typename T>
+template<typename T, typename>
 Matrix* Matrix::create(vector<vector<T>>& var, const string& name) {
     return new MatrixImpl<T>(var, name);
 }
-
 
 }

@@ -3,18 +3,12 @@
 #include <algorithm>
 #include <queue>
 #include <string>
-#include <type_traits>
 #include <vector>
 
 #include "tcframe/io.hpp"
 #include "tcframe/util.hpp"
 #include "tcframe/variable.hpp"
 
-using std::enable_if;
-using std::forward;
-using std::is_arithmetic;
-using std::is_reference;
-using std::is_same;
 using std::queue;
 using std::string;
 using std::vector;
@@ -33,12 +27,6 @@ using std::vector;
 
 
 namespace tcframe {
-
-template<typename T>
-using ScalarCompatible = typename enable_if<!is_reference<T>::value && (is_arithmetic<T>::value || is_same<string, T>::value)>::type;
-
-template<typename T>
-using NotScalarCompatible = typename enable_if<is_reference<T>::value || (!is_arithmetic<T>::value && !is_same<string, T>::value)>::type;
 
 struct VectorSize {
     int size;
@@ -116,6 +104,13 @@ public:
         builder_->addVectorVariable(Vector::create(*var.vektor, extractor_.nextName()), var.size.size);
         return *this;
     }
+
+    template<typename T, typename = NotScalarCompatible<T>>
+    MagicLineIOSegmentBuilder& operator,(T var) {
+        throw runtime_error(
+                "The type of variable " + VariableNameCreator::createName(extractor_.nextName())
+                + " is not supported for a line segment");
+    }
 };
 
 class MagicLinesIOSegmentBuilder {
@@ -141,6 +136,13 @@ public:
         return *this;
     }
 
+    template<typename T>
+    MagicLinesIOSegmentBuilder& operator,(T var) {
+        throw runtime_error(
+                "The type of variable " + VariableNameCreator::createName(extractor_.nextName())
+                + " is not supported for a lines segment");
+    }
+
     MagicLinesIOSegmentBuilder& operator%(VectorSize size) {
         builder_->setSize(size.size);
         return *this;
@@ -162,6 +164,13 @@ public:
     MagicGridIOSegmentBuilder& operator,(vector<vector<T>>& var) {
         builder_->addMatrixVariable(Matrix::create(var, extractor_.nextName()));
         return *this;
+    }
+
+    template<typename T>
+    MagicLineIOSegmentBuilder& operator,(T var) {
+        throw runtime_error(
+                "The type of variable " + VariableNameCreator::createName(extractor_.nextName())
+                + " is not supported for a grid segment");
     }
 
     MagicGridIOSegmentBuilder& operator%(MatrixSize size) {

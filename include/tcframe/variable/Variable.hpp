@@ -9,6 +9,10 @@
 #include "tcframe/util.hpp"
 
 using std::char_traits;
+using std::enable_if;
+using std::is_arithmetic;
+using std::is_reference;
+using std::is_same;
 using std::istream;
 using std::ostream;
 using std::runtime_error;
@@ -16,6 +20,12 @@ using std::string;
 using std::tie;
 
 namespace tcframe {
+
+template<typename T>
+using ScalarCompatible = typename enable_if<!is_reference<T>::value && (is_arithmetic<T>::value || is_same<string, T>::value)>::type;
+
+template<typename T>
+using NotScalarCompatible = typename enable_if<is_reference<T>::value || (!is_arithmetic<T>::value && !is_same<string, T>::value)>::type;
 
 enum VariableType {
     SCALAR,

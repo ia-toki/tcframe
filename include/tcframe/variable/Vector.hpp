@@ -32,11 +32,11 @@ public:
     virtual void parseFrom(istream* in, int size) = 0;
     virtual void parseAndAddElementFrom(istream* in) = 0;
 
-    template<typename T>
+    template<typename T, typename = ScalarCompatible<T>>
     static Vector* create(vector<T>& var, const string& name);
 };
 
-template<typename T>
+template<typename T, typename = ScalarCompatible<T>>
 class VectorImpl : public Vector {
 private:
     reference_wrapper<vector<T>> var_;
@@ -101,7 +101,7 @@ public:
     }
 };
 
-template<typename T>
+template<typename T, typename>
 Vector* Vector::create(vector<T>& var, const string& name) {
     return new VectorImpl<T>(var, name);
 }
