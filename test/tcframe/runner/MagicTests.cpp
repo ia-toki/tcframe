@@ -82,6 +82,16 @@ protected:
             LINES(X, Y, Z) % SIZE(4);
         }
     };
+
+    class GRID_Tester : public IOFormatBuilder {
+    protected:
+        vector<vector<int>> M;
+
+    public:
+        void testValid() {
+            GRID(M) % SIZE(2, 3);
+        }
+    };
 };
 
 TEST_F(MagicTests, VariableNamesExtractor) {
@@ -182,6 +192,22 @@ TEST_F(MagicTests, LINES_Valid) {
             .addVectorVariable(Vector::create(dummy, "Y"))
             .addJaggedVectorVariable(Matrix::create(dummy2, "Z"))
             .setSize(4);
+
+    EXPECT_THAT(ioFormat, Eq(builder.build()));
+}
+
+TEST_F(MagicTests, GRID_Valid) {
+    GRID_Tester tester;
+    tester.prepareForInputFormat();
+    tester.testValid();
+    IOFormat ioFormat = tester.build();
+
+    vector<vector<int>> dummy;
+    IOFormatBuilder builder;
+    builder.prepareForInputFormat();
+    builder.newGridIOSegment()
+            .addMatrixVariable(Matrix::create(dummy, "M"))
+            .setSize(2, 3);
 
     EXPECT_THAT(ioFormat, Eq(builder.build()));
 }

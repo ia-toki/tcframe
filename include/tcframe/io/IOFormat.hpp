@@ -3,6 +3,7 @@
 #include <vector>
 #include <utility>
 
+#include "GridIOSegment.hpp"
 #include "IOSegment.hpp"
 #include "LineIOSegment.hpp"
 #include "LinesIOSegment.hpp"
@@ -79,6 +80,13 @@ public:
     LinesIOSegmentBuilder& newLinesIOSegment() {
         addLastSegment();
         LinesIOSegmentBuilder* builder = new LinesIOSegmentBuilder();
+        lastBuilder_ = builder;
+        return *builder;
+    }
+
+    GridIOSegmentBuilder& newGridIOSegment() {
+        addLastSegment();
+        GridIOSegmentBuilder* builder = new GridIOSegmentBuilder();
         lastBuilder_ = builder;
         return *builder;
     }

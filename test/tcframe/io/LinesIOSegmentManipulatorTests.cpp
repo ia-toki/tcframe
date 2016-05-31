@@ -4,7 +4,6 @@
 
 #include "tcframe/io/LinesIOSegmentManipulator.hpp"
 
-using ::testing::ElementsAre;
 using ::testing::Eq;
 using ::testing::StrEq;
 using ::testing::Test;

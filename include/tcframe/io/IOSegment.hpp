@@ -3,6 +3,7 @@
 namespace tcframe {
 
 enum IOSegmentType {
+    GRID,
     LINE,
     LINES
 };

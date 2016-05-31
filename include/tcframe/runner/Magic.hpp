@@ -24,8 +24,10 @@ using std::vector;
 #define SAMPLE_CASE(...) addSampleTestCase(__VA_ARGS__)
 #define LINE(...) MagicLineIOSegmentBuilder(newLineIOSegment(), #__VA_ARGS__), __VA_ARGS__
 #define LINES(...) (MagicLinesIOSegmentBuilder(newLinesIOSegment(), #__VA_ARGS__), __VA_ARGS__)
+#define GRID(...) (MagicGridIOSegmentBuilder(newGridIOSegment(), #__VA_ARGS__), __VA_ARGS__)
 
 #define SIZE_IMPL1(size) VectorSize{size}
+#define SIZE_IMPL2(rows, columns) MatrixSize{rows, columns}
 #define SIZE_WITH_COUNT(_1, _2, N, ...) SIZE_IMPL ## N
 #define SIZE(...) SIZE_WITH_COUNT(__VA_ARGS__, 2, 1)(__VA_ARGS__)
 
@@ -52,6 +54,11 @@ template<typename T>
 VectorWithSize<T> operator%(vector<T>& vektor, VectorSize size) {
     return VectorWithSize<T>{&vektor, size};
 }
+
+struct MatrixSize {
+    int rows;
+    int columns;
+};
 
 class VariableNamesExtractor {
 private:
@@ -136,6 +143,29 @@ public:
 
     MagicLinesIOSegmentBuilder& operator%(VectorSize size) {
         builder_->setSize(size.size);
+        return *this;
+    }
+};
+
+class MagicGridIOSegmentBuilder {
+private:
+    GridIOSegmentBuilder* builder_;
+    VariableNamesExtractor extractor_;
+
+public:
+    MagicGridIOSegmentBuilder(GridIOSegmentBuilder& builder, string names)
+            : builder_(&builder)
+            , extractor_(VariableNamesExtractor(names))
+    {}
+
+    template<typename T, typename = ScalarCompatible<T>>
+    MagicGridIOSegmentBuilder& operator,(vector<vector<T>>& var) {
+        builder_->addMatrixVariable(Matrix::create(var, extractor_.nextName()));
+        return *this;
+    }
+
+    MagicGridIOSegmentBuilder& operator%(MatrixSize size) {
+        builder_->setSize(size.rows, size.columns);
         return *this;
     }
 };

@@ -61,6 +61,8 @@ set(SOURCE_FILES
     include/tcframe/generation/TestSuiteGenerationResult.hpp
     include/tcframe/generation/VerificationFailure.hpp
     include/tcframe/io.hpp
+    include/tcframe/io/GridIOSegment.hpp
+    include/tcframe/io/GridIOSegmentManipulator.hpp
     include/tcframe/io/IOFormat.hpp
     include/tcframe/io/IOManipulator.hpp
     include/tcframe/io/IOSegment.hpp
@@ -103,8 +105,10 @@ set(SOURCE_FILES
     test/tcframe/generation/TestCaseNameCreatorTests.cpp
     test/tcframe/generation/TestCaseGeneratorTests.cpp
     test/tcframe/generation/TestSuiteGeneratorTests.cpp
+    test/tcframe/io/GridIOSegmentBuilderTests.cpp
     test/tcframe/io/IOFormatBuilderTests.cpp
     test/tcframe/io/IOManipulatorTests.cpp
+    test/tcframe/io/GridIOSegmentManipulatorTests.cpp
     test/tcframe/io/LineIOSegmentBuilderTests.cpp
     test/tcframe/io/LineIOSegmentManipulatorTests.cpp
     test/tcframe/io/LinesIOSegmentBuilderTests.cpp

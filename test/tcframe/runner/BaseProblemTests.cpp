@@ -18,6 +18,7 @@ protected:
     protected:
         int A, B;
         vector<int> X;
+        vector<vector<int>> M;
 
         void Config() {
             setSlug("ab");
@@ -30,6 +31,10 @@ protected:
             newLinesIOSegment()
                     .addVectorVariable(Vector::create(X, "X"))
                     .setSize(3);
+            newGridIOSegment()
+                    .addMatrixVariable(Matrix::create(M, "M"))
+                    .setSize(2, 3)
+                    .build();
         }
     };
 
@@ -69,7 +74,8 @@ TEST_F(BaseProblemTests, IOFormat) {
     IOFormat ioFormat = problem.buildIOFormat();
     EXPECT_THAT(ioFormat.inputFormat(), ElementsAre(
         A<LineIOSegment*>(),
-        A<LinesIOSegment*>()));
+        A<LinesIOSegment*>(),
+        A<GridIOSegment*>()));
 }
 
 TEST_F(BaseProblemTests, Constraints) {
