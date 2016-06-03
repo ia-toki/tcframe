@@ -22,7 +22,7 @@ namespace tcframe {
 
 class TestCaseGenerator {
 private:
-    Verifier* verifier_;
+    ConstraintSuiteVerifier* verifier_;
     IOManipulator* ioManipulator_;
     OperatingSystem* os_;
 
@@ -30,7 +30,7 @@ public:
     virtual ~TestCaseGenerator() {}
 
     TestCaseGenerator(
-            Verifier* verifier,
+            ConstraintSuiteVerifier* verifier,
             IOManipulator* ioManipulator,
             OperatingSystem* os)
             : verifier_(verifier)

@@ -24,7 +24,7 @@ using std::string;
 
 namespace tcframe {
 
-class Generator {
+class TestSuiteGenerator {
 private:
     TestCaseGenerator* testCaseGenerator_;
     IOManipulator* ioManipulator_;
@@ -32,9 +32,9 @@ private:
     GenerationLogger* logger_;
 
 public:
-    virtual ~Generator() {}
+    virtual ~TestSuiteGenerator() {}
 
-    Generator(
+    TestSuiteGenerator(
             TestCaseGenerator* testCaseGenerator,
             IOManipulator* ioManipulator,
             OperatingSystem* os,

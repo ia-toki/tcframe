@@ -1,6 +1,6 @@
 #include "gmock/gmock.h"
 
-#include "tcframe/verifier/Verifier.hpp"
+#include "tcframe/verifier/ConstraintSuiteVerifier.hpp"
 
 using ::testing::ElementsAre;
 using ::testing::IsEmpty;
@@ -15,7 +15,7 @@ bool b3;
 bool b4;
 bool b5;
 
-class VerifierTests : public Test {
+class ConstraintSuiteVerifierTests : public Test {
 protected:
     Constraint constraint1 = Constraint([=]{return b1;}, "1 <= A && A <= 10");
     Constraint constraint2 = Constraint([=]{return b2;}, "1 <= B && B <= 10");
@@ -37,8 +37,8 @@ protected:
             .addConstraint(constraint5)
             .build();
 
-    Verifier verifier = Verifier(constraintSuiteWithoutGroups);
-    Verifier verifierWithGroups = Verifier(constraintSuiteWithGroups);
+    ConstraintSuiteVerifier verifier = ConstraintSuiteVerifier(constraintSuiteWithoutGroups);
+    ConstraintSuiteVerifier verifierWithGroups = ConstraintSuiteVerifier(constraintSuiteWithGroups);
 
     void SetUp() {
         b1 = true;
@@ -49,7 +49,7 @@ protected:
     }
 };
 
-TEST_F(VerifierTests, Verification_Valid_AllConstraintsValid) {
+TEST_F(ConstraintSuiteVerifierTests, Verification_Valid_AllConstraintsValid) {
     VerificationResult result = verifier.verify({-1});
 
     EXPECT_TRUE(result.isValid());
@@ -57,7 +57,7 @@ TEST_F(VerifierTests, Verification_Valid_AllConstraintsValid) {
     EXPECT_THAT(result.unsatisfiedConstraintDescriptionsByConstraintGroupId(), IsEmpty());
 }
 
-TEST_F(VerifierTests, Verification_Invalid_SomeConstraintsInvalid) {
+TEST_F(ConstraintSuiteVerifierTests, Verification_Invalid_SomeConstraintsInvalid) {
     b2 = false;
     VerificationResult result = verifier.verify({-1});
 
@@ -67,7 +67,7 @@ TEST_F(VerifierTests, Verification_Invalid_SomeConstraintsInvalid) {
             Pair(-1, ElementsAre(constraint2.description()))));
 }
 
-TEST_F(VerifierTests, Verification_WithGroups_Valid_AllConstraintsValid) {
+TEST_F(ConstraintSuiteVerifierTests, Verification_WithGroups_Valid_AllConstraintsValid) {
     VerificationResult result = verifierWithGroups.verify({1, 2, 3});
 
     EXPECT_TRUE(result.isValid());
@@ -75,7 +75,7 @@ TEST_F(VerifierTests, Verification_WithGroups_Valid_AllConstraintsValid) {
     EXPECT_THAT(result.unsatisfiedConstraintDescriptionsByConstraintGroupId(), IsEmpty());
 }
 
-TEST_F(VerifierTests, Verification_WithGroups_Valid_AllAssignedConstraintGroupsValid) {
+TEST_F(ConstraintSuiteVerifierTests, Verification_WithGroups_Valid_AllAssignedConstraintGroupsValid) {
     b4 = false;
     VerificationResult result = verifierWithGroups.verify({1, 3});
 
@@ -84,7 +84,7 @@ TEST_F(VerifierTests, Verification_WithGroups_Valid_AllAssignedConstraintGroupsV
     EXPECT_THAT(result.unsatisfiedConstraintDescriptionsByConstraintGroupId(), IsEmpty());
 }
 
-TEST_F(VerifierTests, Verification_WithGroups_Invalid_SomeConstraintsInvalid) {
+TEST_F(ConstraintSuiteVerifierTests, Verification_WithGroups_Invalid_SomeConstraintsInvalid) {
     b4 = false;
     VerificationResult result = verifierWithGroups.verify({2, 3});
 

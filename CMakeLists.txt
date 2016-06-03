@@ -57,7 +57,7 @@ set(SOURCE_FILES
     include/tcframe/generator.hpp
     include/tcframe/generator/GenerationLogger.hpp
     include/tcframe/generator/GenerationResult.hpp
-    include/tcframe/generator/Generator.hpp
+    include/tcframe/generator/TestSuiteGenerator.hpp
     include/tcframe/generator/TestCaseData.hpp
     include/tcframe/generator/TestCaseGenerator.hpp
     include/tcframe/generator/TestCaseGenerationException.hpp
@@ -97,19 +97,19 @@ set(SOURCE_FILES
     include/tcframe/variable/Vector.hpp
     include/tcframe/variable/WhitespaceManipulator.hpp
     include/tcframe/verifier.hpp
+    include/tcframe/verifier/ConstraintSuiteVerifier.hpp
     include/tcframe/verifier/VerificationResult.hpp
-    include/tcframe/verifier/Verifier.hpp
     test/tcframe/mock.hpp
     test/tcframe/constraint/ConstraintSuiteBuilderTests.cpp
     test/tcframe/core/BaseGeneratorTests.cpp
     test/tcframe/core/BaseProblemTests.cpp
     test/tcframe/core/MagicTests.cpp
     test/tcframe/generator/FakeTestCaseGenerationFailure.hpp
-    test/tcframe/generator/GeneratorTests.cpp
     test/tcframe/generator/MockGenerationLogger.hpp
     test/tcframe/generator/MockTestCaseGenerator.hpp
     test/tcframe/generator/TestCaseGeneratorTests.cpp
     test/tcframe/generator/TestCaseNameCreatorTests.cpp
+    test/tcframe/generator/TestSuiteGeneratorTests.cpp
     test/tcframe/io/GridIOSegmentBuilderTests.cpp
     test/tcframe/io/GridIOSegmentManipulatorTests.cpp
     test/tcframe/io/IOFormatBuilderTests.cpp
@@ -130,8 +130,8 @@ set(SOURCE_FILES
     test/tcframe/variable/VariableTests.cpp
     test/tcframe/variable/VectorTests.cpp
     test/tcframe/variable/WhitespaceManipulatorTests.cpp
-    test/tcframe/verifier/MockVerifier.hpp
-    test/tcframe/verifier/VerifierTests.cpp
+    test/tcframe/verifier/ConstraintSuiteVerifierTests.cpp
+    test/tcframe/verifier/MockConstraintSuiteVerifier.hpp
 
     include/tcframe/deprecated/core/Failure.hpp
     include/tcframe/deprecated/core/NotImplementedException.hpp

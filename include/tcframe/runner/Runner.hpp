@@ -39,10 +39,10 @@ public:
 
         auto os = new UnixOperatingSystem();
         auto ioManipulator = new IOManipulator(ioFormat);
-        auto verifier = new Verifier(constraintSuite);
+        auto verifier = new ConstraintSuiteVerifier(constraintSuite);
         auto generationLogger = new GenerationLogger();
         auto testCaseGenerator = new TestCaseGenerator(verifier, ioManipulator, os);
-        auto generator = new Generator(testCaseGenerator, ioManipulator, os, generationLogger);
+        auto generator = new TestSuiteGenerator(testCaseGenerator, ioManipulator, os, generationLogger);
 
         return generator->generate(testSuite, problemConfig, generatorConfig).isSuccessful() ? 0 : 1;
     }

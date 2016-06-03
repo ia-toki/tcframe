@@ -5,7 +5,7 @@
 
 #include "../io/MockIOManipulator.hpp"
 #include "../os/MockOperatingSystem.hpp"
-#include "../verifier/MockVerifier.hpp"
+#include "../verifier/MockConstraintSuiteVerifier.hpp"
 #include "tcframe/generator/TestCaseGenerator.hpp"
 
 using std::ostringstream;
@@ -25,7 +25,7 @@ bool applied;
 
 class TestCaseGeneratorTests : public Test {
 protected:
-    Mock(Verifier) verifier;
+    Mock(ConstraintSuiteVerifier) verifier;
     Mock(IOManipulator) ioManipulator;
     Mock(OperatingSystem) os;
 

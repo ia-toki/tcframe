@@ -15,14 +15,14 @@ using std::vector;
 
 namespace tcframe {
 
-class Verifier {
+class ConstraintSuiteVerifier {
 private:
     ConstraintSuite constraintSuite_;
 
 public:
-    virtual ~Verifier() {}
+    virtual ~ConstraintSuiteVerifier() {}
 
-    Verifier(ConstraintSuite constraintSuite)
+    ConstraintSuiteVerifier(ConstraintSuite constraintSuite)
             : constraintSuite_(move(constraintSuite))
     {}
 

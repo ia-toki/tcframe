@@ -8,7 +8,7 @@
 #include "FakeTestCaseGenerationFailure.hpp"
 #include "MockTestCaseGenerator.hpp"
 #include "MockGenerationLogger.hpp"
-#include "tcframe/generator/Generator.hpp"
+#include "tcframe/generator/TestSuiteGenerator.hpp"
 
 using ::testing::_;
 using ::testing::ElementsAre;
@@ -23,7 +23,7 @@ using std::vector;
 
 namespace tcframe {
 
-class GeneratorTests : public Test {
+class TestSuiteGeneratorTests : public Test {
 protected:
     Mock(TestCaseGenerator) testCaseGenerator;
     Mock(IOManipulator) ioManipulator;
@@ -63,7 +63,7 @@ protected:
             .setTestCasesDir("dir")
             .build();
 
-    Generator generator = Generator(&testCaseGenerator, &ioManipulator, &os, &logger);
+    TestSuiteGenerator generator = TestSuiteGenerator(&testCaseGenerator, &ioManipulator, &os, &logger);
 
     void SetUp() {
         ON_CALL(testCaseGenerator, generate(_, _, generatorConfig))
@@ -71,7 +71,7 @@ protected:
     }
 };
 
-TEST_F(GeneratorTests, Generation_Successful) {
+TEST_F(TestSuiteGeneratorTests, Generation_Successful) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction());
@@ -121,7 +121,7 @@ TEST_F(GeneratorTests, Generation_Successful) {
             Pair("foo_sample_2", TestCaseGenerationResult::successfulResult())));
 }
 
-TEST_F(GeneratorTests, Generation_Failed) {
+TEST_F(TestSuiteGeneratorTests, Generation_Failed) {
     TestCaseGenerationFailure* failure_sample_1 = new FakeTestCaseGenerationFailure();
     ON_CALL(testCaseGenerator, generate(Property(&TestCaseData::name, "foo_sample_1"), _, generatorConfig))
             .WillByDefault(Return(TestCaseGenerationResult::failedResult(failure_sample_1)));
@@ -177,7 +177,7 @@ TEST_F(GeneratorTests, Generation_Failed) {
             Pair("foo_sample_2", TestCaseGenerationResult::successfulResult())));
 }
 
-TEST_F(GeneratorTests, Generation_WithGroups_Successful) {
+TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Successful) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction());
@@ -238,7 +238,7 @@ TEST_F(GeneratorTests, Generation_WithGroups_Successful) {
             Pair("foo_sample_2", TestCaseGenerationResult::successfulResult())));
 }
 
-TEST_F(GeneratorTests, Generation_WithGroups_Failed) {
+TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Failed) {
     TestCaseGenerationFailure* failure_sample_1 = new FakeTestCaseGenerationFailure();
     ON_CALL(testCaseGenerator, generate(Property(&TestCaseData::name, "foo_sample_1"), _, generatorConfig))
             .WillByDefault(Return(TestCaseGenerationResult::failedResult(failure_sample_1)));
