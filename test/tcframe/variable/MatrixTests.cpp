@@ -71,11 +71,11 @@ TEST_F(MatrixTests, Parsing_Failed_ExtraWhitespace) {
 TEST_F(MatrixTests, Parsing_WithoutSize_Rows_Successful) {
     istringstream in("1 2\n3 4 5\n6\n");
     M->parseAndAddRowFrom(&in, 0);
-    WhitespaceUtils::parseNewline(&in, "");
+    WhitespaceManipulator::parseNewline(&in, "");
     M->parseAndAddRowFrom(&in, 1);
-    WhitespaceUtils::parseNewline(&in, "");
+    WhitespaceManipulator::parseNewline(&in, "");
     M->parseAndAddRowFrom(&in, 2);
-    WhitespaceUtils::parseNewline(&in, "");
+    WhitespaceManipulator::parseNewline(&in, "");
 
     EXPECT_THAT(m, Eq(vector<vector<int>>{{1, 2}, {3, 4, 5}, {6}}));
 }

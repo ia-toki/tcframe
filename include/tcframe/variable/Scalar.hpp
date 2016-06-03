@@ -6,7 +6,8 @@
 #include <string>
 
 #include "Variable.hpp"
-#include "VariableNameCreator.hpp"
+#include "WhitespaceManipulator.hpp"
+#include "tcframe/logger.hpp"
 
 using std::istream;
 using std::ostream;
@@ -47,7 +48,7 @@ public:
     }
 
     void parseFrom(istream* in) {
-        Variable::parseValue(in, var_, VariableNameCreator::createName(name()));
+        Variable::parseValue(in, var_, TokenFormatter::formatVariable(name()));
     }
 };
 

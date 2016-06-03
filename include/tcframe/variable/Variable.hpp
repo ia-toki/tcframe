@@ -6,7 +6,7 @@
 #include <tuple>
 #include <type_traits>
 
-#include "tcframe/util.hpp"
+#include "WhitespaceManipulator.hpp"
 
 using std::char_traits;
 using std::enable_if;
@@ -61,8 +61,8 @@ protected:
 
     template<typename T>
     static void parseValue(istream* in, T& val, const string& context) {
-        WhitespaceUtils::ensureNoEof(in, context);
-        WhitespaceUtils::ensureNoWhitespace(in, context);
+        WhitespaceManipulator::ensureNoEof(in, context);
+        WhitespaceManipulator::ensureNoWhitespace(in, context);
 
         long long currentPos = in->tellg();
         *in >> val;

@@ -42,24 +42,29 @@ include_directories("${source_dir}/googlemock/include")
 include_directories(include)
 
 set(SOURCE_FILES
-    include/tcframe/config.hpp
-    include/tcframe/config/GeneratorConfig.hpp
-    include/tcframe/config/ProblemConfig.hpp
     include/tcframe/constraint.hpp
     include/tcframe/constraint/Constraint.hpp
     include/tcframe/constraint/ConstraintGroup.hpp
     include/tcframe/constraint/ConstraintSuite.hpp
-    include/tcframe/generation.hpp
-    include/tcframe/generation/TestSuiteGenerationListener.hpp
-    include/tcframe/generation/TestCaseData.hpp
-    include/tcframe/generation/TestCaseNameCreator.hpp
-    include/tcframe/generation/TestCaseGenerator.hpp
-    include/tcframe/generation/TestCaseGenerationException.hpp
-    include/tcframe/generation/TestCaseGenerationFailure.hpp
-    include/tcframe/generation/TestCaseGenerationResult.hpp
-    include/tcframe/generation/TestSuiteGenerator.hpp
-    include/tcframe/generation/TestSuiteGenerationResult.hpp
-    include/tcframe/generation/VerificationFailure.hpp
+    include/tcframe/core.hpp
+    include/tcframe/core/BaseGenerator.hpp
+    include/tcframe/core/BaseProblem.hpp
+    include/tcframe/core/GeneratorConfig.hpp
+    include/tcframe/core/Magic.hpp
+    include/tcframe/core/NotImplementedException.hpp
+    include/tcframe/core/ProblemConfig.hpp
+    include/tcframe/experimental/runner.hpp
+    include/tcframe/generator.hpp
+    include/tcframe/generator/GenerationLogger.hpp
+    include/tcframe/generator/GenerationResult.hpp
+    include/tcframe/generator/Generator.hpp
+    include/tcframe/generator/TestCaseData.hpp
+    include/tcframe/generator/TestCaseGenerator.hpp
+    include/tcframe/generator/TestCaseGenerationException.hpp
+    include/tcframe/generator/TestCaseGenerationFailure.hpp
+    include/tcframe/generator/TestCaseGenerationResult.hpp
+    include/tcframe/generator/TestCaseNameCreator.hpp
+    include/tcframe/generator/VerificationFailure.hpp
     include/tcframe/io.hpp
     include/tcframe/io/GridIOSegment.hpp
     include/tcframe/io/GridIOSegmentManipulator.hpp
@@ -70,15 +75,13 @@ set(SOURCE_FILES
     include/tcframe/io/LineIOSegmentManipulator.hpp
     include/tcframe/io/LinesIOSegment.hpp
     include/tcframe/io/LinesIOSegmentManipulator.hpp
+    include/tcframe/logger.hpp
+    include/tcframe/logger/TokenFormatter.hpp
     include/tcframe/os.hpp
     include/tcframe/os/ExecutionResult.hpp
     include/tcframe/os/OperatingSystem.hpp
     include/tcframe/os/UnixOperatingSystem.hpp
-    include/tcframe/experimental/runner.hpp
-    include/tcframe/runner/BaseProblem.hpp
-    include/tcframe/runner/BaseGenerator.hpp
-    include/tcframe/runner/Magic.hpp
-    include/tcframe/runner/NotImplementedException.hpp
+    include/tcframe/runner.hpp
     include/tcframe/runner/Runner.hpp
     include/tcframe/testcase.hpp
     include/tcframe/testcase/OfficialTestCase.hpp
@@ -87,49 +90,48 @@ set(SOURCE_FILES
     include/tcframe/testcase/TestGroup.hpp
     include/tcframe/util.hpp
     include/tcframe/util/StringUtils.hpp
-    include/tcframe/util/WhitespaceUtils.hpp
     include/tcframe/variable.hpp
     include/tcframe/variable/Scalar.hpp
     include/tcframe/variable/Matrix.hpp
     include/tcframe/variable/Variable.hpp
-    include/tcframe/variable/VariableNameCreator.hpp
     include/tcframe/variable/Vector.hpp
-    include/tcframe/verification.hpp
-    include/tcframe/verification/ConstraintSuiteVerifier.hpp
-    include/tcframe/verification/ConstraintSuiteVerificationResult.hpp
+    include/tcframe/variable/WhitespaceManipulator.hpp
+    include/tcframe/verifier.hpp
+    include/tcframe/verifier/VerificationResult.hpp
+    include/tcframe/verifier/Verifier.hpp
     test/tcframe/mock.hpp
     test/tcframe/constraint/ConstraintSuiteBuilderTests.cpp
-    test/tcframe/generation/FakeTestCaseGenerationFailure.hpp
-    test/tcframe/generation/MockTestCaseGenerator.hpp
-    test/tcframe/generation/MockTestSuiteGenerationListener.hpp
-    test/tcframe/generation/TestCaseNameCreatorTests.cpp
-    test/tcframe/generation/TestCaseGeneratorTests.cpp
-    test/tcframe/generation/TestSuiteGeneratorTests.cpp
+    test/tcframe/core/BaseGeneratorTests.cpp
+    test/tcframe/core/BaseProblemTests.cpp
+    test/tcframe/core/MagicTests.cpp
+    test/tcframe/generator/FakeTestCaseGenerationFailure.hpp
+    test/tcframe/generator/GeneratorTests.cpp
+    test/tcframe/generator/MockGenerationLogger.hpp
+    test/tcframe/generator/MockTestCaseGenerator.hpp
+    test/tcframe/generator/TestCaseGeneratorTests.cpp
+    test/tcframe/generator/TestCaseNameCreatorTests.cpp
     test/tcframe/io/GridIOSegmentBuilderTests.cpp
+    test/tcframe/io/GridIOSegmentManipulatorTests.cpp
     test/tcframe/io/IOFormatBuilderTests.cpp
     test/tcframe/io/IOManipulatorTests.cpp
-    test/tcframe/io/GridIOSegmentManipulatorTests.cpp
     test/tcframe/io/LineIOSegmentBuilderTests.cpp
     test/tcframe/io/LineIOSegmentManipulatorTests.cpp
     test/tcframe/io/LinesIOSegmentBuilderTests.cpp
     test/tcframe/io/LinesIOSegmentManipulatorTests.cpp
     test/tcframe/io/MockIOManipulator.hpp
+    test/tcframe/logger/TokenFormatterTests.cpp
     test/tcframe/os/MockOperatingSystem.hpp
-    test/tcframe/runner/BaseGeneratorTests.cpp
-    test/tcframe/runner/BaseProblemTests.cpp
-    test/tcframe/runner/MagicTests.cpp
     test/tcframe/runner/RunnerTests.cpp
     test/tcframe/testcase/TestSuiteBuilderTests.cpp
     test/tcframe/util/StringUtilsTests.cpp
-    test/tcframe/util/WhitespaceUtilsTests.cpp
     test/tcframe/variable/FakeVariable.hpp
     test/tcframe/variable/MatrixTests.cpp
     test/tcframe/variable/ScalarTests.cpp
-    test/tcframe/variable/VariableNameCreatorTests.cpp
     test/tcframe/variable/VariableTests.cpp
     test/tcframe/variable/VectorTests.cpp
-    test/tcframe/verification/ConstraintSuiteVerifierTests.cpp
-    test/tcframe/verification/MockConstraintSuiteVerifier.hpp
+    test/tcframe/variable/WhitespaceManipulatorTests.cpp
+    test/tcframe/verifier/MockVerifier.hpp
+    test/tcframe/verifier/VerifierTests.cpp
 
     include/tcframe/deprecated/core/Failure.hpp
     include/tcframe/deprecated/core/NotImplementedException.hpp

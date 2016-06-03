@@ -7,7 +7,8 @@
 #include <vector>
 
 #include "Variable.hpp"
-#include "VariableNameCreator.hpp"
+#include "WhitespaceManipulator.hpp"
+#include "tcframe/logger.hpp"
 
 using std::endl;
 using std::iostream;
@@ -85,14 +86,14 @@ public:
             vector<T> row;
             for (int c = 0; c < columns; c++) {
                 if (c > 0 && hasSpaces_) {
-                    WhitespaceUtils::parseSpace(in, VariableNameCreator::createMatrixElementName(name(), r, c - 1));
+                    WhitespaceManipulator::parseSpace(in, TokenFormatter::formatMatrixElement(name(), r, c - 1));
                 }
                 T element;
-                Variable::parseValue(in, element, VariableNameCreator::createMatrixElementName(name(), r, c));
+                Variable::parseValue(in, element, TokenFormatter::formatMatrixElement(name(), r, c));
                 row.push_back(element);
             }
             var_.get().push_back(row);
-            WhitespaceUtils::parseNewline(in, VariableNameCreator::createMatrixElementName(name(), r, columns - 1));
+            WhitespaceManipulator::parseNewline(in, TokenFormatter::formatMatrixElement(name(), r, columns - 1));
         }
     }
 
@@ -100,16 +101,16 @@ public:
         vector<T> row;
         int c;
         for (c = 0; ; c++) {
-            if (WhitespaceUtils::canParseNewline(in)) {
+            if (WhitespaceManipulator::canParseNewline(in)) {
                 break;
             }
             if (c > 0 && hasSpaces_) {
-                WhitespaceUtils::parseSpaceAfterMissingNewline(
+                WhitespaceManipulator::parseSpaceAfterMissingNewline(
                         in,
-                        VariableNameCreator::createMatrixElementName(name(), rowIndex, c - 1));
+                        TokenFormatter::formatMatrixElement(name(), rowIndex, c - 1));
             }
             T element;
-            Variable::parseValue(in, element, VariableNameCreator::createMatrixElementName(name(), rowIndex, c));
+            Variable::parseValue(in, element, TokenFormatter::formatMatrixElement(name(), rowIndex, c));
             row.push_back(element);
         }
         var_.get().push_back(row);

@@ -1,13 +1,11 @@
 #pragma once
 
-#include "BaseGenerator.hpp"
-#include "BaseProblem.hpp"
-#include "tcframe/config.hpp"
+#include "tcframe/core.hpp"
 #include "tcframe/io.hpp"
-#include "tcframe/generation.hpp"
+#include "tcframe/generator.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/variable.hpp"
-#include "tcframe/verification.hpp"
+#include "tcframe/verifier.hpp"
 
 namespace tcframe {
 
@@ -41,12 +39,12 @@ public:
 
         auto os = new UnixOperatingSystem();
         auto ioManipulator = new IOManipulator(ioFormat);
-        auto constraintSuiteVerifier = new ConstraintSuiteVerifier(constraintSuite);
-        auto generationListener = new TestSuiteGenerationListener();
-        auto testCaseGenerator = new TestCaseGenerator(constraintSuiteVerifier, ioManipulator, os);
-        auto testSuiteGenerator = new TestSuiteGenerator(testCaseGenerator, ioManipulator, os, generationListener);
+        auto verifier = new Verifier(constraintSuite);
+        auto generationLogger = new GenerationLogger();
+        auto testCaseGenerator = new TestCaseGenerator(verifier, ioManipulator, os);
+        auto generator = new Generator(testCaseGenerator, ioManipulator, os, generationLogger);
 
-        return testSuiteGenerator->generate(testSuite, problemConfig, generatorConfig).isSuccessful() ? 0 : 1;
+        return generator->generate(testSuite, problemConfig, generatorConfig).isSuccessful() ? 0 : 1;
     }
 };
 

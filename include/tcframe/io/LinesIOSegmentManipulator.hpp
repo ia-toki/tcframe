@@ -4,6 +4,7 @@
 #include <stdexcept>
 
 #include "LinesIOSegment.hpp"
+#include "tcframe/logger.hpp"
 #include "tcframe/util.hpp"
 #include "tcframe/variable.hpp"
 
@@ -30,18 +31,18 @@ public:
             for (Variable* variable : segment->variables()) {
                 if (variable->type() == VariableType::VECTOR) {
                     if (!lastVariableName.empty()) {
-                        WhitespaceUtils::parseSpace(in, lastVariableName);
+                        WhitespaceManipulator::parseSpace(in, lastVariableName);
                     }
                     ((Vector*) variable)->parseAndAddElementFrom(in);
                 } else {
-                    if (!lastVariableName.empty() && !WhitespaceUtils::canParseNewline(in)) {
-                        WhitespaceUtils::parseSpace(in, lastVariableName);
+                    if (!lastVariableName.empty() && !WhitespaceManipulator::canParseNewline(in)) {
+                        WhitespaceManipulator::parseSpace(in, lastVariableName);
                     }
                     ((Matrix*) variable)->parseAndAddRowFrom(in, j);
                 }
-                lastVariableName = VariableNameCreator::createVectorElementName(variable->name(), j);
+                lastVariableName = TokenFormatter::formatVectorElement(variable->name(), j);
             }
-            WhitespaceUtils::parseNewline(in, lastVariableName);
+            WhitespaceManipulator::parseNewline(in, lastVariableName);
         }
     }
 
@@ -81,7 +82,7 @@ private:
             }
             if (size != segment->size()) {
                 throw runtime_error(
-                        "Number of elements of " + type + " " + VariableNameCreator::createName(variable->name())
+                        "Number of elements of " + type + " " + TokenFormatter::formatVariable(variable->name())
                       + " unsatisfied. Expected: " + StringUtils::toString(segment->size())
                       + ", actual: " + StringUtils::toString(size));
             }

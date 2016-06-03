@@ -4,6 +4,7 @@
 #include <stdexcept>
 
 #include "LineIOSegment.hpp"
+#include "tcframe/logger.hpp"
 #include "tcframe/util.hpp"
 #include "tcframe/variable.hpp"
 
@@ -20,7 +21,7 @@ public:
         string lastVariableName;
         for (const LineIOSegmentVariable& segmentVariable : segment->variables()) {
             if (!lastVariableName.empty()) {
-                WhitespaceUtils::parseSpace(in, lastVariableName);
+                WhitespaceManipulator::parseSpace(in, lastVariableName);
             }
 
             Variable* variable = segmentVariable.variable();
@@ -32,9 +33,9 @@ public:
                 parseVector((Vector*) variable, size, in);
             }
 
-            lastVariableName = VariableNameCreator::createName(variable->name());
+            lastVariableName = TokenFormatter::formatVariable(variable->name());
         }
-        WhitespaceUtils::parseNewline(in, lastVariableName);
+        WhitespaceManipulator::parseNewline(in, lastVariableName);
     }
 
     static void print(LineIOSegment* segment, ostream* out) {
@@ -60,7 +61,7 @@ public:
 private:
     static void checkVectorSize(Vector* vektor, int size) {
         if (size != -1 && vektor->size() != size) {
-            throw runtime_error("Number of elements of vector " + VariableNameCreator::createName(vektor->name())
+            throw runtime_error("Number of elements of vector " + TokenFormatter::formatVariable(vektor->name())
                                 + " unsatisfied. Expected: " + StringUtils::toString(size) + ", actual: "
                                 + StringUtils::toString(vektor->size()));
         }

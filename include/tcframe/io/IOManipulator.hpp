@@ -5,7 +5,7 @@
 
 #include "IOFormat.hpp"
 #include "LineIOSegmentManipulator.hpp"
-#include "tcframe/util/WhitespaceUtils.hpp"
+#include "tcframe/variable.hpp"
 
 using std::endl;
 using std::istream;
@@ -48,7 +48,7 @@ private:
                 LineIOSegmentManipulator::parse((LineIOSegment*) segment, in);
             }
         }
-        WhitespaceUtils::ensureEof(in);
+        WhitespaceManipulator::ensureEof(in);
     }
 };
 

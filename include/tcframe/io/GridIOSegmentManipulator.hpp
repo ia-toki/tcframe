@@ -4,6 +4,7 @@
 #include <stdexcept>
 
 #include "GridIOSegment.hpp"
+#include "tcframe/logger.hpp"
 #include "tcframe/util.hpp"
 #include "tcframe/variable.hpp"
 
@@ -35,7 +36,7 @@ private:
 
         if (variable->rows() != segment->rows()) {
             throw runtime_error(
-                    "Number of rows of matrix " + VariableNameCreator::createName(variable->name())
+                    "Number of rows of matrix " + TokenFormatter::formatVariable(variable->name())
                     + " unsatisfied. Expected: " + StringUtils::toString(segment->rows())
                     + ", actual: " + StringUtils::toString(variable->rows()));
         }
@@ -43,7 +44,7 @@ private:
             if (variable->columns(r) != segment->columns()) {
                 throw runtime_error(
                         "Number of columns of row " + StringUtils::toString(r)
-                        + " of matrix " + VariableNameCreator::createName(variable->name())
+                        + " of matrix " + TokenFormatter::formatVariable(variable->name())
                         + " unsatisfied. Expected: " + StringUtils::toString(segment->columns())
                         + ", actual: " + StringUtils::toString(variable->columns(r)));
             }

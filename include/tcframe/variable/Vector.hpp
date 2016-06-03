@@ -6,7 +6,8 @@
 #include <vector>
 
 #include "Variable.hpp"
-#include "VariableNameCreator.hpp"
+#include "WhitespaceManipulator.hpp"
+#include "tcframe/logger.hpp"
 
 using std::iostream;
 using std::ostream;
@@ -72,13 +73,13 @@ public:
 
     void parseFrom(istream* in) {
         for (int i = 0; ; i++) {
-            if (WhitespaceUtils::canParseNewline(in)) {
+            if (WhitespaceManipulator::canParseNewline(in)) {
                 break;
             }
             if (i > 0) {
-                WhitespaceUtils::parseSpaceAfterMissingNewline(
+                WhitespaceManipulator::parseSpaceAfterMissingNewline(
                         in,
-                        VariableNameCreator::createVectorElementName(name(), i - 1));
+                        TokenFormatter::formatVectorElement(name(), i - 1));
             }
             parseAndAddElementFrom(in);
         }
@@ -87,7 +88,7 @@ public:
     void parseFrom(istream* in, int size) {
         for (int i = 0; i < size; i++) {
             if (i > 0) {
-                WhitespaceUtils::parseSpace(in, VariableNameCreator::createVectorElementName(name(), i - 1));
+                WhitespaceManipulator::parseSpace(in, TokenFormatter::formatVectorElement(name(), i - 1));
             }
             parseAndAddElementFrom(in);
         }
@@ -96,7 +97,7 @@ public:
     void parseAndAddElementFrom(istream* in) {
         int index = size();
         T element;
-        Variable::parseValue(in, element, VariableNameCreator::createVectorElementName(name(), index));
+        Variable::parseValue(in, element, TokenFormatter::formatVectorElement(name(), index));
         var_.get().push_back(element);
     }
 };
