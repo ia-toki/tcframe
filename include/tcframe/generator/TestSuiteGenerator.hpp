@@ -6,7 +6,7 @@
 #include <sstream>
 #include <string>
 
-#include "GenerationLogger.hpp"
+#include "GeneratorLogger.hpp"
 #include "GenerationResult.hpp"
 #include "TestCaseNameCreator.hpp"
 #include "TestCaseGenerationResult.hpp"
@@ -29,7 +29,7 @@ private:
     TestCaseGenerator* testCaseGenerator_;
     IOManipulator* ioManipulator_;
     OperatingSystem* os_;
-    GenerationLogger* logger_;
+    GeneratorLogger* logger_;
 
 public:
     virtual ~TestSuiteGenerator() {}
@@ -38,7 +38,7 @@ public:
             TestCaseGenerator* testCaseGenerator,
             IOManipulator* ioManipulator,
             OperatingSystem* os,
-            GenerationLogger* logger)
+            GeneratorLogger* logger)
             : testCaseGenerator_(testCaseGenerator)
             , ioManipulator_(ioManipulator)
             , os_(os)

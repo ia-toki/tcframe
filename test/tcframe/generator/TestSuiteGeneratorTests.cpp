@@ -7,7 +7,7 @@
 #include "../os/MockOperatingSystem.hpp"
 #include "FakeTestCaseGenerationFailure.hpp"
 #include "MockTestCaseGenerator.hpp"
-#include "MockGenerationLogger.hpp"
+#include "MockGeneratorLogger.hpp"
 #include "tcframe/generator/TestSuiteGenerator.hpp"
 
 using ::testing::_;
@@ -28,7 +28,7 @@ protected:
     Mock(TestCaseGenerator) testCaseGenerator;
     Mock(IOManipulator) ioManipulator;
     Mock(OperatingSystem) os;
-    Mock(GenerationLogger) logger;
+    Mock(GeneratorLogger) logger;
 
     vector<string> stc1 = {"10", "20"};
     vector<string> stc2 = {"30"};

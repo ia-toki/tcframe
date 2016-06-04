@@ -37,10 +37,12 @@ public:
         auto generatorConfig = generator_->buildGeneratorConfig();
         auto testSuite = generator_->buildTestSuite();
 
+        auto loggerEngine = new SimpleLoggerEngine();
+
         auto os = new UnixOperatingSystem();
         auto ioManipulator = new IOManipulator(ioFormat);
         auto verifier = new ConstraintSuiteVerifier(constraintSuite);
-        auto generationLogger = new GenerationLogger();
+        auto generationLogger = new GeneratorLogger(loggerEngine);
         auto testCaseGenerator = new TestCaseGenerator(verifier, ioManipulator, os);
         auto generator = new TestSuiteGenerator(testCaseGenerator, ioManipulator, os, generationLogger);
 

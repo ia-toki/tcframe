@@ -55,8 +55,8 @@ set(SOURCE_FILES
     include/tcframe/core/ProblemConfig.hpp
     include/tcframe/experimental/runner.hpp
     include/tcframe/generator.hpp
-    include/tcframe/generator/GenerationLogger.hpp
     include/tcframe/generator/GenerationResult.hpp
+    include/tcframe/generator/GeneratorLogger.hpp
     include/tcframe/generator/TestSuiteGenerator.hpp
     include/tcframe/generator/TestCaseData.hpp
     include/tcframe/generator/TestCaseGenerator.hpp
@@ -76,6 +76,9 @@ set(SOURCE_FILES
     include/tcframe/io/LinesIOSegment.hpp
     include/tcframe/io/LinesIOSegmentManipulator.hpp
     include/tcframe/logger.hpp
+    include/tcframe/logger/BaseLogger.hpp
+    include/tcframe/logger/LoggerEngine.hpp
+    include/tcframe/logger/SimpleLoggerEngine.hpp
     include/tcframe/logger/TokenFormatter.hpp
     include/tcframe/os.hpp
     include/tcframe/os/ExecutionResult.hpp
@@ -104,8 +107,9 @@ set(SOURCE_FILES
     test/tcframe/core/BaseGeneratorTests.cpp
     test/tcframe/core/BaseProblemTests.cpp
     test/tcframe/core/MagicTests.cpp
+    test/tcframe/generator/GeneratorLoggerTests.cpp
     test/tcframe/generator/FakeTestCaseGenerationFailure.hpp
-    test/tcframe/generator/MockGenerationLogger.hpp
+    test/tcframe/generator/MockGeneratorLogger.hpp
     test/tcframe/generator/MockTestCaseGenerator.hpp
     test/tcframe/generator/TestCaseGeneratorTests.cpp
     test/tcframe/generator/TestCaseNameCreatorTests.cpp
@@ -119,6 +123,8 @@ set(SOURCE_FILES
     test/tcframe/io/LinesIOSegmentBuilderTests.cpp
     test/tcframe/io/LinesIOSegmentManipulatorTests.cpp
     test/tcframe/io/MockIOManipulator.hpp
+    test/tcframe/logger/BaseLogggerTests.cpp
+    test/tcframe/logger/MockLoggerEngine.hpp
     test/tcframe/logger/TokenFormatterTests.cpp
     test/tcframe/os/MockOperatingSystem.hpp
     test/tcframe/runner/RunnerTests.cpp

@@ -4,6 +4,8 @@
 #include <string>
 #include <utility>
 
+#include "TestCaseGenerationResult.hpp"
+
 using std::map;
 using std::move;
 using std::string;
