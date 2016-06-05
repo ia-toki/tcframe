@@ -57,13 +57,14 @@ set(SOURCE_FILES
     include/tcframe/generator.hpp
     include/tcframe/generator/GenerationResult.hpp
     include/tcframe/generator/GeneratorLogger.hpp
-    include/tcframe/generator/TestSuiteGenerator.hpp
     include/tcframe/generator/TestCaseData.hpp
     include/tcframe/generator/TestCaseGenerator.hpp
     include/tcframe/generator/TestCaseGenerationException.hpp
     include/tcframe/generator/TestCaseGenerationFailure.hpp
     include/tcframe/generator/TestCaseGenerationResult.hpp
     include/tcframe/generator/TestCaseNameCreator.hpp
+    include/tcframe/generator/TestSuiteGenerator.hpp
+    include/tcframe/generator/TestSuiteGeneratorFactory.hpp
     include/tcframe/generator/VerificationFailure.hpp
     include/tcframe/io.hpp
     include/tcframe/io/GridIOSegment.hpp
@@ -86,6 +87,9 @@ set(SOURCE_FILES
     include/tcframe/os/UnixOperatingSystem.hpp
     include/tcframe/runner.hpp
     include/tcframe/runner/Runner.hpp
+    include/tcframe/runner/RunnerLogger.hpp
+    include/tcframe/runner/RunnerLoggerFactory.hpp
+    include/tcframe/runner/SpecificationFailure.hpp
     include/tcframe/testcase.hpp
     include/tcframe/testcase/OfficialTestCase.hpp
     include/tcframe/testcase/SampleTestCase.hpp
@@ -128,6 +132,7 @@ set(SOURCE_FILES
     test/tcframe/logger/TokenFormatterTests.cpp
     test/tcframe/os/MockOperatingSystem.hpp
     test/tcframe/runner/RunnerTests.cpp
+    test/tcframe/runner/RunnerLoggerTests.cpp
     test/tcframe/testcase/TestSuiteBuilderTests.cpp
     test/tcframe/util/StringUtilsTests.cpp
     test/tcframe/variable/FakeVariable.hpp

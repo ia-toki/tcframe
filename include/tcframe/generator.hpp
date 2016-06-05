@@ -9,4 +9,5 @@
 #include "tcframe/generator/TestCaseGenerationResult.hpp"
 #include "tcframe/generator/TestCaseNameCreator.hpp"
 #include "tcframe/generator/TestSuiteGenerator.hpp"
+#include "tcframe/generator/TestSuiteGeneratorFactory.hpp"
 #include "tcframe/generator/VerificationFailure.hpp"

@@ -1,5 +1,8 @@
 #pragma once
 
+#include "RunnerLogger.hpp"
+#include "RunnerLoggerFactory.hpp"
+#include "SpecificationFailure.hpp"
 #include "tcframe/core.hpp"
 #include "tcframe/io.hpp"
 #include "tcframe/generator.hpp"
@@ -12,16 +15,48 @@ namespace tcframe {
 template<typename TProblem>
 class Runner {
 private:
-    int argc;
-    char** argv;
+    int argc_;
+    char** argv_;
+
     BaseProblem* problem_;
     BaseGenerator<TProblem>* generator_;
 
+    LoggerEngine* loggerEngine_;
+    OperatingSystem* os_;
+
+    RunnerLoggerFactory* runnerLoggerFactory_;
+    TestSuiteGeneratorFactory* testSuiteGeneratorFactory_;
+
 public:
-    Runner(int argc, char **argv)
-            : argc(argc)
-            , argv(argv)
+    Runner(int argc, char** argv)
+            : argc_(argc)
+            , argv_(argv)
+            , problem_(nullptr)
             , generator_(nullptr)
+            , loggerEngine_(new SimpleLoggerEngine())
+            , os_(new UnixOperatingSystem())
+            , runnerLoggerFactory_(new RunnerLoggerFactory())
+            , testSuiteGeneratorFactory_(new TestSuiteGeneratorFactory())
+    {}
+
+    /* Visible for testing */
+    Runner(
+            int argc,
+            char** argv,
+            BaseProblem* problem,
+            BaseGenerator<TProblem>* generator,
+            LoggerEngine* loggerEngine,
+            OperatingSystem* os,
+            RunnerLoggerFactory* runnerLoggerFactory,
+            TestSuiteGeneratorFactory* testSuiteGeneratorFactory)
+            : argc_(argc)
+            , argv_(argv)
+            , problem_(nullptr)
+            , generator_(nullptr)
+            , loggerEngine_(loggerEngine)
+            , os_(os)
+            , runnerLoggerFactory_(runnerLoggerFactory)
+            , testSuiteGeneratorFactory_(testSuiteGeneratorFactory)
     {}
 
     void setGenerator(BaseGenerator<TProblem>* generator) {
@@ -30,21 +65,31 @@ public:
     }
 
     int run() {
-        auto problemConfig = problem_->buildProblemConfig();
-        auto ioFormat = problem_->buildIOFormat();
-        auto constraintSuite = problem_->buildConstraintSuite();
+        RunnerLogger* logger = runnerLoggerFactory_->create(loggerEngine_);
 
-        auto generatorConfig = generator_->buildGeneratorConfig();
-        auto testSuite = generator_->buildTestSuite();
+        ProblemConfig problemConfig;
+        GeneratorConfig generatorConfig;
+        ConstraintSuite constraintSuite;
+        TestSuite testSuite;
+        IOFormat ioFormat;
 
-        auto loggerEngine = new SimpleLoggerEngine();
+        try {
+            problemConfig = problem_->buildProblemConfig();
+            generatorConfig = generator_->buildGeneratorConfig();
+            constraintSuite = problem_->buildConstraintSuite();
+            testSuite = generator_->buildTestSuite();
+            ioFormat = problem_->buildIOFormat();
+        } catch (runtime_error& e) {
+            logger->logSpecificationFailure(SpecificationFailure({e.what()}));
+            return 1;
+        }
 
-        auto os = new UnixOperatingSystem();
         auto ioManipulator = new IOManipulator(ioFormat);
         auto verifier = new ConstraintSuiteVerifier(constraintSuite);
-        auto generationLogger = new GeneratorLogger(loggerEngine);
-        auto testCaseGenerator = new TestCaseGenerator(verifier, ioManipulator, os);
-        auto generator = new TestSuiteGenerator(testCaseGenerator, ioManipulator, os, generationLogger);
+        auto generationLogger = new GeneratorLogger(loggerEngine_);
+        auto testCaseGenerator = new TestCaseGenerator(verifier, ioManipulator, os_);
+
+        auto generator = testSuiteGeneratorFactory_->create(testCaseGenerator, ioManipulator, os_, generationLogger);
 
         return generator->generate(testSuite, problemConfig, generatorConfig).isSuccessful() ? 0 : 1;
     }
