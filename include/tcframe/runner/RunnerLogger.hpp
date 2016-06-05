@@ -7,6 +7,8 @@ namespace tcframe {
 
 class RunnerLogger : public BaseLogger {
 public:
+    virtual ~RunnerLogger() {}
+
     RunnerLogger(LoggerEngine* engine)
             : BaseLogger(engine)
     {}

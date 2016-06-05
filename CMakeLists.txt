@@ -115,6 +115,8 @@ set(SOURCE_FILES
     test/tcframe/generator/FakeTestCaseGenerationFailure.hpp
     test/tcframe/generator/MockGeneratorLogger.hpp
     test/tcframe/generator/MockTestCaseGenerator.hpp
+    test/tcframe/generator/MockTestSuiteGenerator.hpp
+    test/tcframe/generator/MockTestSuiteGeneratorFactory.hpp
     test/tcframe/generator/TestCaseGeneratorTests.cpp
     test/tcframe/generator/TestCaseNameCreatorTests.cpp
     test/tcframe/generator/TestSuiteGeneratorTests.cpp
@@ -133,6 +135,8 @@ set(SOURCE_FILES
     test/tcframe/os/MockOperatingSystem.hpp
     test/tcframe/runner/RunnerTests.cpp
     test/tcframe/runner/RunnerLoggerTests.cpp
+    test/tcframe/runner/MockRunnerLogger.hpp
+    test/tcframe/runner/MockRunnerLoggerFactory.hpp
     test/tcframe/testcase/TestSuiteBuilderTests.cpp
     test/tcframe/util/StringUtilsTests.cpp
     test/tcframe/variable/FakeVariable.hpp

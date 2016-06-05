@@ -45,7 +45,7 @@ public:
             , logger_(logger)
     {}
 
-    GenerationResult generate(
+    virtual GenerationResult generate(
             const TestSuite& testSuite,
             const ProblemConfig& problemConfig,
             const GeneratorConfig& generatorConfig) {

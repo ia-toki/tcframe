@@ -43,7 +43,6 @@ public:
     Runner(
             int argc,
             char** argv,
-            BaseProblem* problem,
             BaseGenerator<TProblem>* generator,
             LoggerEngine* loggerEngine,
             OperatingSystem* os,
@@ -51,8 +50,8 @@ public:
             TestSuiteGeneratorFactory* testSuiteGeneratorFactory)
             : argc_(argc)
             , argv_(argv)
-            , problem_(nullptr)
-            , generator_(nullptr)
+            , problem_(generator)
+            , generator_(generator)
             , loggerEngine_(loggerEngine)
             , os_(os)
             , runnerLoggerFactory_(runnerLoggerFactory)
