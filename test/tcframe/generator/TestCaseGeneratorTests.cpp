@@ -14,10 +14,8 @@ using ::testing::_;
 using ::testing::Eq;
 using ::testing::InSequence;
 using ::testing::IsNull;
-using ::testing::Pointee;
 using ::testing::Return;
 using ::testing::Test;
-using ::testing::WhenDynamicCastTo;
 
 namespace tcframe {
 
@@ -81,8 +79,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Failed_VerificationFailure) {
 
     EXPECT_TRUE(applied);
     EXPECT_FALSE(result.isSuccessful());
-    EXPECT_THAT(result.failure(), WhenDynamicCastTo<VerificationFailure*>(
-            Pointee(VerificationFailure(verificationResult))));
+    EXPECT_TRUE(result.failure()->equals(new VerificationFailure(verificationResult)));
 }
 
 }
