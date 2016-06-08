@@ -12,16 +12,16 @@ using ::testing::Test;
 
 namespace tcframe {
 
-class BaseGeneratorTests : public Test {
+class BaseTestSpecTests : public Test {
 protected:
-    class FakeProblem : public BaseProblem {
+    class ProblemSpec : public BaseProblemSpec {
     protected:
         int A, B;
 
         void InputFormat() {}
     };
 
-    class FakeGenerator : public BaseGenerator<FakeProblem> {
+    class TestSpec : public BaseTestSpec<ProblemSpec> {
     protected:
         void Config() {
             setSolutionCommand("python Sol.py");
@@ -29,7 +29,7 @@ protected:
         }
     };
 
-    class GeneratorWithoutTestGroups : public FakeGenerator {
+    class TestSpecWithTestCases : public TestSpec {
     protected:
         void SampleTestCases() {
             addSampleTestCase({"10", "20"});
@@ -42,7 +42,7 @@ protected:
         }
     };
 
-    class GeneratorWithTestGroups : public FakeGenerator {
+    class TestSpecWithTestGroups : public TestSpec {
     protected:
         void SampleTestCases() {
             addSampleTestCase({"10", "20"}, {1, 2});
@@ -65,26 +65,26 @@ protected:
         }
     };
 
-    FakeGenerator generator;
-    GeneratorWithoutTestGroups generatorWithoutTestGroups;
-    GeneratorWithTestGroups generatorWithTestGroups;
+    TestSpec spec;
+    TestSpecWithTestCases specWithTestCases;
+    TestSpecWithTestGroups specWithTestGroups;
 };
 
-TEST_F(BaseGeneratorTests, Config) {
-    GeneratorConfig config = generator.buildGeneratorConfig();
+TEST_F(BaseTestSpecTests, Config) {
+    TestConfig config = spec.buildTestConfig();
     EXPECT_THAT(config.solutionCommand(), Eq("python Sol.py"));
     EXPECT_THAT(config.testCasesDir(), Eq("dir"));
 }
 
-TEST_F(BaseGeneratorTests, TestSuite) {
-    TestSuite testSuite = generatorWithoutTestGroups.buildTestSuite();
+TEST_F(BaseTestSpecTests, TestSuite) {
+    TestSuite testSuite = specWithTestCases.buildTestSuite();
     EXPECT_THAT(testSuite.sampleTests(), SizeIs(2));
     EXPECT_THAT(testSuite.officialTests(), ElementsAre(
             AllOf(Property(&TestGroup::id, -1), Property(&TestGroup::officialTestCases, SizeIs(2)))));
 }
 
-TEST_F(BaseGeneratorTests, TestSuite_WithGroups) {
-    TestSuite testSuite = generatorWithTestGroups.buildTestSuite();
+TEST_F(BaseTestSpecTests, TestSuite_WithGroups) {
+    TestSuite testSuite = specWithTestGroups.buildTestSuite();
     EXPECT_THAT(testSuite.sampleTests(), SizeIs(2));
     EXPECT_THAT(testSuite.officialTests(), ElementsAre(
             AllOf(Property(&TestGroup::id, 1), Property(&TestGroup::officialTestCases, SizeIs(3))),

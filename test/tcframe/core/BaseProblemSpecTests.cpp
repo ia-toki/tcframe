@@ -12,9 +12,9 @@ using ::testing::Test;
 
 namespace tcframe {
 
-class BaseProblemTests : public Test {
+class BaseProblemSpecTests : public Test {
 protected:
-    class Problem : public BaseProblem {
+    class ProblemSpec : public BaseProblemSpec {
     protected:
         int A, B;
         vector<int> X;
@@ -38,7 +38,7 @@ protected:
         }
     };
 
-    class ProblemWithoutConstraintGroups : public Problem {
+    class ProblemWithConstraints : public ProblemSpec {
     protected:
         void Constraints() {
             addConstraint(Constraint([=] {return 1 <= A && A <= 100;}, "1 <= A && A <= 100"));
@@ -46,7 +46,7 @@ protected:
         }
     };
 
-    class ProblemWithConstraintGroups : public Problem {
+    class ProblemWithSubtasks : public ProblemSpec {
     protected:
         void Subtask1() {
             addConstraint(Constraint([=] {return 1 <= A && A <= 100;}, "1 <= A && A <= 100"));
@@ -60,32 +60,32 @@ protected:
         }
     };
     
-    Problem problem;
-    ProblemWithoutConstraintGroups problemWithoutConstraintGroups;
-    ProblemWithConstraintGroups problemWithConstraintGroups;
+    ProblemSpec spec;
+    ProblemWithConstraints specWithConstraints;
+    ProblemWithSubtasks specWithSubtasks;
 };
 
-TEST_F(BaseProblemTests, Config) {
-    ProblemConfig config = problem.buildProblemConfig();
+TEST_F(BaseProblemSpecTests, Config) {
+    ProblemConfig config = spec.buildProblemConfig();
     EXPECT_THAT(config.slug(), Eq("ab"));
 }
 
-TEST_F(BaseProblemTests, IOFormat) {
-    IOFormat ioFormat = problem.buildIOFormat();
+TEST_F(BaseProblemSpecTests, IOFormat) {
+    IOFormat ioFormat = spec.buildIOFormat();
     EXPECT_THAT(ioFormat.inputFormat(), ElementsAre(
         A<LineIOSegment*>(),
         A<LinesIOSegment*>(),
         A<GridIOSegment*>()));
 }
 
-TEST_F(BaseProblemTests, Constraints) {
-    ConstraintSuite constraintSuite = problemWithoutConstraintGroups.buildConstraintSuite();
+TEST_F(BaseProblemSpecTests, Constraints) {
+    ConstraintSuite constraintSuite = specWithConstraints.buildConstraintSuite();
     EXPECT_THAT(constraintSuite.individualConstraints(), ElementsAre(
         AllOf(Property(&ConstraintGroup::id, -1), Property(&ConstraintGroup::constraints, SizeIs(2)))));
 }
 
-TEST_F(BaseProblemTests, Subtasks) {
-    ConstraintSuite constraintSuite = problemWithConstraintGroups.buildConstraintSuite();
+TEST_F(BaseProblemSpecTests, Subtasks) {
+    ConstraintSuite constraintSuite = specWithSubtasks.buildConstraintSuite();
     EXPECT_THAT(constraintSuite.individualConstraints(), ElementsAre(
             AllOf(Property(&ConstraintGroup::id, 1), Property(&ConstraintGroup::constraints, SizeIs(3))),
             AllOf(Property(&ConstraintGroup::id, 2), Property(&ConstraintGroup::constraints, SizeIs(2)))));

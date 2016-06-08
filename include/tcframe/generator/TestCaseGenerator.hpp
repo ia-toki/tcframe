@@ -41,7 +41,7 @@ public:
     virtual TestCaseGenerationResult generate(
             const TestCaseData& data,
             const function<void()>& closure,
-            const GeneratorConfig& config) {
+            const TestConfig& config) {
 
         return doGenerate(data, closure, config);
     }
@@ -50,7 +50,7 @@ private:
     TestCaseGenerationResult doGenerate(
             const TestCaseData& data,
             const function<void()>& applier,
-            const GeneratorConfig& config) {
+            const TestConfig& config) {
 
         string inputFilename = config.testCasesDir() + "/" + data.name() + ".in";
         string outputFilename = config.testCasesDir() + "/" + data.name() + ".out";

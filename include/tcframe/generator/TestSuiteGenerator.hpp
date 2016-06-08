@@ -47,24 +47,22 @@ public:
 
     virtual GenerationResult generate(
             const TestSuite& testSuite,
-            const ProblemConfig& problemConfig,
-            const GeneratorConfig& generatorConfig) {
+            const CoreConfig& coreConfig) {
 
         logger_->logIntroduction();
 
-        os_->forceMakeDir(generatorConfig.testCasesDir());
+        os_->forceMakeDir(coreConfig.testConfig().testCasesDir());
 
         map<string, TestCaseGenerationResult> resultsByName;
-        generateSampleTests(testSuite.sampleTests(), problemConfig, generatorConfig, resultsByName);
-        generateOfficialTests(testSuite.officialTests(), problemConfig, generatorConfig, resultsByName);
+        generateSampleTests(testSuite.sampleTests(), coreConfig, resultsByName);
+        generateOfficialTests(testSuite.officialTests(), coreConfig, resultsByName);
         return GenerationResult(resultsByName);
     }
 
 private:
     void generateSampleTests(
             const vector<SampleTestCase>& sampleTests,
-            const ProblemConfig& problemConfig,
-            const GeneratorConfig& generatorConfig,
+            const CoreConfig& coreConfig,
             map<string, TestCaseGenerationResult>& resultsByName) {
 
         logger_->logSampleTestCasesIntroduction();
@@ -72,7 +70,7 @@ private:
         for (int testCaseId = 1; testCaseId <= sampleTests.size(); testCaseId++) {
             SampleTestCase testCase = sampleTests[testCaseId - 1];
             TestCaseData testCaseData = TestCaseDataBuilder()
-                    .setName(TestCaseNameCreator::createSampleTestCaseName(problemConfig.slug(), testCaseId))
+                    .setName(TestCaseNameCreator::createSampleTestCaseName(coreConfig.problemConfig().slug(), testCaseId))
                     .setConstraintGroupIds(testCase.constraintGroupIds())
                     .build();
 
@@ -81,50 +79,52 @@ private:
                 ioManipulator_->parseInput(in);
             };
 
-            generateTestCase(testCaseData, closure, generatorConfig, resultsByName);
+            generateTestCase(testCaseData, closure, coreConfig, resultsByName);
         }
     }
 
     void generateOfficialTests(
             const vector<TestGroup>& officialTests,
-            const ProblemConfig& problemConfig,
-            const GeneratorConfig& generatorConfig,
+            const CoreConfig& coreConfig,
             map<string, TestCaseGenerationResult>& resultsByName) {
 
         for (const TestGroup& testGroup : officialTests) {
-            generateTestGroup(testGroup, problemConfig, generatorConfig, resultsByName);
+            generateTestGroup(testGroup, coreConfig, resultsByName);
         }
     }
 
     void generateTestGroup(
             const TestGroup& testGroup,
-            const ProblemConfig& problemConfig,
-            const GeneratorConfig& generatorConfig,
+            const CoreConfig& coreConfig,
             map<string, TestCaseGenerationResult>& resultsByName) {
 
         logger_->logTestGroupIntroduction(testGroup.id());
 
         for (int testCaseId = 1; testCaseId <= testGroup.officialTestCases().size(); testCaseId++) {
             OfficialTestCase testCase = testGroup.officialTestCases()[testCaseId - 1];
+            string testCaseName = TestCaseNameCreator::createOfficialTestCaseName(
+                    coreConfig.problemConfig().slug(),
+                    testGroup.id(),
+                    testCaseId);
             TestCaseData testCaseData = TestCaseDataBuilder()
-                    .setName(TestCaseNameCreator::createOfficialTestCaseName(problemConfig.slug(), testGroup.id(), testCaseId))
+                    .setName(testCaseName)
                     .setDescription(testCase.description())
                     .setConstraintGroupIds(testGroup.constraintGroupIds())
                     .build();
 
-            generateTestCase(testCaseData, testCase.closure(), generatorConfig, resultsByName);
+            generateTestCase(testCaseData, testCase.closure(), coreConfig, resultsByName);
         }
     }
 
     TestCaseGenerationResult generateTestCase(
             const TestCaseData& testCaseData,
             const function<void()> testCaseClosure,
-            const GeneratorConfig& generatorConfig,
+            const CoreConfig& coreConfig,
             map<string, TestCaseGenerationResult>& testCaseGenerationResultsByName) {
 
         logger_->logTestCaseIntroduction(testCaseData.name());
 
-        TestCaseGenerationResult result = testCaseGenerator_->generate(testCaseData, testCaseClosure, generatorConfig);
+        TestCaseGenerationResult result = testCaseGenerator_->generate(testCaseData, testCaseClosure, coreConfig.testConfig());
         testCaseGenerationResultsByName[testCaseData.name()] = result;
 
         logger_->logTestCaseGenerationResult(testCaseData.description(), result);

@@ -20,6 +20,10 @@ public:
     const vector<string>& messages() const {
         return messages_;
     }
+
+    bool operator==(const SpecificationFailure& o) const {
+        return messages_ == o.messages_;
+    }
 };
 
 }

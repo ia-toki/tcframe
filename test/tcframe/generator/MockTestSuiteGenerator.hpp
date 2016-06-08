@@ -12,7 +12,7 @@ public:
             : TestSuiteGenerator(nullptr, nullptr, nullptr, nullptr)
     {}
 
-    MOCK_METHOD3(generate, GenerationResult(const TestSuite&, const ProblemConfig&, const GeneratorConfig&));
+    MOCK_METHOD2(generate, GenerationResult(const TestSuite&, const CoreConfig&));
 };
 
 }

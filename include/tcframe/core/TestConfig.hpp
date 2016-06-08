@@ -10,8 +10,8 @@ using std::tuple;
 
 namespace tcframe {
 
-struct GeneratorConfig {
-    friend class GeneratorConfigBuilder;
+struct TestConfig {
+    friend class TestConfigBuilder;
 
 private:
     string solutionCommand_;
@@ -26,34 +26,34 @@ public:
         return testCasesDir_;
     }
 
-    bool operator==(const GeneratorConfig& o) const {
+    bool operator==(const TestConfig& o) const {
         return tie(solutionCommand_, testCasesDir_) == tie(o.solutionCommand_, o.testCasesDir_);
     }
 };
 
-class GeneratorConfigBuilder {
+class TestConfigBuilder {
 private:
-    GeneratorConfig subject_;
+    TestConfig subject_;
 
 public:
-    virtual ~GeneratorConfigBuilder() {}
+    virtual ~TestConfigBuilder() {}
 
-    GeneratorConfigBuilder() {
+    TestConfigBuilder() {
         subject_.solutionCommand_ = "./solution";
         subject_.testCasesDir_ = "tc";
     }
 
-    GeneratorConfigBuilder& setSolutionCommand(string solutionCommand) {
+    TestConfigBuilder& setSolutionCommand(string solutionCommand) {
         subject_.solutionCommand_ = solutionCommand;
         return *this;
     }
 
-    GeneratorConfigBuilder& setTestCasesDir(string testCasesDir) {
+    TestConfigBuilder& setTestCasesDir(string testCasesDir) {
         subject_.testCasesDir_ = testCasesDir;
         return *this;
     }
 
-    GeneratorConfig build() {
+    TestConfig build() {
         return move(subject_);
     }
 };

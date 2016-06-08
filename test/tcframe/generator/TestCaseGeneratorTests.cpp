@@ -35,7 +35,7 @@ protected:
             .setDescription("N = 42")
             .setConstraintGroupIds({1, 2})
             .build();
-    GeneratorConfig config = GeneratorConfigBuilder()
+    TestConfig config = TestConfigBuilder()
             .setTestCasesDir("dir")
             .setSolutionCommand("python Sol.py")
             .build();

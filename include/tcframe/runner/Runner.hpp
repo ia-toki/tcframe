@@ -12,85 +12,91 @@
 
 namespace tcframe {
 
-template<typename TProblem>
+template<typename TProblemSpec>
 class Runner {
-private:
-    int argc_;
-    char** argv_;
 
-    BaseProblem* problem_;
-    BaseGenerator<TProblem>* generator_;
+    /* For backward compatibility with 0.x versions. */
+    typedef TProblemSpec TProblem;
+
+private:
+    int argc_;        // Member fields
+    char** argv_;     // for backward compatibility with 0.x versions.
+
+    BaseTestSpec<TProblemSpec>* testSpec_;
 
     LoggerEngine* loggerEngine_;
     OperatingSystem* os_;
 
-    RunnerLoggerFactory* runnerLoggerFactory_;
-    TestSuiteGeneratorFactory* testSuiteGeneratorFactory_;
+    RunnerLoggerFactory* loggerFactory_;
+    TestSuiteGeneratorFactory* generatorFactory_;
 
 public:
-    Runner(int argc, char** argv)
-            : argc_(argc)
-            , argv_(argv)
-            , problem_(nullptr)
-            , generator_(nullptr)
+    Runner(BaseTestSpec<TProblemSpec>* testSpec)
+            : testSpec_(testSpec)
             , loggerEngine_(new SimpleLoggerEngine())
             , os_(new UnixOperatingSystem())
-            , runnerLoggerFactory_(new RunnerLoggerFactory())
-            , testSuiteGeneratorFactory_(new TestSuiteGeneratorFactory())
+            , loggerFactory_(new RunnerLoggerFactory())
+            , generatorFactory_(new TestSuiteGeneratorFactory())
     {}
 
-    /* Visible for testing */
+    /* Visible for testing. */
     Runner(
-            int argc,
-            char** argv,
-            BaseGenerator<TProblem>* generator,
+            BaseTestSpec<TProblemSpec>* testSpec,
             LoggerEngine* loggerEngine,
             OperatingSystem* os,
             RunnerLoggerFactory* runnerLoggerFactory,
             TestSuiteGeneratorFactory* testSuiteGeneratorFactory)
-            : argc_(argc)
-            , argv_(argv)
-            , problem_(generator)
-            , generator_(generator)
+            : testSpec_(testSpec)
             , loggerEngine_(loggerEngine)
             , os_(os)
-            , runnerLoggerFactory_(runnerLoggerFactory)
-            , testSuiteGeneratorFactory_(testSuiteGeneratorFactory)
+            , loggerFactory_(runnerLoggerFactory)
+            , generatorFactory_(testSuiteGeneratorFactory)
     {}
 
+    /* DEPRECATED. For backward compatibility with 0.x versions. */
+    Runner(int argc, char** argv)
+            : argc_(argc)
+            , argv_(argv)
+            , testSpec_(nullptr)
+            , loggerEngine_(new SimpleLoggerEngine())
+            , os_(new UnixOperatingSystem())
+            , loggerFactory_(new RunnerLoggerFactory())
+            , generatorFactory_(new TestSuiteGeneratorFactory())
+    {}
+
+    /* DEPRECATED. For backward compatibility with 0.x versions. */
     void setGenerator(BaseGenerator<TProblem>* generator) {
-        problem_ = generator;
-        generator_ = generator;
+        testSpec_ = generator;
     }
 
+    /* DEPRECATED. For backward compatibility with 0.x versions. */
     int run() {
-        RunnerLogger* logger = runnerLoggerFactory_->create(loggerEngine_);
+        return run(argc_, argv_);
+    }
 
-        ProblemConfig problemConfig;
-        GeneratorConfig generatorConfig;
-        ConstraintSuite constraintSuite;
-        TestSuite testSuite;
-        IOFormat ioFormat;
+    int run(int argc, char** argv) {
+        auto logger = loggerFactory_->create(loggerEngine_);
 
+        CoreSpec coreSpec;
         try {
-            problemConfig = problem_->buildProblemConfig();
-            generatorConfig = generator_->buildGeneratorConfig();
-            constraintSuite = problem_->buildConstraintSuite();
-            testSuite = generator_->buildTestSuite();
-            ioFormat = problem_->buildIOFormat();
+            coreSpec = testSpec_->buildCoreSpec();
         } catch (runtime_error& e) {
             logger->logSpecificationFailure(SpecificationFailure({e.what()}));
             return 1;
         }
 
-        auto ioManipulator = new IOManipulator(ioFormat);
-        auto verifier = new ConstraintSuiteVerifier(constraintSuite);
-        auto generationLogger = new GeneratorLogger(loggerEngine_);
+        return generate(coreSpec);
+    }
+
+private:
+    int generate(const CoreSpec& coreSpec) {
+        auto ioManipulator = new IOManipulator(coreSpec.ioFormat());
+        auto verifier = new ConstraintSuiteVerifier(coreSpec.constraintSuite());
         auto testCaseGenerator = new TestCaseGenerator(verifier, ioManipulator, os_);
+        auto generationLogger = new GeneratorLogger(loggerEngine_);
 
-        auto generator = testSuiteGeneratorFactory_->create(testCaseGenerator, ioManipulator, os_, generationLogger);
-
-        return generator->generate(testSuite, problemConfig, generatorConfig).isSuccessful() ? 0 : 1;
+        auto generator = generatorFactory_->create(testCaseGenerator, ioManipulator, os_, generationLogger);
+        return generator->generate(coreSpec.testSuite(), coreSpec.coreConfig()).isSuccessful() ? 0 : 1;
     }
 };
 

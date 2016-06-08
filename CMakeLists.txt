@@ -47,9 +47,11 @@ set(SOURCE_FILES
     include/tcframe/constraint/ConstraintGroup.hpp
     include/tcframe/constraint/ConstraintSuite.hpp
     include/tcframe/core.hpp
-    include/tcframe/core/BaseGenerator.hpp
-    include/tcframe/core/BaseProblem.hpp
-    include/tcframe/core/GeneratorConfig.hpp
+    include/tcframe/core/BaseTestSpec.hpp
+    include/tcframe/core/BaseProblemSpec.hpp
+    include/tcframe/core/CoreConfig.hpp
+    include/tcframe/core/CoreSpec.hpp
+    include/tcframe/core/TestConfig.hpp
     include/tcframe/core/Magic.hpp
     include/tcframe/core/NotImplementedException.hpp
     include/tcframe/core/ProblemConfig.hpp
@@ -108,8 +110,8 @@ set(SOURCE_FILES
     include/tcframe/verifier/VerificationResult.hpp
     test/tcframe/mock.hpp
     test/tcframe/constraint/ConstraintSuiteBuilderTests.cpp
-    test/tcframe/core/BaseGeneratorTests.cpp
-    test/tcframe/core/BaseProblemTests.cpp
+    test/tcframe/core/BaseTestSpecTests.cpp
+    test/tcframe/core/BaseProblemSpecTests.cpp
     test/tcframe/core/MagicTests.cpp
     test/tcframe/generator/GeneratorLoggerTests.cpp
     test/tcframe/generator/FakeTestCaseGenerationFailure.hpp

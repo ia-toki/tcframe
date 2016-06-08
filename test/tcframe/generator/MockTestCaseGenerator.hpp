@@ -15,7 +15,7 @@ public:
     MOCK_METHOD3(generate, TestCaseGenerationResult(
             const TestCaseData&,
             const function<void()>&,
-            const GeneratorConfig&));
+            const TestConfig&));
 };
 
 }

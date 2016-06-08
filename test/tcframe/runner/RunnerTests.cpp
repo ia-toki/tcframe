@@ -18,52 +18,73 @@ namespace tcframe {
 
 class RunnerTests : public Test {
 protected:
-    class FakeProblem : public BaseProblem {
+    class ProblemSpec : public BaseProblemSpec {
     protected:
         void InputFormat() {}
     };
 
-    class FakeGenerator : public BaseGenerator<FakeProblem> {};
+    class TestSpec : public BaseTestSpec<ProblemSpec> {};
 
-    int argc;
-    char** argv;
+    class BadTestSpec : public BaseTestSpec<ProblemSpec> {
+    public:
+        CoreSpec buildCoreSpec() {
+            throw runtime_error("An error");
+        }
+    };
 
-    BaseGenerator<FakeProblem>* generator = new FakeGenerator();
+    class DeprecatedGenerator : public BaseGenerator<ProblemSpec> {};
+
+    int argc = 1;
+    char** argv =  new char*[1]{(char*) "./runner"};
+
+    BaseTestSpec<ProblemSpec>* testSpec = new TestSpec();
+    BaseTestSpec<ProblemSpec>* badTestSpec = new BadTestSpec();
     LoggerEngine* loggerEngine = new SimpleLoggerEngine();
     OperatingSystem* os = new UnixOperatingSystem();
 
     Mock(RunnerLogger) logger;
-    Mock(TestSuiteGenerator) testSuiteGenerator;
+    Mock(TestSuiteGenerator) generator;
 
     Mock(RunnerLoggerFactory) loggerFactory;
-    Mock(TestSuiteGeneratorFactory) testSuiteGeneratorFactory;
+    Mock(TestSuiteGeneratorFactory) generatorFactory;
 
     void SetUp() {
         ON_CALL(loggerFactory, create(_)).WillByDefault(Return(&logger));
-        ON_CALL(testSuiteGeneratorFactory, create(_, _, _, _)).WillByDefault(Return(&testSuiteGenerator));
+        ON_CALL(generatorFactory, create(_, _, _, _)).WillByDefault(Return(&generator));
     }
 };
 
+TEST_F(RunnerTests, Run_Specification_Failed) {
+    Runner<ProblemSpec> runner(badTestSpec, loggerEngine, os, &loggerFactory, &generatorFactory);
+    EXPECT_CALL(generator, generate(_, _)).Times(0);
+    EXPECT_CALL(logger, logSpecificationFailure(SpecificationFailure({"An error"})));
+
+    EXPECT_THAT(runner.run(argc, argv), Ne(0));
+}
+
 TEST_F(RunnerTests, Run_Generation_Successful) {
-    argc = 1;
-    argv = new char*[1]{(char*) "./runner"};
+    Runner<ProblemSpec> runner(testSpec, loggerEngine, os, &loggerFactory, &generatorFactory);
+    ON_CALL(generator, generate(_, _)).WillByDefault(Return(GenerationResult({})));
 
-    Runner<FakeProblem> runner(argc, argv, generator, loggerEngine, os, &loggerFactory, &testSuiteGeneratorFactory);
-    ON_CALL(testSuiteGenerator, generate(_, _, _)).WillByDefault(Return(GenerationResult({})));
-
-    EXPECT_THAT(runner.run(), Eq(0));
+    EXPECT_THAT(runner.run(argc, argv), Eq(0));
 }
 
 TEST_F(RunnerTests, Run_Generation_Failed) {
-    argc = 1;
-    argv = new char*[1]{(char*) "./runner"};
-
-    Runner<FakeProblem> runner(argc, argv, generator, loggerEngine, os, &loggerFactory, &testSuiteGeneratorFactory);
-    ON_CALL(testSuiteGenerator, generate(_, _, _))
+    Runner<ProblemSpec> runner(testSpec, loggerEngine, os, &loggerFactory, &generatorFactory);
+    ON_CALL(generator, generate(_, _))
             .WillByDefault(Return(GenerationResult({
                     {"foo_1", TestCaseGenerationResult::failedResult(new FakeTestCaseGenerationFailure())}})));
 
-    EXPECT_THAT(runner.run(), Ne(0));
+    EXPECT_THAT(runner.run(argc, argv), Ne(0));
+}
+
+TEST_F(RunnerTests, Run_Deprecated_Compiles) {
+    Runner<ProblemSpec> runner(argc, argv);
+    runner.setGenerator(new DeprecatedGenerator());
+    // So that it won't run
+    if (false) {
+        runner.run();
+    }
 }
 
 }
