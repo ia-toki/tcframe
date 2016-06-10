@@ -3,6 +3,7 @@
 namespace tcframe {
 
 enum FailureType {
+    OTHER,
     VERIFICATION
 };
 

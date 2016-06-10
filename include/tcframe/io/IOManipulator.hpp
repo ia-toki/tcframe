@@ -33,6 +33,12 @@ public:
         parse(ioFormat_.inputFormat(), in);
     }
 
+    virtual void parseOutput(istream* in) {
+        if (!ioFormat_.outputFormat().empty()) {
+            parse(ioFormat_.outputFormat(), in);
+        }
+    }
+
 private:
     void print(const vector<IOSegment*>& segments, ostream* out) {
         for (IOSegment* segment : segments) {

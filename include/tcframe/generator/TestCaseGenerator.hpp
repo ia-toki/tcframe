@@ -7,6 +7,7 @@
 #include "TestCaseData.hpp"
 #include "TestCaseGenerationException.hpp"
 #include "TestCaseGenerationResult.hpp"
+#include "OtherFailure.hpp"
 #include "VerificationFailure.hpp"
 #include "tcframe/core.hpp"
 #include "tcframe/io.hpp"
@@ -62,8 +63,8 @@ private:
             generateOutput(inputFilename, outputFilename, config.solutionCommand());
         } catch (TestCaseGenerationException& e) {
             return TestCaseGenerationResult::failedResult(e.failure());
-        } catch (...) {
-
+        } catch (runtime_error& e) {
+            return TestCaseGenerationResult::failedResult(new OtherFailure(e.what()));
         }
 
         return TestCaseGenerationResult::successfulResult();
@@ -87,7 +88,8 @@ private:
     }
 
     void generateOutput(const string& inputFilename, const string& outputFilename, const string& solutionCommand) {
-        os_->execute(solutionCommand, inputFilename, outputFilename, "_error.out");
+        ExecutionResult result = os_->execute(solutionCommand, inputFilename, outputFilename, "_error.out");
+        ioManipulator_->parseOutput(result.outputStream());
     }
 };
 

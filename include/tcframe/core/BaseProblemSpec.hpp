@@ -51,6 +51,8 @@ public:
     IOFormat buildIOFormat() {
         prepareForInputFormat();
         InputFormat();
+        prepareForOutputFormat();
+        OutputFormat();
         return IOFormatBuilder::build();
     }
 
@@ -78,6 +80,7 @@ protected:
 
     virtual void Config() {}
     virtual void InputFormat() = 0;
+    virtual void OutputFormat() {}
     virtual void Constraints() {throw NotImplementedException();}
     virtual void Subtask1() {throw NotImplementedException();}
     virtual void Subtask2() {throw NotImplementedException();}

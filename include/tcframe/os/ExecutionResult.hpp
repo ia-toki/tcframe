@@ -23,11 +23,11 @@ public:
         return exitStatus_;
     }
 
-    const istream* outputStream() const {
+    istream* outputStream() const {
         return outputStream_;
     }
 
-    const istream* errorStream() const {
+    istream* errorStream() const {
         return errorStream_;
     }
 };
