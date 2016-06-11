@@ -126,6 +126,7 @@ set(SOURCES
     include/tcframe/verifier/ConstraintsVerificationResult.hpp
     include/tcframe/verifier/MultipleTestCasesConstraintsVerificationResult.hpp
     include/tcframe/verifier/Verifier.hpp
+    test/tcframe/helper.hpp
     test/tcframe/mock.hpp
     test/tcframe/generator/GeneratorLoggerTests.cpp
     test/tcframe/generator/GeneratorTests.cpp
