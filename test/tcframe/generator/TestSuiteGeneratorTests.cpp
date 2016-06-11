@@ -1,4 +1,5 @@
 #include "gmock/gmock.h"
+#include "../helper.hpp"
 #include "../mock.hpp"
 
 #include <vector>
@@ -11,17 +12,24 @@
 #include "tcframe/generator/TestSuiteGenerator.hpp"
 
 using ::testing::_;
+using ::testing::DoAll;
 using ::testing::ElementsAre;
 using ::testing::Eq;
 using ::testing::InSequence;
+using ::testing::Invoke;
+using ::testing::InvokeWithoutArgs;
+using ::testing::Ne;
 using ::testing::Pair;
 using ::testing::Property;
 using ::testing::Return;
 using ::testing::Test;
+using ::testing::WithArg;
 
 using std::vector;
 
 namespace tcframe {
+
+int N;
 
 class TestSuiteGeneratorTests : public Test {
 protected:
@@ -33,9 +41,9 @@ protected:
     vector<string> stc1 = {"10", "20"};
     vector<string> stc2 = {"30"};
 
-    OfficialTestCase tc1 = OfficialTestCase([]{}, "N = 1");
-    OfficialTestCase tc2 = OfficialTestCase([]{}, "N = 2");
-    OfficialTestCase tc3 = OfficialTestCase([]{}, "N = 3");
+    OfficialTestCase tc1 = OfficialTestCase([] {N = 1;}, "N = 1");
+    OfficialTestCase tc2 = OfficialTestCase([] {N = 2;}, "N = 2");
+    OfficialTestCase tc3 = OfficialTestCase([] {N = 3;}, "N = 3");
 
     TestSuite testSuiteWithoutGroups = TestSuiteBuilder()
             .addSampleTestCase(stc1)
@@ -307,6 +315,46 @@ TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Failed) {
             Pair("foo_2_1", TestCaseGenerationResult::failedResult(failure_2_1)),
             Pair("foo_sample_1", TestCaseGenerationResult::failedResult(failure_sample_1)),
             Pair("foo_sample_2", TestCaseGenerationResult::successfulResult())));
+}
+
+TEST_F(TestSuiteGeneratorTests, Generation_InputFinalizer_Official_Applied) {
+    TestSuite testSuite = TestSuiteBuilder()
+            .setInputFinalizer([] {N *= 2;})
+            .addOfficialTestCase(tc3)
+            .build();
+
+    Captor<function<void()>> applierCaptor;
+    ON_CALL(testCaseGenerator, generate(_, _, _))
+            .WillByDefault(DoAll(
+                    WithArg<1>(Invoke(&applierCaptor, &Captor<function<void()>>::capture)),
+                    InvokeWithoutArgs([]{return TestCaseGenerationResult::successfulResult();})));
+
+    generator.generate(testSuite, coreConfig);
+
+    applierCaptor.arg()();
+    EXPECT_THAT(N, Eq(3 * 2));
+}
+
+TEST_F(TestSuiteGeneratorTests, Generation_InputFinalizer_Sample_NotApplied) {
+    TestSuite testSuite = TestSuiteBuilder()
+            .setInputFinalizer([] {N *= 2;})
+            .addSampleTestCase(stc1)
+            .build();
+
+    ON_CALL(ioManipulator, parseInput(_))
+            .WillByDefault(InvokeWithoutArgs([] {N = 10;}));
+
+    Captor<function<void()>> applierCaptor;
+    ON_CALL(testCaseGenerator, generate(_, _, _))
+            .WillByDefault(DoAll(
+                    WithArg<1>(Invoke(&applierCaptor, &Captor<function<void()>>::capture)),
+                    InvokeWithoutArgs([]{return TestCaseGenerationResult::successfulResult();})));
+
+    generator.generate(testSuite, coreConfig);
+
+    applierCaptor.arg()();
+    EXPECT_THAT(N, Ne(10 * 2));
+    EXPECT_THAT(N, Eq(10));
 }
 
 }

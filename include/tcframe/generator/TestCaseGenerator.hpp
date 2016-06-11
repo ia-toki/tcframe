@@ -41,10 +41,10 @@ public:
 
     virtual TestCaseGenerationResult generate(
             const TestCaseData& data,
-            const function<void()>& closure,
+            const function<void()>& applier,
             const TestConfig& config) {
 
-        return doGenerate(data, closure, config);
+        return doGenerate(data, applier, config);
     }
 
 private:

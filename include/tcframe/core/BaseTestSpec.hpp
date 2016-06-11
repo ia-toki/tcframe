@@ -52,6 +52,10 @@ public:
     }
 
     TestSuite buildTestSuite() {
+        TestSuiteBuilder::setInputFinalizer([this] {
+            FinalizeInput();
+            InputFinalizer();
+        });
         SampleTestCases();
 
         try {
@@ -85,6 +89,9 @@ public:
 
 protected:
     virtual void Config() {}
+    /* DEPRECATED. For backward compatibility with 0.x versions. */
+    virtual void FinalizeInput() {}
+    virtual void InputFinalizer() {}
     virtual void SampleTestCases() {}
     virtual void TestCases() {throw NotImplementedException();}
     virtual void TestGroup1() {throw NotImplementedException();}

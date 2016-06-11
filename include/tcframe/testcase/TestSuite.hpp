@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <set>
 #include <string>
 #include <tuple>
@@ -10,6 +11,7 @@
 #include "SampleTestCase.hpp"
 #include "TestGroup.hpp"
 
+using std::function;
 using std::move;
 using std::set;
 using std::string;
@@ -23,6 +25,7 @@ struct TestSuite {
 private:
     vector<SampleTestCase> sampleTests_;
     vector<TestGroup> officialTests_;
+    function<void()> inputFinalizer_;
 
 public:
     const vector<SampleTestCase> sampleTests() const {
@@ -31,6 +34,10 @@ public:
 
     const vector<TestGroup>& officialTests() const {
         return officialTests_;
+    }
+
+    const function<void()>& inputFinalizer() const {
+        return inputFinalizer_;
     }
 
     bool operator==(const TestSuite& o) const {
@@ -55,6 +62,11 @@ public:
             , currentTestGroupId_(0)
             , currentConstraintGroupIds_({-1})
     {}
+
+    TestSuiteBuilder& setInputFinalizer(const function<void()>& inputFinalizer) {
+        subject_.inputFinalizer_ = inputFinalizer;
+        return *this;
+    }
 
     TestSuiteBuilder& addSampleTestCase(const vector<string>& lines, const set<int>& constraintGroupIds) {
         string content;

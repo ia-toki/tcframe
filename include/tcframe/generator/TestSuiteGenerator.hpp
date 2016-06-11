@@ -54,19 +54,20 @@ public:
         os_->forceMakeDir(coreConfig.testConfig().testCasesDir());
 
         map<string, TestCaseGenerationResult> resultsByName;
-        generateSampleTests(testSuite.sampleTests(), coreConfig, resultsByName);
-        generateOfficialTests(testSuite.officialTests(), coreConfig, resultsByName);
+        generateSampleTests(testSuite, coreConfig, resultsByName);
+        generateOfficialTests(testSuite, coreConfig, resultsByName);
         return GenerationResult(resultsByName);
     }
 
 private:
     void generateSampleTests(
-            const vector<SampleTestCase>& sampleTests,
+            const TestSuite& testSuite,
             const CoreConfig& coreConfig,
             map<string, TestCaseGenerationResult>& resultsByName) {
 
         logger_->logSampleTestCasesIntroduction();
 
+        vector<SampleTestCase> sampleTests = testSuite.sampleTests();
         for (int testCaseId = 1; testCaseId <= sampleTests.size(); testCaseId++) {
             SampleTestCase testCase = sampleTests[testCaseId - 1];
             TestCaseData testCaseData = TestCaseDataBuilder()
@@ -74,27 +75,29 @@ private:
                     .setConstraintGroupIds(testCase.constraintGroupIds())
                     .build();
 
-            function<void()> closure = [=] {
+            function<void()> applier = [=] {
                 istream* in = new istringstream(testCase.content());
                 ioManipulator_->parseInput(in);
             };
 
-            generateTestCase(testCaseData, closure, coreConfig, resultsByName);
+            generateTestCase(testCaseData, applier, coreConfig, resultsByName);
         }
     }
 
     void generateOfficialTests(
-            const vector<TestGroup>& officialTests,
+            const TestSuite& testSuite,
             const CoreConfig& coreConfig,
             map<string, TestCaseGenerationResult>& resultsByName) {
 
+        vector<TestGroup> officialTests = testSuite.officialTests();
         for (const TestGroup& testGroup : officialTests) {
-            generateTestGroup(testGroup, coreConfig, resultsByName);
+            generateTestGroup(testGroup, testSuite.inputFinalizer(), coreConfig, resultsByName);
         }
     }
 
     void generateTestGroup(
             const TestGroup& testGroup,
+            const function<void()>& inputFinalizer,
             const CoreConfig& coreConfig,
             map<string, TestCaseGenerationResult>& resultsByName) {
 
@@ -111,8 +114,9 @@ private:
                     .setDescription(testCase.description())
                     .setConstraintGroupIds(testGroup.constraintGroupIds())
                     .build();
+            function<void()> applier = [=] {testCase.closure()(); inputFinalizer();};
 
-            generateTestCase(testCaseData, testCase.closure(), coreConfig, resultsByName);
+            generateTestCase(testCaseData, applier, coreConfig, resultsByName);
         }
     }
 

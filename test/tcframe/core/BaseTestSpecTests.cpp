@@ -15,7 +15,7 @@ namespace tcframe {
 class BaseTestSpecTests : public Test {
 protected:
     class ProblemSpec : public BaseProblemSpec {
-    protected:
+    public: // intentionaly public so that input values can be inspected
         int A, B;
 
         void InputFormat() {}
@@ -26,6 +26,10 @@ protected:
         void Config() {
             setSolutionCommand("python Sol.py");
             setTestCasesDir("dir");
+        }
+
+        void InputFinalizer() {
+            A *= 2;
         }
     };
 
@@ -74,6 +78,16 @@ TEST_F(BaseTestSpecTests, Config) {
     TestConfig config = spec.buildTestConfig();
     EXPECT_THAT(config.solutionCommand(), Eq("python Sol.py"));
     EXPECT_THAT(config.testCasesDir(), Eq("dir"));
+}
+
+TEST_F(BaseTestSpecTests, InputFinalizer) {
+    TestSuite testSuite = spec.buildTestSuite();
+    function<void()> inputFinalizer = testSuite.inputFinalizer();
+
+    spec.A = 3;
+    inputFinalizer();
+
+    EXPECT_THAT(spec.A, Eq(3 * 2));
 }
 
 TEST_F(BaseTestSpecTests, TestSuite) {
