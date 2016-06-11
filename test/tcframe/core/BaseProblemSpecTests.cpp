@@ -36,6 +36,19 @@ protected:
                     .setSize(2, 3)
                     .build();
         }
+
+        void OutputFormat() {
+            newLinesIOSegment()
+                    .addVectorVariable(Vector::create(X, "X"))
+                    .setSize(3);
+            newGridIOSegment()
+                    .addMatrixVariable(Matrix::create(M, "M"))
+                    .setSize(2, 3)
+                    .build();
+            newLineIOSegment()
+                    .addScalarVariable(Scalar::create(A, "A"))
+                    .addScalarVariable(Scalar::create(B, "B"));
+        }
     };
 
     class ProblemWithConstraints : public ProblemSpec {
@@ -76,7 +89,11 @@ TEST_F(BaseProblemSpecTests, IOFormat) {
         A<LineIOSegment*>(),
         A<LinesIOSegment*>(),
         A<GridIOSegment*>()));
-}
+    EXPECT_THAT(ioFormat.outputFormat(), ElementsAre(
+            A<LinesIOSegment*>(),
+            A<GridIOSegment*>(),
+            A<LineIOSegment*>()));
+    }
 
 TEST_F(BaseProblemSpecTests, Constraints) {
     ConstraintSuite constraintSuite = specWithConstraints.buildConstraintSuite();
