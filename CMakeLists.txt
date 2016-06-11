@@ -109,6 +109,7 @@ set(SOURCE_FILES
     include/tcframe/verifier.hpp
     include/tcframe/verifier/ConstraintSuiteVerifier.hpp
     include/tcframe/verifier/VerificationResult.hpp
+    test/tcframe/helper.hpp
     test/tcframe/mock.hpp
     test/tcframe/constraint/ConstraintSuiteBuilderTests.cpp
     test/tcframe/core/BaseTestSpecTests.cpp
