@@ -69,6 +69,13 @@ protected:
         }
     };
 
+    class TestSpecWithRandom : public TestSpec {
+    protected:
+        void TestCases() {
+            addOfficialTestCase(OfficialTestCase([=] {A = rnd.nextInt(1, 100);}, "A = rnd.nextInt(1, 100)"));
+        }
+    };
+
     TestSpec spec;
     TestSpecWithTestCases specWithTestCases;
     TestSpecWithTestGroups specWithTestGroups;
@@ -103,6 +110,10 @@ TEST_F(BaseTestSpecTests, TestSuite_WithGroups) {
     EXPECT_THAT(testSuite.officialTests(), ElementsAre(
             AllOf(Property(&TestGroup::id, 1), Property(&TestGroup::officialTestCases, SizeIs(3))),
             AllOf(Property(&TestGroup::id, 2), Property(&TestGroup::officialTestCases, SizeIs(2)))));
+}
+
+TEST_F(BaseTestSpecTests, Random_Compiles) {
+    SUCCEED();
 }
 
 }

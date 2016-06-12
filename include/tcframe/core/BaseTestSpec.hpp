@@ -6,6 +6,7 @@
 #include "CoreSpec.hpp"
 #include "TestConfig.hpp"
 #include "NotImplementedException.hpp"
+#include "tcframe/random.hpp"
 #include "tcframe/testcase.hpp"
 
 using std::vector;
@@ -88,6 +89,8 @@ public:
     }
 
 protected:
+    Random rnd;
+
     virtual void Config() {}
     /* DEPRECATED. For backward compatibility with 0.x versions. */
     virtual void FinalizeInput() {}
