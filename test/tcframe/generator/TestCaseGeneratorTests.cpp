@@ -32,7 +32,7 @@ protected:
     TestCaseData data = TestCaseDataBuilder()
             .setName("foo_1")
             .setDescription("N = 42")
-            .setConstraintGroupIds({1, 2})
+            .setSubtaskIds({1, 2})
             .build();
     TestConfig config = TestConfigBuilder()
             .setTestCasesDir("dir")

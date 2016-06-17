@@ -15,13 +15,13 @@ namespace tcframe {
 struct TestGroup {
 private:
     int id_;
-    set<int> constraintGroupIds_;
+    set<int> subtaskIds_;
     vector<OfficialTestCase> officialTestCases_;
 
 public:
-    TestGroup(int id, const set<int>& constraintGroupId, const vector<OfficialTestCase>& testCases)
+    TestGroup(int id, const set<int>& subtaskIds, const vector<OfficialTestCase>& testCases)
             : id_(id)
-            , constraintGroupIds_(constraintGroupId)
+            , subtaskIds_(subtaskIds)
             , officialTestCases_(testCases)
     {}
 
@@ -29,8 +29,8 @@ public:
         return id_;
     }
 
-    const set<int>& constraintGroupIds() const {
-        return constraintGroupIds_;
+    const set<int>& subtaskIds() const {
+        return subtaskIds_;
     }
 
     const vector<OfficialTestCase>& officialTestCases() const {
@@ -38,7 +38,7 @@ public:
     }
 
     bool operator==(const TestGroup& o) const {
-        return tie(id_, constraintGroupIds_, officialTestCases_) == tie(o.id_, o.constraintGroupIds_, o.officialTestCases_);
+        return tie(id_, subtaskIds_, officialTestCases_) == tie(o.id_, o.subtaskIds_, o.officialTestCases_);
     }
 };
 

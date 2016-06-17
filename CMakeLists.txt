@@ -44,8 +44,8 @@ include_directories(include)
 set(SOURCE_FILES
     include/tcframe/constraint.hpp
     include/tcframe/constraint/Constraint.hpp
-    include/tcframe/constraint/ConstraintGroup.hpp
     include/tcframe/constraint/ConstraintSuite.hpp
+    include/tcframe/constraint/Subtask.hpp
     include/tcframe/core.hpp
     include/tcframe/core/BaseTestSpec.hpp
     include/tcframe/core/BaseProblemSpec.hpp

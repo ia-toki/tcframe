@@ -63,13 +63,13 @@ public:
         } catch (NotImplementedException&) {
             for (auto subtask : subtasks_) {
                 try {
-                    ConstraintSuiteBuilder::newConstraintGroup();
+                    ConstraintSuiteBuilder::newSubtask();
                     (this->*subtask)();
                 } catch (NotImplementedException&) {
                     break;
                 }
             }
-            return ConstraintSuiteBuilder::buildWithoutLastConstraintGroup();
+            return ConstraintSuiteBuilder::buildWithoutLastSubtask();
         }
     }
 

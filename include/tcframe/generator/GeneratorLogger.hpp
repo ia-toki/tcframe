@@ -50,22 +50,22 @@ private:
     }
 
     void printVerificationFailure(const VerificationResult& result) {
-        for (const auto& entry : result.unsatisfiedConstraintDescriptionsByConstraintGroupId()) {
-            int constraintGroupId = entry.first;
+        for (const auto& entry : result.unsatisfiedConstraintDescriptionsBySubtaskId()) {
+            int subtaskId = entry.first;
             const vector<string>& unsatisfiedConstraintDescriptions = entry.second;
 
-            if (constraintGroupId == -1) {
+            if (subtaskId == -1) {
                 engine_->logListItem1(2, "Does not satisfy constraints, on:");
             } else {
-                engine_->logListItem1(2, "Does not satisfy subtask " + StringUtils::toString(constraintGroupId) + ", on constraints:");
+                engine_->logListItem1(2, "Does not satisfy subtask " + StringUtils::toString(subtaskId) + ", on constraints:");
             }
 
             for (const string& unsatisfiedConstraintDescription : unsatisfiedConstraintDescriptions) {
                 engine_->logListItem2(3, unsatisfiedConstraintDescription);
             }
         }
-        for (int constraintGroupId : result.satisfiedButNotAssignedGroupIds()) {
-            engine_->logListItem1(2, "Satisfies subtask " + StringUtils::toString(constraintGroupId) + " but is not assigned to it");
+        for (int subtaskId : result.satisfiedButNotAssignedSubtaskIds()) {
+            engine_->logListItem1(2, "Satisfies subtask " + StringUtils::toString(subtaskId) + " but is not assigned to it");
         }
     }
  };

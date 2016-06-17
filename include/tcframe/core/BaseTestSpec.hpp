@@ -124,7 +124,7 @@ protected:
     virtual void TestGroup25() {throw NotImplementedException();}
 
     void assignToSubtasks(const set<int>& subtaskIds) {
-        TestSuiteBuilder::setConstraintGroupIds(subtaskIds);
+        TestSuiteBuilder::setSubtaskIds(subtaskIds);
     }
 };
 

@@ -72,7 +72,7 @@ private:
             SampleTestCase testCase = sampleTests[testCaseId - 1];
             TestCaseData testCaseData = TestCaseDataBuilder()
                     .setName(TestCaseNameCreator::createSampleTestCaseName(coreConfig.problemConfig().slug(), testCaseId))
-                    .setConstraintGroupIds(testCase.constraintGroupIds())
+                    .setSubtaskIds(testCase.subtaskIds())
                     .build();
 
             function<void()> applier = [=] {
@@ -112,7 +112,7 @@ private:
             TestCaseData testCaseData = TestCaseDataBuilder()
                     .setName(testCaseName)
                     .setDescription(testCase.description())
-                    .setConstraintGroupIds(testGroup.constraintGroupIds())
+                    .setSubtaskIds(testGroup.subtaskIds())
                     .build();
             function<void()> applier = [=] {testCase.closure()(); inputFinalizer();};
 

@@ -24,38 +24,38 @@ TEST_F(ConstraintSuiteBuilderTests, Building) {
             .build();
 
     EXPECT_THAT(constraintSuite.individualConstraints(), ElementsAre(
-            ConstraintGroup(-1, {constraint1, constraint2})));
+            Subtask(-1, {constraint1, constraint2})));
 }
 
-TEST_F(ConstraintSuiteBuilderTests, Building_WithGroups) {
+TEST_F(ConstraintSuiteBuilderTests, Building_WithSubtasks) {
     ConstraintSuite constraintSuite = builder
-            .newConstraintGroup()
+            .newSubtask()
             .addConstraint(constraint1)
             .addConstraint(constraint2)
-            .newConstraintGroup()
+            .newSubtask()
             .addConstraint(constraint3)
             .addConstraint(constraint4)
             .build();
 
     EXPECT_THAT(constraintSuite.individualConstraints(), ElementsAre(
-            ConstraintGroup(1, {constraint1, constraint2}),
-            ConstraintGroup(2, {constraint3, constraint4})));
+            Subtask(1, {constraint1, constraint2}),
+            Subtask(2, {constraint3, constraint4})));
 }
 
-TEST_F(ConstraintSuiteBuilderTests, Building_WithGroups_WithoutLastGroup) {
+TEST_F(ConstraintSuiteBuilderTests, Building_WithSubtasks_WithoutLastSubtask) {
     ConstraintSuite constraintSuite = builder
-            .newConstraintGroup()
+            .newSubtask()
             .addConstraint(constraint1)
             .addConstraint(constraint2)
-            .newConstraintGroup()
+            .newSubtask()
             .addConstraint(constraint3)
             .addConstraint(constraint4)
-            .newConstraintGroup()
-            .buildWithoutLastConstraintGroup();
+            .newSubtask()
+            .buildWithoutLastSubtask();
 
     EXPECT_THAT(constraintSuite.individualConstraints(), ElementsAre(
-            ConstraintGroup(1, {constraint1, constraint2}),
-            ConstraintGroup(2, {constraint3, constraint4})));
+            Subtask(1, {constraint1, constraint2}),
+            Subtask(2, {constraint3, constraint4})));
 }
 
 }

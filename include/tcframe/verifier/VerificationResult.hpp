@@ -18,15 +18,15 @@ namespace tcframe {
 
 struct VerificationResult {
 private:
-    map<int, vector<string>> unsatisfiedConstraintDescriptionsByGroupId_;
-    set<int> satisfiedButNotAssignedGroupIds_;
+    map<int, vector<string>> unsatisfiedConstraintDescriptionsBySubtaskId_;
+    set<int> satisfiedButNotAssignedSubtaskIds_;
 
 public:
     VerificationResult(
-            const map<int, vector<string>>& unsatisfiedConstraintDescriptionsByGroupId,
-            const set<int>& satisfiedButNotAssignedGroupIds)
-            : unsatisfiedConstraintDescriptionsByGroupId_(unsatisfiedConstraintDescriptionsByGroupId)
-            , satisfiedButNotAssignedGroupIds_(satisfiedButNotAssignedGroupIds)
+            const map<int, vector<string>>& unsatisfiedConstraintDescriptionsBySubtaskId,
+            const set<int>& satisfiedButNotAssignedSubtaskIds)
+            : unsatisfiedConstraintDescriptionsBySubtaskId_(unsatisfiedConstraintDescriptionsBySubtaskId)
+            , satisfiedButNotAssignedSubtaskIds_(satisfiedButNotAssignedSubtaskIds)
     {}
 
     static VerificationResult validResult() {
@@ -34,21 +34,21 @@ public:
     }
 
     bool isValid() const {
-        return unsatisfiedConstraintDescriptionsByGroupId_.empty() &&
-               satisfiedButNotAssignedGroupIds_.empty();
+        return unsatisfiedConstraintDescriptionsBySubtaskId_.empty() &&
+               satisfiedButNotAssignedSubtaskIds_.empty();
     }
 
-    const map<int, vector<string>>& unsatisfiedConstraintDescriptionsByConstraintGroupId() const {
-        return unsatisfiedConstraintDescriptionsByGroupId_;
+    const map<int, vector<string>>& unsatisfiedConstraintDescriptionsBySubtaskId() const {
+        return unsatisfiedConstraintDescriptionsBySubtaskId_;
     }
 
-    const set<int>& satisfiedButNotAssignedGroupIds() const {
-        return satisfiedButNotAssignedGroupIds_;
+    const set<int>& satisfiedButNotAssignedSubtaskIds() const {
+        return satisfiedButNotAssignedSubtaskIds_;
     }
 
     bool operator==(const VerificationResult& o) const {
-        return tie(unsatisfiedConstraintDescriptionsByGroupId_, satisfiedButNotAssignedGroupIds_)
-                == tie(o.unsatisfiedConstraintDescriptionsByGroupId_, o.satisfiedButNotAssignedGroupIds_);
+        return tie(unsatisfiedConstraintDescriptionsBySubtaskId_, satisfiedButNotAssignedSubtaskIds_)
+                == tie(o.unsatisfiedConstraintDescriptionsBySubtaskId_, o.satisfiedButNotAssignedSubtaskIds_);
     }
 };
 

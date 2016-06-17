@@ -10,13 +10,13 @@ using std::vector;
 
 namespace tcframe {
 
-class ConstraintGroup {
+class Subtask {
 private:
     int id_;
     vector<Constraint> constraints_;
 
 public:
-    ConstraintGroup(int id, const vector<Constraint>& constraints)
+    Subtask(int id, const vector<Constraint>& constraints)
             : id_(id)
             , constraints_(constraints)
     {}
@@ -29,7 +29,7 @@ public:
         return constraints_;
     }
 
-    bool operator==(const ConstraintGroup& o) const {
+    bool operator==(const Subtask& o) const {
         return tie(id_, constraints_) == tie(o.id_, o.constraints_);
     }
 };

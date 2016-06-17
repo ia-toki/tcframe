@@ -58,7 +58,7 @@ private:
 
         try {
             apply(applier);
-            verify(data.constraintGroupIds());
+            verify(data.subtaskIds());
             generateInput(inputFilename);
             generateOutput(inputFilename, outputFilename, config.solutionCommand());
         } catch (TestCaseGenerationException& e) {
@@ -74,8 +74,8 @@ private:
         applier();
     }
 
-    void verify(const set<int>& constraintGroupIds) {
-        VerificationResult result = verifier_->verify(constraintGroupIds);
+    void verify(const set<int>& subtaskIds) {
+        VerificationResult result = verifier_->verify(subtaskIds);
         if (!result.isValid()) {
             throw TestCaseGenerationException(new VerificationFailure(result));
         }

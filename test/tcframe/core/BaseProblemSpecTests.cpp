@@ -98,14 +98,14 @@ TEST_F(BaseProblemSpecTests, IOFormat) {
 TEST_F(BaseProblemSpecTests, Constraints) {
     ConstraintSuite constraintSuite = specWithConstraints.buildConstraintSuite();
     EXPECT_THAT(constraintSuite.individualConstraints(), ElementsAre(
-        AllOf(Property(&ConstraintGroup::id, -1), Property(&ConstraintGroup::constraints, SizeIs(2)))));
+        AllOf(Property(&Subtask::id, -1), Property(&Subtask::constraints, SizeIs(2)))));
 }
 
 TEST_F(BaseProblemSpecTests, Subtasks) {
     ConstraintSuite constraintSuite = specWithSubtasks.buildConstraintSuite();
     EXPECT_THAT(constraintSuite.individualConstraints(), ElementsAre(
-            AllOf(Property(&ConstraintGroup::id, 1), Property(&ConstraintGroup::constraints, SizeIs(3))),
-            AllOf(Property(&ConstraintGroup::id, 2), Property(&ConstraintGroup::constraints, SizeIs(2)))));
+            AllOf(Property(&Subtask::id, 1), Property(&Subtask::constraints, SizeIs(3))),
+            AllOf(Property(&Subtask::id, 2), Property(&Subtask::constraints, SizeIs(2)))));
 }
 
 }

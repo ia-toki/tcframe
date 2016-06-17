@@ -18,7 +18,7 @@ struct TestCaseData {
 private:
     string name_;
     string description_;
-    set<int> constraintGroupIds_;
+    set<int> subtaskIds_;
 
 public:
     const string& name() const {
@@ -29,12 +29,12 @@ public:
         return description_;
     }
 
-    const set<int>& constraintGroupIds() const {
-        return constraintGroupIds_;
+    const set<int>& subtaskIds() const {
+        return subtaskIds_;
     }
 
     bool operator==(const TestCaseData& o) const {
-        return tie(name_, description_, constraintGroupIds_) == tie(o.name_, o.description_, o.constraintGroupIds_);
+        return tie(name_, description_, subtaskIds_) == tie(o.name_, o.description_, o.subtaskIds_);
     }
 };
 
@@ -53,8 +53,8 @@ public:
         return *this;
     }
 
-    TestCaseDataBuilder& setConstraintGroupIds(set<int> constraintGroupsId) {
-        subject_.constraintGroupIds_ = constraintGroupsId;
+    TestCaseDataBuilder& setSubtaskIds(set<int> subtaskIds) {
+        subject_.subtaskIds_ = subtaskIds;
         return *this;
     }
 

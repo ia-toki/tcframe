@@ -51,7 +51,7 @@ private:
 
     bool hasCurrentTestGroup_;
     int currentTestGroupId_;
-    set<int> currentConstraintGroupIds_;
+    set<int> currentSubtaskIds_;
     vector<OfficialTestCase> currentOfficialTestCases_;
 
 public:
@@ -60,7 +60,7 @@ public:
     TestSuiteBuilder()
             : hasCurrentTestGroup_(false)
             , currentTestGroupId_(0)
-            , currentConstraintGroupIds_({-1})
+            , currentSubtaskIds_({-1})
     {}
 
     TestSuiteBuilder& setInputFinalizer(const function<void()>& inputFinalizer) {
@@ -68,12 +68,12 @@ public:
         return *this;
     }
 
-    TestSuiteBuilder& addSampleTestCase(const vector<string>& lines, const set<int>& constraintGroupIds) {
+    TestSuiteBuilder& addSampleTestCase(const vector<string>& lines, const set<int>& subtaskIds) {
         string content;
         for (const string& line : lines) {
             content += line + "\n";
         }
-        subject_.sampleTests_.push_back(SampleTestCase(content, constraintGroupIds));
+        subject_.sampleTests_.push_back(SampleTestCase(content, subtaskIds));
 
         return *this;
     }
@@ -84,19 +84,19 @@ public:
 
     TestSuiteBuilder& newTestGroup() {
         if (hasCurrentTestGroup_) {
-            subject_.officialTests_.push_back(TestGroup(currentTestGroupId_, currentConstraintGroupIds_, currentOfficialTestCases_));
+            subject_.officialTests_.push_back(TestGroup(currentTestGroupId_, currentSubtaskIds_, currentOfficialTestCases_));
         }
 
         hasCurrentTestGroup_ = true;
         currentTestGroupId_++;
-        currentConstraintGroupIds_ = {-1};
+        currentSubtaskIds_ = {-1};
         currentOfficialTestCases_.clear();
 
         return *this;
     }
 
-    TestSuiteBuilder& setConstraintGroupIds(const set<int>& constraintGroupIds) {
-        currentConstraintGroupIds_ = constraintGroupIds;
+    TestSuiteBuilder& setSubtaskIds(const set<int>& subtaskIds) {
+        currentSubtaskIds_ = subtaskIds;
 
         return *this;
     }
@@ -105,7 +105,7 @@ public:
         if (!hasCurrentTestGroup_) {
             hasCurrentTestGroup_ = true;
             currentTestGroupId_ = -1;
-            currentConstraintGroupIds_ = {-1};
+            currentSubtaskIds_ = {-1};
         }
 
         currentOfficialTestCases_.push_back(officialTestCase);
@@ -115,7 +115,7 @@ public:
 
     TestSuite build() {
         if (hasCurrentTestGroup_) {
-            subject_.officialTests_.push_back(TestGroup(currentTestGroupId_, currentConstraintGroupIds_, currentOfficialTestCases_));
+            subject_.officialTests_.push_back(TestGroup(currentTestGroupId_, currentSubtaskIds_, currentOfficialTestCases_));
         }
         return move(subject_);
     }

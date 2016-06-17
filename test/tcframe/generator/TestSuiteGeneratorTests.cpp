@@ -55,11 +55,11 @@ protected:
             .addSampleTestCase(stc1, {1, 2})
             .addSampleTestCase(stc2, {2})
             .newTestGroup()
-            .setConstraintGroupIds({1, 2})
+            .setSubtaskIds({1, 2})
             .addOfficialTestCase(tc1)
             .addOfficialTestCase(tc2)
             .newTestGroup()
-            .setConstraintGroupIds({2})
+            .setSubtaskIds({2})
             .addOfficialTestCase(tc3)
             .build();
 
@@ -90,14 +90,14 @@ TEST_F(TestSuiteGeneratorTests, Generation_Successful) {
 
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_sample_1"));
         EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_sample_1").setConstraintGroupIds({-1}).build(),
+                TestCaseDataBuilder().setName("foo_sample_1").setSubtaskIds({-1}).build(),
                 _,
                 testConfig));
         EXPECT_CALL(logger, logTestCaseGenerationResult("", TestCaseGenerationResult::successfulResult()));
 
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_sample_2"));
         EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_sample_2").setConstraintGroupIds({-1}).build(),
+                TestCaseDataBuilder().setName("foo_sample_2").setSubtaskIds({-1}).build(),
                 _,
                 testConfig));
         EXPECT_CALL(logger, logTestCaseGenerationResult("", TestCaseGenerationResult::successfulResult()));
@@ -107,14 +107,14 @@ TEST_F(TestSuiteGeneratorTests, Generation_Successful) {
 
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
         EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_1").setDescription("N = 1").setConstraintGroupIds({-1}).build(),
+                TestCaseDataBuilder().setName("foo_1").setDescription("N = 1").setSubtaskIds({-1}).build(),
                 _,
                 testConfig));
         EXPECT_CALL(logger, logTestCaseGenerationResult("N = 1", TestCaseGenerationResult::successfulResult()));
 
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_2"));
         EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_2").setDescription("N = 2").setConstraintGroupIds({-1}).build(),
+                TestCaseDataBuilder().setName("foo_2").setDescription("N = 2").setSubtaskIds({-1}).build(),
                 _,
                 testConfig));
         EXPECT_CALL(logger, logTestCaseGenerationResult("N = 2", TestCaseGenerationResult::successfulResult()));
@@ -146,14 +146,14 @@ TEST_F(TestSuiteGeneratorTests, Generation_Failed) {
 
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_sample_1"));
         EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_sample_1").setConstraintGroupIds({-1}).build(),
+                TestCaseDataBuilder().setName("foo_sample_1").setSubtaskIds({-1}).build(),
                 _,
                 testConfig));
         EXPECT_CALL(logger, logTestCaseGenerationResult("", TestCaseGenerationResult::failedResult(failure_sample_1)));
 
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_sample_2"));
         EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_sample_2").setConstraintGroupIds({-1}).build(),
+                TestCaseDataBuilder().setName("foo_sample_2").setSubtaskIds({-1}).build(),
                 _,
                 testConfig));
         EXPECT_CALL(logger, logTestCaseGenerationResult("", TestCaseGenerationResult::successfulResult()));
@@ -163,14 +163,14 @@ TEST_F(TestSuiteGeneratorTests, Generation_Failed) {
 
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
         EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_1").setDescription("N = 1").setConstraintGroupIds({-1}).build(),
+                TestCaseDataBuilder().setName("foo_1").setDescription("N = 1").setSubtaskIds({-1}).build(),
                 _,
                 testConfig));
         EXPECT_CALL(logger, logTestCaseGenerationResult("N = 1", TestCaseGenerationResult::successfulResult()));
 
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_2"));
         EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_2").setDescription("N = 2").setConstraintGroupIds({-1}).build(),
+                TestCaseDataBuilder().setName("foo_2").setDescription("N = 2").setSubtaskIds({-1}).build(),
                 _,
                 testConfig));
         EXPECT_CALL(logger, logTestCaseGenerationResult("N = 2", TestCaseGenerationResult::failedResult(failure_2)));
@@ -196,14 +196,14 @@ TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Successful) {
 
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_sample_1"));
         EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_sample_1").setConstraintGroupIds({1, 2}).build(),
+                TestCaseDataBuilder().setName("foo_sample_1").setSubtaskIds({1, 2}).build(),
                 _,
                 testConfig));
         EXPECT_CALL(logger, logTestCaseGenerationResult("", TestCaseGenerationResult::successfulResult()));
 
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_sample_2"));
         EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_sample_2").setConstraintGroupIds({2}).build(),
+                TestCaseDataBuilder().setName("foo_sample_2").setSubtaskIds({2}).build(),
                 _,
                 testConfig));
         EXPECT_CALL(logger, logTestCaseGenerationResult("", TestCaseGenerationResult::successfulResult()));
@@ -213,14 +213,14 @@ TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Successful) {
 
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1_1"));
         EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_1_1").setDescription("N = 1").setConstraintGroupIds({1, 2}).build(),
+                TestCaseDataBuilder().setName("foo_1_1").setDescription("N = 1").setSubtaskIds({1, 2}).build(),
                 _,
                 testConfig));
         EXPECT_CALL(logger, logTestCaseGenerationResult("N = 1", TestCaseGenerationResult::successfulResult()));
 
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1_2"));
         EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_1_2").setDescription("N = 2").setConstraintGroupIds({1, 2}).build(),
+                TestCaseDataBuilder().setName("foo_1_2").setDescription("N = 2").setSubtaskIds({1, 2}).build(),
                 _,
                 testConfig));
         EXPECT_CALL(logger, logTestCaseGenerationResult("N = 2", TestCaseGenerationResult::successfulResult()));
@@ -230,7 +230,7 @@ TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Successful) {
 
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_2_1"));
         EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_2_1").setDescription("N = 3").setConstraintGroupIds({2}).build(),
+                TestCaseDataBuilder().setName("foo_2_1").setDescription("N = 3").setSubtaskIds({2}).build(),
                 _,
                 testConfig));
         EXPECT_CALL(logger, logTestCaseGenerationResult("N = 3", TestCaseGenerationResult::successfulResult()));
@@ -266,14 +266,14 @@ TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Failed) {
 
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_sample_1"));
         EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_sample_1").setConstraintGroupIds({1, 2}).build(),
+                TestCaseDataBuilder().setName("foo_sample_1").setSubtaskIds({1, 2}).build(),
                 _,
                 testConfig));
         EXPECT_CALL(logger, logTestCaseGenerationResult("", TestCaseGenerationResult::failedResult(failure_sample_1)));
 
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_sample_2"));
         EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_sample_2").setConstraintGroupIds({2}).build(),
+                TestCaseDataBuilder().setName("foo_sample_2").setSubtaskIds({2}).build(),
                 _,
                 testConfig));
         EXPECT_CALL(logger, logTestCaseGenerationResult("", TestCaseGenerationResult::successfulResult()));
@@ -283,14 +283,14 @@ TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Failed) {
 
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1_1"));
         EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_1_1").setDescription("N = 1").setConstraintGroupIds({1, 2}).build(),
+                TestCaseDataBuilder().setName("foo_1_1").setDescription("N = 1").setSubtaskIds({1, 2}).build(),
                 _,
                 testConfig));
         EXPECT_CALL(logger, logTestCaseGenerationResult("N = 1", TestCaseGenerationResult::successfulResult()));
 
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1_2"));
         EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_1_2").setDescription("N = 2").setConstraintGroupIds({1, 2}).build(),
+                TestCaseDataBuilder().setName("foo_1_2").setDescription("N = 2").setSubtaskIds({1, 2}).build(),
                 _,
                 testConfig));
         EXPECT_CALL(logger, logTestCaseGenerationResult("N = 2", TestCaseGenerationResult::failedResult(failure_1_2)));
@@ -300,7 +300,7 @@ TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Failed) {
 
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_2_1"));
         EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_2_1").setDescription("N = 3").setConstraintGroupIds({2}).build(),
+                TestCaseDataBuilder().setName("foo_2_1").setDescription("N = 3").setSubtaskIds({2}).build(),
                 _,
                 testConfig));
         EXPECT_CALL(logger, logTestCaseGenerationResult("N = 3", TestCaseGenerationResult::failedResult(failure_2_1)));

@@ -26,29 +26,29 @@ public:
             : constraintSuite_(move(constraintSuite))
     {}
 
-    virtual VerificationResult verify(const set<int>& constraintGroupIds) {
-        map<int, vector<string>> unsatisfiedConstraintDescriptionsByGroupId;
-        set<int> satisfiedButNotAssignedGroupIds;
+    virtual VerificationResult verify(const set<int>& subtaskIds) {
+        map<int, vector<string>> unsatisfiedConstraintDescriptionsBySubtaskId;
+        set<int> satisfiedButNotAssignedSubtaskIds;
 
-        for (const ConstraintGroup& constraintGroup : constraintSuite_.individualConstraints()) {
+        for (const Subtask& subtask : constraintSuite_.individualConstraints()) {
             vector<string> unsatisfiedConstraintDescriptions;
-            for (const Constraint& constraint : constraintGroup.constraints()) {
+            for (const Constraint& constraint : subtask.constraints()) {
                 if (!constraint.predicate()()) {
                     unsatisfiedConstraintDescriptions.push_back(constraint.description());
                 }
             }
 
-            if (constraintGroupIds.count(constraintGroup.id())) {
+            if (subtaskIds.count(subtask.id())) {
                 if (!unsatisfiedConstraintDescriptions.empty()) {
-                    unsatisfiedConstraintDescriptionsByGroupId[constraintGroup.id()] = unsatisfiedConstraintDescriptions;
+                    unsatisfiedConstraintDescriptionsBySubtaskId[subtask.id()] = unsatisfiedConstraintDescriptions;
                 }
             } else {
                 if (unsatisfiedConstraintDescriptions.empty()) {
-                    satisfiedButNotAssignedGroupIds.insert(constraintGroup.id());
+                    satisfiedButNotAssignedSubtaskIds.insert(subtask.id());
                 }
             }
         }
-        return VerificationResult(unsatisfiedConstraintDescriptionsByGroupId, satisfiedButNotAssignedGroupIds);
+        return VerificationResult(unsatisfiedConstraintDescriptionsBySubtaskId, satisfiedButNotAssignedSubtaskIds);
     }
 };
 

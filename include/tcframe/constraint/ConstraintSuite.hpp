@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "Constraint.hpp"
-#include "ConstraintGroup.hpp"
+#include "Subtask.hpp"
 
 using std::move;
 using std::tie;
@@ -17,10 +17,10 @@ struct ConstraintSuite {
     friend class ConstraintSuiteBuilder;
 
 private:
-    vector<ConstraintGroup> individualConstraints_;
+    vector<Subtask> individualConstraints_;
 
 public:
-    const vector<ConstraintGroup>& individualConstraints() const {
+    const vector<Subtask>& individualConstraints() const {
         return individualConstraints_;
     }
 
@@ -33,34 +33,34 @@ class ConstraintSuiteBuilder {
 private:
     ConstraintSuite subject_;
 
-    bool hasCurrentConstraintGroup_;
-    int currentConstraintGroupId_;
+    bool hasCurrentSubtask_;
+    int currentSubtaskId_;
     vector<Constraint> currentIndividualConstraints_;
 
 public:
     virtual ~ConstraintSuiteBuilder() {}
 
     ConstraintSuiteBuilder()
-            : hasCurrentConstraintGroup_(false)
-            , currentConstraintGroupId_(0)
+            : hasCurrentSubtask_(false)
+            , currentSubtaskId_(0)
     {}
 
-    ConstraintSuiteBuilder& newConstraintGroup() {
-        if (hasCurrentConstraintGroup_) {
-            subject_.individualConstraints_.push_back(ConstraintGroup(currentConstraintGroupId_, currentIndividualConstraints_));
+    ConstraintSuiteBuilder& newSubtask() {
+        if (hasCurrentSubtask_) {
+            subject_.individualConstraints_.push_back(Subtask(currentSubtaskId_, currentIndividualConstraints_));
         }
 
-        hasCurrentConstraintGroup_ = true;
-        currentConstraintGroupId_++;
+        hasCurrentSubtask_ = true;
+        currentSubtaskId_++;
         currentIndividualConstraints_.clear();
 
         return *this;
     }
 
     ConstraintSuiteBuilder& addConstraint(Constraint constraint) {
-        if (!hasCurrentConstraintGroup_) {
-            hasCurrentConstraintGroup_ = true;
-            currentConstraintGroupId_ = -1;
+        if (!hasCurrentSubtask_) {
+            hasCurrentSubtask_ = true;
+            currentSubtaskId_ = -1;
         }
 
         currentIndividualConstraints_.push_back(constraint);
@@ -69,13 +69,13 @@ public:
     }
 
     ConstraintSuite build() {
-        if (hasCurrentConstraintGroup_) {
-            subject_.individualConstraints_.push_back(ConstraintGroup(currentConstraintGroupId_, currentIndividualConstraints_));
+        if (hasCurrentSubtask_) {
+            subject_.individualConstraints_.push_back(Subtask(currentSubtaskId_, currentIndividualConstraints_));
         }
         return move(subject_);
     }
 
-    ConstraintSuite buildWithoutLastConstraintGroup() {
+    ConstraintSuite buildWithoutLastSubtask() {
         return move(subject_);
     }
 };

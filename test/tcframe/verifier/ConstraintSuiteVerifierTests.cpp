@@ -22,23 +22,23 @@ protected:
     Constraint constraint3 = Constraint([=]{return b3;}, "1 <= C && C <= 10");
     Constraint constraint4 = Constraint([=]{return b4;}, "1 <= D && D <= 10");
     Constraint constraint5 = Constraint([=]{return b5;}, "1 <= E && E <= 10");
-    ConstraintSuite constraintSuiteWithoutGroups = ConstraintSuiteBuilder()
+    ConstraintSuite constraintSuite = ConstraintSuiteBuilder()
             .addConstraint(constraint1)
             .addConstraint(constraint2)
             .build();
-    ConstraintSuite constraintSuiteWithGroups = ConstraintSuiteBuilder()
-            .newConstraintGroup()
+    ConstraintSuite constraintSuiteWithSubtasks = ConstraintSuiteBuilder()
+            .newSubtask()
             .addConstraint(constraint1)
             .addConstraint(constraint2)
-            .newConstraintGroup()
+            .newSubtask()
             .addConstraint(constraint3)
             .addConstraint(constraint4)
-            .newConstraintGroup()
+            .newSubtask()
             .addConstraint(constraint5)
             .build();
 
-    ConstraintSuiteVerifier verifier = ConstraintSuiteVerifier(constraintSuiteWithoutGroups);
-    ConstraintSuiteVerifier verifierWithGroups = ConstraintSuiteVerifier(constraintSuiteWithGroups);
+    ConstraintSuiteVerifier verifier = ConstraintSuiteVerifier(constraintSuite);
+    ConstraintSuiteVerifier verifierWithSubtasks = ConstraintSuiteVerifier(constraintSuiteWithSubtasks);
 
     void SetUp() {
         b1 = true;
@@ -53,8 +53,8 @@ TEST_F(ConstraintSuiteVerifierTests, Verification_Valid_AllConstraintsValid) {
     VerificationResult result = verifier.verify({-1});
 
     EXPECT_TRUE(result.isValid());
-    EXPECT_THAT(result.satisfiedButNotAssignedGroupIds(), IsEmpty());
-    EXPECT_THAT(result.unsatisfiedConstraintDescriptionsByConstraintGroupId(), IsEmpty());
+    EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), IsEmpty());
+    EXPECT_THAT(result.unsatisfiedConstraintDescriptionsBySubtaskId(), IsEmpty());
 }
 
 TEST_F(ConstraintSuiteVerifierTests, Verification_Invalid_SomeConstraintsInvalid) {
@@ -62,35 +62,35 @@ TEST_F(ConstraintSuiteVerifierTests, Verification_Invalid_SomeConstraintsInvalid
     VerificationResult result = verifier.verify({-1});
 
     EXPECT_FALSE(result.isValid());
-    EXPECT_THAT(result.satisfiedButNotAssignedGroupIds(), IsEmpty());
-    EXPECT_THAT(result.unsatisfiedConstraintDescriptionsByConstraintGroupId(), ElementsAre(
+    EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), IsEmpty());
+    EXPECT_THAT(result.unsatisfiedConstraintDescriptionsBySubtaskId(), ElementsAre(
             Pair(-1, ElementsAre(constraint2.description()))));
 }
 
-TEST_F(ConstraintSuiteVerifierTests, Verification_WithGroups_Valid_AllConstraintsValid) {
-    VerificationResult result = verifierWithGroups.verify({1, 2, 3});
+TEST_F(ConstraintSuiteVerifierTests, Verification_WithSubtasks_Valid_AllConstraintsValid) {
+    VerificationResult result = verifierWithSubtasks.verify({1, 2, 3});
 
     EXPECT_TRUE(result.isValid());
-    EXPECT_THAT(result.satisfiedButNotAssignedGroupIds(), IsEmpty());
-    EXPECT_THAT(result.unsatisfiedConstraintDescriptionsByConstraintGroupId(), IsEmpty());
+    EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), IsEmpty());
+    EXPECT_THAT(result.unsatisfiedConstraintDescriptionsBySubtaskId(), IsEmpty());
 }
 
-TEST_F(ConstraintSuiteVerifierTests, Verification_WithGroups_Valid_AllAssignedConstraintGroupsValid) {
+TEST_F(ConstraintSuiteVerifierTests, Verification_WithSubtasks_Valid_AllAssignedSubtasksValid) {
     b4 = false;
-    VerificationResult result = verifierWithGroups.verify({1, 3});
+    VerificationResult result = verifierWithSubtasks.verify({1, 3});
 
     EXPECT_TRUE(result.isValid());
-    EXPECT_THAT(result.satisfiedButNotAssignedGroupIds(), IsEmpty());
-    EXPECT_THAT(result.unsatisfiedConstraintDescriptionsByConstraintGroupId(), IsEmpty());
+    EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), IsEmpty());
+    EXPECT_THAT(result.unsatisfiedConstraintDescriptionsBySubtaskId(), IsEmpty());
 }
 
-TEST_F(ConstraintSuiteVerifierTests, Verification_WithGroups_Invalid_SomeConstraintsInvalid) {
+TEST_F(ConstraintSuiteVerifierTests, Verification_WithSubtasks_Invalid_SomeConstraintsInvalid) {
     b4 = false;
-    VerificationResult result = verifierWithGroups.verify({2, 3});
+    VerificationResult result = verifierWithSubtasks.verify({2, 3});
 
     EXPECT_FALSE(result.isValid());
-    EXPECT_THAT(result.satisfiedButNotAssignedGroupIds(), ElementsAre(1));
-    EXPECT_THAT(result.unsatisfiedConstraintDescriptionsByConstraintGroupId(), ElementsAre(
+    EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), ElementsAre(1));
+    EXPECT_THAT(result.unsatisfiedConstraintDescriptionsBySubtaskId(), ElementsAre(
             Pair(2, ElementsAre(constraint4.description()))));
 }
 
