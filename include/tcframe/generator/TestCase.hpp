@@ -1,10 +1,12 @@
 #pragma once
 
+#include <functional>
 #include <set>
 #include <string>
 #include <tuple>
 #include <utility>
 
+using std::function;
 using std::move;
 using std::set;
 using std::string;
@@ -12,13 +14,14 @@ using std::tie;
 
 namespace tcframe {
 
-struct TestCaseData {
-    friend class TestCaseDataBuilder;
+struct TestCase {
+    friend class TestCaseBuilder;
 
 private:
     string name_;
     string description_;
     set<int> subtaskIds_;
+    function<void()> applier_;
 
 public:
     const string& name() const {
@@ -33,32 +36,43 @@ public:
         return subtaskIds_;
     }
 
-    bool operator==(const TestCaseData& o) const {
+    const function<void()> applier() const {
+        return applier_;
+    }
+
+    bool operator==(const TestCase& o) const {
         return tie(name_, description_, subtaskIds_) == tie(o.name_, o.description_, o.subtaskIds_);
     }
+
+
 };
 
-class TestCaseDataBuilder {
+class TestCaseBuilder {
 private:
-    TestCaseData subject_;
+    TestCase subject_;
 
 public:
-    TestCaseDataBuilder& setName(string name) {
+    TestCaseBuilder& setName(string name) {
         subject_.name_ = name;
         return *this;
     }
 
-    TestCaseDataBuilder& setDescription(string description) {
+    TestCaseBuilder& setDescription(string description) {
         subject_.description_ = description;
         return *this;
     }
 
-    TestCaseDataBuilder& setSubtaskIds(set<int> subtaskIds) {
+    TestCaseBuilder& setSubtaskIds(set<int> subtaskIds) {
         subject_.subtaskIds_ = subtaskIds;
         return *this;
     }
 
-    TestCaseData build() {
+    TestCaseBuilder& setApplier(function<void()> applier) {
+        subject_.applier_ = applier;
+        return *this;
+    }
+
+    TestCase build() {
         return move(subject_);
     }
 };

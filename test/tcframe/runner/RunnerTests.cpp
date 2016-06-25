@@ -1,9 +1,7 @@
 #include "gmock/gmock.h"
 #include "../mock.hpp"
 
-#include "../generator/FakeTestCaseGenerationFailure.hpp"
 #include "../generator/MockTestSuiteGenerator.hpp"
-#include "../generator/MockTestSuiteGeneratorFactory.hpp"
 #include "MockRunnerLogger.hpp"
 #include "MockRunnerLoggerFactory.hpp"
 #include "tcframe/experimental/runner.hpp"
@@ -73,7 +71,7 @@ TEST_F(RunnerTests, Run_Generation_Failed) {
     Runner<ProblemSpec> runner(testSpec, loggerEngine, os, &loggerFactory, &generatorFactory);
     ON_CALL(generator, generate(_, _))
             .WillByDefault(Return(GenerationResult({
-                    {"foo_1", TestCaseGenerationResult::failedResult(new FakeTestCaseGenerationFailure())}})));
+                    TestGroupGenerationResult(new SimpleFailure("Error"), {})})));
 
     EXPECT_THAT(runner.run(argc, argv), Ne(0));
 }

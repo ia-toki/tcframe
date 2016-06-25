@@ -2,14 +2,14 @@
 
 #include <tuple>
 
-#include "TestCaseGenerationFailure.hpp"
+#include "Failure.hpp"
 #include "tcframe/verifier.hpp"
 
 using std::tie;
 
 namespace tcframe {
 
-class VerificationFailure : public TestCaseGenerationFailure {
+class VerificationFailure : public Failure {
 private:
     VerificationResult verificationResult_;
 
@@ -30,8 +30,8 @@ public:
         return tie(verificationResult_) == tie(o.verificationResult_);
     }
 
-    bool equals(TestCaseGenerationFailure* o) const {
-        return type() == o->type() && *this == *((VerificationFailure *) o);
+    bool equals(Failure* o) const {
+        return type() == o->type() && *this == *((VerificationFailure*) o);
     }
 };
 

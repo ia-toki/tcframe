@@ -9,13 +9,10 @@ namespace tcframe {
 class MockTestCaseGenerator : public TestCaseGenerator {
 public:
     MockTestCaseGenerator()
-            : TestCaseGenerator(nullptr, nullptr, nullptr)
+            : TestCaseGenerator(nullptr, nullptr, nullptr, nullptr)
     {}
 
-    MOCK_METHOD3(generate, TestCaseGenerationResult(
-            const TestCaseData&,
-            const function<void()>&,
-            const TestConfig&));
+    MOCK_METHOD2(generate, TestCaseGenerationResult(const TestCase&, const TestConfig&));
 };
 
 }

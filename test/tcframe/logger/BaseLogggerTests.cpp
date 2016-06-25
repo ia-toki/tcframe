@@ -16,17 +16,17 @@ protected:
     BaseLogger logger = BaseLogger(&engine);
 };
 
-TEST_F(BaseLoggerTests, SampleTestCasesIntroduction) {
+TEST_F(BaseLoggerTests, TestGroupIntroduction_Sample) {
     EXPECT_CALL(engine, logHeading("SAMPLE TEST CASES"));
-    logger.logSampleTestCasesIntroduction();
+    logger.logTestGroupIntroduction(0);
 }
 
-TEST_F(BaseLoggerTests, TestGroupIntroduction) {
+TEST_F(BaseLoggerTests, TestGroupIntroduction_Official) {
     EXPECT_CALL(engine, logHeading("OFFICIAL TEST CASES"));
     logger.logTestGroupIntroduction(-1);
 }
 
-TEST_F(BaseLoggerTests, TestGroupIntroduction_WithGroups) {
+TEST_F(BaseLoggerTests, TestGroupIntroduction_Official_WithGroups) {
     EXPECT_CALL(engine, logHeading("TEST GROUP 3"));
     logger.logTestGroupIntroduction(3);
 }

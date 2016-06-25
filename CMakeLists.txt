@@ -56,19 +56,22 @@ set(SOURCE_FILES
     include/tcframe/core/NotImplementedException.hpp
     include/tcframe/core/ProblemConfig.hpp
     include/tcframe/experimental/runner.hpp
+    include/tcframe/failure.hpp
+    include/tcframe/failure/ComplexFailureException.hpp
+    include/tcframe/failure/Failure.hpp
+    include/tcframe/failure/SimpleFailure.hpp
+    include/tcframe/failure/VerificationFailure.hpp
     include/tcframe/generator.hpp
     include/tcframe/generator/GenerationResult.hpp
     include/tcframe/generator/GeneratorLogger.hpp
-    include/tcframe/generator/OtherFailure.hpp
-    include/tcframe/generator/TestCaseData.hpp
+    include/tcframe/generator/TestCase.hpp
     include/tcframe/generator/TestCaseGenerator.hpp
-    include/tcframe/generator/TestCaseGenerationException.hpp
-    include/tcframe/generator/TestCaseGenerationFailure.hpp
     include/tcframe/generator/TestCaseGenerationResult.hpp
     include/tcframe/generator/TestCaseNameCreator.hpp
+    include/tcframe/generator/TestGroup.hpp
+    include/tcframe/generator/TestGroupGenerator.hpp
+    include/tcframe/generator/TestGroupGenerationResult.hpp
     include/tcframe/generator/TestSuiteGenerator.hpp
-    include/tcframe/generator/TestSuiteGeneratorFactory.hpp
-    include/tcframe/generator/VerificationFailure.hpp
     include/tcframe/io.hpp
     include/tcframe/io/GridIOSegment.hpp
     include/tcframe/io/GridIOSegmentManipulator.hpp
@@ -99,7 +102,7 @@ set(SOURCE_FILES
     include/tcframe/testcase/OfficialTestCase.hpp
     include/tcframe/testcase/SampleTestCase.hpp
     include/tcframe/testcase/TestSuite.hpp
-    include/tcframe/testcase/TestGroup.hpp
+    include/tcframe/testcase/OfficialTestGroup.hpp
     include/tcframe/util.hpp
     include/tcframe/util/StringUtils.hpp
     include/tcframe/variable.hpp
@@ -118,13 +121,13 @@ set(SOURCE_FILES
     test/tcframe/core/BaseProblemSpecTests.cpp
     test/tcframe/core/MagicTests.cpp
     test/tcframe/generator/GeneratorLoggerTests.cpp
-    test/tcframe/generator/FakeTestCaseGenerationFailure.hpp
     test/tcframe/generator/MockGeneratorLogger.hpp
     test/tcframe/generator/MockTestCaseGenerator.hpp
+    test/tcframe/generator/MockTestGroupGenerator.hpp
     test/tcframe/generator/MockTestSuiteGenerator.hpp
-    test/tcframe/generator/MockTestSuiteGeneratorFactory.hpp
     test/tcframe/generator/TestCaseGeneratorTests.cpp
     test/tcframe/generator/TestCaseNameCreatorTests.cpp
+    test/tcframe/generator/TestGroupGeneratorTests.cpp
     test/tcframe/generator/TestSuiteGeneratorTests.cpp
     test/tcframe/io/GridIOSegmentBuilderTests.cpp
     test/tcframe/io/GridIOSegmentManipulatorTests.cpp

@@ -4,12 +4,11 @@
 #include <set>
 #include <string>
 
-#include "TestCaseData.hpp"
-#include "TestCaseGenerationException.hpp"
+#include "GeneratorLogger.hpp"
+#include "TestCase.hpp"
 #include "TestCaseGenerationResult.hpp"
-#include "OtherFailure.hpp"
-#include "VerificationFailure.hpp"
 #include "tcframe/core.hpp"
+#include "tcframe/failure.hpp"
 #include "tcframe/io.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/testcase.hpp"
@@ -26,6 +25,7 @@ private:
     ConstraintSuiteVerifier* verifier_;
     IOManipulator* ioManipulator_;
     OperatingSystem* os_;
+    GeneratorLogger* logger_;
 
 public:
     virtual ~TestCaseGenerator() {}
@@ -33,38 +33,35 @@ public:
     TestCaseGenerator(
             ConstraintSuiteVerifier* verifier,
             IOManipulator* ioManipulator,
-            OperatingSystem* os)
+            OperatingSystem* os,
+            GeneratorLogger* logger)
             : verifier_(verifier)
             , ioManipulator_(ioManipulator)
-            ,  os_(os)
+            , os_(os)
+            , logger_(logger)
     {}
 
-    virtual TestCaseGenerationResult generate(
-            const TestCaseData& data,
-            const function<void()>& applier,
-            const TestConfig& config) {
-
-        return doGenerate(data, applier, config);
+    virtual TestCaseGenerationResult generate(const TestCase& testCase, const TestConfig& testConfig) {
+        logger_->logTestCaseIntroduction(testCase.name());
+        TestCaseGenerationResult result = doGenerate(testCase, testConfig);
+        logger_->logTestCaseResult(testCase.description(), result);
+        return result;
     }
 
 private:
-    TestCaseGenerationResult doGenerate(
-            const TestCaseData& data,
-            const function<void()>& applier,
-            const TestConfig& config) {
-
-        string inputFilename = config.testCasesDir() + "/" + data.name() + ".in";
-        string outputFilename = config.testCasesDir() + "/" + data.name() + ".out";
+    TestCaseGenerationResult doGenerate(const TestCase& testCase, const TestConfig& config) {
+        string inputFilename = config.testCasesDir() + "/" + testCase.name() + ".in";
+        string outputFilename = config.testCasesDir() + "/" + testCase.name() + ".out";
 
         try {
-            apply(applier);
-            verify(data.subtaskIds());
+            apply(testCase.applier());
+            verify(testCase.subtaskIds());
             generateInput(inputFilename);
             generateOutput(inputFilename, outputFilename, config.solutionCommand());
-        } catch (TestCaseGenerationException& e) {
+        } catch (ComplexFailureException& e) {
             return TestCaseGenerationResult::failedResult(e.failure());
         } catch (runtime_error& e) {
-            return TestCaseGenerationResult::failedResult(new OtherFailure(e.what()));
+            return TestCaseGenerationResult::failedResult(new SimpleFailure(e.what()));
         }
 
         return TestCaseGenerationResult::successfulResult();
@@ -77,7 +74,7 @@ private:
     void verify(const set<int>& subtaskIds) {
         VerificationResult result = verifier_->verify(subtaskIds);
         if (!result.isValid()) {
-            throw TestCaseGenerationException(new VerificationFailure(result));
+            throw ComplexFailureException(new VerificationFailure(result));
         }
     }
 

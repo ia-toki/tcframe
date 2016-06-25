@@ -6,6 +6,7 @@
 #include "../io/MockIOManipulator.hpp"
 #include "../os/MockOperatingSystem.hpp"
 #include "../verifier/MockConstraintSuiteVerifier.hpp"
+#include "MockGeneratorLogger.hpp"
 #include "tcframe/generator/TestCaseGenerator.hpp"
 
 using std::ostringstream;
@@ -13,7 +14,6 @@ using std::ostringstream;
 using ::testing::_;
 using ::testing::Eq;
 using ::testing::InSequence;
-using ::testing::IsNull;
 using ::testing::Return;
 using ::testing::Test;
 using ::testing::Throw;
@@ -27,24 +27,22 @@ protected:
     Mock(ConstraintSuiteVerifier) verifier;
     Mock(IOManipulator) ioManipulator;
     Mock(OperatingSystem) os;
+    Mock(GeneratorLogger) logger;
 
-    function<void()> closure = [&](){applied = true;};
-    TestCaseData data = TestCaseDataBuilder()
+    TestCase testCase = TestCaseBuilder()
             .setName("foo_1")
             .setDescription("N = 42")
             .setSubtaskIds({1, 2})
+            .setApplier([&] {applied = true;})
             .build();
-    TestConfig config = TestConfigBuilder()
+    TestConfig testConfig = TestConfigBuilder()
             .setTestCasesDir("dir")
             .setSolutionCommand("python Sol.py")
             .build();
     ostream* out = new ostringstream();
     ExecutionResult executionResult = ExecutionResult(0, new istringstream(), new istringstream());
 
-    TestCaseGenerator generator = TestCaseGenerator(
-            &verifier,
-            &ioManipulator,
-            &os);
+    TestCaseGenerator generator = TestCaseGenerator(&verifier, &ioManipulator, &os, &logger);
 
     void SetUp() {
         applied = false;
@@ -59,21 +57,23 @@ protected:
 };
 
 TEST_F(TestCaseGeneratorTests, Generation_Successful) {
+    TestCaseGenerationResult expectedResult = TestCaseGenerationResult::successfulResult();
     {
         InSequence sequence;
+        EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
         EXPECT_CALL(verifier, verify(set<int>{1, 2}));
         EXPECT_CALL(os, openForWriting("dir/foo_1.in"));
         EXPECT_CALL(ioManipulator, printInput(out));
         EXPECT_CALL(os, closeOpenedWritingStream(out));
         EXPECT_CALL(os, execute("python Sol.py", "dir/foo_1.in", "dir/foo_1.out", _));
         EXPECT_CALL(ioManipulator, parseOutput(executionResult.outputStream()));
+        EXPECT_CALL(logger, logTestCaseResult("N = 42", expectedResult));
     }
-
-    TestCaseGenerationResult result = generator.generate(data, closure, config);
-
+    TestCaseGenerationResult result = generator.generate(testCase, testConfig);
+    
     EXPECT_TRUE(applied);
+    EXPECT_THAT(result, Eq(expectedResult));
     EXPECT_TRUE(result.isSuccessful());
-    EXPECT_THAT(result.failure(), IsNull());
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Failed_Verification) {
@@ -81,30 +81,27 @@ TEST_F(TestCaseGeneratorTests, Generation_Failed_Verification) {
     ON_CALL(verifier, verify(set<int>{1, 2}))
             .WillByDefault(Return(verificationResult));
 
-    TestCaseGenerationResult result = generator.generate(data, closure, config);
-
+    TestCaseGenerationResult result = generator.generate(testCase, testConfig);
     EXPECT_FALSE(result.isSuccessful());
-    EXPECT_TRUE(result.failure()->equals(new VerificationFailure(verificationResult)));
+    EXPECT_THAT(result, Eq(TestCaseGenerationResult::failedResult(new VerificationFailure(verificationResult))));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Failed_InputGeneration) {
     ON_CALL(ioManipulator, printInput(out))
             .WillByDefault(Throw(runtime_error("input error")));
 
-    TestCaseGenerationResult result = generator.generate(data, closure, config);
-
+    TestCaseGenerationResult result = generator.generate(testCase, testConfig);
+    EXPECT_THAT(result, Eq(TestCaseGenerationResult::failedResult(new SimpleFailure("input error"))));
     EXPECT_FALSE(result.isSuccessful());
-    EXPECT_TRUE(result.failure()->equals(new OtherFailure("input error")));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Failed_OutputGeneration) {
     ON_CALL(ioManipulator, parseOutput(executionResult.outputStream()))
             .WillByDefault(Throw(runtime_error("output error")));
 
-    TestCaseGenerationResult result = generator.generate(data, closure, config);
-
+    TestCaseGenerationResult result = generator.generate(testCase, testConfig);
+    EXPECT_THAT(result, Eq(TestCaseGenerationResult::failedResult(new SimpleFailure("output error"))));
     EXPECT_FALSE(result.isSuccessful());
-    EXPECT_TRUE(result.failure()->equals(new OtherFailure("output error")));
 }
 
 }

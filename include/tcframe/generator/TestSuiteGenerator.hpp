@@ -1,16 +1,18 @@
 #pragma once
 
 #include <functional>
-#include <map>
+#include <vector>
 #include <set>
 #include <sstream>
 #include <string>
 
 #include "GeneratorLogger.hpp"
 #include "GenerationResult.hpp"
+#include "TestCase.hpp"
+#include "TestGroup.hpp"
 #include "TestCaseNameCreator.hpp"
-#include "TestCaseGenerationResult.hpp"
-#include "TestCaseGenerator.hpp"
+#include "TestGroupGenerationResult.hpp"
+#include "TestGroupGenerator.hpp"
 #include "tcframe/core.hpp"
 #include "tcframe/io.hpp"
 #include "tcframe/os.hpp"
@@ -18,7 +20,7 @@
 
 using std::function;
 using std::istringstream;
-using std::map;
+using std::vector;
 using std::set;
 using std::string;
 
@@ -26,7 +28,7 @@ namespace tcframe {
 
 class TestSuiteGenerator {
 private:
-    TestCaseGenerator* testCaseGenerator_;
+    TestGroupGenerator* testGroupGenerator_;
     IOManipulator* ioManipulator_;
     OperatingSystem* os_;
     GeneratorLogger* logger_;
@@ -35,105 +37,99 @@ public:
     virtual ~TestSuiteGenerator() {}
 
     TestSuiteGenerator(
-            TestCaseGenerator* testCaseGenerator,
+            TestGroupGenerator* testGroupGenerator,
             IOManipulator* ioManipulator,
             OperatingSystem* os,
             GeneratorLogger* logger)
-            : testCaseGenerator_(testCaseGenerator)
+            : testGroupGenerator_(testGroupGenerator)
             , ioManipulator_(ioManipulator)
             , os_(os)
             , logger_(logger)
     {}
 
-    virtual GenerationResult generate(
-            const TestSuite& testSuite,
-            const CoreConfig& coreConfig) {
-
+    virtual GenerationResult generate(const TestSuite& testSuite, const CoreConfig& coreConfig) {
         logger_->logIntroduction();
 
         os_->forceMakeDir(coreConfig.testConfig().testCasesDir());
 
-        map<string, TestCaseGenerationResult> resultsByName;
-        generateSampleTests(testSuite, coreConfig, resultsByName);
-        generateOfficialTests(testSuite, coreConfig, resultsByName);
-        return GenerationResult(resultsByName);
+        vector<TestGroupGenerationResult> testGroupResults;
+        testGroupResults.push_back(generateSampleTests(testSuite, coreConfig));
+        for (TestGroupGenerationResult result : generateOfficialTests(testSuite, coreConfig)) {
+            testGroupResults.push_back(result);
+        }
+
+        return GenerationResult(testGroupResults);
     }
 
 private:
-    void generateSampleTests(
-            const TestSuite& testSuite,
-            const CoreConfig& coreConfig,
-            map<string, TestCaseGenerationResult>& resultsByName) {
-
-        logger_->logSampleTestCasesIntroduction();
+    TestGroupGenerationResult generateSampleTests(const TestSuite& testSuite, const CoreConfig& coreConfig) {
+        logger_->logTestGroupIntroduction(0);
 
         vector<SampleTestCase> sampleTests = testSuite.sampleTests();
+        vector<TestCase> testCases;
         for (int testCaseId = 1; testCaseId <= sampleTests.size(); testCaseId++) {
-            SampleTestCase testCase = sampleTests[testCaseId - 1];
-            TestCaseData testCaseData = TestCaseDataBuilder()
+            SampleTestCase sampleTestCase = sampleTests[testCaseId - 1];
+            TestCase testCase = TestCaseBuilder()
                     .setName(TestCaseNameCreator::createSampleTestCaseName(coreConfig.problemConfig().slug(), testCaseId))
-                    .setSubtaskIds(testCase.subtaskIds())
+                    .setSubtaskIds(sampleTestCase.subtaskIds())
+                    .setApplier([=] {
+                        istream* in = new istringstream(sampleTestCase.content());
+                        ioManipulator_->parseInput(in);
+                    })
                     .build();
-
-            function<void()> applier = [=] {
-                istream* in = new istringstream(testCase.content());
-                ioManipulator_->parseInput(in);
-            };
-
-            generateTestCase(testCaseData, applier, coreConfig, resultsByName);
+            testCases.push_back(testCase);
         }
+
+        return testGroupGenerator_->generate(TestGroup(0, testCases), coreConfig.testConfig());
     }
 
-    void generateOfficialTests(
-            const TestSuite& testSuite,
-            const CoreConfig& coreConfig,
-            map<string, TestCaseGenerationResult>& resultsByName) {
-
-        vector<TestGroup> officialTests = testSuite.officialTests();
-        for (const TestGroup& testGroup : officialTests) {
-            generateTestGroup(testGroup, testSuite.inputFinalizer(), coreConfig, resultsByName);
+    vector<TestGroupGenerationResult> generateOfficialTests(const TestSuite& testSuite, const CoreConfig& coreConfig) {
+        vector<TestGroupGenerationResult> results;
+        for (const OfficialTestGroup& officialTestGroup : testSuite.officialTests()) {
+            results.push_back(generateOfficialTestGroup(officialTestGroup, testSuite.inputFinalizer(), coreConfig));
         }
+        return results;
     }
 
-    void generateTestGroup(
-            const TestGroup& testGroup,
+    TestGroupGenerationResult generateOfficialTestGroup(
+            const OfficialTestGroup& officialTestGroup,
             const function<void()>& inputFinalizer,
-            const CoreConfig& coreConfig,
-            map<string, TestCaseGenerationResult>& resultsByName) {
+            const CoreConfig& coreConfig) {
 
-        logger_->logTestGroupIntroduction(testGroup.id());
+        logger_->logTestGroupIntroduction(officialTestGroup.id());
 
-        for (int testCaseId = 1; testCaseId <= testGroup.officialTestCases().size(); testCaseId++) {
-            OfficialTestCase testCase = testGroup.officialTestCases()[testCaseId - 1];
+        vector<OfficialTestCase> officialTestCases = officialTestGroup.officialTestCases();
+        vector<TestCase> testCases;
+        for (int testCaseId = 1; testCaseId <= officialTestCases.size(); testCaseId++) {
+            OfficialTestCase officialTestCase = officialTestCases[testCaseId - 1];
             string testCaseName = TestCaseNameCreator::createOfficialTestCaseName(
                     coreConfig.problemConfig().slug(),
-                    testGroup.id(),
+                    officialTestGroup.id(),
                     testCaseId);
-            TestCaseData testCaseData = TestCaseDataBuilder()
+            TestCase testCase = TestCaseBuilder()
                     .setName(testCaseName)
-                    .setDescription(testCase.description())
-                    .setSubtaskIds(testGroup.subtaskIds())
+                    .setDescription(officialTestCase.description())
+                    .setSubtaskIds(officialTestGroup.subtaskIds())
+                    .setApplier([=] {officialTestCase.closure()(); inputFinalizer();})
                     .build();
-            function<void()> applier = [=] {testCase.closure()(); inputFinalizer();};
-
-            generateTestCase(testCaseData, applier, coreConfig, resultsByName);
+            testCases.push_back(testCase);
         }
+
+        return testGroupGenerator_->generate(TestGroup(officialTestGroup.id(), testCases), coreConfig.testConfig());
     }
+};
 
-    TestCaseGenerationResult generateTestCase(
-            const TestCaseData& testCaseData,
-            const function<void()> testCaseClosure,
-            const CoreConfig& coreConfig,
-            map<string, TestCaseGenerationResult>& testCaseGenerationResultsByName) {
+class TestSuiteGeneratorFactory {
+public:
+    virtual ~TestSuiteGeneratorFactory() {}
 
-        logger_->logTestCaseIntroduction(testCaseData.name());
+    virtual TestSuiteGenerator* create(
+            TestGroupGenerator* testGroupGenerator,
+            IOManipulator* ioManipulator,
+            OperatingSystem* os,
+            GeneratorLogger* logger) {
 
-        TestCaseGenerationResult result = testCaseGenerator_->generate(testCaseData, testCaseClosure, coreConfig.testConfig());
-        testCaseGenerationResultsByName[testCaseData.name()] = result;
-
-        logger_->logTestCaseGenerationResult(testCaseData.description(), result);
-
-        return result;
+        return new TestSuiteGenerator(testGroupGenerator, ioManipulator, os, logger);
     }
 };
 

@@ -9,7 +9,7 @@
 
 #include "OfficialTestCase.hpp"
 #include "SampleTestCase.hpp"
-#include "TestGroup.hpp"
+#include "OfficialTestGroup.hpp"
 
 using std::function;
 using std::move;
@@ -24,7 +24,7 @@ struct TestSuite {
 
 private:
     vector<SampleTestCase> sampleTests_;
-    vector<TestGroup> officialTests_;
+    vector<OfficialTestGroup> officialTests_;
     function<void()> inputFinalizer_;
 
 public:
@@ -32,7 +32,7 @@ public:
         return sampleTests_;
     }
 
-    const vector<TestGroup>& officialTests() const {
+    const vector<OfficialTestGroup>& officialTests() const {
         return officialTests_;
     }
 
@@ -84,7 +84,7 @@ public:
 
     TestSuiteBuilder& newTestGroup() {
         if (hasCurrentTestGroup_) {
-            subject_.officialTests_.push_back(TestGroup(currentTestGroupId_, currentSubtaskIds_, currentOfficialTestCases_));
+            subject_.officialTests_.push_back(OfficialTestGroup(currentTestGroupId_, currentSubtaskIds_, currentOfficialTestCases_));
         }
 
         hasCurrentTestGroup_ = true;
@@ -115,7 +115,7 @@ public:
 
     TestSuite build() {
         if (hasCurrentTestGroup_) {
-            subject_.officialTests_.push_back(TestGroup(currentTestGroupId_, currentSubtaskIds_, currentOfficialTestCases_));
+            subject_.officialTests_.push_back(OfficialTestGroup(currentTestGroupId_, currentSubtaskIds_, currentOfficialTestCases_));
         }
         return move(subject_);
     }

@@ -6,23 +6,21 @@
 
 #include "../io/MockIOManipulator.hpp"
 #include "../os/MockOperatingSystem.hpp"
-#include "FakeTestCaseGenerationFailure.hpp"
-#include "MockTestCaseGenerator.hpp"
+#include "MockTestGroupGenerator.hpp"
 #include "MockGeneratorLogger.hpp"
 #include "tcframe/generator/TestSuiteGenerator.hpp"
 
 using ::testing::_;
 using ::testing::DoAll;
-using ::testing::ElementsAre;
 using ::testing::Eq;
 using ::testing::InSequence;
 using ::testing::Invoke;
 using ::testing::InvokeWithoutArgs;
 using ::testing::Ne;
-using ::testing::Pair;
 using ::testing::Property;
 using ::testing::Return;
 using ::testing::Test;
+using ::testing::Unused;
 using ::testing::WithArg;
 
 using std::vector;
@@ -33,7 +31,7 @@ int N;
 
 class TestSuiteGeneratorTests : public Test {
 protected:
-    Mock(TestCaseGenerator) testCaseGenerator;
+    Mock(TestGroupGenerator) testGroupGenerator;
     Mock(IOManipulator) ioManipulator;
     Mock(OperatingSystem) os;
     Mock(GeneratorLogger) logger;
@@ -41,15 +39,16 @@ protected:
     vector<string> stc1 = {"10", "20"};
     vector<string> stc2 = {"30"};
 
-    OfficialTestCase tc1 = OfficialTestCase([] {N = 1;}, "N = 1");
-    OfficialTestCase tc2 = OfficialTestCase([] {N = 2;}, "N = 2");
-    OfficialTestCase tc3 = OfficialTestCase([] {N = 3;}, "N = 3");
+    OfficialTestCase tc1 = OfficialTestCase([&] {N = 1;}, "N = 1");
+    OfficialTestCase tc2 = OfficialTestCase([&] {N = 2;}, "N = 2");
+    OfficialTestCase tc3 = OfficialTestCase([&] {N = 3;}, "N = 3");
 
-    TestSuite testSuiteWithoutGroups = TestSuiteBuilder()
+    TestSuite testSuite = TestSuiteBuilder()
             .addSampleTestCase(stc1)
             .addSampleTestCase(stc2)
             .addOfficialTestCase(tc1)
             .addOfficialTestCase(tc2)
+            .addOfficialTestCase(tc3)
             .build();
     TestSuite testSuiteWithGroups = TestSuiteBuilder()
             .addSampleTestCase(stc1, {1, 2})
@@ -72,250 +71,169 @@ protected:
             .build();
     CoreConfig coreConfig = CoreConfig(problemConfig, testConfig);
 
-    TestSuiteGenerator generator = TestSuiteGenerator(&testCaseGenerator, &ioManipulator, &os, &logger);
+    TestSuiteGenerator generator = TestSuiteGenerator(&testGroupGenerator, &ioManipulator, &os, &logger);
+
+    static TestGroupGenerationResult createSuccessfulTestGroupResult(TestGroup testGroup, Unused) {
+        vector<TestCaseGenerationResult> testCaseResults;
+        for (int i = 0; i < testGroup.testCases().size(); i++) {
+            testCaseResults.push_back(TestCaseGenerationResult::successfulResult());
+        }
+        return TestGroupGenerationResult(nullptr, testCaseResults);
+    }
 
     void SetUp() {
-        ON_CALL(testCaseGenerator, generate(_, _, testConfig))
-                .WillByDefault(Return(TestCaseGenerationResult::successfulResult()));
+        ON_CALL(testGroupGenerator, generate(_, _))
+                .WillByDefault(Invoke(&createSuccessfulTestGroupResult));
     }
 };
 
 TEST_F(TestSuiteGeneratorTests, Generation_Successful) {
+    GenerationResult expectedResult({
+            TestGroupGenerationResult(nullptr, {
+                    TestCaseGenerationResult::successfulResult(),
+                    TestCaseGenerationResult::successfulResult()}),
+            TestGroupGenerationResult(nullptr, {
+                    TestCaseGenerationResult::successfulResult(),
+                    TestCaseGenerationResult::successfulResult(),
+                    TestCaseGenerationResult::successfulResult()})});
     {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction());
         EXPECT_CALL(os, forceMakeDir("dir"));
 
-        EXPECT_CALL(logger, logSampleTestCasesIntroduction());
-
-        EXPECT_CALL(logger, logTestCaseIntroduction("foo_sample_1"));
-        EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_sample_1").setSubtaskIds({-1}).build(),
-                _,
+        EXPECT_CALL(testGroupGenerator, generate(TestGroup(0, {
+                TestCaseBuilder().setName("foo_sample_1").setSubtaskIds({-1}).build(),
+                TestCaseBuilder().setName("foo_sample_2").setSubtaskIds({-1}).build()}),
                 testConfig));
-        EXPECT_CALL(logger, logTestCaseGenerationResult("", TestCaseGenerationResult::successfulResult()));
 
-        EXPECT_CALL(logger, logTestCaseIntroduction("foo_sample_2"));
-        EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_sample_2").setSubtaskIds({-1}).build(),
-                _,
+        EXPECT_CALL(testGroupGenerator, generate(TestGroup(-1, {
+                TestCaseBuilder().setName("foo_1").setDescription("N = 1").setSubtaskIds({-1}).build(),
+                TestCaseBuilder().setName("foo_2").setDescription("N = 2").setSubtaskIds({-1}).build(),
+                TestCaseBuilder().setName("foo_3").setDescription("N = 3").setSubtaskIds({-1}).build()}),
                 testConfig));
-        EXPECT_CALL(logger, logTestCaseGenerationResult("", TestCaseGenerationResult::successfulResult()));
-
-
-        EXPECT_CALL(logger, logTestGroupIntroduction(-1));
-
-        EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
-        EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_1").setDescription("N = 1").setSubtaskIds({-1}).build(),
-                _,
-                testConfig));
-        EXPECT_CALL(logger, logTestCaseGenerationResult("N = 1", TestCaseGenerationResult::successfulResult()));
-
-        EXPECT_CALL(logger, logTestCaseIntroduction("foo_2"));
-        EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_2").setDescription("N = 2").setSubtaskIds({-1}).build(),
-                _,
-                testConfig));
-        EXPECT_CALL(logger, logTestCaseGenerationResult("N = 2", TestCaseGenerationResult::successfulResult()));
     }
+    GenerationResult result = generator.generate(testSuite, coreConfig);
 
-    GenerationResult result = generator.generate(testSuiteWithoutGroups, coreConfig);
-
+    EXPECT_THAT(result, Eq(expectedResult));
     EXPECT_TRUE(result.isSuccessful());
-    EXPECT_THAT(result.resultsByName(), ElementsAre(
-            Pair("foo_1", TestCaseGenerationResult::successfulResult()),
-            Pair("foo_2", TestCaseGenerationResult::successfulResult()),
-            Pair("foo_sample_1", TestCaseGenerationResult::successfulResult()),
-            Pair("foo_sample_2", TestCaseGenerationResult::successfulResult())));
 }
 
 TEST_F(TestSuiteGeneratorTests, Generation_Failed) {
-    TestCaseGenerationFailure* failure_sample_1 = new FakeTestCaseGenerationFailure();
-    ON_CALL(testCaseGenerator, generate(Property(&TestCaseData::name, "foo_sample_1"), _, testConfig))
-            .WillByDefault(Return(TestCaseGenerationResult::failedResult(failure_sample_1)));
-    TestCaseGenerationFailure* failure_2 = new FakeTestCaseGenerationFailure();
-    ON_CALL(testCaseGenerator, generate(Property(&TestCaseData::name, "foo_2"), _, testConfig))
-            .WillByDefault(Return(TestCaseGenerationResult::failedResult(failure_2)));
+    ON_CALL(testGroupGenerator, generate(Property(&TestGroup::id, 0), _))
+            .WillByDefault(Return(TestGroupGenerationResult(nullptr, {
+                    TestCaseGenerationResult::successfulResult(),
+                    TestCaseGenerationResult::failedResult(new SimpleFailure("failed"))})));
+
+    GenerationResult expectedResult({
+            TestGroupGenerationResult(nullptr, {
+                    TestCaseGenerationResult::successfulResult(),
+                    TestCaseGenerationResult::failedResult(new SimpleFailure("failed"))}),
+            TestGroupGenerationResult(nullptr, {
+                    TestCaseGenerationResult::successfulResult(),
+                    TestCaseGenerationResult::successfulResult(),
+                    TestCaseGenerationResult::successfulResult()})});
     {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction());
         EXPECT_CALL(os, forceMakeDir("dir"));
 
-        EXPECT_CALL(logger, logSampleTestCasesIntroduction());
-
-        EXPECT_CALL(logger, logTestCaseIntroduction("foo_sample_1"));
-        EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_sample_1").setSubtaskIds({-1}).build(),
-                _,
+        EXPECT_CALL(testGroupGenerator, generate(TestGroup(0, {
+                TestCaseBuilder().setName("foo_sample_1").setSubtaskIds({-1}).build(),
+                TestCaseBuilder().setName("foo_sample_2").setSubtaskIds({-1}).build()}),
                 testConfig));
-        EXPECT_CALL(logger, logTestCaseGenerationResult("", TestCaseGenerationResult::failedResult(failure_sample_1)));
 
-        EXPECT_CALL(logger, logTestCaseIntroduction("foo_sample_2"));
-        EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_sample_2").setSubtaskIds({-1}).build(),
-                _,
+        EXPECT_CALL(testGroupGenerator, generate(TestGroup(-1, {
+                TestCaseBuilder().setName("foo_1").setDescription("N = 1").setSubtaskIds({-1}).build(),
+                TestCaseBuilder().setName("foo_2").setDescription("N = 2").setSubtaskIds({-1}).build(),
+                TestCaseBuilder().setName("foo_3").setDescription("N = 3").setSubtaskIds({-1}).build()}),
                 testConfig));
-        EXPECT_CALL(logger, logTestCaseGenerationResult("", TestCaseGenerationResult::successfulResult()));
-
-
-        EXPECT_CALL(logger, logTestGroupIntroduction(-1));
-
-        EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
-        EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_1").setDescription("N = 1").setSubtaskIds({-1}).build(),
-                _,
-                testConfig));
-        EXPECT_CALL(logger, logTestCaseGenerationResult("N = 1", TestCaseGenerationResult::successfulResult()));
-
-        EXPECT_CALL(logger, logTestCaseIntroduction("foo_2"));
-        EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_2").setDescription("N = 2").setSubtaskIds({-1}).build(),
-                _,
-                testConfig));
-        EXPECT_CALL(logger, logTestCaseGenerationResult("N = 2", TestCaseGenerationResult::failedResult(failure_2)));
     }
+    GenerationResult result = generator.generate(testSuite, coreConfig);
 
-    GenerationResult result = generator.generate(testSuiteWithoutGroups, coreConfig);
-
+    EXPECT_THAT(result, Eq(expectedResult));
     EXPECT_FALSE(result.isSuccessful());
-    EXPECT_THAT(result.resultsByName(), ElementsAre(
-            Pair("foo_1", TestCaseGenerationResult::successfulResult()),
-            Pair("foo_2", TestCaseGenerationResult::failedResult(failure_2)),
-            Pair("foo_sample_1", TestCaseGenerationResult::failedResult(failure_sample_1)),
-            Pair("foo_sample_2", TestCaseGenerationResult::successfulResult())));
 }
+
 
 TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Successful) {
+    GenerationResult expectedResult({
+            TestGroupGenerationResult(nullptr, {
+                    TestCaseGenerationResult::successfulResult(),
+                    TestCaseGenerationResult::successfulResult()}),
+            TestGroupGenerationResult(nullptr, {
+                    TestCaseGenerationResult::successfulResult(),
+                    TestCaseGenerationResult::successfulResult()}),
+            TestGroupGenerationResult(nullptr, {
+                    TestCaseGenerationResult::successfulResult()})});
     {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction());
         EXPECT_CALL(os, forceMakeDir("dir"));
 
-        EXPECT_CALL(logger, logSampleTestCasesIntroduction());
-
-        EXPECT_CALL(logger, logTestCaseIntroduction("foo_sample_1"));
-        EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_sample_1").setSubtaskIds({1, 2}).build(),
-                _,
+        EXPECT_CALL(testGroupGenerator, generate(TestGroup(0, {
+                TestCaseBuilder().setName("foo_sample_1").setSubtaskIds({1, 2}).build(),
+                TestCaseBuilder().setName("foo_sample_2").setSubtaskIds({2}).build()}),
                 testConfig));
-        EXPECT_CALL(logger, logTestCaseGenerationResult("", TestCaseGenerationResult::successfulResult()));
 
-        EXPECT_CALL(logger, logTestCaseIntroduction("foo_sample_2"));
-        EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_sample_2").setSubtaskIds({2}).build(),
-                _,
+        EXPECT_CALL(testGroupGenerator, generate(TestGroup(1, {
+                TestCaseBuilder().setName("foo_1_1").setDescription("N = 1").setSubtaskIds({1, 2}).build(),
+                TestCaseBuilder().setName("foo_1_2").setDescription("N = 2").setSubtaskIds({1, 2}).build()}),
                 testConfig));
-        EXPECT_CALL(logger, logTestCaseGenerationResult("", TestCaseGenerationResult::successfulResult()));
 
-
-        EXPECT_CALL(logger, logTestGroupIntroduction(1));
-
-        EXPECT_CALL(logger, logTestCaseIntroduction("foo_1_1"));
-        EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_1_1").setDescription("N = 1").setSubtaskIds({1, 2}).build(),
-                _,
+        EXPECT_CALL(testGroupGenerator, generate(TestGroup(2, {
+                TestCaseBuilder().setName("foo_2_1").setDescription("N = 3").setSubtaskIds({2}).build()}),
                 testConfig));
-        EXPECT_CALL(logger, logTestCaseGenerationResult("N = 1", TestCaseGenerationResult::successfulResult()));
-
-        EXPECT_CALL(logger, logTestCaseIntroduction("foo_1_2"));
-        EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_1_2").setDescription("N = 2").setSubtaskIds({1, 2}).build(),
-                _,
-                testConfig));
-        EXPECT_CALL(logger, logTestCaseGenerationResult("N = 2", TestCaseGenerationResult::successfulResult()));
-
-
-        EXPECT_CALL(logger, logTestGroupIntroduction(2));
-
-        EXPECT_CALL(logger, logTestCaseIntroduction("foo_2_1"));
-        EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_2_1").setDescription("N = 3").setSubtaskIds({2}).build(),
-                _,
-                testConfig));
-        EXPECT_CALL(logger, logTestCaseGenerationResult("N = 3", TestCaseGenerationResult::successfulResult()));
     }
-
     GenerationResult result = generator.generate(testSuiteWithGroups, coreConfig);
 
+    EXPECT_THAT(result, Eq(expectedResult));
     EXPECT_TRUE(result.isSuccessful());
-    EXPECT_THAT(result.resultsByName(), ElementsAre(
-            Pair("foo_1_1", TestCaseGenerationResult::successfulResult()),
-            Pair("foo_1_2", TestCaseGenerationResult::successfulResult()),
-            Pair("foo_2_1", TestCaseGenerationResult::successfulResult()),
-            Pair("foo_sample_1", TestCaseGenerationResult::successfulResult()),
-            Pair("foo_sample_2", TestCaseGenerationResult::successfulResult())));
 }
+
 
 TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Failed) {
-    TestCaseGenerationFailure* failure_sample_1 = new FakeTestCaseGenerationFailure();
-    ON_CALL(testCaseGenerator, generate(Property(&TestCaseData::name, "foo_sample_1"), _, testConfig))
-            .WillByDefault(Return(TestCaseGenerationResult::failedResult(failure_sample_1)));
-    TestCaseGenerationFailure* failure_1_2 = new FakeTestCaseGenerationFailure();
-    ON_CALL(testCaseGenerator, generate(Property(&TestCaseData::name, "foo_1_2"), _, testConfig))
-            .WillByDefault(Return(TestCaseGenerationResult::failedResult(failure_1_2)));
-    TestCaseGenerationFailure* failure_2_1 = new FakeTestCaseGenerationFailure();
-    ON_CALL(testCaseGenerator, generate(Property(&TestCaseData::name, "foo_2_1"), _, testConfig))
-            .WillByDefault(Return(TestCaseGenerationResult::failedResult(failure_2_1)));
+    ON_CALL(testGroupGenerator, generate(Property(&TestGroup::id, 1), _))
+            .WillByDefault(Return(TestGroupGenerationResult(nullptr, {
+                    TestCaseGenerationResult::failedResult(new SimpleFailure("failed 1")),
+                    TestCaseGenerationResult::successfulResult()})));
+    ON_CALL(testGroupGenerator, generate(Property(&TestGroup::id, 2), _))
+            .WillByDefault(Return(TestGroupGenerationResult(nullptr, {
+                    TestCaseGenerationResult::failedResult(new SimpleFailure("failed 2"))})));
+
+    GenerationResult expectedResult({
+            TestGroupGenerationResult(nullptr, {
+                    TestCaseGenerationResult::successfulResult(),
+                    TestCaseGenerationResult::successfulResult()}),
+            TestGroupGenerationResult(nullptr, {
+                    TestCaseGenerationResult::failedResult(new SimpleFailure("failed 1")),
+                    TestCaseGenerationResult::successfulResult()}),
+            TestGroupGenerationResult(nullptr, {
+                    TestCaseGenerationResult::failedResult(new SimpleFailure("failed 2"))})});
     {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction());
         EXPECT_CALL(os, forceMakeDir("dir"));
 
-        EXPECT_CALL(logger, logSampleTestCasesIntroduction());
-
-        EXPECT_CALL(logger, logTestCaseIntroduction("foo_sample_1"));
-        EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_sample_1").setSubtaskIds({1, 2}).build(),
-                _,
+        EXPECT_CALL(testGroupGenerator, generate(TestGroup(0, {
+                TestCaseBuilder().setName("foo_sample_1").setSubtaskIds({1, 2}).build(),
+                TestCaseBuilder().setName("foo_sample_2").setSubtaskIds({2}).build()}),
                 testConfig));
-        EXPECT_CALL(logger, logTestCaseGenerationResult("", TestCaseGenerationResult::failedResult(failure_sample_1)));
 
-        EXPECT_CALL(logger, logTestCaseIntroduction("foo_sample_2"));
-        EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_sample_2").setSubtaskIds({2}).build(),
-                _,
+        EXPECT_CALL(testGroupGenerator, generate(TestGroup(1, {
+                TestCaseBuilder().setName("foo_1_1").setDescription("N = 1").setSubtaskIds({1, 2}).build(),
+                TestCaseBuilder().setName("foo_1_2").setDescription("N = 2").setSubtaskIds({1, 2}).build()}),
                 testConfig));
-        EXPECT_CALL(logger, logTestCaseGenerationResult("", TestCaseGenerationResult::successfulResult()));
 
-
-        EXPECT_CALL(logger, logTestGroupIntroduction(1));
-
-        EXPECT_CALL(logger, logTestCaseIntroduction("foo_1_1"));
-        EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_1_1").setDescription("N = 1").setSubtaskIds({1, 2}).build(),
-                _,
+        EXPECT_CALL(testGroupGenerator, generate(TestGroup(2, {
+                TestCaseBuilder().setName("foo_2_1").setDescription("N = 3").setSubtaskIds({2}).build()}),
                 testConfig));
-        EXPECT_CALL(logger, logTestCaseGenerationResult("N = 1", TestCaseGenerationResult::successfulResult()));
-
-        EXPECT_CALL(logger, logTestCaseIntroduction("foo_1_2"));
-        EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_1_2").setDescription("N = 2").setSubtaskIds({1, 2}).build(),
-                _,
-                testConfig));
-        EXPECT_CALL(logger, logTestCaseGenerationResult("N = 2", TestCaseGenerationResult::failedResult(failure_1_2)));
-
-
-        EXPECT_CALL(logger, logTestGroupIntroduction(2));
-
-        EXPECT_CALL(logger, logTestCaseIntroduction("foo_2_1"));
-        EXPECT_CALL(testCaseGenerator, generate(
-                TestCaseDataBuilder().setName("foo_2_1").setDescription("N = 3").setSubtaskIds({2}).build(),
-                _,
-                testConfig));
-        EXPECT_CALL(logger, logTestCaseGenerationResult("N = 3", TestCaseGenerationResult::failedResult(failure_2_1)));
     }
-
     GenerationResult result = generator.generate(testSuiteWithGroups, coreConfig);
 
+    EXPECT_THAT(result, Eq(expectedResult));
     EXPECT_FALSE(result.isSuccessful());
-    EXPECT_THAT(result.resultsByName(), ElementsAre(
-            Pair("foo_1_1", TestCaseGenerationResult::successfulResult()),
-            Pair("foo_1_2", TestCaseGenerationResult::failedResult(failure_1_2)),
-            Pair("foo_2_1", TestCaseGenerationResult::failedResult(failure_2_1)),
-            Pair("foo_sample_1", TestCaseGenerationResult::failedResult(failure_sample_1)),
-            Pair("foo_sample_2", TestCaseGenerationResult::successfulResult())));
 }
+
 
 TEST_F(TestSuiteGeneratorTests, Generation_InputFinalizer_Official_Applied) {
     TestSuite testSuite = TestSuiteBuilder()
@@ -323,15 +241,16 @@ TEST_F(TestSuiteGeneratorTests, Generation_InputFinalizer_Official_Applied) {
             .addOfficialTestCase(tc3)
             .build();
 
-    Captor<function<void()>> applierCaptor;
-    ON_CALL(testCaseGenerator, generate(_, _, _))
+    Captor<TestGroup> testGroupCaptor;
+    ON_CALL(testGroupGenerator, generate(_, _))
             .WillByDefault(DoAll(
-                    WithArg<1>(Invoke(&applierCaptor, &Captor<function<void()>>::capture)),
-                    InvokeWithoutArgs([]{return TestCaseGenerationResult::successfulResult();})));
+                    WithArg<0>(Invoke(&testGroupCaptor, &Captor<TestGroup>::capture)),
+                    InvokeWithoutArgs([] {return TestGroupGenerationResult(
+                            nullptr, {TestCaseGenerationResult::successfulResult()});})));
 
     generator.generate(testSuite, coreConfig);
 
-    applierCaptor.arg()();
+    testGroupCaptor.arg().testCases()[0].applier()();
     EXPECT_THAT(N, Eq(3 * 2));
 }
 
@@ -344,15 +263,16 @@ TEST_F(TestSuiteGeneratorTests, Generation_InputFinalizer_Sample_NotApplied) {
     ON_CALL(ioManipulator, parseInput(_))
             .WillByDefault(InvokeWithoutArgs([] {N = 10;}));
 
-    Captor<function<void()>> applierCaptor;
-    ON_CALL(testCaseGenerator, generate(_, _, _))
+    Captor<TestGroup> testGroupCaptor;
+    ON_CALL(testGroupGenerator, generate(_, _))
             .WillByDefault(DoAll(
-                    WithArg<1>(Invoke(&applierCaptor, &Captor<function<void()>>::capture)),
-                    InvokeWithoutArgs([]{return TestCaseGenerationResult::successfulResult();})));
+                    WithArg<0>(Invoke(&testGroupCaptor, &Captor<TestGroup>::capture)),
+                    InvokeWithoutArgs([]{return TestGroupGenerationResult(
+                            nullptr, {TestCaseGenerationResult::successfulResult()});})));
 
     generator.generate(testSuite, coreConfig);
 
-    applierCaptor.arg()();
+    testGroupCaptor.arg().testCases()[0].applier()();
     EXPECT_THAT(N, Ne(10 * 2));
     EXPECT_THAT(N, Eq(10));
 }

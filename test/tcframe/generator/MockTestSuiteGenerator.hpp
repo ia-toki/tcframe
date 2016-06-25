@@ -15,4 +15,9 @@ public:
     MOCK_METHOD2(generate, GenerationResult(const TestSuite&, const CoreConfig&));
 };
 
+class MockTestSuiteGeneratorFactory : public TestSuiteGeneratorFactory {
+public:
+    MOCK_METHOD4(create, TestSuiteGenerator*(TestGroupGenerator*, IOManipulator*, OperatingSystem*, GeneratorLogger*));
+};
+
 }

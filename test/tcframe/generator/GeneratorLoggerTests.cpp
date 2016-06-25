@@ -22,13 +22,13 @@ TEST_F(GeneratorLoggerTests, Introduction) {
     logger.logIntroduction();
 }
 
-TEST_F(GeneratorLoggerTests, TestCaseGenerationResult_Successful) {
+TEST_F(GeneratorLoggerTests, TestCaseResult_Successful) {
     EXPECT_CALL(engine, logParagraph(0, "OK"));
 
-    logger.logTestCaseGenerationResult("N = 1", TestCaseGenerationResult::successfulResult());
+    logger.logTestCaseResult("N = 1", TestCaseGenerationResult::successfulResult());
 }
 
-TEST_F(GeneratorLoggerTests, TestCaseGenerationResult_Failed_Verification) {
+TEST_F(GeneratorLoggerTests, TestCaseResult_Failed_Verification) {
     {
         InSequence sequence;
         EXPECT_CALL(engine, logParagraph(0, "FAILED"));
@@ -41,10 +41,10 @@ TEST_F(GeneratorLoggerTests, TestCaseGenerationResult_Failed_Verification) {
 
     VerificationResult result({{-1, {"A <= 10", "B <= 10"}}}, {});
     VerificationFailure failure(result);
-    logger.logTestCaseGenerationResult("N = 1", TestCaseGenerationResult::failedResult(&failure));
+    logger.logTestCaseResult("N = 1", TestCaseGenerationResult::failedResult(&failure));
 }
 
-TEST_F(GeneratorLoggerTests, TestCaseGenerationResult_Failed_Verification_WithGroups) {
+TEST_F(GeneratorLoggerTests, TestCaseResult_Failed_Verification_WithGroups) {
     {
         InSequence sequence;
         EXPECT_CALL(engine, logParagraph(0, "FAILED"));
@@ -61,7 +61,7 @@ TEST_F(GeneratorLoggerTests, TestCaseGenerationResult_Failed_Verification_WithGr
 
     VerificationResult result({{2, {"A <= 10", "B <= 10"}}, {4, {"A <= B"}}}, {1, 3});
     VerificationFailure failure(result);
-    logger.logTestCaseGenerationResult("N = 1", TestCaseGenerationResult::failedResult(&failure));
+    logger.logTestCaseResult("N = 1", TestCaseGenerationResult::failedResult(&failure));
 }
 
 }

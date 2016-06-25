@@ -35,7 +35,7 @@ TEST_F(TestSuiteBuilderTests, Building) {
     EXPECT_THAT(testSuite.sampleTests(), ElementsAre(
             SampleTestCase("10\n20\n", {-1}), SampleTestCase("30\n", {-1})));
     EXPECT_THAT(testSuite.officialTests(), ElementsAre(
-            TestGroup(-1, {-1}, {tc1, tc2})));
+            OfficialTestGroup(-1, {-1}, {tc1, tc2})));
 }
 
 TEST_F(TestSuiteBuilderTests, Building_WithGroups) {
@@ -55,8 +55,8 @@ TEST_F(TestSuiteBuilderTests, Building_WithGroups) {
     EXPECT_THAT(testSuite.sampleTests(), ElementsAre(
             SampleTestCase("10\n20\n", {1, 2}), SampleTestCase("30\n", {2})));
     EXPECT_THAT(testSuite.officialTests(), ElementsAre(
-            TestGroup(1, {1, 2}, {tc1, tc2}),
-            TestGroup(2, {2}, {tc3, tc4})));
+            OfficialTestGroup(1, {1, 2}, {tc1, tc2}),
+            OfficialTestGroup(2, {2}, {tc3, tc4})));
 }
 
 TEST_F(TestSuiteBuilderTests, Building_WithGroups_WithoutLastGroup) {
@@ -77,8 +77,8 @@ TEST_F(TestSuiteBuilderTests, Building_WithGroups_WithoutLastGroup) {
     EXPECT_THAT(testSuite.sampleTests(), ElementsAre(
             SampleTestCase("10\n20\n", {1, 2}), SampleTestCase("30\n", {2})));
     EXPECT_THAT(testSuite.officialTests(), ElementsAre(
-            TestGroup(1, {1, 2}, {tc1, tc2}),
-            TestGroup(2, {2}, {tc3, tc4})));
+            OfficialTestGroup(1, {1, 2}, {tc1, tc2}),
+            OfficialTestGroup(2, {2}, {tc3, tc4})));
 }
 
 }

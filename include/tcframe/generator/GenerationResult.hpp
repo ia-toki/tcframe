@@ -1,37 +1,39 @@
 #pragma once
 
-#include <map>
-#include <string>
-#include <utility>
+#include <tuple>
+#include <vector>
 
-#include "TestCaseGenerationResult.hpp"
+#include "TestGroupGenerationResult.hpp"
 
-using std::map;
-using std::move;
-using std::string;
+using std::tie;
+using std::vector;
 
 namespace tcframe {
 
 struct GenerationResult {
 private:
-    map<string, TestCaseGenerationResult> resultsByName_;
+    vector<TestGroupGenerationResult> testGroupResults_;
 
 public:
-    GenerationResult(const map<string, TestCaseGenerationResult>& resultsByName)
-            : resultsByName_(resultsByName)
+    GenerationResult(const vector<TestGroupGenerationResult>& testGroupResults)
+            : testGroupResults_(testGroupResults)
     {}
 
-    const map<string, TestCaseGenerationResult>& resultsByName() const {
-        return resultsByName_;
+    const vector<TestGroupGenerationResult>& testGroupResults() const {
+        return testGroupResults_;
     }
 
     bool isSuccessful() const {
-        for (auto entry : resultsByName_) {
-            if (!entry.second.isSuccessful()) {
+        for (auto result : testGroupResults_) {
+            if (!result.isSuccessful()) {
                 return false;
             }
         }
         return true;
+    }
+
+    bool operator==(const GenerationResult& o) const {
+        return tie(testGroupResults_) == tie(o.testGroupResults_);
     }
 };
 

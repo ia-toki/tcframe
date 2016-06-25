@@ -1,26 +1,28 @@
 #pragma once
 
-#include "TestCaseGenerationFailure.hpp"
+#include <string>
+
+#include "tcframe/failure/Failure.hpp"
+
+using std::string;
 
 namespace tcframe {
 
 struct TestCaseGenerationResult {
 private:
-    TestCaseGenerationFailure* failure_;
+    Failure* failure_;
 
 private:
-    TestCaseGenerationResult(TestCaseGenerationFailure* failure)
+    TestCaseGenerationResult(Failure* failure)
             : failure_(failure)
     {}
 
 public:
-    TestCaseGenerationResult() = default;
-
     static TestCaseGenerationResult successfulResult() {
         return TestCaseGenerationResult(nullptr);
     }
 
-    static TestCaseGenerationResult failedResult(TestCaseGenerationFailure* failure) {
+    static TestCaseGenerationResult failedResult(Failure* failure) {
         return TestCaseGenerationResult(failure);
     }
 
@@ -28,7 +30,7 @@ public:
         return failure_ == nullptr;
     }
 
-    TestCaseGenerationFailure* failure() const {
+    Failure* failure() const {
         return failure_;
     }
 

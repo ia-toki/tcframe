@@ -92,10 +92,11 @@ private:
     int generate(const CoreSpec& coreSpec) {
         auto ioManipulator = new IOManipulator(coreSpec.ioFormat());
         auto verifier = new ConstraintSuiteVerifier(coreSpec.constraintSuite());
-        auto testCaseGenerator = new TestCaseGenerator(verifier, ioManipulator, os_);
-        auto generationLogger = new GeneratorLogger(loggerEngine_);
+        auto logger = new GeneratorLogger(loggerEngine_);
+        auto testCaseGenerator = new TestCaseGenerator(verifier, ioManipulator, os_, logger);
+        auto testGroupGenerator = new TestGroupGenerator(testCaseGenerator, logger);
 
-        auto generator = generatorFactory_->create(testCaseGenerator, ioManipulator, os_, generationLogger);
+        auto generator = generatorFactory_->create(testGroupGenerator, ioManipulator, os_, logger);
         return generator->generate(coreSpec.testSuite(), coreSpec.coreConfig()).isSuccessful() ? 0 : 1;
     }
 };

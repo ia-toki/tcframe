@@ -3,36 +3,36 @@
 #include <string>
 #include <tuple>
 
-#include "TestCaseGenerationFailure.hpp"
+#include "Failure.hpp"
 
 using std::string;
 using std::tie;
 
 namespace tcframe {
 
-class OtherFailure : public TestCaseGenerationFailure {
+class SimpleFailure : public Failure {
 private:
     string message_;
 
 public:
-    OtherFailure(const string& message)
+    SimpleFailure(const string& message)
             : message_(message)
     {}
 
     FailureType type() const {
-        return FailureType::OTHER;
+        return FailureType::SIMPLE;
     }
 
     const string& message() const {
         return message_;
     }
 
-    bool operator==(const OtherFailure& o) const {
+    bool operator==(const SimpleFailure& o) const {
         return tie(message_) == tie(o.message_);
     }
 
-    bool equals(TestCaseGenerationFailure* o) const {
-        return type() == o->type() && *this == *((OtherFailure*) o);
+    bool equals(Failure* o) const {
+        return type() == o->type() && *this == *((SimpleFailure*) o);
     }
 };
 

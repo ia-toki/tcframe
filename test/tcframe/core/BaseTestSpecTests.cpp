@@ -102,15 +102,15 @@ TEST_F(BaseTestSpecTests, TestSuite) {
     TestSuite testSuite = specWithTestCases.buildTestSuite();
     EXPECT_THAT(testSuite.sampleTests(), SizeIs(2));
     EXPECT_THAT(testSuite.officialTests(), ElementsAre(
-            AllOf(Property(&TestGroup::id, -1), Property(&TestGroup::officialTestCases, SizeIs(2)))));
+            AllOf(Property(&OfficialTestGroup::id, -1), Property(&OfficialTestGroup::officialTestCases, SizeIs(2)))));
 }
 
 TEST_F(BaseTestSpecTests, TestSuite_WithGroups) {
     TestSuite testSuite = specWithTestGroups.buildTestSuite();
     EXPECT_THAT(testSuite.sampleTests(), SizeIs(2));
     EXPECT_THAT(testSuite.officialTests(), ElementsAre(
-            AllOf(Property(&TestGroup::id, 1), Property(&TestGroup::officialTestCases, SizeIs(3))),
-            AllOf(Property(&TestGroup::id, 2), Property(&TestGroup::officialTestCases, SizeIs(2)))));
+            AllOf(Property(&OfficialTestGroup::id, 1), Property(&OfficialTestGroup::officialTestCases, SizeIs(3))),
+            AllOf(Property(&OfficialTestGroup::id, 2), Property(&OfficialTestGroup::officialTestCases, SizeIs(2)))));
 }
 
 }

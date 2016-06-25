@@ -16,12 +16,10 @@ public:
             : engine_(engine)
     {}
 
-    virtual void logSampleTestCasesIntroduction() {
-        engine_->logHeading("SAMPLE TEST CASES");
-    }
-
     virtual void logTestGroupIntroduction(int testGroupId) {
-        if (testGroupId == -1) {
+        if (testGroupId == 0) {
+            engine_->logHeading("SAMPLE TEST CASES");
+        } else if (testGroupId == -1) {
             engine_->logHeading("OFFICIAL TEST CASES");
         } else {
             engine_->logHeading("TEST GROUP " + StringUtils::toString(testGroupId));

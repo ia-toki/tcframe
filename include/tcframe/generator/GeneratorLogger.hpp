@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "TestCaseGenerationResult.hpp"
-#include "VerificationFailure.hpp"
+#include "tcframe/failure.hpp"
 #include "tcframe/logger.hpp"
 #include "tcframe/util.hpp"
 #include "tcframe/verifier.hpp"
@@ -30,7 +30,7 @@ public:
         engine_->logParagraph(0, "Generating test cases...");
     }
 
-    virtual void logTestCaseGenerationResult(const string& testCaseDescription, const TestCaseGenerationResult& result) {
+    virtual void logTestCaseResult(const string& testCaseDescription, const TestCaseGenerationResult& result) {
         if (result.isSuccessful()) {
             engine_->logParagraph(0, "OK");
         } else {
@@ -38,12 +38,12 @@ public:
             engine_->logParagraph(2, "Description: " + testCaseDescription);
             engine_->logParagraph(2, "Reasons:");
 
-            printTestCaseGenerationFailure(result.failure());
+            printTestCaseFailure(result.failure());
         }
     }
 
 private:
-    void printTestCaseGenerationFailure(TestCaseGenerationFailure* failure) {
+    void printTestCaseFailure(Failure* failure) {
         if (failure->type() == FailureType::VERIFICATION) {
             printVerificationFailure(((VerificationFailure*) failure)->verificationResult());
         }

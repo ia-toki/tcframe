@@ -12,14 +12,14 @@ using std::vector;
 
 namespace tcframe {
 
-struct TestGroup {
+struct OfficialTestGroup {
 private:
     int id_;
     set<int> subtaskIds_;
     vector<OfficialTestCase> officialTestCases_;
 
 public:
-    TestGroup(int id, const set<int>& subtaskIds, const vector<OfficialTestCase>& testCases)
+    OfficialTestGroup(int id, const set<int>& subtaskIds, const vector<OfficialTestCase>& testCases)
             : id_(id)
             , subtaskIds_(subtaskIds)
             , officialTestCases_(testCases)
@@ -37,7 +37,7 @@ public:
         return officialTestCases_;
     }
 
-    bool operator==(const TestGroup& o) const {
+    bool operator==(const OfficialTestGroup& o) const {
         return tie(id_, subtaskIds_, officialTestCases_) == tie(o.id_, o.subtaskIds_, o.officialTestCases_);
     }
 };
