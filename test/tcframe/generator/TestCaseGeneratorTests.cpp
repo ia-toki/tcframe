@@ -30,7 +30,7 @@ protected:
     Mock(GeneratorLogger) logger;
 
     TestCase testCase = TestCaseBuilder()
-            .setName("foo_1")
+            .setId("foo_1")
             .setDescription("N = 42")
             .setSubtaskIds({1, 2})
             .setApplier([&] {applied = true;})

@@ -21,13 +21,13 @@ protected:
     Mock(GeneratorLogger) logger;
 
     TestCase tc1 = TestCaseBuilder()
-            .setName("foo_1")
+            .setId("foo_1")
             .setDescription("N = 42")
             .setSubtaskIds({1, 2})
             .setApplier([] {})
             .build();
     TestCase tc2 = TestCaseBuilder()
-            .setName("foo_2")
+            .setId("foo_2")
             .setDescription("N = 100")
             .setSubtaskIds({1, 2, 3})
             .setApplier([] {})

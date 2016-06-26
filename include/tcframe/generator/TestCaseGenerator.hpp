@@ -42,7 +42,7 @@ public:
     {}
 
     virtual TestCaseGenerationResult generate(const TestCase& testCase, const TestConfig& testConfig) {
-        logger_->logTestCaseIntroduction(testCase.name());
+        logger_->logTestCaseIntroduction(testCase.id());
         TestCaseGenerationResult result = doGenerate(testCase, testConfig);
         logger_->logTestCaseResult(testCase.description(), result);
         return result;
@@ -50,8 +50,8 @@ public:
 
 private:
     TestCaseGenerationResult doGenerate(const TestCase& testCase, const TestConfig& config) {
-        string inputFilename = config.testCasesDir() + "/" + testCase.name() + ".in";
-        string outputFilename = config.testCasesDir() + "/" + testCase.name() + ".out";
+        string inputFilename = config.testCasesDir() + "/" + testCase.id() + ".in";
+        string outputFilename = config.testCasesDir() + "/" + testCase.id() + ".out";
 
         try {
             apply(testCase.applier());

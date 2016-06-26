@@ -10,7 +10,7 @@
 #include "GenerationResult.hpp"
 #include "TestCase.hpp"
 #include "TestGroup.hpp"
-#include "TestCaseNameCreator.hpp"
+#include "TestCaseIdCreator.hpp"
 #include "TestGroupGenerationResult.hpp"
 #include "TestGroupGenerator.hpp"
 #include "tcframe/core.hpp"
@@ -67,10 +67,10 @@ private:
 
         vector<SampleTestCase> sampleTests = testSuite.sampleTests();
         vector<TestCase> testCases;
-        for (int testCaseId = 1; testCaseId <= sampleTests.size(); testCaseId++) {
-            SampleTestCase sampleTestCase = sampleTests[testCaseId - 1];
+        for (int testCaseNo = 1; testCaseNo <= sampleTests.size(); testCaseNo++) {
+            SampleTestCase sampleTestCase = sampleTests[testCaseNo - 1];
             TestCase testCase = TestCaseBuilder()
-                    .setName(TestCaseNameCreator::createSampleTestCaseName(coreConfig.problemConfig().slug(), testCaseId))
+                    .setId(TestCaseIdCreator::create(coreConfig.problemConfig().slug(), 0, testCaseNo))
                     .setSubtaskIds(sampleTestCase.subtaskIds())
                     .setApplier([=] {
                         istream* in = new istringstream(sampleTestCase.content());
@@ -100,14 +100,14 @@ private:
 
         vector<OfficialTestCase> officialTestCases = officialTestGroup.officialTestCases();
         vector<TestCase> testCases;
-        for (int testCaseId = 1; testCaseId <= officialTestCases.size(); testCaseId++) {
-            OfficialTestCase officialTestCase = officialTestCases[testCaseId - 1];
-            string testCaseName = TestCaseNameCreator::createOfficialTestCaseName(
+        for (int testCaseNo = 1; testCaseNo <= officialTestCases.size(); testCaseNo++) {
+            OfficialTestCase officialTestCase = officialTestCases[testCaseNo - 1];
+            string testCaseId = TestCaseIdCreator::create(
                     coreConfig.problemConfig().slug(),
                     officialTestGroup.id(),
-                    testCaseId);
+                    testCaseNo);
             TestCase testCase = TestCaseBuilder()
-                    .setName(testCaseName)
+                    .setId(testCaseId)
                     .setDescription(officialTestCase.description())
                     .setSubtaskIds(officialTestGroup.subtaskIds())
                     .setApplier([=] {officialTestCase.closure()(); inputFinalizer();})

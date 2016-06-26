@@ -18,14 +18,14 @@ struct TestCase {
     friend class TestCaseBuilder;
 
 private:
-    string name_;
+    string id_;
     string description_;
     set<int> subtaskIds_;
     function<void()> applier_;
 
 public:
-    const string& name() const {
-        return name_;
+    const string& id() const {
+        return id_;
     }
 
     const string& description() const {
@@ -41,7 +41,7 @@ public:
     }
 
     bool operator==(const TestCase& o) const {
-        return tie(name_, description_, subtaskIds_) == tie(o.name_, o.description_, o.subtaskIds_);
+        return tie(id_, description_, subtaskIds_) == tie(o.id_, o.description_, o.subtaskIds_);
     }
 
 
@@ -52,8 +52,8 @@ private:
     TestCase subject_;
 
 public:
-    TestCaseBuilder& setName(string name) {
-        subject_.name_ = name;
+    TestCaseBuilder& setId(string id) {
+        subject_.id_ = id;
         return *this;
     }
 

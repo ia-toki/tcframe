@@ -67,7 +67,7 @@ set(SOURCE_FILES
     include/tcframe/generator/TestCase.hpp
     include/tcframe/generator/TestCaseGenerator.hpp
     include/tcframe/generator/TestCaseGenerationResult.hpp
-    include/tcframe/generator/TestCaseNameCreator.hpp
+    include/tcframe/generator/TestCaseIdCreator.hpp
     include/tcframe/generator/TestGroup.hpp
     include/tcframe/generator/TestGroupGenerator.hpp
     include/tcframe/generator/TestGroupGenerationResult.hpp
@@ -126,7 +126,7 @@ set(SOURCE_FILES
     test/tcframe/generator/MockTestGroupGenerator.hpp
     test/tcframe/generator/MockTestSuiteGenerator.hpp
     test/tcframe/generator/TestCaseGeneratorTests.cpp
-    test/tcframe/generator/TestCaseNameCreatorTests.cpp
+    test/tcframe/generator/TestCaseIdCreatorTests.cpp
     test/tcframe/generator/TestGroupGeneratorTests.cpp
     test/tcframe/generator/TestSuiteGeneratorTests.cpp
     test/tcframe/io/GridIOSegmentBuilderTests.cpp
