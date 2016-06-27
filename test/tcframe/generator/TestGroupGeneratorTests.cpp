@@ -74,15 +74,9 @@ TEST_F(TestGroupGeneratorTests, Generation_Failed_SomeTestCaseFailed) {
     ON_CALL(testCaseGenerator, generate(tc2, _))
             .WillByDefault(Return(TestCaseGenerationResult::failedResult(new SimpleFailure("failure"))));
 
-    TestGroupGenerationResult expectedResult = TestGroupGenerationResult(nullptr, {
+    TestGroupGenerationResult expectedResult(nullptr, {
             TestCaseGenerationResult::successfulResult(),
             TestCaseGenerationResult::failedResult(new SimpleFailure("failure"))});
-    {
-        InSequence sequence;
-        EXPECT_CALL(logger, logTestGroupIntroduction(7));
-        EXPECT_CALL(testCaseGenerator, generate(tc1, coreConfig));
-        EXPECT_CALL(testCaseGenerator, generate(tc2, coreConfig));
-    }
 
     TestGroupGenerationResult result = generator.generate(testGroup, coreConfig);
     EXPECT_THAT(result, Eq(expectedResult));

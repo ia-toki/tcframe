@@ -132,22 +132,7 @@ TEST_F(TestSuiteGeneratorTests, Generation_Failed) {
                     TestCaseGenerationResult::successfulResult(),
                     TestCaseGenerationResult::successfulResult(),
                     TestCaseGenerationResult::successfulResult()})});
-    {
-        InSequence sequence;
-        EXPECT_CALL(logger, logIntroduction());
-        EXPECT_CALL(os, forceMakeDir("dir"));
 
-        EXPECT_CALL(testGroupGenerator, generate(TestGroup(0, {
-                TestCaseBuilder().setId("foo_sample_1").setSubtaskIds({-1}).build(),
-                TestCaseBuilder().setId("foo_sample_2").setSubtaskIds({-1}).build()}),
-                coreConfig));
-
-        EXPECT_CALL(testGroupGenerator, generate(TestGroup(-1, {
-                TestCaseBuilder().setId("foo_1").setDescription("N = 1").setSubtaskIds({-1}).build(),
-                TestCaseBuilder().setId("foo_2").setDescription("N = 2").setSubtaskIds({-1}).build(),
-                TestCaseBuilder().setId("foo_3").setDescription("N = 3").setSubtaskIds({-1}).build()}),
-                coreConfig));
-    }
     GenerationResult result = generator.generate(testSuite, coreConfig);
 
     EXPECT_THAT(result, Eq(expectedResult));
@@ -209,25 +194,7 @@ TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Failed) {
                     TestCaseGenerationResult::successfulResult()}),
             TestGroupGenerationResult(nullptr, {
                     TestCaseGenerationResult::failedResult(new SimpleFailure("failed 2"))})});
-    {
-        InSequence sequence;
-        EXPECT_CALL(logger, logIntroduction());
-        EXPECT_CALL(os, forceMakeDir("dir"));
 
-        EXPECT_CALL(testGroupGenerator, generate(TestGroup(0, {
-                TestCaseBuilder().setId("foo_sample_1").setSubtaskIds({1, 2}).build(),
-                TestCaseBuilder().setId("foo_sample_2").setSubtaskIds({2}).build()}),
-                coreConfig));
-
-        EXPECT_CALL(testGroupGenerator, generate(TestGroup(1, {
-                TestCaseBuilder().setId("foo_1_1").setDescription("N = 1").setSubtaskIds({1, 2}).build(),
-                TestCaseBuilder().setId("foo_1_2").setDescription("N = 2").setSubtaskIds({1, 2}).build()}),
-                coreConfig));
-
-        EXPECT_CALL(testGroupGenerator, generate(TestGroup(2, {
-                TestCaseBuilder().setId("foo_2_1").setDescription("N = 3").setSubtaskIds({2}).build()}),
-                coreConfig));
-    }
     GenerationResult result = generator.generate(testSuiteWithGroups, coreConfig);
 
     EXPECT_THAT(result, Eq(expectedResult));

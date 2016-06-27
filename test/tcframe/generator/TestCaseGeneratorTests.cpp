@@ -84,27 +84,39 @@ TEST_F(TestCaseGeneratorTests, Generation_Failed_Verification) {
     ConstraintsVerificationResult verificationResult({{1, {"1 <= N <= 10"}}}, {});
     ON_CALL(verifier, verifyConstraints(set<int>{1, 2}))
             .WillByDefault(Return(verificationResult));
+    TestCaseGenerationResult expectedResult =
+            TestCaseGenerationResult::failedResult(new ConstraintsVerificationFailure(verificationResult));
+
+    EXPECT_CALL(logger, logTestCaseResult("N = 42", expectedResult));
 
     TestCaseGenerationResult result = generator.generate(testCase, coreConfig);
+    EXPECT_THAT(result, Eq(expectedResult));
     EXPECT_FALSE(result.isSuccessful());
-    EXPECT_THAT(result, Eq(TestCaseGenerationResult::failedResult(new ConstraintsVerificationFailure(verificationResult))));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Failed_InputGeneration) {
     ON_CALL(ioManipulator, printInput(out))
             .WillByDefault(Throw(runtime_error("input error")));
+    TestCaseGenerationResult expectedResult =
+            TestCaseGenerationResult::failedResult(new SimpleFailure("input error"));
+
+    EXPECT_CALL(logger, logTestCaseResult("N = 42", expectedResult));
 
     TestCaseGenerationResult result = generator.generate(testCase, coreConfig);
-    EXPECT_THAT(result, Eq(TestCaseGenerationResult::failedResult(new SimpleFailure("input error"))));
+    EXPECT_THAT(result, Eq(expectedResult));
     EXPECT_FALSE(result.isSuccessful());
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Failed_OutputGeneration) {
     ON_CALL(ioManipulator, parseOutput(executionResult.outputStream()))
             .WillByDefault(Throw(runtime_error("output error")));
+    TestCaseGenerationResult expectedResult =
+            TestCaseGenerationResult::failedResult(new SimpleFailure("output error"));
+
+    EXPECT_CALL(logger, logTestCaseResult("N = 42", expectedResult));
 
     TestCaseGenerationResult result = generator.generate(testCase, coreConfig);
-    EXPECT_THAT(result, Eq(TestCaseGenerationResult::failedResult(new SimpleFailure("output error"))));
+    EXPECT_THAT(result, Eq(expectedResult));
     EXPECT_FALSE(result.isSuccessful());
 }
 
