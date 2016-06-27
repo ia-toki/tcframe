@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "GenerationResult.hpp"
 #include "TestCaseGenerationResult.hpp"
 #include "MultipleTestCasesCombinationResult.hpp"
 #include "tcframe/failure.hpp"
@@ -29,6 +30,15 @@ public:
 
     virtual void logIntroduction() {
         engine_->logParagraph(0, "Generating test cases...");
+    }
+
+    virtual void logResult(const GenerationResult& result) {
+        engine_->logParagraph(0, "");
+        if (result.isSuccessful()) {
+            engine_->logParagraph(0, "Generation finished. All test cases OK.");
+        } else {
+            engine_->logParagraph(0, "Generation finished. Some test cases FAILED.");
+        }
     }
 
     virtual void logTestCaseResult(const string& testCaseDescription, const TestCaseGenerationResult& result) {

@@ -49,7 +49,13 @@ public:
 
     virtual GenerationResult generate(const TestSuite& testSuite, const CoreConfig& coreConfig) {
         logger_->logIntroduction();
+        GenerationResult result = doGenerate(testSuite, coreConfig);
+        logger_->logResult(result);
+        return result;
+    }
 
+private:
+    GenerationResult doGenerate(const TestSuite& testSuite, const CoreConfig& coreConfig) {
         os_->forceMakeDir(coreConfig.testConfig().testCasesDir());
 
         vector<TestGroupGenerationResult> testGroupResults;
@@ -57,11 +63,9 @@ public:
         for (TestGroupGenerationResult result : generateOfficialTests(testSuite, coreConfig)) {
             testGroupResults.push_back(result);
         }
-
         return GenerationResult(testGroupResults);
     }
 
-private:
     TestGroupGenerationResult generateSampleTests(const TestSuite& testSuite, const CoreConfig& coreConfig) {
         vector<SampleTestCase> sampleTests = testSuite.sampleTests();
         vector<TestCase> testCases;

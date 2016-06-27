@@ -111,6 +111,8 @@ TEST_F(TestSuiteGeneratorTests, Generation_Successful) {
                 TestCaseBuilder().setId("foo_2").setDescription("N = 2").setSubtaskIds({-1}).build(),
                 TestCaseBuilder().setId("foo_3").setDescription("N = 3").setSubtaskIds({-1}).build()}),
                 coreConfig));
+
+        EXPECT_CALL(logger, logResult(expectedResult));
     }
     GenerationResult result = generator.generate(testSuite, coreConfig);
 
@@ -132,6 +134,8 @@ TEST_F(TestSuiteGeneratorTests, Generation_Failed) {
                     TestCaseGenerationResult::successfulResult(),
                     TestCaseGenerationResult::successfulResult(),
                     TestCaseGenerationResult::successfulResult()})});
+
+    EXPECT_CALL(logger, logResult(expectedResult));
 
     GenerationResult result = generator.generate(testSuite, coreConfig);
 
@@ -168,6 +172,8 @@ TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Successful) {
         EXPECT_CALL(testGroupGenerator, generate(TestGroup(2, {
                 TestCaseBuilder().setId("foo_2_1").setDescription("N = 3").setSubtaskIds({2}).build()}),
                 coreConfig));
+
+        EXPECT_CALL(logger, logResult(expectedResult));
     }
     GenerationResult result = generator.generate(testSuiteWithGroups, coreConfig);
 
@@ -194,6 +200,8 @@ TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Failed) {
                     TestCaseGenerationResult::successfulResult()}),
             TestGroupGenerationResult(nullptr, {
                     TestCaseGenerationResult::failedResult(new SimpleFailure("failed 2"))})});
+
+    EXPECT_CALL(logger, logResult(expectedResult));
 
     GenerationResult result = generator.generate(testSuiteWithGroups, coreConfig);
 

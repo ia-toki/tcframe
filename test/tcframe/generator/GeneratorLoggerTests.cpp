@@ -22,6 +22,26 @@ TEST_F(GeneratorLoggerTests, Introduction) {
     logger.logIntroduction();
 }
 
+TEST_F(GeneratorLoggerTests, Result_Successful) {
+    {
+        InSequence sequence;
+        EXPECT_CALL(engine, logParagraph(0, ""));
+        EXPECT_CALL(engine, logParagraph(0, "Generation finished. All test cases OK."));
+    }
+
+    logger.logResult(GenerationResult({}));
+}
+
+TEST_F(GeneratorLoggerTests, Result_Failed) {
+    {
+        InSequence sequence;
+        EXPECT_CALL(engine, logParagraph(0, ""));
+        EXPECT_CALL(engine, logParagraph(0, "Generation finished. Some test cases FAILED."));
+    }
+
+    logger.logResult(GenerationResult({TestGroupGenerationResult(new SimpleFailure("failed"), {})}));
+}
+
 TEST_F(GeneratorLoggerTests, TestCaseResult_Successful) {
     EXPECT_CALL(engine, logParagraph(0, "OK"));
 
