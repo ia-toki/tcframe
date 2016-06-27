@@ -63,8 +63,6 @@ public:
 
 private:
     TestGroupGenerationResult generateSampleTests(const TestSuite& testSuite, const CoreConfig& coreConfig) {
-        logger_->logTestGroupIntroduction(0);
-
         vector<SampleTestCase> sampleTests = testSuite.sampleTests();
         vector<TestCase> testCases;
         for (int testCaseNo = 1; testCaseNo <= sampleTests.size(); testCaseNo++) {
@@ -95,8 +93,6 @@ private:
             const OfficialTestGroup& officialTestGroup,
             const function<void()>& inputFinalizer,
             const CoreConfig& coreConfig) {
-
-        logger_->logTestGroupIntroduction(officialTestGroup.id());
 
         vector<OfficialTestCase> officialTestCases = officialTestGroup.officialTestCases();
         vector<TestCase> testCases;
