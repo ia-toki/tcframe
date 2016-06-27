@@ -58,12 +58,14 @@ set(SOURCE_FILES
     include/tcframe/experimental/runner.hpp
     include/tcframe/failure.hpp
     include/tcframe/failure/ComplexFailureException.hpp
+    include/tcframe/failure/ConstraintsVerificationFailure.hpp
     include/tcframe/failure/Failure.hpp
+    include/tcframe/failure/MultipleTestCasesConstraintsVerificationFailure.hpp
     include/tcframe/failure/SimpleFailure.hpp
-    include/tcframe/failure/VerificationFailure.hpp
     include/tcframe/generator.hpp
     include/tcframe/generator/GenerationResult.hpp
     include/tcframe/generator/GeneratorLogger.hpp
+    include/tcframe/generator/MultipleTestCasesCombinationResult.hpp
     include/tcframe/generator/TestCase.hpp
     include/tcframe/generator/TestCaseGenerator.hpp
     include/tcframe/generator/TestCaseGenerationResult.hpp
@@ -113,7 +115,8 @@ set(SOURCE_FILES
     include/tcframe/variable/WhitespaceManipulator.hpp
     include/tcframe/verifier.hpp
     include/tcframe/verifier/ConstraintSuiteVerifier.hpp
-    include/tcframe/verifier/VerificationResult.hpp
+    include/tcframe/verifier/ConstraintsVerificationResult.hpp
+    include/tcframe/verifier/MultipleTestCasesConstraintsVerificationResult.hpp
     test/tcframe/helper.hpp
     test/tcframe/mock.hpp
     test/tcframe/constraint/ConstraintSuiteBuilderTests.cpp

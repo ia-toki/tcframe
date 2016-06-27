@@ -16,7 +16,6 @@ public:
         return createBaseId(slug, testGroupId) + "_" + StringUtils::toString(testCaseNo);
     }
 
-private:
     static string createBaseId(const string& slug, int testGroupId) {
         if (testGroupId == 0) {
             return slug + "_sample";

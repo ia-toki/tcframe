@@ -35,10 +35,14 @@ protected:
             .setSubtaskIds({1, 2})
             .setApplier([&] {applied = true;})
             .build();
+    ProblemConfig problemConfig = ProblemConfigBuilder()
+            .setSlug("foo")
+            .build();
     TestConfig testConfig = TestConfigBuilder()
             .setTestCasesDir("dir")
             .setSolutionCommand("python Sol.py")
             .build();
+    CoreConfig coreConfig = CoreConfig(problemConfig, testConfig);
     ostream* out = new ostringstream();
     ExecutionResult executionResult = ExecutionResult(0, new istringstream(), new istringstream());
 
@@ -47,8 +51,8 @@ protected:
     void SetUp() {
         applied = false;
 
-        ON_CALL(verifier, verify(_))
-                .WillByDefault(Return(VerificationResult::validResult()));
+        ON_CALL(verifier, verifyConstraints(_))
+                .WillByDefault(Return(ConstraintsVerificationResult::validResult()));
         ON_CALL(os, openForWriting(_))
                 .WillByDefault(Return(out));
         ON_CALL(os, execute(_, _, _, _))
@@ -61,7 +65,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Successful) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
-        EXPECT_CALL(verifier, verify(set<int>{1, 2}));
+        EXPECT_CALL(verifier, verifyConstraints(set<int>{1, 2}));
         EXPECT_CALL(os, openForWriting("dir/foo_1.in"));
         EXPECT_CALL(ioManipulator, printInput(out));
         EXPECT_CALL(os, closeOpenedWritingStream(out));
@@ -69,7 +73,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Successful) {
         EXPECT_CALL(ioManipulator, parseOutput(executionResult.outputStream()));
         EXPECT_CALL(logger, logTestCaseResult("N = 42", expectedResult));
     }
-    TestCaseGenerationResult result = generator.generate(testCase, testConfig);
+    TestCaseGenerationResult result = generator.generate(testCase, coreConfig);
     
     EXPECT_TRUE(applied);
     EXPECT_THAT(result, Eq(expectedResult));
@@ -77,20 +81,20 @@ TEST_F(TestCaseGeneratorTests, Generation_Successful) {
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Failed_Verification) {
-    VerificationResult verificationResult({{1, {"1 <= N <= 10"}}}, {});
-    ON_CALL(verifier, verify(set<int>{1, 2}))
+    ConstraintsVerificationResult verificationResult({{1, {"1 <= N <= 10"}}}, {});
+    ON_CALL(verifier, verifyConstraints(set<int>{1, 2}))
             .WillByDefault(Return(verificationResult));
 
-    TestCaseGenerationResult result = generator.generate(testCase, testConfig);
+    TestCaseGenerationResult result = generator.generate(testCase, coreConfig);
     EXPECT_FALSE(result.isSuccessful());
-    EXPECT_THAT(result, Eq(TestCaseGenerationResult::failedResult(new VerificationFailure(verificationResult))));
+    EXPECT_THAT(result, Eq(TestCaseGenerationResult::failedResult(new ConstraintsVerificationFailure(verificationResult))));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Failed_InputGeneration) {
     ON_CALL(ioManipulator, printInput(out))
             .WillByDefault(Throw(runtime_error("input error")));
 
-    TestCaseGenerationResult result = generator.generate(testCase, testConfig);
+    TestCaseGenerationResult result = generator.generate(testCase, coreConfig);
     EXPECT_THAT(result, Eq(TestCaseGenerationResult::failedResult(new SimpleFailure("input error"))));
     EXPECT_FALSE(result.isSuccessful());
 }
@@ -99,7 +103,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Failed_OutputGeneration) {
     ON_CALL(ioManipulator, parseOutput(executionResult.outputStream()))
             .WillByDefault(Throw(runtime_error("output error")));
 
-    TestCaseGenerationResult result = generator.generate(testCase, testConfig);
+    TestCaseGenerationResult result = generator.generate(testCase, coreConfig);
     EXPECT_THAT(result, Eq(TestCaseGenerationResult::failedResult(new SimpleFailure("output error"))));
     EXPECT_FALSE(result.isSuccessful());
 }

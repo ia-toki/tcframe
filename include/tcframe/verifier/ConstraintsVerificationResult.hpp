@@ -16,21 +16,21 @@ using std::vector;
 
 namespace tcframe {
 
-struct VerificationResult {
+struct ConstraintsVerificationResult {
 private:
     map<int, vector<string>> unsatisfiedConstraintDescriptionsBySubtaskId_;
     set<int> satisfiedButNotAssignedSubtaskIds_;
 
 public:
-    VerificationResult(
+    ConstraintsVerificationResult(
             const map<int, vector<string>>& unsatisfiedConstraintDescriptionsBySubtaskId,
             const set<int>& satisfiedButNotAssignedSubtaskIds)
             : unsatisfiedConstraintDescriptionsBySubtaskId_(unsatisfiedConstraintDescriptionsBySubtaskId)
             , satisfiedButNotAssignedSubtaskIds_(satisfiedButNotAssignedSubtaskIds)
     {}
 
-    static VerificationResult validResult() {
-        return VerificationResult({}, {});
+    static ConstraintsVerificationResult validResult() {
+        return ConstraintsVerificationResult({}, {});
     }
 
     bool isValid() const {
@@ -46,7 +46,7 @@ public:
         return satisfiedButNotAssignedSubtaskIds_;
     }
 
-    bool operator==(const VerificationResult& o) const {
+    bool operator==(const ConstraintsVerificationResult& o) const {
         return tie(unsatisfiedConstraintDescriptionsBySubtaskId_, satisfiedButNotAssignedSubtaskIds_)
                 == tie(o.unsatisfiedConstraintDescriptionsBySubtaskId_, o.satisfiedButNotAssignedSubtaskIds_);
     }

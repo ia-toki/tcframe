@@ -17,15 +17,21 @@ struct ConstraintSuite {
     friend class ConstraintSuiteBuilder;
 
 private:
-    vector<Subtask> individualConstraints_;
+    vector<Subtask> constraints_;
+    vector<Constraint> multipleTestCasesConstraints_;
 
 public:
-    const vector<Subtask>& individualConstraints() const {
-        return individualConstraints_;
+    const vector<Subtask>& constraints() const {
+        return constraints_;
+    }
+
+    const vector<Constraint>& multipleTestCasesConstraints() const {
+        return multipleTestCasesConstraints_;
     }
 
     bool operator==(const ConstraintSuite& o) const {
-        return tie(individualConstraints_) == tie(o.individualConstraints_);
+        return tie(constraints_, multipleTestCasesConstraints_)
+               == tie(o.constraints_, multipleTestCasesConstraints_);
     }
 };
 
@@ -35,7 +41,8 @@ private:
 
     bool hasCurrentSubtask_;
     int currentSubtaskId_;
-    vector<Constraint> currentIndividualConstraints_;
+    bool isInMultipleTestCasesConstraints_;
+    vector<Constraint> currentConstraints;
 
 public:
     virtual ~ConstraintSuiteBuilder() {}
@@ -43,34 +50,45 @@ public:
     ConstraintSuiteBuilder()
             : hasCurrentSubtask_(false)
             , currentSubtaskId_(0)
+            , isInMultipleTestCasesConstraints_(false)
     {}
 
     ConstraintSuiteBuilder& newSubtask() {
         if (hasCurrentSubtask_) {
-            subject_.individualConstraints_.push_back(Subtask(currentSubtaskId_, currentIndividualConstraints_));
+            subject_.constraints_.push_back(Subtask(currentSubtaskId_, currentConstraints));
         }
 
         hasCurrentSubtask_ = true;
         currentSubtaskId_++;
-        currentIndividualConstraints_.clear();
+        currentConstraints.clear();
 
         return *this;
     }
 
+    ConstraintSuiteBuilder& prepareForMultipleTestCasesConstraints() {
+        isInMultipleTestCasesConstraints_ = true;
+        return *this;
+    }
+
     ConstraintSuiteBuilder& addConstraint(Constraint constraint) {
+        if (isInMultipleTestCasesConstraints_) {
+            subject_.multipleTestCasesConstraints_.push_back(constraint);
+            return *this;
+        }
+
         if (!hasCurrentSubtask_) {
             hasCurrentSubtask_ = true;
             currentSubtaskId_ = -1;
         }
 
-        currentIndividualConstraints_.push_back(constraint);
+        currentConstraints.push_back(constraint);
 
         return *this;
     }
 
     ConstraintSuite build() {
         if (hasCurrentSubtask_) {
-            subject_.individualConstraints_.push_back(Subtask(currentSubtaskId_, currentIndividualConstraints_));
+            subject_.constraints_.push_back(Subtask(currentSubtaskId_, currentConstraints));
         }
         return move(subject_);
     }

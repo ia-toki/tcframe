@@ -94,7 +94,7 @@ private:
         auto verifier = new ConstraintSuiteVerifier(coreSpec.constraintSuite());
         auto logger = new GeneratorLogger(loggerEngine_);
         auto testCaseGenerator = new TestCaseGenerator(verifier, ioManipulator, os_, logger);
-        auto testGroupGenerator = new TestGroupGenerator(testCaseGenerator, logger);
+        auto testGroupGenerator = new TestGroupGenerator(testCaseGenerator, verifier, os_, logger);
 
         auto generator = generatorFactory_->create(testGroupGenerator, ioManipulator, os_, logger);
         return generator->generate(coreSpec.testSuite(), coreSpec.coreConfig()).isSuccessful() ? 0 : 1;

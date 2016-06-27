@@ -50,7 +50,7 @@ protected:
 };
 
 TEST_F(ConstraintSuiteVerifierTests, Verification_Valid_AllConstraintsValid) {
-    VerificationResult result = verifier.verify({-1});
+    ConstraintsVerificationResult result = verifier.verifyConstraints({-1});
 
     EXPECT_TRUE(result.isValid());
     EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), IsEmpty());
@@ -59,7 +59,7 @@ TEST_F(ConstraintSuiteVerifierTests, Verification_Valid_AllConstraintsValid) {
 
 TEST_F(ConstraintSuiteVerifierTests, Verification_Invalid_SomeConstraintsInvalid) {
     b2 = false;
-    VerificationResult result = verifier.verify({-1});
+    ConstraintsVerificationResult result = verifier.verifyConstraints({-1});
 
     EXPECT_FALSE(result.isValid());
     EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), IsEmpty());
@@ -68,7 +68,7 @@ TEST_F(ConstraintSuiteVerifierTests, Verification_Invalid_SomeConstraintsInvalid
 }
 
 TEST_F(ConstraintSuiteVerifierTests, Verification_WithSubtasks_Valid_AllConstraintsValid) {
-    VerificationResult result = verifierWithSubtasks.verify({1, 2, 3});
+    ConstraintsVerificationResult result = verifierWithSubtasks.verifyConstraints({1, 2, 3});
 
     EXPECT_TRUE(result.isValid());
     EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), IsEmpty());
@@ -77,7 +77,7 @@ TEST_F(ConstraintSuiteVerifierTests, Verification_WithSubtasks_Valid_AllConstrai
 
 TEST_F(ConstraintSuiteVerifierTests, Verification_WithSubtasks_Valid_AllAssignedSubtasksValid) {
     b4 = false;
-    VerificationResult result = verifierWithSubtasks.verify({1, 3});
+    ConstraintsVerificationResult result = verifierWithSubtasks.verifyConstraints({1, 3});
 
     EXPECT_TRUE(result.isValid());
     EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), IsEmpty());
@@ -86,7 +86,7 @@ TEST_F(ConstraintSuiteVerifierTests, Verification_WithSubtasks_Valid_AllAssigned
 
 TEST_F(ConstraintSuiteVerifierTests, Verification_WithSubtasks_Invalid_SomeConstraintsInvalid) {
     b4 = false;
-    VerificationResult result = verifierWithSubtasks.verify({2, 3});
+    ConstraintsVerificationResult result = verifierWithSubtasks.verifyConstraints({2, 3});
 
     EXPECT_FALSE(result.isValid());
     EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), ElementsAre(1));

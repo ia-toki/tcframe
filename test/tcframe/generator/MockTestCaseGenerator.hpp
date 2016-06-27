@@ -12,7 +12,7 @@ public:
             : TestCaseGenerator(nullptr, nullptr, nullptr, nullptr)
     {}
 
-    MOCK_METHOD2(generate, TestCaseGenerationResult(const TestCase&, const TestConfig&));
+    MOCK_METHOD2(generate, TestCaseGenerationResult(const TestCase&, const CoreConfig&));
 };
 
 }

@@ -4,7 +4,8 @@ namespace tcframe {
 
 enum FailureType {
     SIMPLE,
-    VERIFICATION
+    CONSTRAINTS_VERIFICATION,
+    MULTIPLE_TEST_CASES_CONSTRAINTS_VERIFICATION
 };
 
 struct Failure {

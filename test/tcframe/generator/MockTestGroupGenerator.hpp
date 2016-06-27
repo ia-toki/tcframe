@@ -9,10 +9,10 @@ namespace tcframe {
 class MockTestGroupGenerator : public TestGroupGenerator {
 public:
     MockTestGroupGenerator()
-            : TestGroupGenerator(nullptr, nullptr)
+            : TestGroupGenerator(nullptr, nullptr, nullptr, nullptr)
     {}
 
-    MOCK_METHOD2(generate, TestGroupGenerationResult(const TestGroup&, const TestConfig&));
+    MOCK_METHOD2(generate, TestGroupGenerationResult(const TestGroup&, const CoreConfig&));
 };
 
 }

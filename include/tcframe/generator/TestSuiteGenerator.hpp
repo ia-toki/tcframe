@@ -80,7 +80,7 @@ private:
             testCases.push_back(testCase);
         }
 
-        return testGroupGenerator_->generate(TestGroup(0, testCases), coreConfig.testConfig());
+        return testGroupGenerator_->generate(TestGroup(0, testCases), coreConfig);
     }
 
     vector<TestGroupGenerationResult> generateOfficialTests(const TestSuite& testSuite, const CoreConfig& coreConfig) {
@@ -115,7 +115,7 @@ private:
             testCases.push_back(testCase);
         }
 
-        return testGroupGenerator_->generate(TestGroup(officialTestGroup.id(), testCases), coreConfig.testConfig());
+        return testGroupGenerator_->generate(TestGroup(officialTestGroup.id(), testCases), coreConfig);
     }
 };
 

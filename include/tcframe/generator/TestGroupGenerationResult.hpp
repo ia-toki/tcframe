@@ -43,15 +43,15 @@ public:
     }
 
     bool operator==(const TestGroupGenerationResult& o) const {
-        if (testGroupFailure_ != o.testGroupFailure_) {
-            return false;
+        return failuresEqual(testGroupFailure_, o.testGroupFailure_) && testCaseResults_ == o.testCaseResults_;
+    }
+
+private:
+    static bool failuresEqual(Failure* failure1, Failure* failure2) {
+        if (failure1 != nullptr && failure2 != nullptr) {
+            return failure1->equals(failure2);
         }
-        if (testGroupFailure_ != nullptr && o.testGroupFailure_ != nullptr) {
-            if (!testGroupFailure_->equals(o.testGroupFailure_)) {
-                return false;
-            }
-        }
-        return testCaseResults_ == o.testCaseResults_;
+        return failure1 == failure2;
     }
 };
 

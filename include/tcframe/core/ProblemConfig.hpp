@@ -15,10 +15,15 @@ struct ProblemConfig {
 
 private:
     string slug_;
+    int* multipleTestCasesCount_;
 
 public:
     const string& slug() const {
         return slug_;
+    }
+
+    int* multipleTestCasesCount() const {
+        return multipleTestCasesCount_;
     }
 
     bool operator==(const ProblemConfig& o) const {
@@ -35,10 +40,16 @@ public:
 
     ProblemConfigBuilder() {
         subject_.slug_ = "problem";
+        subject_.multipleTestCasesCount_ = nullptr;
     }
 
     ProblemConfigBuilder& setSlug(string slug) {
         subject_.slug_ = slug;
+        return *this;
+    }
+
+    ProblemConfigBuilder& setMultipleTestCasesCount(int& var) {
+        subject_.multipleTestCasesCount_ = &var;
         return *this;
     }
 

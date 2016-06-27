@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <functional>
 #include <set>
 #include <string>
@@ -14,6 +15,7 @@
 #include "tcframe/testcase.hpp"
 #include "tcframe/verifier.hpp"
 
+using std::endl;
 using std::function;
 using std::set;
 using std::string;
@@ -41,23 +43,23 @@ public:
             , logger_(logger)
     {}
 
-    virtual TestCaseGenerationResult generate(const TestCase& testCase, const TestConfig& testConfig) {
+    virtual TestCaseGenerationResult generate(const TestCase& testCase, const CoreConfig& coreConfig) {
         logger_->logTestCaseIntroduction(testCase.id());
-        TestCaseGenerationResult result = doGenerate(testCase, testConfig);
+        TestCaseGenerationResult result = doGenerate(testCase, coreConfig);
         logger_->logTestCaseResult(testCase.description(), result);
         return result;
     }
 
 private:
-    TestCaseGenerationResult doGenerate(const TestCase& testCase, const TestConfig& config) {
-        string inputFilename = config.testCasesDir() + "/" + testCase.id() + ".in";
-        string outputFilename = config.testCasesDir() + "/" + testCase.id() + ".out";
+    TestCaseGenerationResult doGenerate(const TestCase& testCase, const CoreConfig& coreConfig) {
+        string inputFilename = coreConfig.testConfig().testCasesDir() + "/" + testCase.id() + ".in";
+        string outputFilename = coreConfig.testConfig().testCasesDir() + "/" + testCase.id() + ".out";
 
         try {
             apply(testCase.applier());
             verify(testCase.subtaskIds());
-            generateInput(inputFilename);
-            generateOutput(inputFilename, outputFilename, config.solutionCommand());
+            generateInput(inputFilename, coreConfig.problemConfig());
+            generateOutput(inputFilename, outputFilename, coreConfig.testConfig().solutionCommand());
         } catch (ComplexFailureException& e) {
             return TestCaseGenerationResult::failedResult(e.failure());
         } catch (runtime_error& e) {
@@ -72,14 +74,17 @@ private:
     }
 
     void verify(const set<int>& subtaskIds) {
-        VerificationResult result = verifier_->verify(subtaskIds);
+        ConstraintsVerificationResult result = verifier_->verifyConstraints(subtaskIds);
         if (!result.isValid()) {
-            throw ComplexFailureException(new VerificationFailure(result));
+            throw ComplexFailureException(new ConstraintsVerificationFailure(result));
         }
     }
 
-    void generateInput(const string& inputFilename) {
+    void generateInput(const string& inputFilename, const ProblemConfig& problemConfig) {
         ostream* testCaseInput = os_->openForWriting(inputFilename);
+        if (problemConfig.multipleTestCasesCount() != nullptr) {
+            *testCaseInput << "1" << endl;
+        }
         ioManipulator_->printInput(testCaseInput);
         os_->closeOpenedWritingStream(testCaseInput);
     }

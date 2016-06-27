@@ -91,6 +91,25 @@ public:
         return ExecutionResult(exitCode, outputStream, errorStream);
     }
 
+    void combineMultipleTestCases(const string& testCaseBaseFilename, int testCasesCount) {
+        ostringstream sout;
+        sout << "echo " << testCasesCount << " > " << testCaseBaseFilename << ".in";
+        sout << " && touch " << testCaseBaseFilename << ".out";
+        system(sout.str().c_str());
+
+        for (int i = 1; i <= testCasesCount; i++) {
+            ostringstream sout2;
+            sout2 << "tail -n +2 " << testCaseBaseFilename << "_" << i << ".in >> " << testCaseBaseFilename << ".in";
+            sout2 << "&& cat " << testCaseBaseFilename << "_" << i << ".out >> " << testCaseBaseFilename << ".out";
+            system(sout2.str().c_str());
+
+            ostringstream sout3;
+            sout3 << "rm " << testCaseBaseFilename << "_" << i << ".in ";
+            sout3 << testCaseBaseFilename << "_" << i << ".out";
+            system(sout3.str().c_str());
+        }
+    }
+
 private:
     istringstream* openForReadingAsStringStream(const string& filename) {
         ifstream file(filename);

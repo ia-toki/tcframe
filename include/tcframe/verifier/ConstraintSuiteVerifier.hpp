@@ -5,7 +5,8 @@
 #include <string>
 #include <utility>
 
-#include "VerificationResult.hpp"
+#include "ConstraintsVerificationResult.hpp"
+#include "MultipleTestCasesConstraintsVerificationResult.hpp"
 #include "tcframe/constraint.hpp"
 
 using std::map;
@@ -26,11 +27,11 @@ public:
             : constraintSuite_(move(constraintSuite))
     {}
 
-    virtual VerificationResult verify(const set<int>& subtaskIds) {
+    virtual ConstraintsVerificationResult verifyConstraints(const set<int>& subtaskIds) {
         map<int, vector<string>> unsatisfiedConstraintDescriptionsBySubtaskId;
         set<int> satisfiedButNotAssignedSubtaskIds;
 
-        for (const Subtask& subtask : constraintSuite_.individualConstraints()) {
+        for (const Subtask& subtask : constraintSuite_.constraints()) {
             vector<string> unsatisfiedConstraintDescriptions;
             for (const Constraint& constraint : subtask.constraints()) {
                 if (!constraint.predicate()()) {
@@ -48,7 +49,17 @@ public:
                 }
             }
         }
-        return VerificationResult(unsatisfiedConstraintDescriptionsBySubtaskId, satisfiedButNotAssignedSubtaskIds);
+        return ConstraintsVerificationResult(unsatisfiedConstraintDescriptionsBySubtaskId, satisfiedButNotAssignedSubtaskIds);
+    }
+
+    virtual MultipleTestCasesConstraintsVerificationResult verifyMultipleTestCasesConstraints() {
+        set<string> unsatisfiedConstraintDescriptions;
+        for (const Constraint& constraint : constraintSuite_.multipleTestCasesConstraints()) {
+            if (!constraint.predicate()()) {
+                unsatisfiedConstraintDescriptions.insert(constraint.description());
+            }
+        }
+        return MultipleTestCasesConstraintsVerificationResult(unsatisfiedConstraintDescriptions);
     }
 };
 

@@ -26,6 +26,7 @@ public:
             const string& inputFilename,
             const string& outputFilename,
             const string& errorFilename) = 0;
+    virtual void combineMultipleTestCases(const string& testCaseBaseFilename, int testCasesCount) = 0;
 };
 
 }

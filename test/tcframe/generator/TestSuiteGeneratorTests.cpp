@@ -104,13 +104,13 @@ TEST_F(TestSuiteGeneratorTests, Generation_Successful) {
         EXPECT_CALL(testGroupGenerator, generate(TestGroup(0, {
                 TestCaseBuilder().setId("foo_sample_1").setSubtaskIds({-1}).build(),
                 TestCaseBuilder().setId("foo_sample_2").setSubtaskIds({-1}).build()}),
-                testConfig));
+                coreConfig));
 
         EXPECT_CALL(testGroupGenerator, generate(TestGroup(-1, {
                 TestCaseBuilder().setId("foo_1").setDescription("N = 1").setSubtaskIds({-1}).build(),
                 TestCaseBuilder().setId("foo_2").setDescription("N = 2").setSubtaskIds({-1}).build(),
                 TestCaseBuilder().setId("foo_3").setDescription("N = 3").setSubtaskIds({-1}).build()}),
-                testConfig));
+                coreConfig));
     }
     GenerationResult result = generator.generate(testSuite, coreConfig);
 
@@ -140,13 +140,13 @@ TEST_F(TestSuiteGeneratorTests, Generation_Failed) {
         EXPECT_CALL(testGroupGenerator, generate(TestGroup(0, {
                 TestCaseBuilder().setId("foo_sample_1").setSubtaskIds({-1}).build(),
                 TestCaseBuilder().setId("foo_sample_2").setSubtaskIds({-1}).build()}),
-                testConfig));
+                coreConfig));
 
         EXPECT_CALL(testGroupGenerator, generate(TestGroup(-1, {
                 TestCaseBuilder().setId("foo_1").setDescription("N = 1").setSubtaskIds({-1}).build(),
                 TestCaseBuilder().setId("foo_2").setDescription("N = 2").setSubtaskIds({-1}).build(),
                 TestCaseBuilder().setId("foo_3").setDescription("N = 3").setSubtaskIds({-1}).build()}),
-                testConfig));
+                coreConfig));
     }
     GenerationResult result = generator.generate(testSuite, coreConfig);
 
@@ -173,16 +173,16 @@ TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Successful) {
         EXPECT_CALL(testGroupGenerator, generate(TestGroup(0, {
                 TestCaseBuilder().setId("foo_sample_1").setSubtaskIds({1, 2}).build(),
                 TestCaseBuilder().setId("foo_sample_2").setSubtaskIds({2}).build()}),
-                testConfig));
+                coreConfig));
 
         EXPECT_CALL(testGroupGenerator, generate(TestGroup(1, {
                 TestCaseBuilder().setId("foo_1_1").setDescription("N = 1").setSubtaskIds({1, 2}).build(),
                 TestCaseBuilder().setId("foo_1_2").setDescription("N = 2").setSubtaskIds({1, 2}).build()}),
-                testConfig));
+                coreConfig));
 
         EXPECT_CALL(testGroupGenerator, generate(TestGroup(2, {
                 TestCaseBuilder().setId("foo_2_1").setDescription("N = 3").setSubtaskIds({2}).build()}),
-                testConfig));
+                coreConfig));
     }
     GenerationResult result = generator.generate(testSuiteWithGroups, coreConfig);
 
@@ -217,16 +217,16 @@ TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Failed) {
         EXPECT_CALL(testGroupGenerator, generate(TestGroup(0, {
                 TestCaseBuilder().setId("foo_sample_1").setSubtaskIds({1, 2}).build(),
                 TestCaseBuilder().setId("foo_sample_2").setSubtaskIds({2}).build()}),
-                testConfig));
+                coreConfig));
 
         EXPECT_CALL(testGroupGenerator, generate(TestGroup(1, {
                 TestCaseBuilder().setId("foo_1_1").setDescription("N = 1").setSubtaskIds({1, 2}).build(),
                 TestCaseBuilder().setId("foo_1_2").setDescription("N = 2").setSubtaskIds({1, 2}).build()}),
-                testConfig));
+                coreConfig));
 
         EXPECT_CALL(testGroupGenerator, generate(TestGroup(2, {
                 TestCaseBuilder().setId("foo_2_1").setDescription("N = 3").setSubtaskIds({2}).build()}),
-                testConfig));
+                coreConfig));
     }
     GenerationResult result = generator.generate(testSuiteWithGroups, coreConfig);
 

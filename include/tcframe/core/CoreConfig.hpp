@@ -1,7 +1,11 @@
 #pragma once
 
+#include <tuple>
+
 #include "ProblemConfig.hpp"
 #include "TestConfig.hpp"
+
+using std::tie;
 
 namespace tcframe {
 
@@ -24,6 +28,10 @@ public:
 
     const TestConfig& testConfig() const {
         return testConfig_;
+    }
+
+    bool operator==(const CoreConfig& o) const {
+        return tie(problemConfig_, testConfig_) == tie(o.problemConfig_, o.testConfig_);
     }
 };
 

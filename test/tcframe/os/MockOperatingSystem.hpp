@@ -18,6 +18,7 @@ public:
             const string&,
             const string&,
             const string&));
+    MOCK_METHOD2(combineMultipleTestCases, void(const string&, int));
 };
 
 }

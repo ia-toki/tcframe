@@ -23,7 +23,7 @@ TEST_F(ConstraintSuiteBuilderTests, Building) {
             .addConstraint(constraint2)
             .build();
 
-    EXPECT_THAT(constraintSuite.individualConstraints(), ElementsAre(
+    EXPECT_THAT(constraintSuite.constraints(), ElementsAre(
             Subtask(-1, {constraint1, constraint2})));
 }
 
@@ -37,7 +37,7 @@ TEST_F(ConstraintSuiteBuilderTests, Building_WithSubtasks) {
             .addConstraint(constraint4)
             .build();
 
-    EXPECT_THAT(constraintSuite.individualConstraints(), ElementsAre(
+    EXPECT_THAT(constraintSuite.constraints(), ElementsAre(
             Subtask(1, {constraint1, constraint2}),
             Subtask(2, {constraint3, constraint4})));
 }
@@ -53,7 +53,7 @@ TEST_F(ConstraintSuiteBuilderTests, Building_WithSubtasks_WithoutLastSubtask) {
             .newSubtask()
             .buildWithoutLastSubtask();
 
-    EXPECT_THAT(constraintSuite.individualConstraints(), ElementsAre(
+    EXPECT_THAT(constraintSuite.constraints(), ElementsAre(
             Subtask(1, {constraint1, constraint2}),
             Subtask(2, {constraint3, constraint4})));
 }

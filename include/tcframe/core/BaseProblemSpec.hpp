@@ -59,6 +59,8 @@ public:
     ConstraintSuite buildConstraintSuite() {
         try {
             Constraints();
+            ConstraintSuiteBuilder::prepareForMultipleTestCasesConstraints();
+            MultipleTestCasesConstraints();
             return ConstraintSuiteBuilder::build();
         } catch (NotImplementedException&) {
             for (auto subtask : subtasks_) {
@@ -69,6 +71,8 @@ public:
                     break;
                 }
             }
+            ConstraintSuiteBuilder::prepareForMultipleTestCasesConstraints();
+            MultipleTestCasesConstraints();
             return ConstraintSuiteBuilder::buildWithoutLastSubtask();
         }
     }
@@ -82,6 +86,7 @@ protected:
     virtual void InputFormat() = 0;
     virtual void OutputFormat() {}
     virtual void Constraints() {throw NotImplementedException();}
+    virtual void MultipleTestCasesConstraints() {}
     virtual void Subtask1() {throw NotImplementedException();}
     virtual void Subtask2() {throw NotImplementedException();}
     virtual void Subtask3() {throw NotImplementedException();}
