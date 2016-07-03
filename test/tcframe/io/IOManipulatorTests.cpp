@@ -16,7 +16,8 @@ namespace tcframe {
 class IOManipulatorTests : public Test {
 protected:
     int A;
-    int B;
+    vector<int> V;
+    vector<vector<int>> M;
 
     IOManipulator* manipulator;
 
@@ -25,8 +26,12 @@ protected:
         ioFormatBuilder.prepareForInputFormat();
         ioFormatBuilder.newLineIOSegment()
                 .addScalarVariable(Scalar::create(A, "A"));
-        ioFormatBuilder.newLineIOSegment()
-                .addScalarVariable(Scalar::create(B, "B"));
+        ioFormatBuilder.newLinesIOSegment()
+                .addVectorVariable(Vector::create(V, "V"))
+                .setSize(2);
+        ioFormatBuilder.newGridIOSegment()
+                .addMatrixVariable(Matrix::create(M, "M"))
+                .setSize(2, 2);
         IOFormat ioFormat = ioFormatBuilder.build();
 
         manipulator = new IOManipulator(ioFormat);
@@ -34,14 +39,15 @@ protected:
 };
 
 TEST_F(IOManipulatorTests, Parsing_Successful) {
-    istringstream in("123\n42\n");
+    istringstream in("123\n42\n7\n5 6\n7 8\n");
     manipulator->parseInput(&in);
     EXPECT_THAT(A, Eq(123));
-    EXPECT_THAT(B, Eq(42));
+    EXPECT_THAT(V, Eq((vector<int>{42, 7})));
+    EXPECT_THAT(M, Eq((vector<vector<int>>{{5, 6}, {7, 8}})));
 }
 
 TEST_F(IOManipulatorTests, Parsing_Failed_MissingEof) {
-    istringstream in("123\n42\nbogus");
+    istringstream in("123\n42\n7\n5 6\n7 8\nbogus");
     try {
         manipulator->parseInput(&in);
         FAIL();
@@ -52,10 +58,11 @@ TEST_F(IOManipulatorTests, Parsing_Failed_MissingEof) {
 
 TEST_F(IOManipulatorTests, Printing_Successful) {
     A = 123;
-    B = 42;
+    V = {42, 7};
+    M = {{5, 6}, {7, 8}};
     ostringstream out;
     manipulator->printInput(&out);
-    EXPECT_THAT(out.str(), Eq("123\n42\n"));
+    EXPECT_THAT(out.str(), Eq("123\n42\n7\n5 6\n7 8\n"));
 }
 
 }

@@ -3,8 +3,10 @@
 #include <iostream>
 #include <vector>
 
+#include "GridIOSegmentManipulator.hpp"
 #include "IOFormat.hpp"
 #include "LineIOSegmentManipulator.hpp"
+#include "LinesIOSegmentManipulator.hpp"
 #include "tcframe/variable.hpp"
 
 using std::endl;
@@ -42,16 +44,24 @@ public:
 private:
     void print(const vector<IOSegment*>& segments, ostream* out) {
         for (IOSegment* segment : segments) {
-            if (segment->type() == IOSegmentType::LINE) {
+            if (segment->type() == IOSegmentType::GRID) {
+                GridIOSegmentManipulator::print((GridIOSegment*) segment, out);
+            } else if (segment->type() == IOSegmentType::LINE) {
                 LineIOSegmentManipulator::print((LineIOSegment*) segment, out);
+            } else if (segment->type() == IOSegmentType::LINES) {
+                LinesIOSegmentManipulator::print((LinesIOSegment*) segment, out);
             }
         }
     }
 
     void parse(const vector<IOSegment*>& segments, istream* in) {
         for (IOSegment* segment : segments) {
-            if (segment->type() == IOSegmentType::LINE) {
+            if (segment->type() == IOSegmentType::GRID) {
+                GridIOSegmentManipulator::parse((GridIOSegment*) segment, in);
+            } else if (segment->type() == IOSegmentType::LINE) {
                 LineIOSegmentManipulator::parse((LineIOSegment*) segment, in);
+            } else if (segment->type() == IOSegmentType::LINES) {
+                LinesIOSegmentManipulator::parse((LinesIOSegment*) segment, in);
             }
         }
         WhitespaceManipulator::ensureEof(in);
