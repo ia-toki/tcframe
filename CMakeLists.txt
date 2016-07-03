@@ -107,6 +107,7 @@ set(SOURCE_FILES
     include/tcframe/testcase/OfficialTestGroup.hpp
     include/tcframe/util.hpp
     include/tcframe/util/StringUtils.hpp
+    include/tcframe/util/optional.hpp
     include/tcframe/variable.hpp
     include/tcframe/variable/Scalar.hpp
     include/tcframe/variable/Matrix.hpp
@@ -151,6 +152,7 @@ set(SOURCE_FILES
     test/tcframe/runner/MockRunnerLogger.hpp
     test/tcframe/runner/MockRunnerLoggerFactory.hpp
     test/tcframe/testcase/TestSuiteBuilderTests.cpp
+    test/tcframe/util/OptionalTests.cpp
     test/tcframe/util/StringUtilsTests.cpp
     test/tcframe/variable/FakeVariable.hpp
     test/tcframe/variable/MatrixTests.cpp
