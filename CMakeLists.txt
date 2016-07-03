@@ -96,6 +96,8 @@ set(SOURCE_FILES
     include/tcframe/random.hpp
     include/tcframe/random/Random.hpp
     include/tcframe/runner.hpp
+    include/tcframe/runner/Args.hpp
+    include/tcframe/runner/ArgsParser.hpp
     include/tcframe/runner/Runner.hpp
     include/tcframe/runner/RunnerLogger.hpp
     include/tcframe/runner/RunnerLoggerFactory.hpp
@@ -147,6 +149,7 @@ set(SOURCE_FILES
     test/tcframe/logger/TokenFormatterTests.cpp
     test/tcframe/os/MockOperatingSystem.hpp
     test/tcframe/random/RandomTests.cpp
+    test/tcframe/runner/ArgsParserTests.cpp
     test/tcframe/runner/RunnerTests.cpp
     test/tcframe/runner/RunnerLoggerTests.cpp
     test/tcframe/runner/MockRunnerLogger.hpp
