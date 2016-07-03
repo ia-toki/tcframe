@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CoreConfig.hpp"
+#include "ProblemConfig.hpp"
 #include "tcframe/constraint.hpp"
 #include "tcframe/io.hpp"
 #include "tcframe/testcase.hpp"
@@ -9,28 +9,25 @@ namespace tcframe {
 
 struct CoreSpec {
 private:
-    CoreConfig coreConfig_;
+    ProblemConfig problemConfig_;
     IOFormat ioFormat_;
     ConstraintSuite constraintSuite_;
     TestSuite testSuite_;
 
 public:
-    CoreSpec() = default;
-
     CoreSpec(
-            const CoreConfig& coreConfig,
+            const ProblemConfig& problemConfig,
             const IOFormat& ioFormat,
             const ConstraintSuite& constraintSuite,
             const TestSuite& testSuite)
-            : coreConfig_(coreConfig)
+            : problemConfig_(problemConfig)
             , ioFormat_(ioFormat)
             , constraintSuite_(constraintSuite)
             , testSuite_(testSuite)
     {}
 
-
-    const CoreConfig& coreConfig() const {
-        return coreConfig_;
+    const ProblemConfig& problemConfig() const {
+        return problemConfig_;
     }
 
     const IOFormat& ioFormat() const {

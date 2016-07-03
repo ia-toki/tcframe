@@ -52,6 +52,11 @@ protected:
     }
 };
 
+TEST_F(RunnerTests, Run_ArgsParsing_Failed) {
+    Runner<ProblemSpec> runner(testSpec, loggerEngine, os, &loggerFactory, &generatorFactory);
+    EXPECT_THAT(runner.run(2, new char*[2]{(char*) "./runner", (char*) "--blah"}), Ne(0));
+}
+
 TEST_F(RunnerTests, Run_Specification_Failed) {
     Runner<ProblemSpec> runner(badTestSpec, loggerEngine, os, &loggerFactory, &generatorFactory);
     EXPECT_CALL(generator, generate(_, _)).Times(0);

@@ -49,9 +49,8 @@ set(SOURCE_FILES
     include/tcframe/core.hpp
     include/tcframe/core/BaseTestSpec.hpp
     include/tcframe/core/BaseProblemSpec.hpp
-    include/tcframe/core/CoreConfig.hpp
     include/tcframe/core/CoreSpec.hpp
-    include/tcframe/core/TestConfig.hpp
+    include/tcframe/core/DefaultValues.hpp
     include/tcframe/core/Magic.hpp
     include/tcframe/core/NotImplementedException.hpp
     include/tcframe/core/ProblemConfig.hpp
@@ -64,6 +63,7 @@ set(SOURCE_FILES
     include/tcframe/failure/SimpleFailure.hpp
     include/tcframe/generator.hpp
     include/tcframe/generator/GenerationResult.hpp
+    include/tcframe/generator/GeneratorConfig.hpp
     include/tcframe/generator/GeneratorLogger.hpp
     include/tcframe/generator/MultipleTestCasesCombinationResult.hpp
     include/tcframe/generator/TestCase.hpp

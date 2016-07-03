@@ -1,6 +1,7 @@
 #pragma once
 
 #include "tcframe/generator/GenerationResult.hpp"
+#include "tcframe/generator/GeneratorConfig.hpp"
 #include "tcframe/generator/GeneratorLogger.hpp"
 #include "tcframe/generator/MultipleTestCasesCombinationResult.hpp"
 #include "tcframe/generator/TestCase.hpp"

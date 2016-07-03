@@ -47,32 +47,32 @@ public:
             , logger_(logger)
     {}
 
-    virtual GenerationResult generate(const TestSuite& testSuite, const CoreConfig& coreConfig) {
+    virtual GenerationResult generate(const TestSuite& testSuite, const GeneratorConfig& config) {
         logger_->logIntroduction();
-        GenerationResult result = doGenerate(testSuite, coreConfig);
+        GenerationResult result = doGenerate(testSuite, config);
         logger_->logResult(result);
         return result;
     }
 
 private:
-    GenerationResult doGenerate(const TestSuite& testSuite, const CoreConfig& coreConfig) {
-        os_->forceMakeDir(coreConfig.testConfig().testCasesDir());
+    GenerationResult doGenerate(const TestSuite& testSuite, const GeneratorConfig& config) {
+        os_->forceMakeDir(config.testCasesDir());
 
         vector<TestGroupGenerationResult> testGroupResults;
-        testGroupResults.push_back(generateSampleTests(testSuite, coreConfig));
-        for (TestGroupGenerationResult result : generateOfficialTests(testSuite, coreConfig)) {
+        testGroupResults.push_back(generateSampleTests(testSuite, config));
+        for (TestGroupGenerationResult result : generateOfficialTests(testSuite, config)) {
             testGroupResults.push_back(result);
         }
         return GenerationResult(testGroupResults);
     }
 
-    TestGroupGenerationResult generateSampleTests(const TestSuite& testSuite, const CoreConfig& coreConfig) {
+    TestGroupGenerationResult generateSampleTests(const TestSuite& testSuite, const GeneratorConfig& config) {
         vector<SampleTestCase> sampleTests = testSuite.sampleTests();
         vector<TestCase> testCases;
         for (int testCaseNo = 1; testCaseNo <= sampleTests.size(); testCaseNo++) {
             SampleTestCase sampleTestCase = sampleTests[testCaseNo - 1];
             TestCase testCase = TestCaseBuilder()
-                    .setId(TestCaseIdCreator::create(coreConfig.problemConfig().slug(), 0, testCaseNo))
+                    .setId(TestCaseIdCreator::create(config.slug(), 0, testCaseNo))
                     .setSubtaskIds(sampleTestCase.subtaskIds())
                     .setApplier([=] {
                         istream* in = new istringstream(sampleTestCase.content());
@@ -82,13 +82,13 @@ private:
             testCases.push_back(testCase);
         }
 
-        return testGroupGenerator_->generate(TestGroup(0, testCases), coreConfig);
+        return testGroupGenerator_->generate(TestGroup(0, testCases), config);
     }
 
-    vector<TestGroupGenerationResult> generateOfficialTests(const TestSuite& testSuite, const CoreConfig& coreConfig) {
+    vector<TestGroupGenerationResult> generateOfficialTests(const TestSuite& testSuite, const GeneratorConfig& config) {
         vector<TestGroupGenerationResult> results;
         for (const OfficialTestGroup& officialTestGroup : testSuite.officialTests()) {
-            results.push_back(generateOfficialTestGroup(officialTestGroup, testSuite.inputFinalizer(), coreConfig));
+            results.push_back(generateOfficialTestGroup(officialTestGroup, testSuite.inputFinalizer(), config));
         }
         return results;
     }
@@ -96,14 +96,14 @@ private:
     TestGroupGenerationResult generateOfficialTestGroup(
             const OfficialTestGroup& officialTestGroup,
             const function<void()>& inputFinalizer,
-            const CoreConfig& coreConfig) {
+            const GeneratorConfig& config) {
 
         vector<OfficialTestCase> officialTestCases = officialTestGroup.officialTestCases();
         vector<TestCase> testCases;
         for (int testCaseNo = 1; testCaseNo <= officialTestCases.size(); testCaseNo++) {
             OfficialTestCase officialTestCase = officialTestCases[testCaseNo - 1];
             string testCaseId = TestCaseIdCreator::create(
-                    coreConfig.problemConfig().slug(),
+                    config.slug(),
                     officialTestGroup.id(),
                     testCaseNo);
             TestCase testCase = TestCaseBuilder()
@@ -115,7 +115,7 @@ private:
             testCases.push_back(testCase);
         }
 
-        return testGroupGenerator_->generate(TestGroup(officialTestGroup.id(), testCases), coreConfig);
+        return testGroupGenerator_->generate(TestGroup(officialTestGroup.id(), testCases), config);
     }
 };
 

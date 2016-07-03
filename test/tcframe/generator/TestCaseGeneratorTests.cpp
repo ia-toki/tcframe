@@ -35,14 +35,11 @@ protected:
             .setSubtaskIds({1, 2})
             .setApplier([&] {applied = true;})
             .build();
-    ProblemConfig problemConfig = ProblemConfigBuilder()
+    GeneratorConfig config = GeneratorConfigBuilder()
             .setSlug("foo")
-            .build();
-    TestConfig testConfig = TestConfigBuilder()
-            .setTestCasesDir("dir")
             .setSolutionCommand("python Sol.py")
+            .setTestCasesDir("dir")
             .build();
-    CoreConfig coreConfig = CoreConfig(problemConfig, testConfig);
     ostream* out = new ostringstream();
     ExecutionResult executionResult = ExecutionResult(0, new istringstream(), new istringstream());
 
@@ -73,7 +70,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Successful) {
         EXPECT_CALL(ioManipulator, parseOutput(executionResult.outputStream()));
         EXPECT_CALL(logger, logTestCaseResult("N = 42", expectedResult));
     }
-    TestCaseGenerationResult result = generator.generate(testCase, coreConfig);
+    TestCaseGenerationResult result = generator.generate(testCase, config);
     
     EXPECT_TRUE(applied);
     EXPECT_THAT(result, Eq(expectedResult));
@@ -89,7 +86,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Failed_Verification) {
 
     EXPECT_CALL(logger, logTestCaseResult("N = 42", expectedResult));
 
-    TestCaseGenerationResult result = generator.generate(testCase, coreConfig);
+    TestCaseGenerationResult result = generator.generate(testCase, config);
     EXPECT_THAT(result, Eq(expectedResult));
     EXPECT_FALSE(result.isSuccessful());
 }
@@ -102,7 +99,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Failed_InputGeneration) {
 
     EXPECT_CALL(logger, logTestCaseResult("N = 42", expectedResult));
 
-    TestCaseGenerationResult result = generator.generate(testCase, coreConfig);
+    TestCaseGenerationResult result = generator.generate(testCase, config);
     EXPECT_THAT(result, Eq(expectedResult));
     EXPECT_FALSE(result.isSuccessful());
 }
@@ -115,7 +112,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Failed_OutputGeneration) {
 
     EXPECT_CALL(logger, logTestCaseResult("N = 42", expectedResult));
 
-    TestCaseGenerationResult result = generator.generate(testCase, coreConfig);
+    TestCaseGenerationResult result = generator.generate(testCase, config);
     EXPECT_THAT(result, Eq(expectedResult));
     EXPECT_FALSE(result.isSuccessful());
 }

@@ -5,6 +5,7 @@
 #include <set>
 #include <string>
 
+#include "GeneratorConfig.hpp"
 #include "GeneratorLogger.hpp"
 #include "TestCase.hpp"
 #include "TestCaseGenerationResult.hpp"
@@ -43,23 +44,23 @@ public:
             , logger_(logger)
     {}
 
-    virtual TestCaseGenerationResult generate(const TestCase& testCase, const CoreConfig& coreConfig) {
+    virtual TestCaseGenerationResult generate(const TestCase& testCase, const GeneratorConfig& config) {
         logger_->logTestCaseIntroduction(testCase.id());
-        TestCaseGenerationResult result = doGenerate(testCase, coreConfig);
+        TestCaseGenerationResult result = doGenerate(testCase, config);
         logger_->logTestCaseResult(testCase.description(), result);
         return result;
     }
 
 private:
-    TestCaseGenerationResult doGenerate(const TestCase& testCase, const CoreConfig& coreConfig) {
-        string inputFilename = coreConfig.testConfig().testCasesDir() + "/" + testCase.id() + ".in";
-        string outputFilename = coreConfig.testConfig().testCasesDir() + "/" + testCase.id() + ".out";
+    TestCaseGenerationResult doGenerate(const TestCase& testCase, const GeneratorConfig& config) {
+        string inputFilename = config.testCasesDir() + "/" + testCase.id() + ".in";
+        string outputFilename = config.testCasesDir() + "/" + testCase.id() + ".out";
 
         try {
             apply(testCase.applier());
             verify(testCase.subtaskIds());
-            generateInput(inputFilename, coreConfig.problemConfig());
-            generateOutput(inputFilename, outputFilename, coreConfig.testConfig().solutionCommand());
+            generateInput(inputFilename, config);
+            generateOutput(inputFilename, outputFilename, config.solutionCommand());
         } catch (ComplexFailureException& e) {
             return TestCaseGenerationResult::failedResult(e.failure());
         } catch (runtime_error& e) {
@@ -80,9 +81,9 @@ private:
         }
     }
 
-    void generateInput(const string& inputFilename, const ProblemConfig& problemConfig) {
+    void generateInput(const string& inputFilename, const GeneratorConfig& config) {
         ostream* testCaseInput = os_->openForWriting(inputFilename);
-        if (problemConfig.multipleTestCasesCount() != nullptr) {
+        if (config.multipleTestCasesCount() != nullptr) {
             *testCaseInput << "1" << endl;
         }
         ioManipulator_->printInput(testCaseInput);

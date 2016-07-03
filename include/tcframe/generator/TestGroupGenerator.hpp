@@ -41,13 +41,13 @@ public:
             , logger_(logger)
     {}
 
-    virtual TestGroupGenerationResult generate(const TestGroup& testGroup, const CoreConfig& coreConfig) {
+    virtual TestGroupGenerationResult generate(const TestGroup& testGroup, const GeneratorConfig& config) {
         logger_->logTestGroupIntroduction(testGroup.id());
 
         vector<TestCaseGenerationResult> testCaseResults;
         bool successful = true;
         for (const TestCase& testCase : testGroup.testCases()) {
-            TestCaseGenerationResult testCaseResult = testCaseGenerator_->generate(testCase, coreConfig);
+            TestCaseGenerationResult testCaseResult = testCaseGenerator_->generate(testCase, config);
             testCaseResults.push_back(testCaseResult);
             successful &= testCaseResult.isSuccessful();
         }
@@ -55,11 +55,11 @@ public:
         Failure* failure = nullptr;
 
         if (successful &&
-            coreConfig.problemConfig().multipleTestCasesCount() != nullptr && !testGroup.testCases().empty()) {
+            config.multipleTestCasesCount() != nullptr && !testGroup.testCases().empty()) {
 
-            string baseId = TestCaseIdCreator::createBaseId(coreConfig.problemConfig().slug(), testGroup.id());
+            string baseId = TestCaseIdCreator::createBaseId(config.slug(), testGroup.id());
             logger_->logMultipleTestCasesCombinationIntroduction(baseId);
-            MultipleTestCasesCombinationResult combinationResult = combineMultipleTestCases(testGroup, coreConfig);
+            MultipleTestCasesCombinationResult combinationResult = combineMultipleTestCases(testGroup, config);
             logger_->logMultipleTestCasesCombinationResult(combinationResult);
             failure = combinationResult.failure();
         }
@@ -70,15 +70,15 @@ public:
 private:
     MultipleTestCasesCombinationResult combineMultipleTestCases(
             const TestGroup& testGroup,
-            const CoreConfig& coreConfig) {
+            const GeneratorConfig& config) {
 
-        *coreConfig.problemConfig().multipleTestCasesCount() = (int) testGroup.testCases().size();
+        *config.multipleTestCasesCount() = (int) testGroup.testCases().size();
 
         Failure* failure = nullptr;
 
         try {
             verify();
-            combine(testGroup, coreConfig);
+            combine(testGroup, config);
         } catch (ComplexFailureException& e) {
             failure = e.failure();
         } catch (runtime_error& e) {
@@ -94,9 +94,9 @@ private:
         }
     }
 
-    void combine(const TestGroup& testGroup, const CoreConfig& coreConfig) {
-        string baseId = TestCaseIdCreator::createBaseId(coreConfig.problemConfig().slug(), testGroup.id());
-        string baseFilename = coreConfig.testConfig().testCasesDir() + "/" + baseId;
+    void combine(const TestGroup& testGroup, const GeneratorConfig& config) {
+        string baseId = TestCaseIdCreator::createBaseId(config.slug(), testGroup.id());
+        string baseFilename = config.testCasesDir() + "/" + baseId;
         os_->combineMultipleTestCases(baseFilename, (int) testGroup.testCases().size());
     }
 };

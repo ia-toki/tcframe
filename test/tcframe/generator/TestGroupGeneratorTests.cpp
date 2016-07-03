@@ -37,14 +37,11 @@ protected:
             .setApplier([] {})
             .build();
     TestGroup testGroup = TestGroup(7, {tc1, tc2});
-    ProblemConfig problemConfig = ProblemConfigBuilder()
+    GeneratorConfig config = GeneratorConfigBuilder()
             .setSlug("foo")
-            .build();
-    TestConfig testConfig = TestConfigBuilder()
-            .setTestCasesDir("dir")
             .setSolutionCommand("python Sol.py")
+            .setTestCasesDir("dir")
             .build();
-    CoreConfig coreConfig = CoreConfig(problemConfig, testConfig);
 
     TestGroupGenerator generator = TestGroupGenerator(&testCaseGenerator, &verifier, &os, &logger);
 
@@ -61,11 +58,11 @@ TEST_F(TestGroupGeneratorTests, Generation_Successful) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestGroupIntroduction(7));
-        EXPECT_CALL(testCaseGenerator, generate(tc1, coreConfig));
-        EXPECT_CALL(testCaseGenerator, generate(tc2, coreConfig));
+        EXPECT_CALL(testCaseGenerator, generate(tc1, config));
+        EXPECT_CALL(testCaseGenerator, generate(tc2, config));
     }
 
-    TestGroupGenerationResult result = generator.generate(testGroup, coreConfig);
+    TestGroupGenerationResult result = generator.generate(testGroup, config);
     EXPECT_THAT(result, Eq(expectedResult));
     EXPECT_TRUE(result.isSuccessful());
 }
@@ -78,7 +75,7 @@ TEST_F(TestGroupGeneratorTests, Generation_Failed_SomeTestCaseFailed) {
             TestCaseGenerationResult::successfulResult(),
             TestCaseGenerationResult::failedResult(new SimpleFailure("failure"))});
 
-    TestGroupGenerationResult result = generator.generate(testGroup, coreConfig);
+    TestGroupGenerationResult result = generator.generate(testGroup, config);
     EXPECT_THAT(result, Eq(expectedResult));
     EXPECT_FALSE(result.isSuccessful());
 }
@@ -86,11 +83,11 @@ TEST_F(TestGroupGeneratorTests, Generation_Failed_SomeTestCaseFailed) {
 TEST_F(TestGroupGeneratorTests, Generation_MultipleTestCases_Successful) {
     int T;
 
-    ProblemConfig problemConfig = ProblemConfigBuilder()
+    GeneratorConfig config = GeneratorConfigBuilder()
+            .setMultipleTestCasesCount(&T)
             .setSlug("foo")
-            .setMultipleTestCasesCount(T)
+            .setTestCasesDir("dir")
             .build();
-    CoreConfig coreConfig(problemConfig, testConfig);
 
     ON_CALL(verifier, verifyMultipleTestCasesConstraints())
             .WillByDefault(Return(MultipleTestCasesConstraintsVerificationResult({})));
@@ -102,8 +99,8 @@ TEST_F(TestGroupGeneratorTests, Generation_MultipleTestCases_Successful) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestGroupIntroduction(7));
-        EXPECT_CALL(testCaseGenerator, generate(tc1, coreConfig));
-        EXPECT_CALL(testCaseGenerator, generate(tc2, coreConfig));
+        EXPECT_CALL(testCaseGenerator, generate(tc1, config));
+        EXPECT_CALL(testCaseGenerator, generate(tc2, config));
         EXPECT_CALL(logger, logMultipleTestCasesCombinationIntroduction("foo_7"));
         EXPECT_CALL(verifier, verifyMultipleTestCasesConstraints());
         EXPECT_CALL(os, combineMultipleTestCases("dir/foo_7", 2));
@@ -111,7 +108,7 @@ TEST_F(TestGroupGeneratorTests, Generation_MultipleTestCases_Successful) {
                 MultipleTestCasesCombinationResult(expectedCombinationFailure)));
     }
 
-    TestGroupGenerationResult result = generator.generate(testGroup, coreConfig);
+    TestGroupGenerationResult result = generator.generate(testGroup, config);
     EXPECT_THAT(T, Eq(2));
     EXPECT_THAT(result, Eq(expectedResult));
     EXPECT_TRUE(result.isSuccessful());
@@ -121,11 +118,10 @@ TEST_F(TestGroupGeneratorTests, Generation_MultipleTestCases_Successful) {
 TEST_F(TestGroupGeneratorTests, Generation_MultipleTestCases_Failed_Verification) {
     int T;
 
-    ProblemConfig problemConfig = ProblemConfigBuilder()
+    GeneratorConfig config = GeneratorConfigBuilder()
+            .setMultipleTestCasesCount(&T)
             .setSlug("foo")
-            .setMultipleTestCasesCount(T)
             .build();
-    CoreConfig coreConfig(problemConfig, testConfig);
 
     ON_CALL(verifier, verifyMultipleTestCasesConstraints())
             .WillByDefault(Return(MultipleTestCasesConstraintsVerificationResult({"T <= 20"})));
@@ -139,7 +135,7 @@ TEST_F(TestGroupGeneratorTests, Generation_MultipleTestCases_Failed_Verification
     EXPECT_CALL(logger, logMultipleTestCasesCombinationResult(
             MultipleTestCasesCombinationResult(expectedCombinationFailure)));
 
-    TestGroupGenerationResult result = generator.generate(testGroup, coreConfig);
+    TestGroupGenerationResult result = generator.generate(testGroup, config);
     EXPECT_THAT(result, Eq(expectedResult));
     EXPECT_FALSE(result.isSuccessful());
 }

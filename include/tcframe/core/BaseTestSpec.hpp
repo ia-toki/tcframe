@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "CoreSpec.hpp"
-#include "TestConfig.hpp"
 #include "NotImplementedException.hpp"
 #include "tcframe/random.hpp"
 #include "tcframe/testcase.hpp"
@@ -15,7 +14,7 @@ using std::set;
 namespace tcframe {
 
 template<typename TProblemSpec /* extends BaseProblemSpec */>
-class BaseTestSpec : public TProblemSpec, protected TestConfigBuilder, protected TestSuiteBuilder {
+class BaseTestSpec : public TProblemSpec, protected TestSuiteBuilder {
 private:
     vector<void(BaseTestSpec::*)()> testGroups_ = {
             &BaseTestSpec::TestGroup1,
@@ -47,11 +46,6 @@ private:
 public:
     virtual ~BaseTestSpec() {}
 
-    /* Hack: this is here because Config() is ambiguous with BaseProblemSpec's. */
-    void applyProblemConfig() {
-        TProblemSpec::Config();
-    }
-
     TestSuite buildTestSuite() {
         TestSuiteBuilder::setInputFinalizer([this] {
             FinalizeInput();
@@ -75,14 +69,9 @@ public:
         }
     }
 
-    TestConfig buildTestConfig() {
-        Config();
-        return TestConfigBuilder::build();
-    }
-
     virtual CoreSpec buildCoreSpec() {
         return CoreSpec(
-                CoreConfig(TProblemSpec::buildProblemConfig(), buildTestConfig()),
+                TProblemSpec::buildProblemConfig(),
                 TProblemSpec::buildIOFormat(),
                 TProblemSpec::buildConstraintSuite(),
                 buildTestSuite());

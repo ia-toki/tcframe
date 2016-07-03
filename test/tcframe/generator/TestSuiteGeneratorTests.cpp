@@ -65,11 +65,11 @@ protected:
     ProblemConfig problemConfig = ProblemConfigBuilder()
             .setSlug("foo")
             .build();
-    TestConfig testConfig = TestConfigBuilder()
+    GeneratorConfig config = GeneratorConfigBuilder()
+            .setSlug("foo")
             .setSolutionCommand("python Sol.py")
             .setTestCasesDir("dir")
             .build();
-    CoreConfig coreConfig = CoreConfig(problemConfig, testConfig);
 
     TestSuiteGenerator generator = TestSuiteGenerator(&testGroupGenerator, &ioManipulator, &os, &logger);
 
@@ -104,17 +104,17 @@ TEST_F(TestSuiteGeneratorTests, Generation_Successful) {
         EXPECT_CALL(testGroupGenerator, generate(TestGroup(0, {
                 TestCaseBuilder().setId("foo_sample_1").setSubtaskIds({-1}).build(),
                 TestCaseBuilder().setId("foo_sample_2").setSubtaskIds({-1}).build()}),
-                coreConfig));
+                config));
 
         EXPECT_CALL(testGroupGenerator, generate(TestGroup(-1, {
                 TestCaseBuilder().setId("foo_1").setDescription("N = 1").setSubtaskIds({-1}).build(),
                 TestCaseBuilder().setId("foo_2").setDescription("N = 2").setSubtaskIds({-1}).build(),
                 TestCaseBuilder().setId("foo_3").setDescription("N = 3").setSubtaskIds({-1}).build()}),
-                coreConfig));
+                config));
 
         EXPECT_CALL(logger, logResult(expectedResult));
     }
-    GenerationResult result = generator.generate(testSuite, coreConfig);
+    GenerationResult result = generator.generate(testSuite, config);
 
     EXPECT_THAT(result, Eq(expectedResult));
     EXPECT_TRUE(result.isSuccessful());
@@ -137,7 +137,7 @@ TEST_F(TestSuiteGeneratorTests, Generation_Failed) {
 
     EXPECT_CALL(logger, logResult(expectedResult));
 
-    GenerationResult result = generator.generate(testSuite, coreConfig);
+    GenerationResult result = generator.generate(testSuite, config);
 
     EXPECT_THAT(result, Eq(expectedResult));
     EXPECT_FALSE(result.isSuccessful());
@@ -162,20 +162,20 @@ TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Successful) {
         EXPECT_CALL(testGroupGenerator, generate(TestGroup(0, {
                 TestCaseBuilder().setId("foo_sample_1").setSubtaskIds({1, 2}).build(),
                 TestCaseBuilder().setId("foo_sample_2").setSubtaskIds({2}).build()}),
-                coreConfig));
+                config));
 
         EXPECT_CALL(testGroupGenerator, generate(TestGroup(1, {
                 TestCaseBuilder().setId("foo_1_1").setDescription("N = 1").setSubtaskIds({1, 2}).build(),
                 TestCaseBuilder().setId("foo_1_2").setDescription("N = 2").setSubtaskIds({1, 2}).build()}),
-                coreConfig));
+                config));
 
         EXPECT_CALL(testGroupGenerator, generate(TestGroup(2, {
                 TestCaseBuilder().setId("foo_2_1").setDescription("N = 3").setSubtaskIds({2}).build()}),
-                coreConfig));
+                config));
 
         EXPECT_CALL(logger, logResult(expectedResult));
     }
-    GenerationResult result = generator.generate(testSuiteWithGroups, coreConfig);
+    GenerationResult result = generator.generate(testSuiteWithGroups, config);
 
     EXPECT_THAT(result, Eq(expectedResult));
     EXPECT_TRUE(result.isSuccessful());
@@ -203,7 +203,7 @@ TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Failed) {
 
     EXPECT_CALL(logger, logResult(expectedResult));
 
-    GenerationResult result = generator.generate(testSuiteWithGroups, coreConfig);
+    GenerationResult result = generator.generate(testSuiteWithGroups, config);
 
     EXPECT_THAT(result, Eq(expectedResult));
     EXPECT_FALSE(result.isSuccessful());
@@ -223,7 +223,7 @@ TEST_F(TestSuiteGeneratorTests, Generation_InputFinalizer_Official_Applied) {
                     InvokeWithoutArgs([] {return TestGroupGenerationResult(
                             nullptr, {TestCaseGenerationResult::successfulResult()});})));
 
-    generator.generate(testSuite, coreConfig);
+    generator.generate(testSuite, config);
 
     testGroupCaptor.arg().testCases()[0].applier()();
     EXPECT_THAT(N, Eq(3 * 2));
@@ -245,7 +245,7 @@ TEST_F(TestSuiteGeneratorTests, Generation_InputFinalizer_Sample_NotApplied) {
                     InvokeWithoutArgs([]{return TestGroupGenerationResult(
                             nullptr, {TestCaseGenerationResult::successfulResult()});})));
 
-    generator.generate(testSuite, coreConfig);
+    generator.generate(testSuite, config);
 
     testGroupCaptor.arg().testCases()[0].applier()();
     EXPECT_THAT(N, Ne(10 * 2));

@@ -4,6 +4,8 @@
 #include <tuple>
 #include <utility>
 
+#include "tcframe/util.hpp"
+
 using std::move;
 using std::string;
 using std::tie;
@@ -14,20 +16,20 @@ struct ProblemConfig {
     friend class ProblemConfigBuilder;
 
 private:
-    string slug_;
-    int* multipleTestCasesCount_;
+    optional<int*> multipleTestCasesCount_;
+    optional<string> slug_;
 
 public:
-    const string& slug() const {
-        return slug_;
-    }
-
-    int* multipleTestCasesCount() const {
+    const optional<int*>& multipleTestCasesCount() const {
         return multipleTestCasesCount_;
     }
 
+    const optional<string>& slug() const {
+        return slug_;
+    }
+
     bool operator==(const ProblemConfig& o) const {
-        return tie(slug_) == tie(o.slug_);
+        return tie(multipleTestCasesCount_, slug_) == tie(o.multipleTestCasesCount_, o.slug_);
     }
 };
 
@@ -38,18 +40,13 @@ private:
 public:
     virtual ~ProblemConfigBuilder() {}
 
-    ProblemConfigBuilder() {
-        subject_.slug_ = "problem";
-        subject_.multipleTestCasesCount_ = nullptr;
-    }
-
-    ProblemConfigBuilder& setSlug(string slug) {
-        subject_.slug_ = slug;
+    ProblemConfigBuilder& setMultipleTestCasesCount(int& var) {
+        subject_.multipleTestCasesCount_ = optional<int*>(&var);
         return *this;
     }
 
-    ProblemConfigBuilder& setMultipleTestCasesCount(int& var) {
-        subject_.multipleTestCasesCount_ = &var;
+    ProblemConfigBuilder& setSlug(string slug) {
+        subject_.slug_ = optional<string>(slug);
         return *this;
     }
 

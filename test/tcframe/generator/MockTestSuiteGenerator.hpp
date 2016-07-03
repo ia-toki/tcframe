@@ -12,7 +12,7 @@ public:
             : TestSuiteGenerator(nullptr, nullptr, nullptr, nullptr)
     {}
 
-    MOCK_METHOD2(generate, GenerationResult(const TestSuite&, const CoreConfig&));
+    MOCK_METHOD2(generate, GenerationResult(const TestSuite&, const GeneratorConfig&));
 };
 
 class MockTestSuiteGeneratorFactory : public TestSuiteGeneratorFactory {

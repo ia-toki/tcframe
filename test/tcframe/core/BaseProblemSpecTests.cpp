@@ -97,7 +97,7 @@ protected:
 
 TEST_F(BaseProblemSpecTests, Config) {
     ProblemConfig config = spec.buildProblemConfig();
-    EXPECT_THAT(config.slug(), Eq("ab"));
+    EXPECT_THAT(config.slug(), Eq(optional<string>("ab")));
 }
 
 TEST_F(BaseProblemSpecTests, IOFormat) {
@@ -122,7 +122,6 @@ TEST_F(BaseProblemSpecTests, MultipleTestCasesConstraints) {
     ConstraintSuite constraintSuite = specWithMultipleTestCasesConstraints.buildConstraintSuite();
     EXPECT_THAT(constraintSuite.multipleTestCasesConstraints(), SizeIs(1));
 }
-
 
 TEST_F(BaseProblemSpecTests, Subtasks) {
     ConstraintSuite constraintSuite = specWithSubtasks.buildConstraintSuite();

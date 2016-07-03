@@ -23,11 +23,6 @@ protected:
 
     class TestSpec : public BaseTestSpec<ProblemSpec> {
     protected:
-        void Config() {
-            setSolutionCommand("python Sol.py");
-            setTestCasesDir("dir");
-        }
-
         void InputFinalizer() {
             A *= 2;
         }
@@ -81,12 +76,6 @@ protected:
     TestSpecWithTestCases specWithTestCases;
     TestSpecWithTestGroups specWithTestGroups;
 };
-
-TEST_F(BaseTestSpecTests, Config) {
-    TestConfig config = spec.buildTestConfig();
-    EXPECT_THAT(config.solutionCommand(), Eq("python Sol.py"));
-    EXPECT_THAT(config.testCasesDir(), Eq("dir"));
-}
 
 TEST_F(BaseTestSpecTests, InputFinalizer) {
     TestSuite testSuite = spec.buildTestSuite();

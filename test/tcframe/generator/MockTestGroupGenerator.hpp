@@ -12,7 +12,7 @@ public:
             : TestGroupGenerator(nullptr, nullptr, nullptr, nullptr)
     {}
 
-    MOCK_METHOD2(generate, TestGroupGenerationResult(const TestGroup&, const CoreConfig&));
+    MOCK_METHOD2(generate, TestGroupGenerationResult(const TestGroup&, const GeneratorConfig&));
 };
 
 }
