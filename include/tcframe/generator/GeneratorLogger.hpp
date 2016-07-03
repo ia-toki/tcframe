@@ -1,6 +1,8 @@
 #pragma once
 
+#include <cstring>
 #include <iostream>
+#include <streambuf>
 #include <string>
 #include <vector>
 
@@ -12,9 +14,7 @@
 #include "tcframe/util.hpp"
 #include "tcframe/verifier.hpp"
 
-using std::cout;
-using std::endl;
-using std::flush;
+using std::istreambuf_iterator;
 using std::string;
 using std::vector;
 
@@ -70,11 +70,19 @@ public:
 
 private:
     void logFailure(Failure* failure) {
-        if (failure->type() == FailureType::CONSTRAINTS_VERIFICATION) {
-            logConstraintsVerificationFailure(((ConstraintsVerificationFailure*) failure)->verificationResult());
-        } else if (failure->type() == FailureType::MULTIPLE_TEST_CASES_CONSTRAINTS_VERIFICATION) {
-            logMultipleTestCasesConstraintsVerificationFailure(
-                    ((MultipleTestCasesConstraintsVerificationFailure*) failure)->verificationResult());
+        switch (failure->type()) {
+            case FailureType::CONSTRAINTS_VERIFICATION:
+                logConstraintsVerificationFailure(((ConstraintsVerificationFailure*) failure)->verificationResult());
+                break;
+            case FailureType::MULTIPLE_TEST_CASES_CONSTRAINTS_VERIFICATION:
+                logMultipleTestCasesConstraintsVerificationFailure(
+                        ((MultipleTestCasesConstraintsVerificationFailure*) failure)->verificationResult());
+                break;
+            case FailureType::SOLUTION_EXECUTION:
+                logSolutionExecutionFailure(((SolutionExecutionFailure*) failure)->executionResult());
+                break;
+            default:
+                logSimpleFailure(((SimpleFailure*) failure)->message());
         }
     }
 
@@ -106,6 +114,20 @@ private:
         for (const string& unsatisfiedConstraintDescription : result.unsatisfiedConstraintDescriptions()) {
             engine_->logListItem2(3, unsatisfiedConstraintDescription);
         }
+    }
+
+    void logSolutionExecutionFailure(const ExecutionResult& result) {
+        engine_->logListItem1(2, "Execution of solution failed:");
+        if (result.exitStatus() <= 128) {
+            engine_->logListItem2(3, "Exit code: " + StringUtils::toString(result.exitStatus()));
+            engine_->logListItem2(3, "Standard error: " + string(istreambuf_iterator<char>(*result.errorStream()), istreambuf_iterator<char>()));
+        } else {
+            engine_->logListItem2(3, string(strsignal(result.exitStatus() - 128)));
+        }
+    }
+
+    void logSimpleFailure(const string& message) {
+        engine_->logListItem1(2, message);
     }
  };
 

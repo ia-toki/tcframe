@@ -1,13 +1,12 @@
 #pragma once
 
 #include <fstream>
-#include <istream>
-#include <ostream>
+#include <iostream>
 #include <sstream>
 #include <string>
 
-#include "tcframe/os/ExecutionResult.hpp"
-#include "tcframe/os/OperatingSystem.hpp"
+#include "ExecutionResult.hpp"
+#include "OperatingSystem.hpp"
 
 using std::ifstream;
 using std::istream;
@@ -54,7 +53,7 @@ public:
 
         ostringstream sout;
 
-        sout << command;
+        sout << "{ " << command << "; }";
 
         if (!inputFilename.empty()) {
             sout << " < " << inputFilename;
@@ -88,7 +87,7 @@ public:
             errorStream = openForReadingAsStringStream(errorFilename);
         }
 
-        return ExecutionResult(exitCode, outputStream, errorStream);
+        return ExecutionResult(exitStatus, outputStream, errorStream);
     }
 
     void combineMultipleTestCases(const string& testCaseBaseFilename, int testCasesCount) {

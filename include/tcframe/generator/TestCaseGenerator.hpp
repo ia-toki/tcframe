@@ -92,6 +92,9 @@ private:
 
     void generateOutput(const string& inputFilename, const string& outputFilename, const string& solutionCommand) {
         ExecutionResult result = os_->execute(solutionCommand, inputFilename, outputFilename, "_error.out");
+        if (result.exitStatus() != 0) {
+            throw ComplexFailureException(new SolutionExecutionFailure(result));
+        }
         ioManipulator_->parseOutput(result.outputStream());
     }
 };

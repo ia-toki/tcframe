@@ -1,8 +1,10 @@
 #pragma once
 
 #include <istream>
+#include <tuple>
 
 using std::istream;
+using std::tie;
 
 namespace tcframe {
 
@@ -29,6 +31,10 @@ public:
 
     istream* errorStream() const {
         return errorStream_;
+    }
+
+    bool operator==(const ExecutionResult& o) const {
+        return tie(exitStatus_) == tie(o.exitStatus_);
     }
 };
 

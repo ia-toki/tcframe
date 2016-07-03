@@ -5,3 +5,4 @@
 #include "tcframe/failure/Failure.hpp"
 #include "tcframe/failure/MultipleTestCasesConstraintsVerificationFailure.hpp"
 #include "tcframe/failure/SimpleFailure.hpp"
+#include "tcframe/failure/SolutionExecutionFailure.hpp"

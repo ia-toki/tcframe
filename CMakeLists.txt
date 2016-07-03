@@ -61,6 +61,7 @@ set(SOURCE_FILES
     include/tcframe/failure/Failure.hpp
     include/tcframe/failure/MultipleTestCasesConstraintsVerificationFailure.hpp
     include/tcframe/failure/SimpleFailure.hpp
+    include/tcframe/failure/SolutionExecutionFailure.hpp
     include/tcframe/generator.hpp
     include/tcframe/generator/GenerationResult.hpp
     include/tcframe/generator/GeneratorConfig.hpp
