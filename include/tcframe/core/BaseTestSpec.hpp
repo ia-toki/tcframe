@@ -80,7 +80,6 @@ public:
 protected:
     Random rnd;
 
-    virtual void Config() {}
     /* DEPRECATED. For backward compatibility with 0.x versions. */
     virtual void FinalizeInput() {}
     virtual void InputFinalizer() {}

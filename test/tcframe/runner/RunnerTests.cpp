@@ -2,6 +2,7 @@
 #include "../mock.hpp"
 
 #include "../generator/MockTestSuiteGenerator.hpp"
+#include "../os/MockOperatingSystem.hpp"
 #include "MockRunnerLogger.hpp"
 #include "MockRunnerLoggerFactory.hpp"
 #include "tcframe/experimental/runner.hpp"
@@ -21,7 +22,16 @@ protected:
         void InputFormat() {}
     };
 
+    class ProblemSpecWithConfig : public ProblemSpec {
+    protected:
+        void Config() {
+            setSlug("foo");
+        }
+    };
+
     class TestSpec : public BaseTestSpec<ProblemSpec> {};
+
+    class TestSpecWithConfig : public BaseTestSpec<ProblemSpecWithConfig> {};
 
     class BadTestSpec : public BaseTestSpec<ProblemSpec> {
     public:
@@ -30,19 +40,22 @@ protected:
         }
     };
 
-    class DeprecatedGenerator : public BaseGenerator<ProblemSpec> {};
+    class DeprecatedProblem : public BaseProblem {
+    protected:
+        void InputFormat() {}
+    };
+
+    class DeprecatedGenerator : public BaseGenerator<DeprecatedProblem> {};
 
     int argc = 1;
     char** argv =  new char*[1]{(char*) "./runner"};
 
-    BaseTestSpec<ProblemSpec>* testSpec = new TestSpec();
-    BaseTestSpec<ProblemSpec>* badTestSpec = new BadTestSpec();
     LoggerEngine* loggerEngine = new SimpleLoggerEngine();
-    OperatingSystem* os = new UnixOperatingSystem();
 
     Mock(RunnerLogger) logger;
     Mock(TestSuiteGenerator) generator;
 
+    Mock(OperatingSystem) os;
     Mock(RunnerLoggerFactory) loggerFactory;
     Mock(TestSuiteGeneratorFactory) generatorFactory;
 
@@ -53,12 +66,12 @@ protected:
 };
 
 TEST_F(RunnerTests, Run_ArgsParsing_Failed) {
-    Runner<ProblemSpec> runner(testSpec, loggerEngine, os, &loggerFactory, &generatorFactory);
+    Runner<ProblemSpec> runner(new TestSpec(), loggerEngine, &os, &loggerFactory, &generatorFactory);
     EXPECT_THAT(runner.run(2, new char*[2]{(char*) "./runner", (char*) "--blah"}), Ne(0));
 }
 
 TEST_F(RunnerTests, Run_Specification_Failed) {
-    Runner<ProblemSpec> runner(badTestSpec, loggerEngine, os, &loggerFactory, &generatorFactory);
+    Runner<ProblemSpec> runner(new BadTestSpec(), loggerEngine, &os, &loggerFactory, &generatorFactory);
     EXPECT_CALL(generator, generate(_, _)).Times(0);
     EXPECT_CALL(logger, logSpecificationFailure(SpecificationFailure({"An error"})));
 
@@ -66,14 +79,14 @@ TEST_F(RunnerTests, Run_Specification_Failed) {
 }
 
 TEST_F(RunnerTests, Run_Generation_Successful) {
-    Runner<ProblemSpec> runner(testSpec, loggerEngine, os, &loggerFactory, &generatorFactory);
+    Runner<ProblemSpec> runner(new TestSpec(), loggerEngine, &os, &loggerFactory, &generatorFactory);
     ON_CALL(generator, generate(_, _)).WillByDefault(Return(GenerationResult({})));
 
     EXPECT_THAT(runner.run(argc, argv), Eq(0));
 }
 
 TEST_F(RunnerTests, Run_Generation_Failed) {
-    Runner<ProblemSpec> runner(testSpec, loggerEngine, os, &loggerFactory, &generatorFactory);
+    Runner<ProblemSpec> runner(new TestSpec(), loggerEngine, &os, &loggerFactory, &generatorFactory);
     ON_CALL(generator, generate(_, _))
             .WillByDefault(Return(GenerationResult({
                     TestGroupGenerationResult(new SimpleFailure("Error"), {})})));
@@ -81,8 +94,51 @@ TEST_F(RunnerTests, Run_Generation_Failed) {
     EXPECT_THAT(runner.run(argc, argv), Ne(0));
 }
 
+TEST_F(RunnerTests, Run_Generation_UseDefaultOptions) {
+    Runner<ProblemSpec> runner(new TestSpec(), loggerEngine, &os, &loggerFactory, &generatorFactory);
+    EXPECT_CALL(generator, generate(_, GeneratorConfigBuilder()
+            .setSeed(0)
+            .setSlug("problem")
+            .setSolutionCommand("./solution")
+            .setTestCasesDir("tc")
+            .build()));
+
+    runner.run(argc, argv);
+}
+
+TEST_F(RunnerTests, Run_Generation_UseSuppliedOptions) {
+    Runner<ProblemSpecWithConfig> runner(
+            new TestSpecWithConfig(), loggerEngine, &os, &loggerFactory, &generatorFactory);
+    EXPECT_CALL(generator, generate(_, GeneratorConfigBuilder()
+            .setSeed(0)
+            .setSlug("foo")
+            .setSolutionCommand("./solution")
+            .setTestCasesDir("tc")
+            .build()));
+
+    runner.run(argc, argv);
+}
+
+TEST_F(RunnerTests, Run_Generation_UseArgsOptions) {
+    Runner<ProblemSpecWithConfig> runner(
+            new TestSpecWithConfig(), loggerEngine, &os, &loggerFactory, &generatorFactory);
+    EXPECT_CALL(generator, generate(_, GeneratorConfigBuilder()
+            .setSeed(42)
+            .setSlug("bar")
+            .setSolutionCommand("\"java Solution\"")
+            .setTestCasesDir("testdata")
+            .build()));
+
+    runner.run(5, new char*[5]{
+            (char*) "./runner",
+            (char*) "--seed=42",
+            (char*) "--slug=bar",
+            (char*) "--solution=\"java Solution\"",
+            (char*) "--tc-dir=testdata"});
+}
+
 TEST_F(RunnerTests, Run_Deprecated_Compiles) {
-    Runner<ProblemSpec> runner(argc, argv);
+    Runner<DeprecatedProblem> runner(argc, argv);
     runner.setGenerator(new DeprecatedGenerator());
     // So that it won't run
     if (false) {

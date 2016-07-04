@@ -43,8 +43,8 @@ private:
 public:
     virtual ~BaseProblemSpec() {}
 
-    virtual ProblemConfig buildProblemConfig() {
-        applyProblemConfig();
+    ProblemConfig buildProblemConfig() {
+        Config();
         return ProblemConfigBuilder::build();
     }
 
@@ -78,10 +78,6 @@ public:
     }
 
 protected:
-    virtual void applyProblemConfig() {
-        Config();
-    }
-
     virtual void Config() {}
     virtual void InputFormat() = 0;
     virtual void OutputFormat() {}
