@@ -2,10 +2,10 @@
 
 #include <vector>
 
-#include "NotImplementedException.hpp"
 #include "ProblemConfig.hpp"
 #include "tcframe/constraint.hpp"
 #include "tcframe/io.hpp"
+#include "tcframe/util.hpp"
 
 using std::vector;
 

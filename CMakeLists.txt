@@ -98,7 +98,6 @@ set(SOURCE_FILES
     include/tcframe/spec/CoreSpec.hpp
     include/tcframe/spec/DefaultValues.hpp
     include/tcframe/spec/Magic.hpp
-    include/tcframe/spec/NotImplementedException.hpp
     include/tcframe/spec/ProblemConfig.hpp
     include/tcframe/testcase.hpp
     include/tcframe/testcase/OfficialTestCase.hpp
@@ -109,6 +108,7 @@ set(SOURCE_FILES
     include/tcframe/testcase/TestGroup.hpp
     include/tcframe/testcase/TestSuite.hpp
     include/tcframe/util.hpp
+    include/tcframe/util/NotImplementedException.hpp
     include/tcframe/util/StringUtils.hpp
     include/tcframe/util/optional.hpp
     include/tcframe/variable.hpp

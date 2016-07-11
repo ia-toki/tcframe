@@ -5,5 +5,4 @@
 #include "tcframe/spec/CoreSpec.hpp"
 #include "tcframe/spec/DefaultValues.hpp"
 #include "tcframe/spec/Magic.hpp"
-#include "tcframe/spec/NotImplementedException.hpp"
 #include "tcframe/spec/ProblemConfig.hpp"

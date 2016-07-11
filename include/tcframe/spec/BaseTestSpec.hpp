@@ -4,9 +4,9 @@
 #include <vector>
 
 #include "CoreSpec.hpp"
-#include "NotImplementedException.hpp"
 #include "tcframe/random.hpp"
 #include "tcframe/testcase.hpp"
+#include "tcframe/util.hpp"
 
 using std::vector;
 using std::set;
