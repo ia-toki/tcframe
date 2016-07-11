@@ -4,15 +4,13 @@
 #include <vector>
 
 #include "GeneratorLogger.hpp"
-#include "TestCase.hpp"
 #include "TestCaseGenerator.hpp"
-#include "TestCaseIdCreator.hpp"
-#include "TestGroup.hpp"
 #include "TestGroupGenerationResult.hpp"
 #include "MultipleTestCasesCombinationResult.hpp"
 #include "tcframe/core.hpp"
 #include "tcframe/failure.hpp"
 #include "tcframe/os.hpp"
+#include "tcframe/testcase.hpp"
 #include "tcframe/verifier.hpp"
 
 using std::string;

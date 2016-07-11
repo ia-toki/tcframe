@@ -8,9 +8,6 @@
 
 #include "GeneratorLogger.hpp"
 #include "GenerationResult.hpp"
-#include "TestCase.hpp"
-#include "TestGroup.hpp"
-#include "TestCaseIdCreator.hpp"
 #include "TestGroupGenerationResult.hpp"
 #include "TestGroupGenerator.hpp"
 #include "tcframe/core.hpp"

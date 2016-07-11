@@ -7,7 +7,6 @@
 
 #include "GeneratorConfig.hpp"
 #include "GeneratorLogger.hpp"
-#include "TestCase.hpp"
 #include "TestCaseGenerationResult.hpp"
 #include "tcframe/core.hpp"
 #include "tcframe/failure.hpp"
