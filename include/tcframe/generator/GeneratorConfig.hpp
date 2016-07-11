@@ -4,7 +4,7 @@
 #include <tuple>
 #include <utility>
 
-#include "tcframe/core.hpp"
+#include "tcframe/spec.hpp"
 
 using std::move;
 using std::string;

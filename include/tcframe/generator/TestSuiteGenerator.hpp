@@ -10,9 +10,9 @@
 #include "GenerationResult.hpp"
 #include "TestGroupGenerationResult.hpp"
 #include "TestGroupGenerator.hpp"
-#include "tcframe/core.hpp"
 #include "tcframe/io.hpp"
 #include "tcframe/os.hpp"
+#include "tcframe/spec.hpp"
 #include "tcframe/testcase.hpp"
 
 using std::function;

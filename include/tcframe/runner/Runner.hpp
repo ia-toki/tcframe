@@ -7,10 +7,10 @@
 #include "RunnerLogger.hpp"
 #include "RunnerLoggerFactory.hpp"
 #include "SpecificationFailure.hpp"
-#include "tcframe/core.hpp"
 #include "tcframe/io.hpp"
 #include "tcframe/generator.hpp"
 #include "tcframe/os.hpp"
+#include "tcframe/spec.hpp"
 #include "tcframe/variable.hpp"
 #include "tcframe/verifier.hpp"
 

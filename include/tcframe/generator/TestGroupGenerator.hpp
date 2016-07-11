@@ -7,9 +7,9 @@
 #include "TestCaseGenerator.hpp"
 #include "TestGroupGenerationResult.hpp"
 #include "MultipleTestCasesCombinationResult.hpp"
-#include "tcframe/core.hpp"
 #include "tcframe/failure.hpp"
 #include "tcframe/os.hpp"
+#include "tcframe/spec.hpp"
 #include "tcframe/testcase.hpp"
 #include "tcframe/verifier.hpp"
 

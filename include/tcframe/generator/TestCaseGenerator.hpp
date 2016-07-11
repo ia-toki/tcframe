@@ -8,10 +8,10 @@
 #include "GeneratorConfig.hpp"
 #include "GeneratorLogger.hpp"
 #include "TestCaseGenerationResult.hpp"
-#include "tcframe/core.hpp"
 #include "tcframe/failure.hpp"
 #include "tcframe/io.hpp"
 #include "tcframe/os.hpp"
+#include "tcframe/spec.hpp"
 #include "tcframe/testcase.hpp"
 #include "tcframe/verifier.hpp"
 

@@ -46,14 +46,6 @@ set(SOURCE_FILES
     include/tcframe/constraint/Constraint.hpp
     include/tcframe/constraint/ConstraintSuite.hpp
     include/tcframe/constraint/Subtask.hpp
-    include/tcframe/core.hpp
-    include/tcframe/core/BaseTestSpec.hpp
-    include/tcframe/core/BaseProblemSpec.hpp
-    include/tcframe/core/CoreSpec.hpp
-    include/tcframe/core/DefaultValues.hpp
-    include/tcframe/core/Magic.hpp
-    include/tcframe/core/NotImplementedException.hpp
-    include/tcframe/core/ProblemConfig.hpp
     include/tcframe/experimental/runner.hpp
     include/tcframe/failure.hpp
     include/tcframe/failure/ComplexFailureException.hpp
@@ -100,6 +92,14 @@ set(SOURCE_FILES
     include/tcframe/runner/RunnerLogger.hpp
     include/tcframe/runner/RunnerLoggerFactory.hpp
     include/tcframe/runner/SpecificationFailure.hpp
+    include/tcframe/spec.hpp
+    include/tcframe/spec/BaseTestSpec.hpp
+    include/tcframe/spec/BaseProblemSpec.hpp
+    include/tcframe/spec/CoreSpec.hpp
+    include/tcframe/spec/DefaultValues.hpp
+    include/tcframe/spec/Magic.hpp
+    include/tcframe/spec/NotImplementedException.hpp
+    include/tcframe/spec/ProblemConfig.hpp
     include/tcframe/testcase.hpp
     include/tcframe/testcase/OfficialTestCase.hpp
     include/tcframe/testcase/OfficialTestGroup.hpp
@@ -124,9 +124,6 @@ set(SOURCE_FILES
     test/tcframe/helper.hpp
     test/tcframe/mock.hpp
     test/tcframe/constraint/ConstraintSuiteBuilderTests.cpp
-    test/tcframe/core/BaseTestSpecTests.cpp
-    test/tcframe/core/BaseProblemSpecTests.cpp
-    test/tcframe/core/MagicTests.cpp
     test/tcframe/generator/GeneratorLoggerTests.cpp
     test/tcframe/generator/MockGeneratorLogger.hpp
     test/tcframe/generator/MockTestCaseGenerator.hpp
@@ -154,6 +151,9 @@ set(SOURCE_FILES
     test/tcframe/runner/RunnerLoggerTests.cpp
     test/tcframe/runner/MockRunnerLogger.hpp
     test/tcframe/runner/MockRunnerLoggerFactory.hpp
+    test/tcframe/spec/BaseTestSpecTests.cpp
+    test/tcframe/spec/BaseProblemSpecTests.cpp
+    test/tcframe/spec/MagicTests.cpp
     test/tcframe/testcase/TestCaseIdCreatorTests.cpp
     test/tcframe/testcase/TestSuiteBuilderTests.cpp
     test/tcframe/util/OptionalTests.cpp
