@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "TestCaseGenerationResult.hpp"
-#include "tcframe/failure.hpp"
+#include "tcframe/generator/failure.hpp"
 
 using std::vector;
 

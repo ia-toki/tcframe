@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "../io/MockIOManipulator.hpp"
+#include "../io_manipulator/MockIOManipulator.hpp"
 #include "../os/MockOperatingSystem.hpp"
 #include "MockTestGroupGenerator.hpp"
 #include "MockGeneratorLogger.hpp"
@@ -43,14 +43,14 @@ protected:
     OfficialTestCase tc2 = OfficialTestCase([&] {N = 2;}, "N = 2");
     OfficialTestCase tc3 = OfficialTestCase([&] {N = 3;}, "N = 3");
 
-    TestSuite testSuite = TestSuiteBuilder()
+    RawTestSuite rawTestSuite = RawTestSuiteBuilder()
             .addSampleTestCase(stc1)
             .addSampleTestCase(stc2)
             .addOfficialTestCase(tc1)
             .addOfficialTestCase(tc2)
             .addOfficialTestCase(tc3)
             .build();
-    TestSuite testSuiteWithGroups = TestSuiteBuilder()
+    RawTestSuite rawTestSuiteWithGroups = RawTestSuiteBuilder()
             .addSampleTestCase(stc1, {1, 2})
             .addSampleTestCase(stc2, {2})
             .newTestGroup()
@@ -114,7 +114,7 @@ TEST_F(TestSuiteGeneratorTests, Generation_Successful) {
 
         EXPECT_CALL(logger, logResult(expectedResult));
     }
-    GenerationResult result = generator.generate(testSuite, config);
+    GenerationResult result = generator.generate(rawTestSuite, config);
 
     EXPECT_THAT(result, Eq(expectedResult));
     EXPECT_TRUE(result.isSuccessful());
@@ -137,7 +137,7 @@ TEST_F(TestSuiteGeneratorTests, Generation_Failed) {
 
     EXPECT_CALL(logger, logResult(expectedResult));
 
-    GenerationResult result = generator.generate(testSuite, config);
+    GenerationResult result = generator.generate(rawTestSuite, config);
 
     EXPECT_THAT(result, Eq(expectedResult));
     EXPECT_FALSE(result.isSuccessful());
@@ -175,7 +175,7 @@ TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Successful) {
 
         EXPECT_CALL(logger, logResult(expectedResult));
     }
-    GenerationResult result = generator.generate(testSuiteWithGroups, config);
+    GenerationResult result = generator.generate(rawTestSuiteWithGroups, config);
 
     EXPECT_THAT(result, Eq(expectedResult));
     EXPECT_TRUE(result.isSuccessful());
@@ -203,7 +203,7 @@ TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Failed) {
 
     EXPECT_CALL(logger, logResult(expectedResult));
 
-    GenerationResult result = generator.generate(testSuiteWithGroups, config);
+    GenerationResult result = generator.generate(rawTestSuiteWithGroups, config);
 
     EXPECT_THAT(result, Eq(expectedResult));
     EXPECT_FALSE(result.isSuccessful());
@@ -211,7 +211,7 @@ TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Failed) {
 
 
 TEST_F(TestSuiteGeneratorTests, Generation_InputFinalizer_Official_Applied) {
-    TestSuite testSuite = TestSuiteBuilder()
+    RawTestSuite rawTestSuite = RawTestSuiteBuilder()
             .setInputFinalizer([] {N *= 2;})
             .addOfficialTestCase(tc3)
             .build();
@@ -223,14 +223,14 @@ TEST_F(TestSuiteGeneratorTests, Generation_InputFinalizer_Official_Applied) {
                     InvokeWithoutArgs([] {return TestGroupGenerationResult(
                             nullptr, {TestCaseGenerationResult::successfulResult()});})));
 
-    generator.generate(testSuite, config);
+    generator.generate(rawTestSuite, config);
 
     testGroupCaptor.arg().testCases()[0].applier()();
     EXPECT_THAT(N, Eq(3 * 2));
 }
 
 TEST_F(TestSuiteGeneratorTests, Generation_InputFinalizer_Sample_NotApplied) {
-    TestSuite testSuite = TestSuiteBuilder()
+    RawTestSuite rawTestSuite = RawTestSuiteBuilder()
             .setInputFinalizer([] {N *= 2;})
             .addSampleTestCase(stc1)
             .build();
@@ -245,7 +245,7 @@ TEST_F(TestSuiteGeneratorTests, Generation_InputFinalizer_Sample_NotApplied) {
                     InvokeWithoutArgs([]{return TestGroupGenerationResult(
                             nullptr, {TestCaseGenerationResult::successfulResult()});})));
 
-    generator.generate(testSuite, config);
+    generator.generate(rawTestSuite, config);
 
     testGroupCaptor.arg().testCases()[0].applier()();
     EXPECT_THAT(N, Ne(10 * 2));

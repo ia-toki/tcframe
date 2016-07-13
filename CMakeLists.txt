@@ -42,19 +42,15 @@ include_directories("${source_dir}/googlemock/include")
 include_directories(include)
 
 set(SOURCE_FILES
-    include/tcframe/constraint.hpp
-    include/tcframe/constraint/Constraint.hpp
-    include/tcframe/constraint/ConstraintSuite.hpp
-    include/tcframe/constraint/Subtask.hpp
     include/tcframe/experimental/runner.hpp
-    include/tcframe/failure.hpp
-    include/tcframe/failure/ComplexFailureException.hpp
-    include/tcframe/failure/ConstraintsVerificationFailure.hpp
-    include/tcframe/failure/Failure.hpp
-    include/tcframe/failure/MultipleTestCasesConstraintsVerificationFailure.hpp
-    include/tcframe/failure/SimpleFailure.hpp
-    include/tcframe/failure/SolutionExecutionFailure.hpp
     include/tcframe/generator.hpp
+    include/tcframe/generator/failure.hpp
+    include/tcframe/generator/failure/ComplexFailureException.hpp
+    include/tcframe/generator/failure/ConstraintsVerificationFailure.hpp
+    include/tcframe/generator/failure/Failure.hpp
+    include/tcframe/generator/failure/MultipleTestCasesConstraintsVerificationFailure.hpp
+    include/tcframe/generator/failure/SimpleFailure.hpp
+    include/tcframe/generator/failure/SolutionExecutionFailure.hpp
     include/tcframe/generator/GenerationResult.hpp
     include/tcframe/generator/GeneratorConfig.hpp
     include/tcframe/generator/GeneratorLogger.hpp
@@ -64,27 +60,19 @@ set(SOURCE_FILES
     include/tcframe/generator/TestGroupGenerator.hpp
     include/tcframe/generator/TestGroupGenerationResult.hpp
     include/tcframe/generator/TestSuiteGenerator.hpp
-    include/tcframe/io.hpp
-    include/tcframe/io/GridIOSegment.hpp
-    include/tcframe/io/GridIOSegmentManipulator.hpp
-    include/tcframe/io/IOFormat.hpp
-    include/tcframe/io/IOManipulator.hpp
-    include/tcframe/io/IOSegment.hpp
-    include/tcframe/io/LineIOSegment.hpp
-    include/tcframe/io/LineIOSegmentManipulator.hpp
-    include/tcframe/io/LinesIOSegment.hpp
-    include/tcframe/io/LinesIOSegmentManipulator.hpp
+    include/tcframe/io_manipulator.hpp
+    include/tcframe/io_manipulator/GridIOSegmentManipulator.hpp
+    include/tcframe/io_manipulator/IOManipulator.hpp
+    include/tcframe/io_manipulator/LineIOSegmentManipulator.hpp
+    include/tcframe/io_manipulator/LinesIOSegmentManipulator.hpp
     include/tcframe/logger.hpp
     include/tcframe/logger/BaseLogger.hpp
     include/tcframe/logger/LoggerEngine.hpp
     include/tcframe/logger/SimpleLoggerEngine.hpp
-    include/tcframe/logger/TokenFormatter.hpp
     include/tcframe/os.hpp
     include/tcframe/os/ExecutionResult.hpp
     include/tcframe/os/OperatingSystem.hpp
     include/tcframe/os/UnixOperatingSystem.hpp
-    include/tcframe/random.hpp
-    include/tcframe/random/Random.hpp
     include/tcframe/runner.hpp
     include/tcframe/runner/Args.hpp
     include/tcframe/runner/ArgsParser.hpp
@@ -93,37 +81,51 @@ set(SOURCE_FILES
     include/tcframe/runner/RunnerLoggerFactory.hpp
     include/tcframe/runner/SpecificationFailure.hpp
     include/tcframe/spec.hpp
-    include/tcframe/spec/BaseTestSpec.hpp
-    include/tcframe/spec/BaseProblemSpec.hpp
-    include/tcframe/spec/CoreSpec.hpp
-    include/tcframe/spec/DefaultValues.hpp
-    include/tcframe/spec/Magic.hpp
-    include/tcframe/spec/ProblemConfig.hpp
+    include/tcframe/spec/constraint.hpp
+    include/tcframe/spec/constraint/Constraint.hpp
+    include/tcframe/spec/constraint/ConstraintSuite.hpp
+    include/tcframe/spec/constraint/Subtask.hpp
+    include/tcframe/spec/core.hpp
+    include/tcframe/spec/core/BaseTestSpec.hpp
+    include/tcframe/spec/core/BaseProblemSpec.hpp
+    include/tcframe/spec/core/CoreSpec.hpp
+    include/tcframe/spec/core/DefaultValues.hpp
+    include/tcframe/spec/core/Magic.hpp
+    include/tcframe/spec/core/ProblemConfig.hpp
+    include/tcframe/spec/io.hpp
+    include/tcframe/spec/io/GridIOSegment.hpp
+    include/tcframe/spec/io/IOFormat.hpp
+    include/tcframe/spec/io/IOSegment.hpp
+    include/tcframe/spec/io/LineIOSegment.hpp
+    include/tcframe/spec/io/LinesIOSegment.hpp
+    include/tcframe/spec/random.hpp
+    include/tcframe/spec/random/Random.hpp
+    include/tcframe/spec/raw_testcase.hpp
+    include/tcframe/spec/raw_testcase/OfficialTestCase.hpp
+    include/tcframe/spec/raw_testcase/OfficialTestGroup.hpp
+    include/tcframe/spec/raw_testcase/RawTestSuite.hpp
+    include/tcframe/spec/raw_testcase/SampleTestCase.hpp
+    include/tcframe/spec/variable.hpp
+    include/tcframe/spec/variable/Scalar.hpp
+    include/tcframe/spec/variable/Matrix.hpp
+    include/tcframe/spec/variable/TokenFormatter.hpp
+    include/tcframe/spec/variable/Variable.hpp
+    include/tcframe/spec/variable/Vector.hpp
+    include/tcframe/spec/variable/WhitespaceManipulator.hpp
     include/tcframe/testcase.hpp
-    include/tcframe/testcase/OfficialTestCase.hpp
-    include/tcframe/testcase/OfficialTestGroup.hpp
-    include/tcframe/testcase/SampleTestCase.hpp
     include/tcframe/testcase/TestCase.hpp
     include/tcframe/testcase/TestCaseIdCreator.hpp
     include/tcframe/testcase/TestGroup.hpp
-    include/tcframe/testcase/TestSuite.hpp
     include/tcframe/util.hpp
     include/tcframe/util/NotImplementedException.hpp
     include/tcframe/util/StringUtils.hpp
     include/tcframe/util/optional.hpp
-    include/tcframe/variable.hpp
-    include/tcframe/variable/Scalar.hpp
-    include/tcframe/variable/Matrix.hpp
-    include/tcframe/variable/Variable.hpp
-    include/tcframe/variable/Vector.hpp
-    include/tcframe/variable/WhitespaceManipulator.hpp
     include/tcframe/verifier.hpp
     include/tcframe/verifier/ConstraintSuiteVerifier.hpp
     include/tcframe/verifier/ConstraintsVerificationResult.hpp
     include/tcframe/verifier/MultipleTestCasesConstraintsVerificationResult.hpp
     test/tcframe/helper.hpp
     test/tcframe/mock.hpp
-    test/tcframe/constraint/ConstraintSuiteBuilderTests.cpp
     test/tcframe/generator/GeneratorLoggerTests.cpp
     test/tcframe/generator/MockGeneratorLogger.hpp
     test/tcframe/generator/MockTestCaseGenerator.hpp
@@ -132,38 +134,39 @@ set(SOURCE_FILES
     test/tcframe/generator/TestCaseGeneratorTests.cpp
     test/tcframe/generator/TestGroupGeneratorTests.cpp
     test/tcframe/generator/TestSuiteGeneratorTests.cpp
-    test/tcframe/io/GridIOSegmentBuilderTests.cpp
-    test/tcframe/io/GridIOSegmentManipulatorTests.cpp
-    test/tcframe/io/IOFormatBuilderTests.cpp
-    test/tcframe/io/IOManipulatorTests.cpp
-    test/tcframe/io/LineIOSegmentBuilderTests.cpp
-    test/tcframe/io/LineIOSegmentManipulatorTests.cpp
-    test/tcframe/io/LinesIOSegmentBuilderTests.cpp
-    test/tcframe/io/LinesIOSegmentManipulatorTests.cpp
-    test/tcframe/io/MockIOManipulator.hpp
+    test/tcframe/io_manipulator/GridIOSegmentManipulatorTests.cpp
+    test/tcframe/io_manipulator/IOManipulatorTests.cpp
+    test/tcframe/io_manipulator/LineIOSegmentManipulatorTests.cpp
+    test/tcframe/io_manipulator/LinesIOSegmentManipulatorTests.cpp
+    test/tcframe/io_manipulator/MockIOManipulator.hpp
     test/tcframe/logger/BaseLogggerTests.cpp
     test/tcframe/logger/MockLoggerEngine.hpp
-    test/tcframe/logger/TokenFormatterTests.cpp
     test/tcframe/os/MockOperatingSystem.hpp
-    test/tcframe/random/RandomTests.cpp
     test/tcframe/runner/ArgsParserTests.cpp
     test/tcframe/runner/RunnerTests.cpp
     test/tcframe/runner/RunnerLoggerTests.cpp
     test/tcframe/runner/MockRunnerLogger.hpp
     test/tcframe/runner/MockRunnerLoggerFactory.hpp
-    test/tcframe/spec/BaseTestSpecTests.cpp
-    test/tcframe/spec/BaseProblemSpecTests.cpp
-    test/tcframe/spec/MagicTests.cpp
+    test/tcframe/spec/constraint/ConstraintSuiteBuilderTests.cpp
+    test/tcframe/spec/core/BaseTestSpecTests.cpp
+    test/tcframe/spec/core/BaseProblemSpecTests.cpp
+    test/tcframe/spec/core/MagicTests.cpp
+    test/tcframe/spec/io/GridIOSegmentBuilderTests.cpp
+    test/tcframe/spec/io/IOFormatBuilderTests.cpp
+    test/tcframe/spec/io/LineIOSegmentBuilderTests.cpp
+    test/tcframe/spec/io/LinesIOSegmentBuilderTests.cpp
+    test/tcframe/spec/random/RandomTests.cpp
+    test/tcframe/spec/raw_testcase/RawTestSuiteBuilderTests.cpp
+    test/tcframe/spec/variable/FakeVariable.hpp
+    test/tcframe/spec/variable/MatrixTests.cpp
+    test/tcframe/spec/variable/ScalarTests.cpp
+    test/tcframe/spec/variable/TokenFormatterTests.cpp
+    test/tcframe/spec/variable/VariableTests.cpp
+    test/tcframe/spec/variable/VectorTests.cpp
+    test/tcframe/spec/variable/WhitespaceManipulatorTests.cpp
     test/tcframe/testcase/TestCaseIdCreatorTests.cpp
-    test/tcframe/testcase/TestSuiteBuilderTests.cpp
     test/tcframe/util/OptionalTests.cpp
     test/tcframe/util/StringUtilsTests.cpp
-    test/tcframe/variable/FakeVariable.hpp
-    test/tcframe/variable/MatrixTests.cpp
-    test/tcframe/variable/ScalarTests.cpp
-    test/tcframe/variable/VariableTests.cpp
-    test/tcframe/variable/VectorTests.cpp
-    test/tcframe/variable/WhitespaceManipulatorTests.cpp
     test/tcframe/verifier/ConstraintSuiteVerifierTests.cpp
     test/tcframe/verifier/MockConstraintSuiteVerifier.hpp
 

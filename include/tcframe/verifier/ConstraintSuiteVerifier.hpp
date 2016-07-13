@@ -7,7 +7,7 @@
 
 #include "ConstraintsVerificationResult.hpp"
 #include "MultipleTestCasesConstraintsVerificationResult.hpp"
-#include "tcframe/constraint.hpp"
+#include "tcframe/spec/constraint.hpp"
 
 using std::map;
 using std::move;

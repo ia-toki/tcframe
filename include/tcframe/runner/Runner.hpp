@@ -7,11 +7,9 @@
 #include "RunnerLogger.hpp"
 #include "RunnerLoggerFactory.hpp"
 #include "SpecificationFailure.hpp"
-#include "tcframe/io.hpp"
 #include "tcframe/generator.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/spec.hpp"
-#include "tcframe/variable.hpp"
 #include "tcframe/verifier.hpp"
 
 using std::cout;
@@ -130,7 +128,7 @@ private:
         auto testGroupGenerator = new TestGroupGenerator(testCaseGenerator, verifier, os_, logger);
 
         auto generator = generatorFactory_->create(testGroupGenerator, ioManipulator, os_, logger);
-        return generator->generate(coreSpec.testSuite(), config).isSuccessful();
+        return generator->generate(coreSpec.rawTestSuite(), config).isSuccessful();
     }
 };
 

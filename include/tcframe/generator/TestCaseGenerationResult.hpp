@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "tcframe/failure/Failure.hpp"
+#include "tcframe/generator/failure.hpp"
 
 using std::string;
 

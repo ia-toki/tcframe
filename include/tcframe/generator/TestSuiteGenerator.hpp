@@ -10,9 +10,8 @@
 #include "GenerationResult.hpp"
 #include "TestGroupGenerationResult.hpp"
 #include "TestGroupGenerator.hpp"
-#include "tcframe/io.hpp"
+#include "tcframe/io_manipulator.hpp"
 #include "tcframe/os.hpp"
-#include "tcframe/spec.hpp"
 #include "tcframe/testcase.hpp"
 
 using std::function;
@@ -44,27 +43,27 @@ public:
             , logger_(logger)
     {}
 
-    virtual GenerationResult generate(const TestSuite& testSuite, const GeneratorConfig& config) {
+    virtual GenerationResult generate(const RawTestSuite& rawTestSuite, const GeneratorConfig& config) {
         logger_->logIntroduction();
-        GenerationResult result = doGenerate(testSuite, config);
+        GenerationResult result = doGenerate(rawTestSuite, config);
         logger_->logResult(result);
         return result;
     }
 
 private:
-    GenerationResult doGenerate(const TestSuite& testSuite, const GeneratorConfig& config) {
+    GenerationResult doGenerate(const RawTestSuite& rawTestSuite, const GeneratorConfig& config) {
         os_->forceMakeDir(config.testCasesDir());
 
         vector<TestGroupGenerationResult> testGroupResults;
-        testGroupResults.push_back(generateSampleTests(testSuite, config));
-        for (TestGroupGenerationResult result : generateOfficialTests(testSuite, config)) {
+        testGroupResults.push_back(generateSampleTests(rawTestSuite, config));
+        for (TestGroupGenerationResult result : generateOfficialTests(rawTestSuite, config)) {
             testGroupResults.push_back(result);
         }
         return GenerationResult(testGroupResults);
     }
 
-    TestGroupGenerationResult generateSampleTests(const TestSuite& testSuite, const GeneratorConfig& config) {
-        vector<SampleTestCase> sampleTests = testSuite.sampleTests();
+    TestGroupGenerationResult generateSampleTests(const RawTestSuite& rawTestSuite, const GeneratorConfig& config) {
+        vector<SampleTestCase> sampleTests = rawTestSuite.sampleTests();
         vector<TestCase> testCases;
         for (int testCaseNo = 1; testCaseNo <= sampleTests.size(); testCaseNo++) {
             SampleTestCase sampleTestCase = sampleTests[testCaseNo - 1];
@@ -82,10 +81,10 @@ private:
         return testGroupGenerator_->generate(TestGroup(0, testCases), config);
     }
 
-    vector<TestGroupGenerationResult> generateOfficialTests(const TestSuite& testSuite, const GeneratorConfig& config) {
+    vector<TestGroupGenerationResult> generateOfficialTests(const RawTestSuite& rawTestSuite, const GeneratorConfig& config) {
         vector<TestGroupGenerationResult> results;
-        for (const OfficialTestGroup& officialTestGroup : testSuite.officialTests()) {
-            results.push_back(generateOfficialTestGroup(officialTestGroup, testSuite.inputFinalizer(), config));
+        for (const OfficialTestGroup& officialTestGroup : rawTestSuite.officialTests()) {
+            results.push_back(generateOfficialTestGroup(officialTestGroup, rawTestSuite.inputFinalizer(), config));
         }
         return results;
     }

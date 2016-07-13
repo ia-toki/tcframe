@@ -3,7 +3,7 @@
 
 #include <sstream>
 
-#include "../io/MockIOManipulator.hpp"
+#include "../io_manipulator/MockIOManipulator.hpp"
 #include "../os/MockOperatingSystem.hpp"
 #include "../verifier/MockConstraintSuiteVerifier.hpp"
 #include "MockGeneratorLogger.hpp"

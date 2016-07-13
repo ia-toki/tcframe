@@ -6,7 +6,7 @@
 #include <tuple>
 #include <vector>
 
-#include "tcframe/constraint.hpp"
+#include "tcframe/spec/constraint.hpp"
 
 using std::map;
 using std::set;

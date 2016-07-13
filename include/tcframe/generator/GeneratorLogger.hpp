@@ -9,7 +9,7 @@
 #include "GenerationResult.hpp"
 #include "TestCaseGenerationResult.hpp"
 #include "MultipleTestCasesCombinationResult.hpp"
-#include "tcframe/failure.hpp"
+#include "tcframe/generator/failure.hpp"
 #include "tcframe/logger.hpp"
 #include "tcframe/util.hpp"
 #include "tcframe/verifier.hpp"
