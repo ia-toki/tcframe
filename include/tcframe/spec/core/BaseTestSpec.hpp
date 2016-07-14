@@ -48,7 +48,6 @@ public:
 
     RawTestSuite buildRawTestSuite() {
         RawTestSuiteBuilder::setInputFinalizer([this] {
-            FinalizeInput();
             InputFinalizer();
         });
         SampleTestCases();
@@ -80,8 +79,6 @@ public:
 protected:
     Random rnd;
 
-    /* DEPRECATED. For backward compatibility with 0.x versions. */
-    virtual void FinalizeInput() {}
     virtual void InputFinalizer() {}
     virtual void SampleTestCases() {}
     virtual void TestCases() {throw NotImplementedException();}
@@ -114,13 +111,6 @@ protected:
     void assignToSubtasks(const set<int>& subtaskIds) {
         RawTestSuiteBuilder::setSubtaskIds(subtaskIds);
     }
-};
-
-/* DEPRECATED. For backward compatibility with 0.x versions. */
-template<typename TProblem>
-class BaseGenerator : public BaseTestSpec<TProblem> {
-public:
-    virtual ~BaseGenerator() {}
 };
 
 }

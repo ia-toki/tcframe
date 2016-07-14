@@ -1,7 +1,7 @@
 #include "gmock/gmock.h"
 #include "../mock.hpp"
 
-#include "../generator/MockTestSuiteGenerator.hpp"
+#include "../generator/MockGenerator.hpp"
 #include "../os/MockOperatingSystem.hpp"
 #include "MockRunnerLogger.hpp"
 #include "MockRunnerLoggerFactory.hpp"
@@ -40,24 +40,17 @@ protected:
         }
     };
 
-    class DeprecatedProblem : public BaseProblem {
-    protected:
-        void InputFormat() {}
-    };
-
-    class DeprecatedGenerator : public BaseGenerator<DeprecatedProblem> {};
-
     int argc = 1;
     char** argv =  new char*[1]{(char*) "./runner"};
 
     LoggerEngine* loggerEngine = new SimpleLoggerEngine();
 
     Mock(RunnerLogger) logger;
-    Mock(TestSuiteGenerator) generator;
+    Mock(Generator) generator;
 
     Mock(OperatingSystem) os;
     Mock(RunnerLoggerFactory) loggerFactory;
-    Mock(TestSuiteGeneratorFactory) generatorFactory;
+    Mock(GeneratorFactory) generatorFactory;
 
     void SetUp() {
         ON_CALL(loggerFactory, create(_)).WillByDefault(Return(&logger));
@@ -135,15 +128,6 @@ TEST_F(RunnerTests, Run_Generation_UseArgsOptions) {
             (char*) "--slug=bar",
             (char*) "--solution=\"java Solution\"",
             (char*) "--tc-dir=testdata"});
-}
-
-TEST_F(RunnerTests, Run_Deprecated_Compiles) {
-    Runner<DeprecatedProblem> runner(argc, argv);
-    runner.setGenerator(new DeprecatedGenerator());
-    // So that it won't run
-    if (false) {
-        runner.run();
-    }
 }
 
 }

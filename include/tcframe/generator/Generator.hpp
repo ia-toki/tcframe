@@ -22,7 +22,7 @@ using std::string;
 
 namespace tcframe {
 
-class TestSuiteGenerator {
+class Generator {
 private:
     TestGroupGenerator* testGroupGenerator_;
     IOManipulator* ioManipulator_;
@@ -30,9 +30,9 @@ private:
     GeneratorLogger* logger_;
 
 public:
-    virtual ~TestSuiteGenerator() {}
+    virtual ~Generator() {}
 
-    TestSuiteGenerator(
+    Generator(
             TestGroupGenerator* testGroupGenerator,
             IOManipulator* ioManipulator,
             OperatingSystem* os,
@@ -115,17 +115,17 @@ private:
     }
 };
 
-class TestSuiteGeneratorFactory {
+class GeneratorFactory {
 public:
-    virtual ~TestSuiteGeneratorFactory() {}
+    virtual ~GeneratorFactory() {}
 
-    virtual TestSuiteGenerator* create(
+    virtual Generator* create(
             TestGroupGenerator* testGroupGenerator,
             IOManipulator* ioManipulator,
             OperatingSystem* os,
             GeneratorLogger* logger) {
 
-        return new TestSuiteGenerator(testGroupGenerator, ioManipulator, os, logger);
+        return new Generator(testGroupGenerator, ioManipulator, os, logger);
     }
 };
 

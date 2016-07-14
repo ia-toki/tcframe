@@ -20,7 +20,7 @@ namespace tcframe {
 class TestGroupGenerator {
 private:
     TestCaseGenerator* testCaseGenerator_;
-    ConstraintSuiteVerifier* verifier_;
+    Verifier* verifier_;
     OperatingSystem* os_;
     GeneratorLogger* logger_;
 
@@ -29,7 +29,7 @@ public:
 
     TestGroupGenerator(
             TestCaseGenerator* testCaseGenerator,
-            ConstraintSuiteVerifier* verifier,
+            Verifier* verifier,
             OperatingSystem* os,
             GeneratorLogger* logger)
             : testCaseGenerator_(testCaseGenerator)

@@ -110,10 +110,4 @@ protected:
     virtual void Subtask25() {throw NotImplementedException();}
 };
 
-/* DEPRECATED. For backward compatibility with 0.x versions. */
-class BaseProblem : public BaseProblemSpec {
-public:
-    virtual ~BaseProblem() {}
-};
-
 }

@@ -5,7 +5,7 @@
 
 #include "../io_manipulator/MockIOManipulator.hpp"
 #include "../os/MockOperatingSystem.hpp"
-#include "../verifier/MockConstraintSuiteVerifier.hpp"
+#include "../verifier/MockVerifier.hpp"
 #include "MockGeneratorLogger.hpp"
 #include "tcframe/generator/TestCaseGenerator.hpp"
 
@@ -24,7 +24,7 @@ bool applied;
 
 class TestCaseGeneratorTests : public Test {
 protected:
-    Mock(ConstraintSuiteVerifier) verifier;
+    Mock(Verifier) verifier;
     Mock(IOManipulator) ioManipulator;
     Mock(OperatingSystem) os;
     Mock(GeneratorLogger) logger;

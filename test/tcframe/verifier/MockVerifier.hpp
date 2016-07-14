@@ -2,14 +2,14 @@
 
 #include "gmock/gmock.h"
 
-#include "tcframe/verifier/ConstraintSuiteVerifier.hpp"
+#include "tcframe/verifier/Verifier.hpp"
 
 namespace tcframe {
 
-class MockConstraintSuiteVerifier : public ConstraintSuiteVerifier {
+class MockVerifier : public Verifier {
 public:
-    MockConstraintSuiteVerifier()
-            : ConstraintSuiteVerifier(ConstraintSuite())
+    MockVerifier()
+            : Verifier(ConstraintSuite())
     {}
 
     MOCK_METHOD1(verifyConstraints, ConstraintsVerificationResult(const set<int>&));

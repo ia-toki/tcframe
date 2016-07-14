@@ -1,6 +1,6 @@
 #include "gmock/gmock.h"
 
-#include "tcframe/verifier/ConstraintSuiteVerifier.hpp"
+#include "tcframe/verifier/Verifier.hpp"
 
 using ::testing::ElementsAre;
 using ::testing::IsEmpty;
@@ -15,7 +15,7 @@ bool b3;
 bool b4;
 bool b5;
 
-class ConstraintSuiteVerifierTests : public Test {
+class VerifierTests : public Test {
 protected:
     Constraint constraint1 = Constraint([=]{return b1;}, "1 <= A && A <= 10");
     Constraint constraint2 = Constraint([=]{return b2;}, "1 <= B && B <= 10");
@@ -37,8 +37,8 @@ protected:
             .addConstraint(constraint5)
             .build();
 
-    ConstraintSuiteVerifier verifier = ConstraintSuiteVerifier(constraintSuite);
-    ConstraintSuiteVerifier verifierWithSubtasks = ConstraintSuiteVerifier(constraintSuiteWithSubtasks);
+    Verifier verifier = Verifier(constraintSuite);
+    Verifier verifierWithSubtasks = Verifier(constraintSuiteWithSubtasks);
 
     void SetUp() {
         b1 = true;
@@ -49,7 +49,7 @@ protected:
     }
 };
 
-TEST_F(ConstraintSuiteVerifierTests, Verification_Valid_AllConstraintsValid) {
+TEST_F(VerifierTests, Verification_Valid_AllConstraintsValid) {
     ConstraintsVerificationResult result = verifier.verifyConstraints({-1});
 
     EXPECT_TRUE(result.isValid());
@@ -57,7 +57,7 @@ TEST_F(ConstraintSuiteVerifierTests, Verification_Valid_AllConstraintsValid) {
     EXPECT_THAT(result.unsatisfiedConstraintDescriptionsBySubtaskId(), IsEmpty());
 }
 
-TEST_F(ConstraintSuiteVerifierTests, Verification_Invalid_SomeConstraintsInvalid) {
+TEST_F(VerifierTests, Verification_Invalid_SomeConstraintsInvalid) {
     b2 = false;
     ConstraintsVerificationResult result = verifier.verifyConstraints({-1});
 
@@ -67,7 +67,7 @@ TEST_F(ConstraintSuiteVerifierTests, Verification_Invalid_SomeConstraintsInvalid
             Pair(-1, ElementsAre(constraint2.description()))));
 }
 
-TEST_F(ConstraintSuiteVerifierTests, Verification_WithSubtasks_Valid_AllConstraintsValid) {
+TEST_F(VerifierTests, Verification_WithSubtasks_Valid_AllConstraintsValid) {
     ConstraintsVerificationResult result = verifierWithSubtasks.verifyConstraints({1, 2, 3});
 
     EXPECT_TRUE(result.isValid());
@@ -75,7 +75,7 @@ TEST_F(ConstraintSuiteVerifierTests, Verification_WithSubtasks_Valid_AllConstrai
     EXPECT_THAT(result.unsatisfiedConstraintDescriptionsBySubtaskId(), IsEmpty());
 }
 
-TEST_F(ConstraintSuiteVerifierTests, Verification_WithSubtasks_Valid_AllAssignedSubtasksValid) {
+TEST_F(VerifierTests, Verification_WithSubtasks_Valid_AllAssignedSubtasksValid) {
     b4 = false;
     ConstraintsVerificationResult result = verifierWithSubtasks.verifyConstraints({1, 3});
 
@@ -84,7 +84,7 @@ TEST_F(ConstraintSuiteVerifierTests, Verification_WithSubtasks_Valid_AllAssigned
     EXPECT_THAT(result.unsatisfiedConstraintDescriptionsBySubtaskId(), IsEmpty());
 }
 
-TEST_F(ConstraintSuiteVerifierTests, Verification_WithSubtasks_Invalid_SomeConstraintsInvalid) {
+TEST_F(VerifierTests, Verification_WithSubtasks_Invalid_SomeConstraintsInvalid) {
     b4 = false;
     ConstraintsVerificationResult result = verifierWithSubtasks.verifyConstraints({2, 3});
 

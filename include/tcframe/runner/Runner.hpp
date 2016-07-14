@@ -19,21 +19,14 @@ namespace tcframe {
 
 template<typename TProblemSpec>
 class Runner {
-
-    /* For backward compatibility with 0.x versions. */
-    typedef TProblemSpec TProblem;
-
 private:
-    int argc_;        // Member fields
-    char** argv_;     // for backward compatibility with 0.x versions.
-
     BaseTestSpec<TProblemSpec>* testSpec_;
 
     LoggerEngine* loggerEngine_;
     OperatingSystem* os_;
 
     RunnerLoggerFactory* loggerFactory_;
-    TestSuiteGeneratorFactory* generatorFactory_;
+    GeneratorFactory* generatorFactory_;
 
 public:
     Runner(BaseTestSpec<TProblemSpec>* testSpec)
@@ -41,7 +34,7 @@ public:
             , loggerEngine_(new SimpleLoggerEngine())
             , os_(new UnixOperatingSystem())
             , loggerFactory_(new RunnerLoggerFactory())
-            , generatorFactory_(new TestSuiteGeneratorFactory())
+            , generatorFactory_(new GeneratorFactory())
     {}
 
     /* Visible for testing. */
@@ -50,34 +43,13 @@ public:
             LoggerEngine* loggerEngine,
             OperatingSystem* os,
             RunnerLoggerFactory* runnerLoggerFactory,
-            TestSuiteGeneratorFactory* testSuiteGeneratorFactory)
+            GeneratorFactory* generatorFactory)
             : testSpec_(testSpec)
             , loggerEngine_(loggerEngine)
             , os_(os)
             , loggerFactory_(runnerLoggerFactory)
-            , generatorFactory_(testSuiteGeneratorFactory)
+            , generatorFactory_(generatorFactory)
     {}
-
-    /* DEPRECATED. For backward compatibility with 0.x versions. */
-    Runner(int argc, char** argv)
-            : argc_(argc)
-            , argv_(argv)
-            , testSpec_(nullptr)
-            , loggerEngine_(new SimpleLoggerEngine())
-            , os_(new UnixOperatingSystem())
-            , loggerFactory_(new RunnerLoggerFactory())
-            , generatorFactory_(new TestSuiteGeneratorFactory())
-    {}
-
-    /* DEPRECATED. For backward compatibility with 0.x versions. */
-    void setGenerator(BaseGenerator<TProblem>* generator) {
-        testSpec_ = generator;
-    }
-
-    /* DEPRECATED. For backward compatibility with 0.x versions. */
-    int run() {
-        return run(argc_, argv_);
-    }
 
     int run(int argc, char* argv[]) {
         auto logger = loggerFactory_->create(loggerEngine_);
@@ -122,7 +94,7 @@ private:
                 .build();
 
         auto ioManipulator = new IOManipulator(coreSpec.ioFormat());
-        auto verifier = new ConstraintSuiteVerifier(coreSpec.constraintSuite());
+        auto verifier = new Verifier(coreSpec.constraintSuite());
         auto logger = new GeneratorLogger(loggerEngine_);
         auto testCaseGenerator = new TestCaseGenerator(verifier, ioManipulator, os_, logger);
         auto testGroupGenerator = new TestGroupGenerator(testCaseGenerator, verifier, os_, logger);

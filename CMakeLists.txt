@@ -59,7 +59,7 @@ set(SOURCE_FILES
     include/tcframe/generator/TestCaseGenerationResult.hpp
     include/tcframe/generator/TestGroupGenerator.hpp
     include/tcframe/generator/TestGroupGenerationResult.hpp
-    include/tcframe/generator/TestSuiteGenerator.hpp
+    include/tcframe/generator/Generator.hpp
     include/tcframe/io_manipulator.hpp
     include/tcframe/io_manipulator/GridIOSegmentManipulator.hpp
     include/tcframe/io_manipulator/IOManipulator.hpp
@@ -121,19 +121,19 @@ set(SOURCE_FILES
     include/tcframe/util/StringUtils.hpp
     include/tcframe/util/optional.hpp
     include/tcframe/verifier.hpp
-    include/tcframe/verifier/ConstraintSuiteVerifier.hpp
     include/tcframe/verifier/ConstraintsVerificationResult.hpp
     include/tcframe/verifier/MultipleTestCasesConstraintsVerificationResult.hpp
+    include/tcframe/verifier/Verifier.hpp
     test/tcframe/helper.hpp
     test/tcframe/mock.hpp
     test/tcframe/generator/GeneratorLoggerTests.cpp
+    test/tcframe/generator/GeneratorTests.cpp
+    test/tcframe/generator/MockGenerator.hpp
     test/tcframe/generator/MockGeneratorLogger.hpp
     test/tcframe/generator/MockTestCaseGenerator.hpp
     test/tcframe/generator/MockTestGroupGenerator.hpp
-    test/tcframe/generator/MockTestSuiteGenerator.hpp
     test/tcframe/generator/TestCaseGeneratorTests.cpp
     test/tcframe/generator/TestGroupGeneratorTests.cpp
-    test/tcframe/generator/TestSuiteGeneratorTests.cpp
     test/tcframe/io_manipulator/GridIOSegmentManipulatorTests.cpp
     test/tcframe/io_manipulator/IOManipulatorTests.cpp
     test/tcframe/io_manipulator/LineIOSegmentManipulatorTests.cpp
@@ -167,8 +167,8 @@ set(SOURCE_FILES
     test/tcframe/testcase/TestCaseIdCreatorTests.cpp
     test/tcframe/util/OptionalTests.cpp
     test/tcframe/util/StringUtilsTests.cpp
-    test/tcframe/verifier/ConstraintSuiteVerifierTests.cpp
-    test/tcframe/verifier/MockConstraintSuiteVerifier.hpp
+    test/tcframe/verifier/MockVerifier.hpp
+    test/tcframe/verifier/VerifierTests.cpp
 
     include/tcframe/deprecated/core/Failure.hpp
     include/tcframe/deprecated/core/NotImplementedException.hpp

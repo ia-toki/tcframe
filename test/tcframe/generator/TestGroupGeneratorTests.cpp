@@ -1,7 +1,7 @@
 #include "gmock/gmock.h"
 #include "../mock.hpp"
 
-#include "../verifier/MockConstraintSuiteVerifier.hpp"
+#include "../verifier/MockVerifier.hpp"
 #include "../os/MockOperatingSystem.hpp"
 #include "MockGeneratorLogger.hpp"
 #include "MockTestCaseGenerator.hpp"
@@ -20,7 +20,7 @@ namespace tcframe {
 class TestGroupGeneratorTests : public Test {
 protected:
     Mock(TestCaseGenerator) testCaseGenerator;
-    Mock(ConstraintSuiteVerifier) verifier;
+    Mock(Verifier) verifier;
     Mock(OperatingSystem) os;
     Mock(GeneratorLogger) logger;
 

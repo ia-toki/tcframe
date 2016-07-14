@@ -8,7 +8,7 @@
 #include "../os/MockOperatingSystem.hpp"
 #include "MockTestGroupGenerator.hpp"
 #include "MockGeneratorLogger.hpp"
-#include "tcframe/generator/TestSuiteGenerator.hpp"
+#include "tcframe/generator/Generator.hpp"
 
 using ::testing::_;
 using ::testing::DoAll;
@@ -29,7 +29,7 @@ namespace tcframe {
 
 int N;
 
-class TestSuiteGeneratorTests : public Test {
+class GeneratorTests : public Test {
 protected:
     Mock(TestGroupGenerator) testGroupGenerator;
     Mock(IOManipulator) ioManipulator;
@@ -71,7 +71,7 @@ protected:
             .setTestCasesDir("dir")
             .build();
 
-    TestSuiteGenerator generator = TestSuiteGenerator(&testGroupGenerator, &ioManipulator, &os, &logger);
+    Generator generator = Generator(&testGroupGenerator, &ioManipulator, &os, &logger);
 
     static TestGroupGenerationResult createSuccessfulTestGroupResult(TestGroup testGroup, Unused) {
         vector<TestCaseGenerationResult> testCaseResults;
@@ -87,7 +87,7 @@ protected:
     }
 };
 
-TEST_F(TestSuiteGeneratorTests, Generation_Successful) {
+TEST_F(GeneratorTests, Generation_Successful) {
     GenerationResult expectedResult({
             TestGroupGenerationResult(nullptr, {
                     TestCaseGenerationResult::successfulResult(),
@@ -120,7 +120,7 @@ TEST_F(TestSuiteGeneratorTests, Generation_Successful) {
     EXPECT_TRUE(result.isSuccessful());
 }
 
-TEST_F(TestSuiteGeneratorTests, Generation_Failed) {
+TEST_F(GeneratorTests, Generation_Failed) {
     ON_CALL(testGroupGenerator, generate(Property(&TestGroup::id, 0), _))
             .WillByDefault(Return(TestGroupGenerationResult(nullptr, {
                     TestCaseGenerationResult::successfulResult(),
@@ -144,7 +144,7 @@ TEST_F(TestSuiteGeneratorTests, Generation_Failed) {
 }
 
 
-TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Successful) {
+TEST_F(GeneratorTests, Generation_WithGroups_Successful) {
     GenerationResult expectedResult({
             TestGroupGenerationResult(nullptr, {
                     TestCaseGenerationResult::successfulResult(),
@@ -182,7 +182,7 @@ TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Successful) {
 }
 
 
-TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Failed) {
+TEST_F(GeneratorTests, Generation_WithGroups_Failed) {
     ON_CALL(testGroupGenerator, generate(Property(&TestGroup::id, 1), _))
             .WillByDefault(Return(TestGroupGenerationResult(nullptr, {
                     TestCaseGenerationResult::failedResult(new SimpleFailure("failed 1")),
@@ -210,7 +210,7 @@ TEST_F(TestSuiteGeneratorTests, Generation_WithGroups_Failed) {
 }
 
 
-TEST_F(TestSuiteGeneratorTests, Generation_InputFinalizer_Official_Applied) {
+TEST_F(GeneratorTests, Generation_InputFinalizer_Official_Applied) {
     RawTestSuite rawTestSuite = RawTestSuiteBuilder()
             .setInputFinalizer([] {N *= 2;})
             .addOfficialTestCase(tc3)
@@ -229,7 +229,7 @@ TEST_F(TestSuiteGeneratorTests, Generation_InputFinalizer_Official_Applied) {
     EXPECT_THAT(N, Eq(3 * 2));
 }
 
-TEST_F(TestSuiteGeneratorTests, Generation_InputFinalizer_Sample_NotApplied) {
+TEST_F(GeneratorTests, Generation_InputFinalizer_Sample_NotApplied) {
     RawTestSuite rawTestSuite = RawTestSuiteBuilder()
             .setInputFinalizer([] {N *= 2;})
             .addSampleTestCase(stc1)
