@@ -13,6 +13,8 @@ private:
     function<void()> callback_;
 
 public:
+    ~GenerationException() noexcept {}
+
     GenerationException(const function<void()>& callback)
             : callback_(callback)
     {}
