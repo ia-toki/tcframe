@@ -44,22 +44,11 @@ include_directories(include)
 set(SOURCE_FILES
     include/tcframe/experimental/runner.hpp
     include/tcframe/generator.hpp
-    include/tcframe/generator/failure.hpp
-    include/tcframe/generator/failure/ComplexFailureException.hpp
-    include/tcframe/generator/failure/ConstraintsVerificationFailure.hpp
-    include/tcframe/generator/failure/Failure.hpp
-    include/tcframe/generator/failure/MultipleTestCasesConstraintsVerificationFailure.hpp
-    include/tcframe/generator/failure/SimpleFailure.hpp
-    include/tcframe/generator/failure/SolutionExecutionFailure.hpp
-    include/tcframe/generator/GenerationResult.hpp
+    include/tcframe/generator/GenerationException.hpp
+    include/tcframe/generator/Generator.hpp
     include/tcframe/generator/GeneratorConfig.hpp
     include/tcframe/generator/GeneratorLogger.hpp
-    include/tcframe/generator/MultipleTestCasesCombinationResult.hpp
     include/tcframe/generator/TestCaseGenerator.hpp
-    include/tcframe/generator/TestCaseGenerationResult.hpp
-    include/tcframe/generator/TestGroupGenerator.hpp
-    include/tcframe/generator/TestGroupGenerationResult.hpp
-    include/tcframe/generator/Generator.hpp
     include/tcframe/io_manipulator.hpp
     include/tcframe/io_manipulator/GridIOSegmentManipulator.hpp
     include/tcframe/io_manipulator/IOManipulator.hpp
@@ -79,7 +68,6 @@ set(SOURCE_FILES
     include/tcframe/runner/Runner.hpp
     include/tcframe/runner/RunnerLogger.hpp
     include/tcframe/runner/RunnerLoggerFactory.hpp
-    include/tcframe/runner/SpecificationFailure.hpp
     include/tcframe/spec.hpp
     include/tcframe/spec/constraint.hpp
     include/tcframe/spec/constraint/Constraint.hpp
@@ -116,6 +104,7 @@ set(SOURCE_FILES
     include/tcframe/testcase/TestCase.hpp
     include/tcframe/testcase/TestCaseIdCreator.hpp
     include/tcframe/testcase/TestGroup.hpp
+    include/tcframe/testcase/TestSuite.hpp
     include/tcframe/util.hpp
     include/tcframe/util/NotImplementedException.hpp
     include/tcframe/util/StringUtils.hpp
@@ -124,16 +113,13 @@ set(SOURCE_FILES
     include/tcframe/verifier/ConstraintsVerificationResult.hpp
     include/tcframe/verifier/MultipleTestCasesConstraintsVerificationResult.hpp
     include/tcframe/verifier/Verifier.hpp
-    test/tcframe/helper.hpp
     test/tcframe/mock.hpp
     test/tcframe/generator/GeneratorLoggerTests.cpp
     test/tcframe/generator/GeneratorTests.cpp
     test/tcframe/generator/MockGenerator.hpp
     test/tcframe/generator/MockGeneratorLogger.hpp
     test/tcframe/generator/MockTestCaseGenerator.hpp
-    test/tcframe/generator/MockTestGroupGenerator.hpp
     test/tcframe/generator/TestCaseGeneratorTests.cpp
-    test/tcframe/generator/TestGroupGeneratorTests.cpp
     test/tcframe/io_manipulator/GridIOSegmentManipulatorTests.cpp
     test/tcframe/io_manipulator/IOManipulatorTests.cpp
     test/tcframe/io_manipulator/LineIOSegmentManipulatorTests.cpp
@@ -165,6 +151,7 @@ set(SOURCE_FILES
     test/tcframe/spec/variable/VectorTests.cpp
     test/tcframe/spec/variable/WhitespaceManipulatorTests.cpp
     test/tcframe/testcase/TestCaseIdCreatorTests.cpp
+    test/tcframe/testcase/TestSuiteProviderTests.cpp
     test/tcframe/util/OptionalTests.cpp
     test/tcframe/util/StringUtilsTests.cpp
     test/tcframe/verifier/MockVerifier.hpp

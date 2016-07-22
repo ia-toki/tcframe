@@ -6,11 +6,8 @@
 #include <string>
 #include <vector>
 
-#include "GenerationResult.hpp"
-#include "TestCaseGenerationResult.hpp"
-#include "MultipleTestCasesCombinationResult.hpp"
-#include "tcframe/generator/failure.hpp"
 #include "tcframe/logger.hpp"
+#include "tcframe/os.hpp"
 #include "tcframe/util.hpp"
 #include "tcframe/verifier.hpp"
 
@@ -32,61 +29,40 @@ public:
         engine_->logParagraph(0, "Generating test cases...");
     }
 
-    virtual void logResult(const GenerationResult& result) {
+    virtual void logSuccessfulResult() {
         engine_->logParagraph(0, "");
-        if (result.isSuccessful()) {
-            engine_->logParagraph(0, "Generation finished. All test cases OK.");
-        } else {
-            engine_->logParagraph(0, "Generation finished. Some test cases FAILED.");
-        }
+        engine_->logParagraph(0, "Generation finished. All test cases OK.");
     }
 
-    virtual void logTestCaseResult(const string& testCaseDescription, const TestCaseGenerationResult& result) {
-        if (result.isSuccessful()) {
-            engine_->logParagraph(0, "OK");
-        } else {
-            engine_->logParagraph(0, "FAILED");
-            engine_->logParagraph(2, "Description: " + testCaseDescription);
-            engine_->logParagraph(2, "Reasons:");
+    virtual void logFailedResult() {
+        engine_->logParagraph(0, "");
+        engine_->logParagraph(0, "Generation finished. Some test cases FAILED.");
+    }
 
-            logFailure(result.failure());
-        }
+    virtual void logTestCaseSuccessfulResult() {
+        engine_->logParagraph(0, "OK");
+    }
+
+    virtual void logTestCaseFailedResult(const string& testCaseDescription) {
+        engine_->logParagraph(0, "FAILED");
+        engine_->logParagraph(2, "Description: " + testCaseDescription);
+        engine_->logParagraph(2, "Reasons:");
     }
 
     virtual void logMultipleTestCasesCombinationIntroduction(const string& testCaseBaseId) {
         engine_->logHangingParagraph(1, "Combining test cases into a single file (" + testCaseBaseId + "): ");
     }
 
-    virtual void logMultipleTestCasesCombinationResult(const MultipleTestCasesCombinationResult& result) {
-        if (result.isSuccessful()) {
-            engine_->logParagraph(0, "OK");
-        } else {
-            engine_->logParagraph(0, "FAILED");
-            engine_->logParagraph(2, "Reasons:");
-
-            logFailure(result.failure());
-        }
+    virtual void logMultipleTestCasesCombinationSuccessfulResult() {
+        engine_->logParagraph(0, "OK");
     }
 
-private:
-    void logFailure(Failure* failure) {
-        switch (failure->type()) {
-            case FailureType::CONSTRAINTS_VERIFICATION:
-                logConstraintsVerificationFailure(((ConstraintsVerificationFailure*) failure)->verificationResult());
-                break;
-            case FailureType::MULTIPLE_TEST_CASES_CONSTRAINTS_VERIFICATION:
-                logMultipleTestCasesConstraintsVerificationFailure(
-                        ((MultipleTestCasesConstraintsVerificationFailure*) failure)->verificationResult());
-                break;
-            case FailureType::SOLUTION_EXECUTION:
-                logSolutionExecutionFailure(((SolutionExecutionFailure*) failure)->executionResult());
-                break;
-            default:
-                logSimpleFailure(((SimpleFailure*) failure)->message());
-        }
+    virtual void logMultipleTestCasesCombinationFailedResult() {
+        engine_->logParagraph(0, "FAILED");
+        engine_->logParagraph(2, "Reasons:");
     }
 
-    void logConstraintsVerificationFailure(const ConstraintsVerificationResult& result) {
+    virtual void logConstraintsVerificationFailure(const ConstraintsVerificationResult& result) {
         for (const auto& entry : result.unsatisfiedConstraintDescriptionsBySubtaskId()) {
             int subtaskId = entry.first;
             const vector<string>& unsatisfiedConstraintDescriptions = entry.second;
@@ -106,7 +82,7 @@ private:
         }
     }
 
-    void logMultipleTestCasesConstraintsVerificationFailure(
+    virtual void logMultipleTestCasesConstraintsVerificationFailure(
             const MultipleTestCasesConstraintsVerificationResult& result) {
 
         engine_->logListItem1(2, "Does not satisfy constraints, on:");
@@ -116,17 +92,18 @@ private:
         }
     }
 
-    void logSolutionExecutionFailure(const ExecutionResult& result) {
+    virtual void logSolutionExecutionFailure(const ExecutionResult& result) {
         engine_->logListItem1(2, "Execution of solution failed:");
         if (result.exitStatus() <= 128) {
             engine_->logListItem2(3, "Exit code: " + StringUtils::toString(result.exitStatus()));
-            engine_->logListItem2(3, "Standard error: " + string(istreambuf_iterator<char>(*result.errorStream()), istreambuf_iterator<char>()));
+            engine_->logListItem2(3, "Standard error: "
+                    + string(istreambuf_iterator<char>(*result.errorStream()), istreambuf_iterator<char>()));
         } else {
             engine_->logListItem2(3, string(strsignal(result.exitStatus() - 128)));
         }
     }
 
-    void logSimpleFailure(const string& message) {
+    virtual void logSimpleFailure(const string& message) {
         engine_->logListItem1(2, message);
     }
  };

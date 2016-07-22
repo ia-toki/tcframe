@@ -26,8 +26,8 @@ public:
         }
     }
 
-    virtual void logTestCaseIntroduction(string testCaseName) {
-        engine_->logHangingParagraph(1, testCaseName + ": ");
+    virtual void logTestCaseIntroduction(string testCaseId) {
+        engine_->logHangingParagraph(1, testCaseId + ": ");
     }
 };
 

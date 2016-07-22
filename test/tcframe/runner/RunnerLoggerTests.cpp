@@ -24,9 +24,7 @@ TEST_F(RunnerLoggerTests, SpecificationFailure) {
         EXPECT_CALL(engine, logListItem1(1, "lorem ipsum"));
         EXPECT_CALL(engine, logListItem1(1, "dolor sit amet"));
     }
-
-    SpecificationFailure failure({"lorem ipsum", "dolor sit amet"});
-    logger.logSpecificationFailure(failure);
+    logger.logSpecificationFailure({"lorem ipsum", "dolor sit amet"});
 }
 
 }

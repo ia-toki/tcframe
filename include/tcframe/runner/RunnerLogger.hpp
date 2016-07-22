@@ -1,7 +1,12 @@
 #pragma once
 
-#include "SpecificationFailure.hpp"
+#include <string>
+#include <vector>
+
 #include "tcframe/logger.hpp"
+
+using std::string;
+using std::vector;
 
 namespace tcframe {
 
@@ -13,10 +18,10 @@ public:
             : BaseLogger(engine)
     {}
 
-    virtual void logSpecificationFailure(SpecificationFailure failure) {
+    virtual void logSpecificationFailure(const vector<string>& messages) {
         engine_->logHeading("SPECIFICATIONS");
         engine_->logParagraph(1, "The specifications contain errors:");
-        for (const string& message : failure.messages()) {
+        for (const string& message : messages) {
             engine_->logListItem1(1, message);
         }
     }

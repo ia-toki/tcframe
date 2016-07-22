@@ -66,23 +66,21 @@ TEST_F(RunnerTests, Run_ArgsParsing_Failed) {
 TEST_F(RunnerTests, Run_Specification_Failed) {
     Runner<ProblemSpec> runner(new BadTestSpec(), loggerEngine, &os, &loggerFactory, &generatorFactory);
     EXPECT_CALL(generator, generate(_, _)).Times(0);
-    EXPECT_CALL(logger, logSpecificationFailure(SpecificationFailure({"An error"})));
+    EXPECT_CALL(logger, logSpecificationFailure(vector<string>{"An error"}));
 
     EXPECT_THAT(runner.run(argc, argv), Ne(0));
 }
 
 TEST_F(RunnerTests, Run_Generation_Successful) {
     Runner<ProblemSpec> runner(new TestSpec(), loggerEngine, &os, &loggerFactory, &generatorFactory);
-    ON_CALL(generator, generate(_, _)).WillByDefault(Return(GenerationResult({})));
+    ON_CALL(generator, generate(_, _)).WillByDefault(Return(true));
 
     EXPECT_THAT(runner.run(argc, argv), Eq(0));
 }
 
 TEST_F(RunnerTests, Run_Generation_Failed) {
     Runner<ProblemSpec> runner(new TestSpec(), loggerEngine, &os, &loggerFactory, &generatorFactory);
-    ON_CALL(generator, generate(_, _))
-            .WillByDefault(Return(GenerationResult({
-                    TestGroupGenerationResult(new SimpleFailure("Error"), {})})));
+    ON_CALL(generator, generate(_, _)).WillByDefault(Return(false));
 
     EXPECT_THAT(runner.run(argc, argv), Ne(0));
 }

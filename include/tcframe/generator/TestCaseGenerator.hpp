@@ -5,10 +5,9 @@
 #include <set>
 #include <string>
 
+#include "GenerationException.hpp"
 #include "GeneratorConfig.hpp"
 #include "GeneratorLogger.hpp"
-#include "TestCaseGenerationResult.hpp"
-#include "tcframe/generator/failure.hpp"
 #include "tcframe/io_manipulator.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/spec.hpp"
@@ -43,15 +42,9 @@ public:
             , logger_(logger)
     {}
 
-    virtual TestCaseGenerationResult generate(const TestCase& testCase, const GeneratorConfig& config) {
+    virtual bool generate(const TestCase& testCase, const GeneratorConfig& config) {
         logger_->logTestCaseIntroduction(testCase.id());
-        TestCaseGenerationResult result = doGenerate(testCase, config);
-        logger_->logTestCaseResult(testCase.description(), result);
-        return result;
-    }
 
-private:
-    TestCaseGenerationResult doGenerate(const TestCase& testCase, const GeneratorConfig& config) {
         string inputFilename = config.testCasesDir() + "/" + testCase.id() + ".in";
         string outputFilename = config.testCasesDir() + "/" + testCase.id() + ".out";
 
@@ -60,15 +53,21 @@ private:
             verify(testCase.subtaskIds());
             generateInput(inputFilename, config);
             generateOutput(inputFilename, outputFilename, config.solutionCommand());
-        } catch (ComplexFailureException& e) {
-            return TestCaseGenerationResult::failedResult(e.failure());
+        } catch (GenerationException& e) {
+            logger_->logTestCaseFailedResult(testCase.description());
+            e.callback()();
+            return false;
         } catch (runtime_error& e) {
-            return TestCaseGenerationResult::failedResult(new SimpleFailure(e.what()));
+            logger_->logTestCaseFailedResult(testCase.description());
+            logger_->logSimpleFailure(e.what());
+            return false;
         }
 
-        return TestCaseGenerationResult::successfulResult();
+        logger_->logTestCaseSuccessfulResult();
+        return true;
     }
 
+private:
     void apply(const function<void()>& applier) {
         applier();
     }
@@ -76,7 +75,7 @@ private:
     void verify(const set<int>& subtaskIds) {
         ConstraintsVerificationResult result = verifier_->verifyConstraints(subtaskIds);
         if (!result.isValid()) {
-            throw ComplexFailureException(new ConstraintsVerificationFailure(result));
+            throw GenerationException([=] {logger_->logConstraintsVerificationFailure(result);});
         }
     }
 
@@ -92,7 +91,7 @@ private:
     void generateOutput(const string& inputFilename, const string& outputFilename, const string& solutionCommand) {
         ExecutionResult result = os_->execute(solutionCommand, inputFilename, outputFilename, "_error.out");
         if (result.exitStatus() != 0) {
-            throw ComplexFailureException(new SolutionExecutionFailure(result));
+            throw GenerationException([=] {logger_->logSolutionExecutionFailure(result);});
         }
         ioManipulator_->parseOutput(result.outputStream());
     }

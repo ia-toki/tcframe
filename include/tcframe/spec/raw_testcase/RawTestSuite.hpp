@@ -60,8 +60,10 @@ public:
     RawTestSuiteBuilder()
             : hasCurrentTestGroup_(false)
             , currentTestGroupId_(0)
-            , currentSubtaskIds_({-1})
-    {}
+            , currentSubtaskIds_({-1}) {
+
+        subject_.inputFinalizer_ = []{};
+    }
 
     RawTestSuiteBuilder& setInputFinalizer(const function<void()>& inputFinalizer) {
         subject_.inputFinalizer_ = inputFinalizer;

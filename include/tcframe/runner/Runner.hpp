@@ -6,10 +6,11 @@
 #include "ArgsParser.hpp"
 #include "RunnerLogger.hpp"
 #include "RunnerLoggerFactory.hpp"
-#include "SpecificationFailure.hpp"
 #include "tcframe/generator.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/spec.hpp"
+#include "tcframe/testcase.hpp"
+#include "tcframe/util.hpp"
 #include "tcframe/verifier.hpp"
 
 using std::cout;
@@ -77,7 +78,7 @@ private:
         try {
             return testSpec_->buildCoreSpec();
         } catch (runtime_error& e) {
-            logger->logSpecificationFailure(SpecificationFailure({e.what()}));
+            logger->logSpecificationFailure({e.what()});
             throw;
         }
     }
@@ -97,10 +98,14 @@ private:
         auto verifier = new Verifier(coreSpec.constraintSuite());
         auto logger = new GeneratorLogger(loggerEngine_);
         auto testCaseGenerator = new TestCaseGenerator(verifier, ioManipulator, os_, logger);
-        auto testGroupGenerator = new TestGroupGenerator(testCaseGenerator, verifier, os_, logger);
+        auto generator = generatorFactory_->create(testCaseGenerator, verifier, os_, logger);
 
-        auto generator = generatorFactory_->create(testGroupGenerator, ioManipulator, os_, logger);
-        return generator->generate(coreSpec.rawTestSuite(), config).isSuccessful();
+        auto testSuite = TestSuiteProvider::provide(
+                coreSpec.rawTestSuite(),
+                config.slug(),
+                optional<IOManipulator*>(ioManipulator));
+
+        return generator->generate(testSuite, config);
     }
 };
 

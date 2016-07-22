@@ -12,7 +12,7 @@ public:
             : RunnerLogger(nullptr)
     {}
 
-    MOCK_METHOD1(logSpecificationFailure, void(SpecificationFailure failure));
+    MOCK_METHOD1(logSpecificationFailure, void(const vector<string>&));
 };
 
 }

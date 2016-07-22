@@ -12,12 +12,12 @@ public:
             : Generator(nullptr, nullptr, nullptr, nullptr)
     {}
 
-    MOCK_METHOD2(generate, GenerationResult(const RawTestSuite&, const GeneratorConfig&));
+    MOCK_METHOD2(generate, bool(const TestSuite&, const GeneratorConfig&));
 };
 
 class MockGeneratorFactory : public GeneratorFactory {
 public:
-    MOCK_METHOD4(create, Generator*(TestGroupGenerator*, IOManipulator*, OperatingSystem*, GeneratorLogger*));
+    MOCK_METHOD4(create, Generator*(TestCaseGenerator*, Verifier*, OperatingSystem*, GeneratorLogger*));
 };
 
 }

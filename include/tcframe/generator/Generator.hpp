@@ -7,12 +7,10 @@
 #include <string>
 
 #include "GeneratorLogger.hpp"
-#include "GenerationResult.hpp"
-#include "TestGroupGenerationResult.hpp"
-#include "TestGroupGenerator.hpp"
-#include "tcframe/io_manipulator.hpp"
+#include "TestCaseGenerator.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/testcase.hpp"
+#include "tcframe/verifier.hpp"
 
 using std::function;
 using std::istringstream;
@@ -24,8 +22,8 @@ namespace tcframe {
 
 class Generator {
 private:
-    TestGroupGenerator* testGroupGenerator_;
-    IOManipulator* ioManipulator_;
+    TestCaseGenerator* testCaseGenerator_;
+    Verifier* verifier_;
     OperatingSystem* os_;
     GeneratorLogger* logger_;
 
@@ -33,85 +31,81 @@ public:
     virtual ~Generator() {}
 
     Generator(
-            TestGroupGenerator* testGroupGenerator,
-            IOManipulator* ioManipulator,
+            TestCaseGenerator* testCaseGenerator,
+            Verifier* verifier,
             OperatingSystem* os,
             GeneratorLogger* logger)
-            : testGroupGenerator_(testGroupGenerator)
-            , ioManipulator_(ioManipulator)
+            : testCaseGenerator_(testCaseGenerator)
+            , verifier_(verifier)
             , os_(os)
             , logger_(logger)
     {}
 
-    virtual GenerationResult generate(const RawTestSuite& rawTestSuite, const GeneratorConfig& config) {
+    virtual bool generate(const TestSuite& testSuite, const GeneratorConfig& config) {
         logger_->logIntroduction();
-        GenerationResult result = doGenerate(rawTestSuite, config);
-        logger_->logResult(result);
-        return result;
+
+        os_->forceMakeDir(config.testCasesDir());
+
+        bool successful = true;
+        for (const TestGroup& testGroup : testSuite.testGroups()) {
+            successful &= generateTestGroup(testGroup, config);
+        }
+        if (successful) {
+            logger_->logSuccessfulResult();
+        } else {
+            logger_->logFailedResult();
+        }
+        return successful;
     }
 
 private:
-    GenerationResult doGenerate(const RawTestSuite& rawTestSuite, const GeneratorConfig& config) {
-        os_->forceMakeDir(config.testCasesDir());
+    bool generateTestGroup(const TestGroup& testGroup, const GeneratorConfig& config) {
+        logger_->logTestGroupIntroduction(testGroup.id());
 
-        vector<TestGroupGenerationResult> testGroupResults;
-        testGroupResults.push_back(generateSampleTests(rawTestSuite, config));
-        for (TestGroupGenerationResult result : generateOfficialTests(rawTestSuite, config)) {
-            testGroupResults.push_back(result);
+        bool successful = true;
+        for (const TestCase& testCase : testGroup.testCases()) {
+            successful &= testCaseGenerator_->generate(testCase, config);
         }
-        return GenerationResult(testGroupResults);
+        if (successful && config.multipleTestCasesCount() != nullptr && !testGroup.testCases().empty()) {
+            return combineMultipleTestCases(testGroup, config);
+        }
+        return successful;
     }
 
-    TestGroupGenerationResult generateSampleTests(const RawTestSuite& rawTestSuite, const GeneratorConfig& config) {
-        vector<SampleTestCase> sampleTests = rawTestSuite.sampleTests();
-        vector<TestCase> testCases;
-        for (int testCaseNo = 1; testCaseNo <= sampleTests.size(); testCaseNo++) {
-            SampleTestCase sampleTestCase = sampleTests[testCaseNo - 1];
-            TestCase testCase = TestCaseBuilder()
-                    .setId(TestCaseIdCreator::create(config.slug(), 0, testCaseNo))
-                    .setSubtaskIds(sampleTestCase.subtaskIds())
-                    .setApplier([=] {
-                        istream* in = new istringstream(sampleTestCase.content());
-                        ioManipulator_->parseInput(in);
-                    })
-                    .build();
-            testCases.push_back(testCase);
+    bool combineMultipleTestCases(const TestGroup& testGroup, const GeneratorConfig& config) {
+        string baseId = TestCaseIdCreator::createBaseId(config.slug(), testGroup.id());
+        logger_->logMultipleTestCasesCombinationIntroduction(baseId);
+
+        *config.multipleTestCasesCount() = (int) testGroup.testCases().size();
+
+        try {
+            verify();
+            combine(testGroup, config);
+        } catch (GenerationException& e) {
+            logger_->logMultipleTestCasesCombinationFailedResult();
+            e.callback()();
+            return false;
+        } catch (runtime_error& e) {
+            logger_->logMultipleTestCasesCombinationFailedResult();
+            logger_->logSimpleFailure(e.what());
+            return false;
         }
 
-        return testGroupGenerator_->generate(TestGroup(0, testCases), config);
+        logger_->logMultipleTestCasesCombinationSuccessfulResult();
+        return true;
     }
 
-    vector<TestGroupGenerationResult> generateOfficialTests(const RawTestSuite& rawTestSuite, const GeneratorConfig& config) {
-        vector<TestGroupGenerationResult> results;
-        for (const OfficialTestGroup& officialTestGroup : rawTestSuite.officialTests()) {
-            results.push_back(generateOfficialTestGroup(officialTestGroup, rawTestSuite.inputFinalizer(), config));
+    void verify() {
+        MultipleTestCasesConstraintsVerificationResult result = verifier_->verifyMultipleTestCasesConstraints();
+        if (!result.isValid()) {
+            throw GenerationException([=] {logger_->logMultipleTestCasesConstraintsVerificationFailure(result);});
         }
-        return results;
     }
 
-    TestGroupGenerationResult generateOfficialTestGroup(
-            const OfficialTestGroup& officialTestGroup,
-            const function<void()>& inputFinalizer,
-            const GeneratorConfig& config) {
-
-        vector<OfficialTestCase> officialTestCases = officialTestGroup.officialTestCases();
-        vector<TestCase> testCases;
-        for (int testCaseNo = 1; testCaseNo <= officialTestCases.size(); testCaseNo++) {
-            OfficialTestCase officialTestCase = officialTestCases[testCaseNo - 1];
-            string testCaseId = TestCaseIdCreator::create(
-                    config.slug(),
-                    officialTestGroup.id(),
-                    testCaseNo);
-            TestCase testCase = TestCaseBuilder()
-                    .setId(testCaseId)
-                    .setDescription(officialTestCase.description())
-                    .setSubtaskIds(officialTestGroup.subtaskIds())
-                    .setApplier([=] {officialTestCase.closure()(); inputFinalizer();})
-                    .build();
-            testCases.push_back(testCase);
-        }
-
-        return testGroupGenerator_->generate(TestGroup(officialTestGroup.id(), testCases), config);
+    void combine(const TestGroup& testGroup, const GeneratorConfig& config) {
+        string baseId = TestCaseIdCreator::createBaseId(config.slug(), testGroup.id());
+        string baseFilename = config.testCasesDir() + "/" + baseId;
+        os_->combineMultipleTestCases(baseFilename, (int) testGroup.testCases().size());
     }
 };
 
@@ -120,12 +114,12 @@ public:
     virtual ~GeneratorFactory() {}
 
     virtual Generator* create(
-            TestGroupGenerator* testGroupGenerator,
-            IOManipulator* ioManipulator,
+            TestCaseGenerator* testCaseGenerator,
+            Verifier* verifier,
             OperatingSystem* os,
             GeneratorLogger* logger) {
 
-        return new Generator(testGroupGenerator, ioManipulator, os, logger);
+        return new Generator(testCaseGenerator, verifier, os, logger);
     }
 };
 

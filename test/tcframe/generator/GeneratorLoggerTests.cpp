@@ -28,8 +28,7 @@ TEST_F(GeneratorLoggerTests, Result_Successful) {
         EXPECT_CALL(engine, logParagraph(0, ""));
         EXPECT_CALL(engine, logParagraph(0, "Generation finished. All test cases OK."));
     }
-
-    logger.logResult(GenerationResult({}));
+    logger.logSuccessfulResult();
 }
 
 TEST_F(GeneratorLoggerTests, Result_Failed) {
@@ -38,38 +37,39 @@ TEST_F(GeneratorLoggerTests, Result_Failed) {
         EXPECT_CALL(engine, logParagraph(0, ""));
         EXPECT_CALL(engine, logParagraph(0, "Generation finished. Some test cases FAILED."));
     }
-
-    logger.logResult(GenerationResult({TestGroupGenerationResult(new SimpleFailure("failed"), {})}));
+    logger.logFailedResult();
 }
 
 TEST_F(GeneratorLoggerTests, TestCaseResult_Successful) {
     EXPECT_CALL(engine, logParagraph(0, "OK"));
 
-    logger.logTestCaseResult("N = 1", TestCaseGenerationResult::successfulResult());
+    logger.logTestCaseSuccessfulResult();
 }
 
-TEST_F(GeneratorLoggerTests, TestCaseResult_Failed_Verification) {
+TEST_F(GeneratorLoggerTests, TestCaseResult_Failed) {
     {
         InSequence sequence;
         EXPECT_CALL(engine, logParagraph(0, "FAILED"));
         EXPECT_CALL(engine, logParagraph(2, "Description: N = 1"));
         EXPECT_CALL(engine, logParagraph(2, "Reasons:"));
+    }
+    logger.logTestCaseFailedResult("N = 1");
+}
+
+TEST_F(GeneratorLoggerTests, ConstraintsVerificationFailure) {
+    {
+        InSequence sequence;
         EXPECT_CALL(engine, logListItem1(2, "Does not satisfy constraints, on:"));
         EXPECT_CALL(engine, logListItem2(3, "A <= 10"));
         EXPECT_CALL(engine, logListItem2(3, "B <= 10"));
     }
-
     ConstraintsVerificationResult result({{-1, {"A <= 10", "B <= 10"}}}, {});
-    ConstraintsVerificationFailure failure(result);
-    logger.logTestCaseResult("N = 1", TestCaseGenerationResult::failedResult(&failure));
+    logger.logConstraintsVerificationFailure(result);
 }
 
-TEST_F(GeneratorLoggerTests, TestCaseResult_Failed_Verification_WithGroups) {
+TEST_F(GeneratorLoggerTests, ConstraintsVerificationFailure_WithGroups) {
     {
         InSequence sequence;
-        EXPECT_CALL(engine, logParagraph(0, "FAILED"));
-        EXPECT_CALL(engine, logParagraph(2, "Description: N = 1"));
-        EXPECT_CALL(engine, logParagraph(2, "Reasons:"));
         EXPECT_CALL(engine, logListItem1(2, "Does not satisfy subtask 2, on constraints:"));
         EXPECT_CALL(engine, logListItem2(3, "A <= 10"));
         EXPECT_CALL(engine, logListItem2(3, "B <= 10"));
@@ -78,10 +78,8 @@ TEST_F(GeneratorLoggerTests, TestCaseResult_Failed_Verification_WithGroups) {
         EXPECT_CALL(engine, logListItem1(2, "Satisfies subtask 1 but is not assigned to it"));
         EXPECT_CALL(engine, logListItem1(2, "Satisfies subtask 3 but is not assigned to it"));
     }
-
     ConstraintsVerificationResult result({{2, {"A <= 10", "B <= 10"}}, {4, {"A <= B"}}}, {1, 3});
-    ConstraintsVerificationFailure failure(result);
-    logger.logTestCaseResult("N = 1", TestCaseGenerationResult::failedResult(&failure));
+    logger.logConstraintsVerificationFailure(result);
 }
 
 TEST_F(GeneratorLoggerTests, MultipleTestCasesCombinationIntroduction) {
@@ -93,22 +91,16 @@ TEST_F(GeneratorLoggerTests, MultipleTestCasesCombinationIntroduction) {
 TEST_F(GeneratorLoggerTests, MultipleTestCasesCombinationResult_Successful) {
     EXPECT_CALL(engine, logParagraph(0, "OK"));
 
-    logger.logMultipleTestCasesCombinationResult(MultipleTestCasesCombinationResult(nullptr));
+    logger.logMultipleTestCasesCombinationSuccessfulResult();
 }
 
-TEST_F(GeneratorLoggerTests, MultipleTestCasesCombinationResult_Failed_Verification) {
+TEST_F(GeneratorLoggerTests, MultipleTestCasesCombinationResult_Failed) {
     {
         InSequence sequence;
         EXPECT_CALL(engine, logParagraph(0, "FAILED"));
         EXPECT_CALL(engine, logParagraph(2, "Reasons:"));
-        EXPECT_CALL(engine, logListItem1(2, "Does not satisfy constraints, on:"));
-        EXPECT_CALL(engine, logListItem2(3, "A <= 10"));
-        EXPECT_CALL(engine, logListItem2(3, "B <= 10"));
     }
-
-    MultipleTestCasesConstraintsVerificationResult result({"A <= 10", "B <= 10"});
-    MultipleTestCasesConstraintsVerificationFailure failure(result);
-    logger.logMultipleTestCasesCombinationResult(MultipleTestCasesCombinationResult(&failure));
+    logger.logMultipleTestCasesCombinationFailedResult();
 }
 
 }

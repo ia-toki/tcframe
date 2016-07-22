@@ -54,6 +54,10 @@ private:
     GeneratorConfig subject_;
 
 public:
+    GeneratorConfigBuilder(const GeneratorConfig& from)
+            : subject_(from)
+    {}
+
     GeneratorConfigBuilder() {
         subject_.multipleTestCasesCount_ = nullptr;
         subject_.seed_ = DefaultValues::seed();

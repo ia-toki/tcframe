@@ -58,7 +58,6 @@ protected:
 };
 
 TEST_F(TestCaseGeneratorTests, Generation_Successful) {
-    TestCaseGenerationResult expectedResult = TestCaseGenerationResult::successfulResult();
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
@@ -68,53 +67,46 @@ TEST_F(TestCaseGeneratorTests, Generation_Successful) {
         EXPECT_CALL(os, closeOpenedWritingStream(out));
         EXPECT_CALL(os, execute("python Sol.py", "dir/foo_1.in", "dir/foo_1.out", _));
         EXPECT_CALL(ioManipulator, parseOutput(executionResult.outputStream()));
-        EXPECT_CALL(logger, logTestCaseResult("N = 42", expectedResult));
+        EXPECT_CALL(logger, logTestCaseSuccessfulResult());
     }
-    TestCaseGenerationResult result = generator.generate(testCase, config);
-    
+    EXPECT_TRUE(generator.generate(testCase, config));
     EXPECT_TRUE(applied);
-    EXPECT_THAT(result, Eq(expectedResult));
-    EXPECT_TRUE(result.isSuccessful());
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Failed_Verification) {
     ConstraintsVerificationResult verificationResult({{1, {"1 <= N <= 10"}}}, {});
     ON_CALL(verifier, verifyConstraints(set<int>{1, 2}))
             .WillByDefault(Return(verificationResult));
-    TestCaseGenerationResult expectedResult =
-            TestCaseGenerationResult::failedResult(new ConstraintsVerificationFailure(verificationResult));
-
-    EXPECT_CALL(logger, logTestCaseResult("N = 42", expectedResult));
-
-    TestCaseGenerationResult result = generator.generate(testCase, config);
-    EXPECT_THAT(result, Eq(expectedResult));
-    EXPECT_FALSE(result.isSuccessful());
+    {
+        InSequence sequence;
+        EXPECT_CALL(logger, logTestCaseFailedResult("N = 42"));
+        EXPECT_CALL(logger, logConstraintsVerificationFailure(verificationResult));
+    }
+    EXPECT_FALSE(generator.generate(testCase, config));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Failed_InputGeneration) {
+    string message = "input error";
     ON_CALL(ioManipulator, printInput(out))
-            .WillByDefault(Throw(runtime_error("input error")));
-    TestCaseGenerationResult expectedResult =
-            TestCaseGenerationResult::failedResult(new SimpleFailure("input error"));
-
-    EXPECT_CALL(logger, logTestCaseResult("N = 42", expectedResult));
-
-    TestCaseGenerationResult result = generator.generate(testCase, config);
-    EXPECT_THAT(result, Eq(expectedResult));
-    EXPECT_FALSE(result.isSuccessful());
+            .WillByDefault(Throw(runtime_error(message)));
+    {
+        InSequence sequence;
+        EXPECT_CALL(logger, logTestCaseFailedResult("N = 42"));
+        EXPECT_CALL(logger, logSimpleFailure(message));
+    }
+    EXPECT_FALSE(generator.generate(testCase, config));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Failed_OutputGeneration) {
+    string message = "output error";
     ON_CALL(ioManipulator, parseOutput(executionResult.outputStream()))
-            .WillByDefault(Throw(runtime_error("output error")));
-    TestCaseGenerationResult expectedResult =
-            TestCaseGenerationResult::failedResult(new SimpleFailure("output error"));
-
-    EXPECT_CALL(logger, logTestCaseResult("N = 42", expectedResult));
-
-    TestCaseGenerationResult result = generator.generate(testCase, config);
-    EXPECT_THAT(result, Eq(expectedResult));
-    EXPECT_FALSE(result.isSuccessful());
+            .WillByDefault(Throw(runtime_error(message)));
+    {
+        InSequence sequence;
+        EXPECT_CALL(logger, logTestCaseFailedResult("N = 42"));
+        EXPECT_CALL(logger, logSimpleFailure(message));
+    }
+    EXPECT_FALSE(generator.generate(testCase, config));
 }
 
 }
