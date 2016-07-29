@@ -27,7 +27,7 @@ using ScalarCompatible = typename enable_if<!is_reference<T>::value && (is_arith
 template<typename T>
 using NotScalarCompatible = typename enable_if<is_reference<T>::value || (!is_arithmetic<T>::value && !is_same<string, T>::value)>::type;
 
-enum VariableType {
+enum class VariableType {
     SCALAR,
     VECTOR,
     MATRIX

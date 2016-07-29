@@ -12,7 +12,7 @@ struct Args {
     friend class ArgsParser;
 
 public:
-    enum Command {
+    enum class Command {
         GEN
     };
 
