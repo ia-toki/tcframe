@@ -50,8 +50,7 @@ public:
     ConstraintSuiteBuilder()
             : hasCurrentSubtask_(false)
             , currentSubtaskId_(0)
-            , isInMultipleTestCasesConstraints_(false)
-    {}
+            , isInMultipleTestCasesConstraints_(false) {}
 
     ConstraintSuiteBuilder& newSubtask() {
         if (hasCurrentSubtask_) {

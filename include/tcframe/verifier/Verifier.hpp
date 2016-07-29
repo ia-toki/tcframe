@@ -24,8 +24,7 @@ public:
     virtual ~Verifier() {}
 
     Verifier(ConstraintSuite constraintSuite)
-            : constraintSuite_(move(constraintSuite))
-    {}
+            : constraintSuite_(move(constraintSuite)) {}
 
     virtual ConstraintsVerificationResult verifyConstraints(const set<int>& subtaskIds) {
         map<int, vector<string>> unsatisfiedConstraintDescriptionsBySubtaskId;

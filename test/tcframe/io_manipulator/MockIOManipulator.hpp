@@ -9,8 +9,7 @@ namespace tcframe {
 class MockIOManipulator : public IOManipulator {
 public:
     MockIOManipulator()
-            : IOManipulator(IOFormat())
-    {}
+            : IOManipulator(IOFormat()) {}
 
     MOCK_METHOD1(printInput, void(ostream*));
     MOCK_METHOD1(parseInput, void(istream*));

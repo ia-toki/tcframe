@@ -9,8 +9,7 @@ namespace tcframe {
 class MockGeneratorLogger : public GeneratorLogger {
 public:
     MockGeneratorLogger()
-            : GeneratorLogger(nullptr)
-    {}
+            : GeneratorLogger(nullptr) {}
 
     MOCK_METHOD1(logTestGroupIntroduction, void(int));
     MOCK_METHOD1(logTestCaseIntroduction, void(string));

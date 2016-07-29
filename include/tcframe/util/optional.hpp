@@ -12,12 +12,10 @@ private:
 
 public:
     optional()
-            : val(nullptr)
-    {}
+            : val(nullptr) {}
 
     optional(T value)
-            : val(new T(value))
-    {}
+            : val(new T(value)) {}
 
     const T& value() const {
         return *val;

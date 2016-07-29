@@ -16,6 +16,8 @@ namespace tcframe {
 
 class WhitespaceManipulator {
 public:
+    WhitespaceManipulator() = delete;
+
     static void parseSpace(istream* in, const string& context) {
         if (in->get() != ' ') {
             throw runtime_error("Expected: <space> after " + context);

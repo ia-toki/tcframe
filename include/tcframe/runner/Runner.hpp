@@ -35,8 +35,7 @@ public:
             , loggerEngine_(new SimpleLoggerEngine())
             , os_(new UnixOperatingSystem())
             , loggerFactory_(new RunnerLoggerFactory())
-            , generatorFactory_(new GeneratorFactory())
-    {}
+            , generatorFactory_(new GeneratorFactory()) {}
 
     /* Visible for testing. */
     Runner(
@@ -49,8 +48,7 @@ public:
             , loggerEngine_(loggerEngine)
             , os_(os)
             , loggerFactory_(runnerLoggerFactory)
-            , generatorFactory_(generatorFactory)
-    {}
+            , generatorFactory_(generatorFactory) {}
 
     int run(int argc, char* argv[]) {
         auto logger = loggerFactory_->create(loggerEngine_);

@@ -9,8 +9,7 @@ namespace tcframe {
 class MockRunnerLogger : public RunnerLogger {
 public:
     MockRunnerLogger()
-            : RunnerLogger(nullptr)
-    {}
+            : RunnerLogger(nullptr) {}
 
     MOCK_METHOD1(logSpecificationFailure, void(const vector<string>&));
 };

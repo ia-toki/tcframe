@@ -56,8 +56,7 @@ public:
 protected:
     Variable(const string& name, VariableType type)
             : name_(name)
-            , type_(type)
-    {}
+            , type_(type) {}
 
     template<typename T>
     static void parseValue(istream* in, T& val, const string& context) {

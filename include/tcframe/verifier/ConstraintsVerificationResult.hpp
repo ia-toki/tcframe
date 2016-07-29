@@ -26,8 +26,7 @@ public:
             const map<int, vector<string>>& unsatisfiedConstraintDescriptionsBySubtaskId,
             const set<int>& satisfiedButNotAssignedSubtaskIds)
             : unsatisfiedConstraintDescriptionsBySubtaskId_(unsatisfiedConstraintDescriptionsBySubtaskId)
-            , satisfiedButNotAssignedSubtaskIds_(satisfiedButNotAssignedSubtaskIds)
-    {}
+            , satisfiedButNotAssignedSubtaskIds_(satisfiedButNotAssignedSubtaskIds) {}
 
     static ConstraintsVerificationResult validResult() {
         return ConstraintsVerificationResult({}, {});

@@ -16,8 +16,7 @@ private:
 
 public:
     MultipleTestCasesConstraintsVerificationResult(const set<string>& unsatisfiedConstraintDescriptions)
-            : unsatisfiedConstraintDescriptions_(unsatisfiedConstraintDescriptions)
-    {}
+            : unsatisfiedConstraintDescriptions_(unsatisfiedConstraintDescriptions) {}
 
     const set<string>& unsatisfiedConstraintDescriptions() const {
         return unsatisfiedConstraintDescriptions_;

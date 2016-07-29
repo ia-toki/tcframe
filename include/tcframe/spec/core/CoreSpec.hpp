@@ -23,8 +23,7 @@ public:
             : problemConfig_(problemConfig)
             , ioFormat_(ioFormat)
             , constraintSuite_(constraintSuite)
-            , rawTestSuite_(rawTestSuite)
-    {}
+            , rawTestSuite_(rawTestSuite) {}
 
     const ProblemConfig& problemConfig() const {
         return problemConfig_;

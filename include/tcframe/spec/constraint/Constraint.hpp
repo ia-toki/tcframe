@@ -18,8 +18,7 @@ private:
 public:
     Constraint(const function<bool()>& predicate, const string& description)
             : predicate_(predicate)
-            , description_(description)
-    {}
+            , description_(description) {}
 
     const function<bool()>& predicate() const {
         return predicate_;

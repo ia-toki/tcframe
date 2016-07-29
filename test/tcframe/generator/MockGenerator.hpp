@@ -9,8 +9,7 @@ namespace tcframe {
 class MockGenerator : public Generator {
 public:
     MockGenerator()
-            : Generator(nullptr, nullptr, nullptr, nullptr)
-    {}
+            : Generator(nullptr, nullptr, nullptr, nullptr) {}
 
     MOCK_METHOD2(generate, bool(const TestSuite&, const GeneratorConfig&));
 };

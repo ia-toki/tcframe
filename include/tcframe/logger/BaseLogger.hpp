@@ -13,8 +13,7 @@ public:
     virtual ~BaseLogger() {}
 
     BaseLogger(LoggerEngine* engine)
-            : engine_(engine)
-    {}
+            : engine_(engine) {}
 
     virtual void logTestGroupIntroduction(int testGroupId) {
         if (testGroupId == 0) {

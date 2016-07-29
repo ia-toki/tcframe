@@ -22,8 +22,7 @@ public:
     OfficialTestGroup(int id, const set<int>& subtaskIds, const vector<OfficialTestCase>& testCases)
             : id_(id)
             , subtaskIds_(subtaskIds)
-            , officialTestCases_(testCases)
-    {}
+            , officialTestCases_(testCases) {}
 
     int id() const {
         return id_;

@@ -39,8 +39,7 @@ public:
             : verifier_(verifier)
             , ioManipulator_(ioManipulator)
             , os_(os)
-            , logger_(logger)
-    {}
+            , logger_(logger) {}
 
     virtual bool generate(const TestCase& testCase, const GeneratorConfig& config) {
         logger_->logTestCaseIntroduction(testCase.id());

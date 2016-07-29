@@ -38,8 +38,7 @@ public:
             : testCaseGenerator_(testCaseGenerator)
             , verifier_(verifier)
             , os_(os)
-            , logger_(logger)
-    {}
+            , logger_(logger) {}
 
     virtual bool generate(const TestSuite& testSuite, const GeneratorConfig& config) {
         logger_->logIntroduction();

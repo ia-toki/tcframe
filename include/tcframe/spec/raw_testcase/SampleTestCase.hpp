@@ -18,8 +18,7 @@ private:
 public:
     SampleTestCase(const string& content, const set<int>& subtaskIds)
               : content_(content)
-              , subtaskIds_(subtaskIds)
-    {}
+              , subtaskIds_(subtaskIds) {}
 
     const string& content() const {
         return content_;

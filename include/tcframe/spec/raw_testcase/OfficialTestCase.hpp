@@ -18,8 +18,7 @@ private:
 public:
     OfficialTestCase(const function<void()>& closure, const string& description)
             : closure_(closure)
-            , description_(description)
-    {}
+            , description_(description) {}
 
     const function<void()>& closure() const {
         return closure_;

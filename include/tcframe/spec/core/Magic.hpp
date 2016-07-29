@@ -85,8 +85,7 @@ private:
 public:
     MagicLineIOSegmentBuilder(LineIOSegmentBuilder& builder, string names)
             : builder_(&builder)
-            , extractor_(VariableNamesExtractor(names))
-    {}
+            , extractor_(VariableNamesExtractor(names)) {}
 
     template<typename T, typename = ScalarCompatible<T>>
     MagicLineIOSegmentBuilder& operator,(T& var) {
@@ -122,8 +121,7 @@ private:
 public:
     MagicLinesIOSegmentBuilder(LinesIOSegmentBuilder& builder, string names)
             : builder_(&builder)
-            , extractor_(VariableNamesExtractor(names))
-    {}
+            , extractor_(VariableNamesExtractor(names)) {}
 
     template<typename T, typename = ScalarCompatible<T>>
     MagicLinesIOSegmentBuilder& operator,(vector<T>& var) {
@@ -158,8 +156,7 @@ private:
 public:
     MagicGridIOSegmentBuilder(GridIOSegmentBuilder& builder, string names)
             : builder_(&builder)
-            , extractor_(VariableNamesExtractor(names))
-    {}
+            , extractor_(VariableNamesExtractor(names)) {}
 
     template<typename T, typename = ScalarCompatible<T>>
     MagicGridIOSegmentBuilder& operator,(vector<vector<T>>& var) {

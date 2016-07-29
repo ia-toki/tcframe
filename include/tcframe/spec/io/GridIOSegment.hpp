@@ -23,8 +23,7 @@ public:
     GridIOSegment()
             : variable_(nullptr)
             , rows_(-1)
-            , columns_(-1)
-    {}
+            , columns_(-1) {}
 
     IOSegmentType type() const {
         return IOSegmentType::GRID;

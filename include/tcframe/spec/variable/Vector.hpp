@@ -22,8 +22,7 @@ public:
     virtual ~Vector() {}
 
     Vector(const string& name)
-            : Variable(name, VariableType::VECTOR)
-    {}
+            : Variable(name, VariableType::VECTOR) {}
 
     virtual int size() const = 0;
     virtual void clear() = 0;

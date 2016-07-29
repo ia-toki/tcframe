@@ -15,8 +15,7 @@ public:
     virtual ~RunnerLogger() {}
 
     RunnerLogger(LoggerEngine* engine)
-            : BaseLogger(engine)
-    {}
+            : BaseLogger(engine) {}
 
     virtual void logSpecificationFailure(const vector<string>& messages) {
         engine_->logHeading("SPECIFICATIONS");

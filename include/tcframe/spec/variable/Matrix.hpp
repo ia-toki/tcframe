@@ -25,8 +25,7 @@ public:
     virtual ~Matrix() {}
 
     Matrix(const string& name)
-            : Variable(name, VariableType::MATRIX)
-    {}
+            : Variable(name, VariableType::MATRIX) {}
 
     virtual int rows() const = 0;
     virtual int columns(int rowIndex) const = 0;

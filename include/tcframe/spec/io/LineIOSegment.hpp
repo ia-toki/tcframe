@@ -74,8 +74,7 @@ private:
 public:
     LineIOSegmentBuilder()
             : subject_(new LineIOSegment())
-            , hasVectorWithoutSize_(false)
-    {}
+            , hasVectorWithoutSize_(false) {}
 
     LineIOSegmentBuilder& addScalarVariable(Scalar* variable) {
         checkVectorWithoutSize();

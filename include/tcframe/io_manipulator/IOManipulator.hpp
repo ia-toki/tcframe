@@ -24,8 +24,7 @@ public:
     virtual ~IOManipulator() {}
 
     IOManipulator(const IOFormat& ioFormat)
-            : ioFormat_(ioFormat)
-    {}
+            : ioFormat_(ioFormat) {}
 
     virtual void printInput(ostream* out) {
         print(ioFormat_.inputFormat(), out);

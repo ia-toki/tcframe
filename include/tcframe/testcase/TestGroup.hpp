@@ -19,8 +19,7 @@ private:
 public:
     TestGroup(int id, const vector<TestCase>& testCases)
             : id_(id)
-            , testCases_(testCases)
-    {}
+            , testCases_(testCases) {}
 
     int id() const {
         return id_;

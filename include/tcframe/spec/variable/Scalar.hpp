@@ -22,8 +22,7 @@ public:
     virtual ~Scalar() {}
 
     Scalar(const string& name)
-            : Variable(name, VariableType::SCALAR)
-    {}
+            : Variable(name, VariableType::SCALAR) {}
 
     virtual void printTo(ostream* out) = 0;
     virtual void parseFrom(istream* in) = 0;
