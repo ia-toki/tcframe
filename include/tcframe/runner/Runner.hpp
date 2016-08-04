@@ -9,6 +9,7 @@
 #include "tcframe/generator.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/spec.hpp"
+#include "tcframe/submitter.hpp"
 #include "tcframe/testcase.hpp"
 #include "tcframe/util.hpp"
 #include "tcframe/verifier.hpp"
@@ -28,6 +29,7 @@ private:
 
     RunnerLoggerFactory* loggerFactory_;
     GeneratorFactory* generatorFactory_;
+    SubmitterFactory* submitterFactory_;
 
 public:
     Runner(BaseTestSpec<TProblemSpec>* testSpec)
@@ -35,7 +37,8 @@ public:
             , loggerEngine_(new SimpleLoggerEngine())
             , os_(new UnixOperatingSystem())
             , loggerFactory_(new RunnerLoggerFactory())
-            , generatorFactory_(new GeneratorFactory()) {}
+            , generatorFactory_(new GeneratorFactory())
+            , submitterFactory_(new SubmitterFactory()) {}
 
     /* Visible for testing. */
     Runner(
@@ -43,12 +46,14 @@ public:
             LoggerEngine* loggerEngine,
             OperatingSystem* os,
             RunnerLoggerFactory* runnerLoggerFactory,
-            GeneratorFactory* generatorFactory)
+            GeneratorFactory* generatorFactory,
+            SubmitterFactory* submitterFactory)
             : testSpec_(testSpec)
             , loggerEngine_(loggerEngine)
             , os_(os)
             , loggerFactory_(runnerLoggerFactory)
-            , generatorFactory_(generatorFactory) {}
+            , generatorFactory_(generatorFactory)
+            , submitterFactory_(submitterFactory) {}
 
     int run(int argc, char* argv[]) {
         auto logger = loggerFactory_->create(loggerEngine_);
@@ -56,7 +61,12 @@ public:
         try {
             Args args = parseArgs(argc, argv);
             CoreSpec coreSpec = buildCoreSpec(logger);
-            return generate(args, coreSpec) ? 0 : 1;
+
+            if (args.command() == Args::Command::GEN) {
+                return generate(args, coreSpec);
+            } else {
+                return submit(args, coreSpec);
+            }
         } catch (...) {
             return 1;
         }
@@ -81,7 +91,7 @@ private:
         }
     }
 
-    bool generate(const Args& args, const CoreSpec& coreSpec) {
+    int generate(const Args& args, const CoreSpec& coreSpec) {
         const ProblemConfig& problemConfig = coreSpec.problemConfig();
 
         GeneratorConfig config = GeneratorConfigBuilder()
@@ -103,7 +113,37 @@ private:
                 config.slug(),
                 optional<IOManipulator*>(ioManipulator));
 
-        return generator->generate(testSuite, config);
+        return generator->generate(testSuite, config) ? 0 : 1;
+    }
+
+    int submit(const Args& args, const CoreSpec& coreSpec) {
+        const ProblemConfig& problemConfig = coreSpec.problemConfig();
+
+        SubmitterConfig config = SubmitterConfigBuilder()
+                .setHasMultipleTestCasesCount(problemConfig.multipleTestCasesCount())
+                .setSlug(args.slug().value_or(problemConfig.slug().value_or(DefaultValues::slug())))
+                .setSolutionCommand(args.solution().value_or(DefaultValues::solutionCommand()))
+                .setTestCasesDir(args.tcDir().value_or(DefaultValues::testCasesDir()))
+                .build();
+
+        auto logger = new SubmitterLogger(loggerEngine_);
+        auto evaluator = new BatchEvaluator(os_, logger);
+        auto scorer = new DiffScorer(os_, logger);
+        auto testCaseSubmitter = new TestCaseSubmitter(evaluator, scorer, logger);
+        auto submitter = submitterFactory_->create(testCaseSubmitter, logger);
+
+        auto testSuite = TestSuiteProvider::provide(
+                coreSpec.rawTestSuite(),
+                config.slug(),
+                optional<IOManipulator*>());
+
+        set<int> subtaskIds;
+        for (const Subtask& subtask : coreSpec.constraintSuite().constraints()) {
+            subtaskIds.insert(subtask.id());
+        }
+
+        submitter->submit(testSuite, subtaskIds, config);
+        return 0;
     }
 };
 

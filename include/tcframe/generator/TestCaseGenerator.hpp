@@ -89,7 +89,7 @@ private:
 
     void generateOutput(const string& inputFilename, const string& outputFilename, const string& solutionCommand) {
         ExecutionResult result = os_->execute(solutionCommand, inputFilename, outputFilename, "_error.out");
-        if (result.exitStatus() != 0) {
+        if (result.info().exitStatus() != 0) {
             throw GenerationException([=] {logger_->logSolutionExecutionFailure(result);});
         }
         ioManipulator_->parseOutput(result.outputStream());

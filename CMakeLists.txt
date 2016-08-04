@@ -59,6 +59,7 @@ set(SOURCE_FILES
     include/tcframe/logger/LoggerEngine.hpp
     include/tcframe/logger/SimpleLoggerEngine.hpp
     include/tcframe/os.hpp
+    include/tcframe/os/ExecutionInfo.hpp
     include/tcframe/os/ExecutionResult.hpp
     include/tcframe/os/OperatingSystem.hpp
     include/tcframe/os/UnixOperatingSystem.hpp
@@ -100,6 +101,16 @@ set(SOURCE_FILES
     include/tcframe/spec/variable/Variable.hpp
     include/tcframe/spec/variable/Vector.hpp
     include/tcframe/spec/variable/WhitespaceManipulator.hpp
+    include/tcframe/submitter.hpp
+    include/tcframe/submitter/BatchEvaluator.hpp
+    include/tcframe/submitter/DiffScorer.hpp
+    include/tcframe/submitter/Evaluator.hpp
+    include/tcframe/submitter/Scorer.hpp
+    include/tcframe/submitter/Submitter.hpp
+    include/tcframe/submitter/SubmitterConfig.hpp
+    include/tcframe/submitter/SubmitterLogger.hpp
+    include/tcframe/submitter/TestCaseSubmitter.hpp
+    include/tcframe/submitter/Verdict.hpp
     include/tcframe/testcase.hpp
     include/tcframe/testcase/TestCase.hpp
     include/tcframe/testcase/TestCaseIdCreator.hpp
@@ -150,6 +161,16 @@ set(SOURCE_FILES
     test/tcframe/spec/variable/VariableTests.cpp
     test/tcframe/spec/variable/VectorTests.cpp
     test/tcframe/spec/variable/WhitespaceManipulatorTests.cpp
+    test/tcframe/submitter/BatchEvaluatorTests.cpp
+    test/tcframe/submitter/DiffScorerTests.cpp
+    test/tcframe/submitter/MockEvaluator.hpp
+    test/tcframe/submitter/MockScorer.hpp
+    test/tcframe/submitter/MockSubmitter.hpp
+    test/tcframe/submitter/MockSubmitterLogger.hpp
+    test/tcframe/submitter/MockTestCaseSubmitter.hpp
+    test/tcframe/submitter/SubmitterLoggerTests.cpp
+    test/tcframe/submitter/SubmitterTests.cpp
+    test/tcframe/submitter/TestCaseSubmitterTests.cpp
     test/tcframe/testcase/TestCaseIdCreatorTests.cpp
     test/tcframe/testcase/TestSuiteProviderTests.cpp
     test/tcframe/util/OptionalTests.cpp

@@ -13,7 +13,8 @@ struct Args {
 
 public:
     enum class Command {
-        GEN
+        GEN,
+        SUBMIT
     };
 
 private:

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdio>
+#include <cstring>
 #include <getopt.h>
 #include <stdexcept>
 #include <string>
@@ -25,6 +26,11 @@ public:
 
         Args args;
         args.command_ = Args::Command::GEN;
+        if (argc >= 2 && strcmp(argv[1], "submit") == 0) {
+            args.command_ = Args::Command::SUBMIT;
+            argc--;
+            argv++;
+        }
 
         optind = 1;
         opterr = 0;

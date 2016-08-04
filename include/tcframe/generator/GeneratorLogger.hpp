@@ -2,16 +2,13 @@
 
 #include <cstring>
 #include <iostream>
-#include <streambuf>
 #include <string>
 #include <vector>
 
 #include "tcframe/logger.hpp"
-#include "tcframe/os.hpp"
 #include "tcframe/util.hpp"
 #include "tcframe/verifier.hpp"
 
-using std::istreambuf_iterator;
 using std::string;
 using std::vector;
 
@@ -89,17 +86,6 @@ public:
 
         for (const string& unsatisfiedConstraintDescription : result.unsatisfiedConstraintDescriptions()) {
             engine_->logListItem2(3, unsatisfiedConstraintDescription);
-        }
-    }
-
-    virtual void logSolutionExecutionFailure(const ExecutionResult& result) {
-        engine_->logListItem1(2, "Execution of solution failed:");
-        if (result.exitStatus() <= 128) {
-            engine_->logListItem2(3, "Exit code: " + StringUtils::toString(result.exitStatus()));
-            engine_->logListItem2(3, "Standard error: "
-                    + string(istreambuf_iterator<char>(*result.errorStream()), istreambuf_iterator<char>()));
-        } else {
-            engine_->logListItem2(3, string(strsignal(result.exitStatus() - 128)));
         }
     }
 

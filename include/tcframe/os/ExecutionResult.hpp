@@ -3,6 +3,8 @@
 #include <istream>
 #include <tuple>
 
+#include "ExecutionInfo.hpp"
+
 using std::istream;
 using std::tie;
 
@@ -10,19 +12,19 @@ namespace tcframe {
 
 struct ExecutionResult {
 private:
-    int exitStatus_;
+    ExecutionInfo info_;
     istream* outputStream_;
     istream* errorStream_;
 
 public:
-    ExecutionResult(int exitStatus, istream *outputStream, istream *errorStream)
-            : exitStatus_(exitStatus)
+    ExecutionResult(ExecutionInfo info, istream* outputStream, istream* errorStream)
+            : info_(info)
             , outputStream_(outputStream)
             , errorStream_(errorStream)
     {}
 
-    int exitStatus() const {
-        return exitStatus_;
+    ExecutionInfo info() const {
+        return info_;
     }
 
     istream* outputStream() const {
@@ -34,7 +36,7 @@ public:
     }
 
     bool operator==(const ExecutionResult& o) const {
-        return tie(exitStatus_) == tie(o.exitStatus_);
+        return tie(info_) == tie(o.info_);
     }
 };
 
