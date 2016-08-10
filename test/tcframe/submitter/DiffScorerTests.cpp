@@ -10,6 +10,7 @@
 using ::testing::_;
 using ::testing::Eq;
 using ::testing::InSequence;
+using ::testing::Property;
 using ::testing::StartsWith;
 using ::testing::Return;
 using ::testing::Test;
@@ -34,18 +35,21 @@ protected:
 };
 
 TEST_F(DiffScorerTests, Scoring_AC) {
-    ON_CALL(os, execute(StartsWith("diff --brief"), _, _, _))
-            .WillByDefault(Return(ExecutionResult(ExecutionInfo(0), new istringstream(), new istringstream())));
+    ON_CALL(os, execute(Property(&ExecutionRequest::command, StartsWith("diff --brief"))))
+            .WillByDefault(Return(ExecutionResult(
+                    ExecutionInfoBuilder().setExitCode(0).build(), new istringstream(), new istringstream())));
 
     EXPECT_CALL(logger, logTestCaseVerdict(Verdict::ac()));
     EXPECT_THAT(scorer.score(testCase, config), Eq(Verdict::ac()));
 }
 
 TEST_F(DiffScorerTests, Scoring_WA) {
-    ON_CALL(os, execute(StartsWith("diff --brief"), _, _, _))
-            .WillByDefault(Return(ExecutionResult(ExecutionInfo(1), new istringstream(), new istringstream())));
-    ON_CALL(os, execute(StartsWith("diff --unchanged"), _, _, _))
-            .WillByDefault(Return(ExecutionResult(ExecutionInfo(0), new istringstream("diff"), new istringstream())));
+    ON_CALL(os, execute(Property(&ExecutionRequest::command, StartsWith("diff --brief"))))
+            .WillByDefault(Return(ExecutionResult(
+                    ExecutionInfoBuilder().setExitCode(1).build(), new istringstream(), new istringstream())));
+    ON_CALL(os, execute(Property(&ExecutionRequest::command, StartsWith("diff --unchanged"))))
+            .WillByDefault(Return(ExecutionResult(
+                    ExecutionInfoBuilder().setExitCode(0).build(), new istringstream("diff"), new istringstream())));
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseVerdict(Verdict::wa()));

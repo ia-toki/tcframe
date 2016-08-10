@@ -18,6 +18,8 @@ struct ProblemConfig {
 private:
     optional<int*> multipleTestCasesCount_;
     optional<string> slug_;
+    optional<int> timeLimit_;
+    optional<int> memoryLimit_;
 
 public:
     const optional<int*>& multipleTestCasesCount() const {
@@ -26,6 +28,14 @@ public:
 
     const optional<string>& slug() const {
         return slug_;
+    }
+
+    const optional<int>& timeLimit() const {
+        return timeLimit_;
+    }
+
+    const optional<int>& memoryLimit() const {
+        return memoryLimit_;
     }
 
     bool operator==(const ProblemConfig& o) const {
@@ -47,6 +57,16 @@ public:
 
     ProblemConfigBuilder& setSlug(string slug) {
         subject_.slug_ = optional<string>(slug);
+        return *this;
+    }
+
+    ProblemConfigBuilder& setTimeLimit(int timeLimit) {
+        subject_.timeLimit_ = optional<int>(timeLimit);
+        return *this;
+    }
+
+    ProblemConfigBuilder& setMemoryLimit(int memoryLimit) {
+        subject_.memoryLimit_ = optional<int>(memoryLimit);
         return *this;
     }
 

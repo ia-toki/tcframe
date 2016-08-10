@@ -23,14 +23,28 @@ public:
     optional<Verdict> evaluate(const TestCase& testCase, const SubmitterConfig& config) {
         string inputFilename = config.testCasesDir() + "/" + testCase.id() + ".in";
 
-        ExecutionResult result = os_->execute(
-                config.solutionCommand(),
-                inputFilename,
-                "_evaluation.out",
-                "_error.out");
+        ExecutionRequestBuilder request = ExecutionRequestBuilder()
+                .setCommand(config.solutionCommand())
+                .setInputFilename(inputFilename)
+                .setOutputFilename("_evaluation.out")
+                .setErrorFilename("_error.out");
 
-        if (result.info().exitStatus() == 0) {
+        if (config.timeLimit()) {
+            request.setTimeLimit(config.timeLimit().value());
+        }
+        if (config.memoryLimit()) {
+            request.setMemoryLimit(config.memoryLimit().value());
+        }
+
+        ExecutionResult result = os_->execute(request.build());
+
+        if (result.info().isSuccessful()) {
             return optional<Verdict>();
+        }
+
+        if (result.info().exceededCpuLimits()) {
+            logger_->logTestCaseVerdict(Verdict::tle());
+            return optional<Verdict>(Verdict::tle());
         }
 
         logger_->logTestCaseVerdict(Verdict::rte());

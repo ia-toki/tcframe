@@ -12,8 +12,10 @@
 using std::ostringstream;
 
 using ::testing::_;
+using ::testing::AllOf;
 using ::testing::Eq;
 using ::testing::InSequence;
+using ::testing::Property;
 using ::testing::Return;
 using ::testing::Test;
 using ::testing::Throw;
@@ -41,7 +43,8 @@ protected:
             .setTestCasesDir("dir")
             .build();
     ostream* out = new ostringstream();
-    ExecutionResult executionResult = ExecutionResult(0, new istringstream(), new istringstream());
+    ExecutionInfo executionInfo = ExecutionInfoBuilder().setExitCode(0).build();
+    ExecutionResult executionResult = ExecutionResult(executionInfo, new istringstream(), new istringstream());
 
     TestCaseGenerator generator = TestCaseGenerator(&verifier, &ioManipulator, &os, &logger);
 
@@ -52,7 +55,7 @@ protected:
                 .WillByDefault(Return(ConstraintsVerificationResult::validResult()));
         ON_CALL(os, openForWriting(_))
                 .WillByDefault(Return(out));
-        ON_CALL(os, execute(_, _, _, _))
+        ON_CALL(os, execute(_))
                 .WillByDefault(Return(executionResult));
     }
 };
@@ -65,7 +68,10 @@ TEST_F(TestCaseGeneratorTests, Generation_Successful) {
         EXPECT_CALL(os, openForWriting("dir/foo_1.in"));
         EXPECT_CALL(ioManipulator, printInput(out));
         EXPECT_CALL(os, closeOpenedWritingStream(out));
-        EXPECT_CALL(os, execute("python Sol.py", "dir/foo_1.in", "dir/foo_1.out", _));
+        EXPECT_CALL(os, execute(AllOf(
+                Property(&ExecutionRequest::command, "python Sol.py"),
+                Property(&ExecutionRequest::inputFilename, optional<string>("dir/foo_1.in")),
+                Property(&ExecutionRequest::outputFilename, optional<string>("dir/foo_1.out")))));
         EXPECT_CALL(ioManipulator, parseOutput(executionResult.outputStream()));
         EXPECT_CALL(logger, logTestCaseSuccessfulResult());
     }

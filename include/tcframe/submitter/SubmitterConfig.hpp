@@ -4,6 +4,7 @@
 #include <utility>
 
 #include "tcframe/spec/core.hpp"
+#include "tcframe/util.hpp"
 
 using std::move;
 using std::string;
@@ -18,6 +19,9 @@ private:
     string slug_;
     string solutionCommand_;
     string testCasesDir_;
+    optional<int> timeLimit_;
+    optional<int> memoryLimit_;
+
 public:
     bool hasMultipleTestCasesCount() const {
         return hasMultipleTestCasesCount_;
@@ -35,9 +39,18 @@ public:
         return testCasesDir_;
     }
 
+    const optional<int>& timeLimit() const {
+        return timeLimit_;
+    }
+
+    const optional<int>& memoryLimit() const {
+        return memoryLimit_;
+    }
+
     bool operator==(const SubmitterConfig& o) const {
-        return tie(hasMultipleTestCasesCount_, slug_, solutionCommand_, testCasesDir_) ==
-               tie(o.hasMultipleTestCasesCount_, o.slug_, o.solutionCommand_, o.testCasesDir_);
+        return tie(hasMultipleTestCasesCount_, slug_, solutionCommand_, testCasesDir_, timeLimit_, memoryLimit_) ==
+                tie(o.hasMultipleTestCasesCount_,o.slug_, o.solutionCommand_, o.testCasesDir_, o.timeLimit_,
+                    o.memoryLimit_);
     }
 };
 
@@ -72,6 +85,16 @@ public:
 
     SubmitterConfigBuilder& setTestCasesDir(string testCasesDir) {
         subject_.testCasesDir_ = testCasesDir;
+        return *this;
+    }
+
+    SubmitterConfigBuilder& setTimeLimit(int timeLimit) {
+        subject_.timeLimit_ = optional<int>(timeLimit);
+        return *this;
+    }
+
+    SubmitterConfigBuilder& setMemoryLimit(int memoryLimit) {
+        subject_.memoryLimit_ = optional<int>(memoryLimit);
         return *this;
     }
 

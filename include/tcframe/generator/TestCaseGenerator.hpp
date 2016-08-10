@@ -88,8 +88,13 @@ private:
     }
 
     void generateOutput(const string& inputFilename, const string& outputFilename, const string& solutionCommand) {
-        ExecutionResult result = os_->execute(solutionCommand, inputFilename, outputFilename, "_error.out");
-        if (result.info().exitStatus() != 0) {
+        ExecutionResult result = os_->execute(ExecutionRequestBuilder()
+                .setCommand(solutionCommand)
+                .setInputFilename(inputFilename)
+                .setOutputFilename(outputFilename)
+                .setErrorFilename("_error.out")
+                .build());
+        if (!result.info().isSuccessful()) {
             throw GenerationException([=] {logger_->logSolutionExecutionFailure(result);});
         }
         ioManipulator_->parseOutput(result.outputStream());

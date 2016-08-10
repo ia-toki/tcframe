@@ -27,9 +27,9 @@ public:
         string outputFilename = config.testCasesDir() + "/" + testCase.id() + ".out";
 
         string briefDiffCommand = "diff --brief _evaluation.out " + outputFilename;
-        ExecutionResult briefResult = os_->execute(briefDiffCommand, "", "", "");
+        ExecutionResult briefResult = os_->execute(ExecutionRequestBuilder().setCommand(briefDiffCommand).build());
 
-        if (briefResult.info().exitStatus() == 0) {
+        if (briefResult.info().isSuccessful()) {
             logger_->logTestCaseVerdict(Verdict::ac());
             return Verdict::ac();
         }
@@ -43,7 +43,10 @@ public:
                  "--new-line-format='(received) [line %.2dn]    %L' " +
                  outputFilename + " _evaluation.out";
         string scoringCommand = diffCommand + " | head -n 10";
-        ExecutionResult result = os_->execute(scoringCommand, "", "_diff.out", "");
+        ExecutionResult result = os_->execute(ExecutionRequestBuilder()
+                .setCommand(scoringCommand)
+                .setOutputFilename("_diff.out")
+                .build());
 
         string diff = string(istreambuf_iterator<char>(*result.outputStream()), istreambuf_iterator<char>());
         logger_->logDiffFailure(diff);

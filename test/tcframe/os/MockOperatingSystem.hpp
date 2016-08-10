@@ -13,11 +13,7 @@ public:
     MOCK_METHOD1(closeOpenedWritingStream, void(ostream*));
     MOCK_METHOD1(forceMakeDir, void(const string&));
     MOCK_METHOD1(removeFile, void(const string&));
-    MOCK_METHOD4(execute, ExecutionResult(
-            const string&,
-            const string&,
-            const string&,
-            const string&));
+    MOCK_METHOD1(execute, ExecutionResult(const ExecutionRequest&));
     MOCK_METHOD2(combineMultipleTestCases, void(const string&, int));
 };
 

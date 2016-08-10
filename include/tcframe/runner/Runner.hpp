@@ -117,14 +117,26 @@ private:
     }
 
     int submit(const Args& args, const CoreSpec& coreSpec) {
-        const ProblemConfig& problemConfig = coreSpec.problemConfig();
+        const ProblemConfig &problemConfig = coreSpec.problemConfig();
 
-        SubmitterConfig config = SubmitterConfigBuilder()
+        SubmitterConfigBuilder configBuilder = SubmitterConfigBuilder()
                 .setHasMultipleTestCasesCount(problemConfig.multipleTestCasesCount())
                 .setSlug(args.slug().value_or(problemConfig.slug().value_or(DefaultValues::slug())))
                 .setSolutionCommand(args.solution().value_or(DefaultValues::solutionCommand()))
-                .setTestCasesDir(args.tcDir().value_or(DefaultValues::testCasesDir()))
-                .build();
+                .setTestCasesDir(args.tcDir().value_or(DefaultValues::testCasesDir()));
+
+        if (args.timeLimit()) {
+            configBuilder.setTimeLimit(args.timeLimit().value());
+        } else if (problemConfig.timeLimit()) {
+            configBuilder.setTimeLimit(problemConfig.timeLimit().value());
+        }
+        if (args.memoryLimit()) {
+            configBuilder.setMemoryLimit(args.memoryLimit().value());
+        } else if (problemConfig.memoryLimit()) {
+            configBuilder.setMemoryLimit(problemConfig.memoryLimit().value());
+        }
+
+        SubmitterConfig config = configBuilder.build();
 
         auto logger = new SubmitterLogger(loggerEngine_);
         auto evaluator = new BatchEvaluator(os_, logger);

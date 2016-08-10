@@ -27,6 +27,8 @@ protected:
     protected:
         void Config() {
             setSlug("foo");
+            setTimeLimit(3);
+            setMemoryLimit(128);
         }
     };
 
@@ -124,21 +126,23 @@ TEST_F(RunnerTests, Run_Generation_UseArgsOptions) {
             .setTestCasesDir("testdata")
             .build()));
 
-    runner.run(5, new char*[5]{
+    runner.run(5, new char*[6]{
             (char*) "./runner",
             (char*) "--seed=42",
             (char*) "--slug=bar",
             (char*) "--solution=\"java Solution\"",
-            (char*) "--tc-dir=testdata"});
+            (char*) "--tc-dir=testdata",
+            nullptr});
 }
 
 TEST_F(RunnerTests, Run_Submission) {
     Runner<ProblemSpec> runner(new TestSpec(), loggerEngine, &os, &loggerFactory, &generatorFactory, &submitterFactory);
     EXPECT_CALL(submitter, submit(_, _, _));
 
-    int exitStatus = runner.run(2, new char*[2]{
+    int exitStatus = runner.run(2, new char*[3]{
             (char*) "./runner",
-            (char*) "submit"});
+            (char*) "submit",
+            nullptr});
 
     EXPECT_THAT(exitStatus, Eq(0));
 }
@@ -151,9 +155,10 @@ TEST_F(RunnerTests, Run_Submission_UseDefaultOptions) {
             .setTestCasesDir("tc")
             .build()));
 
-    runner.run(2, new char*[2]{
+    runner.run(2, new char*[3]{
             (char*) "./runner",
-            (char*) "submit"});
+            (char*) "submit",
+            nullptr});
 }
 
 TEST_F(RunnerTests, Run_Submission_UseSuppliedOptions) {
@@ -163,11 +168,14 @@ TEST_F(RunnerTests, Run_Submission_UseSuppliedOptions) {
             .setSlug("foo")
             .setSolutionCommand("./solution")
             .setTestCasesDir("tc")
+            .setTimeLimit(3)
+            .setMemoryLimit(128)
             .build()));
 
-    runner.run(2, new char*[2]{
+    runner.run(2, new char*[3]{
             (char*) "./runner",
-            (char*) "submit"});
+            (char*) "submit",
+            nullptr});
 }
 
 TEST_F(RunnerTests, Run_Submission_UseArgsOptions) {
@@ -177,14 +185,19 @@ TEST_F(RunnerTests, Run_Submission_UseArgsOptions) {
             .setSlug("bar")
             .setSolutionCommand("\"java Solution\"")
             .setTestCasesDir("testdata")
+            .setTimeLimit(4)
+            .setMemoryLimit(256)
             .build()));
 
-    runner.run(5, new char*[5]{
+    runner.run(7, new char*[8]{
             (char*) "./runner",
             (char*) "submit",
             (char*) "--slug=bar",
             (char*) "--solution=\"java Solution\"",
-            (char*) "--tc-dir=testdata"});
+            (char*) "--tc-dir=testdata",
+            (char*) "--time-limit=4",
+            (char*) "--memory-limit=256",
+            nullptr});
 }
 
 }

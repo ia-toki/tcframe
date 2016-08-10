@@ -16,13 +16,18 @@ TEST_F(ArgsParserTests, Parsing_AllOptions) {
             (char*) "--slug=foo",
             (char*) "--solution=python Sol.py",
             (char*) "--tc-dir=my/testdata",
-            (char*) "--seed=42"};
-    int argc = sizeof(argv) / sizeof(char*);
+            (char*) "--time-limit=3",
+            (char*) "--memory-limit=128",
+            (char*) "--seed=42",
+            nullptr};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     Args args = ArgsParser::parse(argc, argv);
     EXPECT_THAT(args.slug(), Eq(optional<string>("foo")));
     EXPECT_THAT(args.solution(), Eq(optional<string>("python Sol.py")));
     EXPECT_THAT(args.tcDir(), Eq(optional<string>("my/testdata")));
+    EXPECT_THAT(args.timeLimit(), Eq(optional<int>(3)));
+    EXPECT_THAT(args.memoryLimit(), Eq(optional<int>(128)));
     EXPECT_THAT(args.seed(), Eq(optional<unsigned>(42)));
 }
 
@@ -31,8 +36,9 @@ TEST_F(ArgsParserTests, Parsing_SomeOptions) {
             (char*) "./runner",
             (char*) "--slug=foo",
             (char*) "--tc-dir=my/testdata",
-            (char*) "--seed=42"};
-    int argc = sizeof(argv) / sizeof(char*);
+            (char*) "--seed=42",
+            nullptr};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     Args args = ArgsParser::parse(argc, argv);
     EXPECT_THAT(args.slug(), Eq(optional<string>("foo")));
@@ -44,8 +50,9 @@ TEST_F(ArgsParserTests, Parsing_SomeOptions) {
 TEST_F(ArgsParserTests, Parsing_MissingOptionArgument) {
     char* argv[] = {
             (char*) "./runner",
-            (char*) "--slug"};
-    int argc = sizeof(argv) / sizeof(char*);
+            (char*) "--slug",
+            nullptr};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     try {
         ArgsParser::parse(argc, argv);
@@ -58,8 +65,9 @@ TEST_F(ArgsParserTests, Parsing_MissingOptionArgument) {
 TEST_F(ArgsParserTests, Parsing_InvalidOption) {
     char* argv[] = {
             (char*) "./runner",
-            (char*) "--blah"};
-    int argc = sizeof(argv) / sizeof(char*);
+            (char*) "--blah",
+            nullptr};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     try {
         ArgsParser::parse(argc, argv);

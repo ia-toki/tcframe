@@ -22,6 +22,8 @@ private:
     optional<string> slug_;
     optional<string> solution_;
     optional<string> tcDir_;
+    optional<int> timeLimit_;
+    optional<int> memoryLimit_;
     optional<unsigned> seed_;
 
 public:
@@ -39,6 +41,14 @@ public:
 
     const optional<string>& tcDir() const {
         return tcDir_;
+    }
+
+    const optional<int>& timeLimit() const {
+        return timeLimit_;
+    }
+
+    const optional<int>& memoryLimit() const {
+        return memoryLimit_;
     }
 
     const optional<unsigned>& seed() const {

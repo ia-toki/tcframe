@@ -34,6 +34,10 @@ public:
         return Verdict("RTE", "Runtime Error", 2);
     }
 
+    static Verdict tle() {
+        return Verdict("TLE", "Time Limit Exceeded", 3);
+    }
+
     const string& code() const {
         return code_;
     }

@@ -8,8 +8,10 @@
 #include "tcframe/submitter/BatchEvaluator.hpp"
 
 using ::testing::_;
+using ::testing::AllOf;
 using ::testing::Eq;
 using ::testing::InSequence;
+using ::testing::Property;
 using ::testing::Return;
 using ::testing::Test;
 
@@ -28,20 +30,30 @@ protected:
             .setSlug("foo")
             .setSolutionCommand("python Sol.py")
             .setTestCasesDir("dir")
+            .setTimeLimit(3)
+            .setMemoryLimit(128)
             .build();
 
     BatchEvaluator evaluator = BatchEvaluator(&os, &logger);
 };
 
 TEST_F(BatchEvaluatorTests, Evaluation_OK) {
-    ON_CALL(os, execute("python Sol.py", "dir/foo_1.in", _, _))
-            .WillByDefault(Return(ExecutionResult(ExecutionInfo(0), new istringstream(), new istringstream())));
+    ON_CALL(os, execute(AllOf(
+            Property(&ExecutionRequest::command, "python Sol.py"),
+            Property(&ExecutionRequest::inputFilename, optional<string>("dir/foo_1.in")),
+            Property(&ExecutionRequest::timeLimit, optional<int>(3)),
+            Property(&ExecutionRequest::memoryLimit, optional<int>(128)))))
+            .WillByDefault(Return(ExecutionResult(
+                    ExecutionInfoBuilder().setExitCode(0).build(), new istringstream(), new istringstream())));
     EXPECT_THAT(evaluator.evaluate(testCase, config), Eq(optional<Verdict>()));
 }
 
 TEST_F(BatchEvaluatorTests, Evaluation_RTE) {
-    ON_CALL(os, execute("python Sol.py", "dir/foo_1.in", _, _))
-            .WillByDefault(Return(ExecutionResult(ExecutionInfo(1), new istringstream(), new istringstream())));
+    ON_CALL(os, execute(AllOf(
+            Property(&ExecutionRequest::command, "python Sol.py"),
+            Property(&ExecutionRequest::inputFilename, optional<string>("dir/foo_1.in")))))
+            .WillByDefault(Return(ExecutionResult(
+                    ExecutionInfoBuilder().setExitCode(1).build(), new istringstream(), new istringstream())));
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseVerdict(Verdict::rte()));

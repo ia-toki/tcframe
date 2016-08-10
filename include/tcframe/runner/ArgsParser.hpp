@@ -18,10 +18,12 @@ class ArgsParser {
 public:
     static Args parse(int argc, char* argv[]) {
         option longopts[] = {
-                { "seed",       required_argument, nullptr, 'a'},
-                { "slug",       required_argument, nullptr, 'b'},
-                { "solution",   required_argument, nullptr, 'c'},
-                { "tc-dir",     required_argument, nullptr, 'd'},
+                { "memory-limit",   required_argument, nullptr, 'a'},
+                { "seed",           required_argument, nullptr, 'b'},
+                { "slug",           required_argument, nullptr, 'c'},
+                { "solution",       required_argument, nullptr, 'd'},
+                { "tc-dir",         required_argument, nullptr, 'e'},
+                { "time-limit",     required_argument, nullptr, 'f'},
                 { 0, 0, 0, 0 }};
 
         Args args;
@@ -36,21 +38,31 @@ public:
         opterr = 0;
 
         int c;
+        int memoryLimit;
         unsigned seed;
+        int timeLimit;
         while ((c = getopt_long_only(argc, argv, ":", longopts, nullptr)) != -1) {
             switch (c) {
                 case 'a':
+                    sscanf(optarg, "%d", &memoryLimit);
+                    args.memoryLimit_ = optional<int>(memoryLimit);
+                    break;
+                case 'b':
                     sscanf(optarg, "%u", &seed);
                     args.seed_ = optional<unsigned>(seed);
                     break;
-                case 'b':
+                case 'c':
                     args.slug_ = optional<string>(optarg);
                     break;
-                case 'c':
+                case 'd':
                     args.solution_ = optional<string>(optarg);
                     break;
-                case 'd':
+                case 'e':
                     args.tcDir_ = optional<string>(optarg);
+                    break;
+                case 'f':
+                    sscanf(optarg, "%d", &timeLimit);
+                    args.timeLimit_ = optional<int>(timeLimit);
                     break;
                 case ':':
                     throw runtime_error("tcframe: option " + string(argv[optind - 1]) + " requires an argument");

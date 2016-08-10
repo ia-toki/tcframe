@@ -1,9 +1,11 @@
 #pragma once
 
+#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <sys/wait.h>
 
 #include "ExecutionResult.hpp"
 #include "OperatingSystem.hpp"
@@ -45,49 +47,67 @@ public:
         runCommand("rm -rf " + filename);
     }
 
-    ExecutionResult execute(
-            const string& command,
-            const string& inputFilename,
-            const string& outputFilename,
-            const string& errorFilename) {
-
+    ExecutionResult execute(const ExecutionRequest& request) {
         ostringstream sout;
 
-        sout << "{ " << command << "; }";
+        sout << "{ ";
 
-        if (!inputFilename.empty()) {
-            sout << " < " << inputFilename;
+        if (request.timeLimit()) {
+            sout << "ulimit -S -t " << request.timeLimit().value() << "; ";
         }
-        if (outputFilename.empty()) {
+
+        // Note: this has no effect on OS X. No known workaround unfortunately.
+        if (request.memoryLimit()) {
+            sout << "ulimit -S -v " << request.memoryLimit().value() * 1024 << "; ";
+        }
+
+        sout << request.command() << "; }";
+
+        if (request.inputFilename()) {
+            sout << " < " << request.inputFilename().value();
+        }
+        if (request.outputFilename()) {
+            sout << " > " << request.outputFilename().value();
+        } else {
             sout << " > /dev/null";
-        } else {
-            sout << " > " << outputFilename;
         }
-        if (errorFilename.empty()) {
-            sout << " 2> /dev/null";
+        if (request.errorFilename()) {
+            sout << " 2> " << request.errorFilename().value();
         } else {
-            sout << " 2> " << errorFilename;
+            sout << " 2> /dev/null";
         }
 
-        int exitCode = system(sout.str().c_str());
-        int exitStatus = WEXITSTATUS(exitCode);
+        ExecutionInfoBuilder info;
+
+        int exitValue = system(sout.str().c_str());
+        int exitStatus = WEXITSTATUS(exitValue);
+
+        if (WIFSIGNALED(exitStatus)) {
+            int signal = WTERMSIG(exitStatus);
+            info.setExitSignal(strsignal(signal));
+            if (signal == SIGXCPU) {
+                info.setExceededCpuLimits(true);
+            }
+        } else {
+            info.setExitCode(exitStatus);
+        }
 
         istream* outputStream;
         istream* errorStream;
 
-        if (outputFilename.empty()) {
+        if (request.outputFilename()) {
+            outputStream = openForReading(request.outputFilename().value());
+        } else {
             outputStream = new istringstream();
-        } else {
-            outputStream = openForReading(outputFilename);
         }
 
-        if (errorFilename.empty()) {
+        if (request.errorFilename()) {
+            errorStream = openForReadingAsStringStream(request.errorFilename().value());
+        } else {
             errorStream = new istringstream();
-        } else {
-            errorStream = openForReadingAsStringStream(errorFilename);
         }
 
-        return ExecutionResult(exitStatus, outputStream, errorStream);
+        return ExecutionResult(info.build(), outputStream, errorStream);
     }
 
     void combineMultipleTestCases(const string& testCaseBaseFilename, int testCasesCount) {
