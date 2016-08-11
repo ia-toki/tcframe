@@ -97,7 +97,7 @@ public:
         return *this;
     }
 
-    RawTestSuiteBuilder& setSubtaskIds(const set<int>& subtaskIds) {
+    RawTestSuiteBuilder& Subtasks(const set<int> &subtaskIds) {
         currentSubtaskIds_ = subtaskIds;
 
         return *this;

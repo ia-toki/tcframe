@@ -21,7 +21,7 @@ protected:
         vector<vector<int>> M;
 
         void Config() {
-            setSlug("ab");
+            Slug("ab");
         }
 
         void InputFormat() {
@@ -56,8 +56,8 @@ protected:
         int T;
 
         void Config() {
-            setSlug("ab");
-            setMultipleTestCasesCount(T);
+            Slug("ab");
+            MultipleTestCasesCount(T);
         }
 
         void InputFormat() {}

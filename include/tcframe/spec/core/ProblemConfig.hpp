@@ -50,22 +50,22 @@ private:
 public:
     virtual ~ProblemConfigBuilder() {}
 
-    ProblemConfigBuilder& setMultipleTestCasesCount(int& var) {
+    ProblemConfigBuilder& MultipleTestCasesCount(int &var) {
         subject_.multipleTestCasesCount_ = optional<int*>(&var);
         return *this;
     }
 
-    ProblemConfigBuilder& setSlug(string slug) {
+    ProblemConfigBuilder& Slug(string slug) {
         subject_.slug_ = optional<string>(slug);
         return *this;
     }
 
-    ProblemConfigBuilder& setTimeLimit(int timeLimit) {
+    ProblemConfigBuilder& TimeLimit(int timeLimit) {
         subject_.timeLimit_ = optional<int>(timeLimit);
         return *this;
     }
 
-    ProblemConfigBuilder& setMemoryLimit(int memoryLimit) {
+    ProblemConfigBuilder& MemoryLimit(int memoryLimit) {
         subject_.memoryLimit_ = optional<int>(memoryLimit);
         return *this;
     }

@@ -26,9 +26,9 @@ protected:
     class ProblemSpecWithConfig : public ProblemSpec {
     protected:
         void Config() {
-            setSlug("foo");
-            setTimeLimit(3);
-            setMemoryLimit(128);
+            Slug("foo");
+            TimeLimit(3);
+            MemoryLimit(128);
         }
     };
 

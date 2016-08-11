@@ -49,7 +49,7 @@ protected:
         }
 
         void TestGroup1() {
-            assignToSubtasks({1, 2});
+            Subtasks({1, 2});
 
             addOfficialTestCase(OfficialTestCase([=] {A = 1, B = 2;}, "A = 1, B = 2"));
             addOfficialTestCase(OfficialTestCase([=] {A = 3, B = 4;}, "A = 3, B = 4"));
@@ -57,7 +57,7 @@ protected:
         }
 
         void TestGroup2() {
-            assignToSubtasks({2});
+            Subtasks({2});
 
             addOfficialTestCase(OfficialTestCase([=] {A = 101, B = 201;}, "A = 101, B = 201"));
             addOfficialTestCase(OfficialTestCase([=] {A = 301, B = 401;}, "A = 301, B = 401"));

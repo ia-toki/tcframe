@@ -73,11 +73,11 @@ TEST_F(TestSuiteProviderTests, Provide_WithGroups) {
             .addSampleTestCase(stc1, {1, 2})
             .addSampleTestCase(stc2, {1})
             .newTestGroup()
-            .setSubtaskIds({1})
+            .Subtasks({1})
             .addOfficialTestCase(tc1)
             .addOfficialTestCase(tc2)
             .newTestGroup()
-            .setSubtaskIds({1, 2})
+            .Subtasks({1, 2})
             .addOfficialTestCase(tc3)
             .build();
 

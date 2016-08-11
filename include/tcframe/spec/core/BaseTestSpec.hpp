@@ -107,10 +107,6 @@ protected:
     virtual void TestGroup23() {throw NotImplementedException();}
     virtual void TestGroup24() {throw NotImplementedException();}
     virtual void TestGroup25() {throw NotImplementedException();}
-
-    void assignToSubtasks(const set<int>& subtaskIds) {
-        RawTestSuiteBuilder::setSubtaskIds(subtaskIds);
-    }
 };
 
 }
