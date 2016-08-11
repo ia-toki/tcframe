@@ -31,6 +31,12 @@ protected:
             .build();
 };
 
+TEST_F(LineIOSegmentManipulatorTests, Parsing_EmptyLine) {
+    istringstream in("\n");
+
+    LineIOSegmentManipulator::parse(LineIOSegmentBuilder().build(), &in);
+}
+
 TEST_F(LineIOSegmentManipulatorTests, Parsing_Successful) {
     istringstream in("42 123 1 2\n");
 
@@ -92,6 +98,13 @@ TEST_F(LineIOSegmentManipulatorTests, Parsing_WithVectorWithoutSize_Failed_Missi
     } catch (runtime_error& e) {
         EXPECT_THAT(e.what(), StrEq("Expected: <space> or <newline> after 'D[2]'"));
     }
+}
+
+TEST_F(LineIOSegmentManipulatorTests, Printing_EmptyLine) {
+    ostringstream out;
+
+    LineIOSegmentManipulator::print(LineIOSegmentBuilder().build(), &out);
+    EXPECT_THAT(out.str(), Eq("\n"));
 }
 
 TEST_F(LineIOSegmentManipulatorTests, Printing_Successful) {

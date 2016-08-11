@@ -17,6 +17,7 @@ using std::vector;
 #define CONS(predicate) addConstraint(Constraint([=] {return predicate;}, #predicate))
 #define CASE(...) addOfficialTestCase(OfficialTestCase([=] {__VA_ARGS__;}, #__VA_ARGS__))
 #define SAMPLE_CASE(...) addSampleTestCase(__VA_ARGS__)
+#define EMPTY_LINE() MagicLineIOSegmentBuilder(newLineIOSegment(), "")
 #define LINE(...) MagicLineIOSegmentBuilder(newLineIOSegment(), #__VA_ARGS__), __VA_ARGS__
 #define LINES(...) (MagicLinesIOSegmentBuilder(newLinesIOSegment(), #__VA_ARGS__), __VA_ARGS__)
 #define GRID(...) (MagicGridIOSegmentBuilder(newGridIOSegment(), #__VA_ARGS__), __VA_ARGS__)

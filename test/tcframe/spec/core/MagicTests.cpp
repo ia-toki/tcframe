@@ -68,6 +68,7 @@ protected:
     public:
         void testValid() {
             LINE(A);
+            EMPTY_LINE();
             LINE(A, B);
             LINE(A, B, C % SIZE(3), D);
         }
@@ -177,6 +178,7 @@ TEST_F(MagicTests, LINE_Valid) {
     builder.prepareForInputFormat();
     builder.newLineIOSegment()
             .addScalarVariable(Scalar::create(dummy, "A"));
+    builder.newLineIOSegment();
     builder.newLineIOSegment()
             .addScalarVariable(Scalar::create(dummy, "A"))
             .addScalarVariable(Scalar::create(dummy, "B"));
