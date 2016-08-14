@@ -121,15 +121,14 @@ TEST_F(RunnerTests, Run_Generation_UseArgsOptions) {
             new TestSpecWithConfig(), loggerEngine, &os, &loggerFactory, &generatorFactory, &submitterFactory);
     EXPECT_CALL(generator, generate(_, GeneratorConfigBuilder()
             .setSeed(42)
-            .setSlug("bar")
+            .setSlug("foo")
             .setSolutionCommand("\"java Solution\"")
             .setTestCasesDir("testdata")
             .build()));
 
-    runner.run(5, new char*[6]{
+    runner.run(4, new char*[5]{
             (char*) "./runner",
             (char*) "--seed=42",
-            (char*) "--slug=bar",
             (char*) "--solution=\"java Solution\"",
             (char*) "--tc-dir=testdata",
             nullptr});
@@ -182,17 +181,16 @@ TEST_F(RunnerTests, Run_Submission_UseArgsOptions) {
     Runner<ProblemSpecWithConfig> runner(
             new TestSpecWithConfig(), loggerEngine, &os, &loggerFactory, &generatorFactory, &submitterFactory);
     EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder()
-            .setSlug("bar")
+            .setSlug("foo")
             .setSolutionCommand("\"java Solution\"")
             .setTestCasesDir("testdata")
             .setTimeLimit(4)
             .setMemoryLimit(256)
             .build()));
 
-    runner.run(7, new char*[8]{
+    runner.run(6, new char*[7]{
             (char*) "./runner",
             (char*) "submit",
-            (char*) "--slug=bar",
             (char*) "--solution=\"java Solution\"",
             (char*) "--tc-dir=testdata",
             (char*) "--time-limit=4",

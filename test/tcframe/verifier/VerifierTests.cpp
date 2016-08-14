@@ -17,24 +17,19 @@ bool b5;
 
 class VerifierTests : public Test {
 protected:
-    Constraint constraint1 = Constraint([=]{return b1;}, "1 <= A && A <= 10");
-    Constraint constraint2 = Constraint([=]{return b2;}, "1 <= B && B <= 10");
-    Constraint constraint3 = Constraint([=]{return b3;}, "1 <= C && C <= 10");
-    Constraint constraint4 = Constraint([=]{return b4;}, "1 <= D && D <= 10");
-    Constraint constraint5 = Constraint([=]{return b5;}, "1 <= E && E <= 10");
     ConstraintSuite constraintSuite = ConstraintSuiteBuilder()
-            .addConstraint(constraint1)
-            .addConstraint(constraint2)
+            .addConstraint([=]{return b1;}, "1 <= A && A <= 10")
+            .addConstraint([=]{return b2;}, "1 <= B && B <= 10")
             .build();
     ConstraintSuite constraintSuiteWithSubtasks = ConstraintSuiteBuilder()
             .newSubtask()
-            .addConstraint(constraint1)
-            .addConstraint(constraint2)
+            .addConstraint([=]{return b1;}, "1 <= A && A <= 10")
+            .addConstraint([=]{return b2;}, "1 <= B && B <= 10")
             .newSubtask()
-            .addConstraint(constraint3)
-            .addConstraint(constraint4)
+            .addConstraint([=]{return b3;}, "1 <= C && C <= 10")
+            .addConstraint([=]{return b4;}, "1 <= D && D <= 10")
             .newSubtask()
-            .addConstraint(constraint5)
+            .addConstraint([=]{return b5;}, "1 <= E && E <= 10")
             .build();
 
     Verifier verifier = Verifier(constraintSuite);
@@ -64,7 +59,7 @@ TEST_F(VerifierTests, Verification_Invalid_SomeConstraintsInvalid) {
     EXPECT_FALSE(result.isValid());
     EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), IsEmpty());
     EXPECT_THAT(result.unsatisfiedConstraintDescriptionsBySubtaskId(), ElementsAre(
-            Pair(-1, ElementsAre(constraint2.description()))));
+            Pair(-1, ElementsAre("1 <= B && B <= 10"))));
 }
 
 TEST_F(VerifierTests, Verification_WithSubtasks_Valid_AllConstraintsValid) {
@@ -91,7 +86,7 @@ TEST_F(VerifierTests, Verification_WithSubtasks_Invalid_SomeConstraintsInvalid) 
     EXPECT_FALSE(result.isValid());
     EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), ElementsAre(1));
     EXPECT_THAT(result.unsatisfiedConstraintDescriptionsBySubtaskId(), ElementsAre(
-            Pair(2, ElementsAre(constraint4.description()))));
+            Pair(2, ElementsAre("1 <= D && D <= 10"))));
 }
 
 }

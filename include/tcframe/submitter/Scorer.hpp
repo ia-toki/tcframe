@@ -2,7 +2,6 @@
 
 #include "SubmitterConfig.hpp"
 #include "Verdict.hpp"
-#include "tcframe/testcase.hpp"
 
 namespace tcframe {
 

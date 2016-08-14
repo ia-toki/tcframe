@@ -36,8 +36,8 @@ protected:
         }
 
         void TestCases() {
-            addOfficialTestCase(OfficialTestCase([=] {A = 1, B = 2;}, "A = 1, B = 2"));
-            addOfficialTestCase(OfficialTestCase([=] {A = 3, B = 4;}, "A = 3, B = 4"));
+            addOfficialTestCase([=] {A = 1, B = 2;}, "A = 1, B = 2");
+            addOfficialTestCase([=] {A = 3, B = 4;}, "A = 3, B = 4");
         }
     };
 
@@ -51,16 +51,16 @@ protected:
         void TestGroup1() {
             Subtasks({1, 2});
 
-            addOfficialTestCase(OfficialTestCase([=] {A = 1, B = 2;}, "A = 1, B = 2"));
-            addOfficialTestCase(OfficialTestCase([=] {A = 3, B = 4;}, "A = 3, B = 4"));
-            addOfficialTestCase(OfficialTestCase([=] {A = 5, B = 6;}, "A = 5, B = 6"));
+            addOfficialTestCase([=] {A = 1, B = 2;}, "A = 1, B = 2");
+            addOfficialTestCase([=] {A = 3, B = 4;}, "A = 3, B = 4");
+            addOfficialTestCase([=] {A = 5, B = 6;}, "A = 5, B = 6");
         }
 
         void TestGroup2() {
             Subtasks({2});
 
-            addOfficialTestCase(OfficialTestCase([=] {A = 101, B = 201;}, "A = 101, B = 201"));
-            addOfficialTestCase(OfficialTestCase([=] {A = 301, B = 401;}, "A = 301, B = 401"));
+            addOfficialTestCase([=] {A = 101, B = 201;}, "A = 101, B = 201");
+            addOfficialTestCase([=] {A = 301, B = 401;}, "A = 301, B = 401");
         }
     };
 
@@ -68,38 +68,35 @@ protected:
     class TestSpecWithRandom : public TestSpec {
     protected:
         void TestCases() {
-            addOfficialTestCase(OfficialTestCase([=] {A = rnd.nextInt(1, 100);}, "A = rnd.nextInt(1, 100)"));
+            addOfficialTestCase([=] {A = rnd.nextInt(1, 100);}, "A = rnd.nextInt(1, 100)");
         }
     };
 
-    TestSpec spec;
     TestSpecWithTestCases specWithTestCases;
     TestSpecWithTestGroups specWithTestGroups;
 };
 
 TEST_F(BaseTestSpecTests, InputFinalizer) {
-    RawTestSuite rawTestSuite = spec.buildRawTestSuite();
-    function<void()> inputFinalizer = rawTestSuite.inputFinalizer();
+    TestSuite testSuite = specWithTestCases.buildTestSuite("foo");
+    OfficialTestCaseData* data = (OfficialTestCaseData*) testSuite.testGroups()[1].testCases()[1].data();
 
-    spec.A = 3;
-    inputFinalizer();
-
-    EXPECT_THAT(spec.A, Eq(3 * 2));
+    data->closure()();
+    EXPECT_THAT(specWithTestCases.A, Eq(3 * 2));
 }
 
 TEST_F(BaseTestSpecTests, RawTestSuite) {
-    RawTestSuite rawTestSuite = specWithTestCases.buildRawTestSuite();
-    EXPECT_THAT(rawTestSuite.sampleTests(), SizeIs(2));
-    EXPECT_THAT(rawTestSuite.officialTests(), ElementsAre(
-            AllOf(Property(&OfficialTestGroup::id, -1), Property(&OfficialTestGroup::officialTestCases, SizeIs(2)))));
+    TestSuite testSuite = specWithTestCases.buildTestSuite("foo");
+    EXPECT_THAT(testSuite.testGroups(), ElementsAre(
+            AllOf(Property(&TestGroup::id, 0), Property(&TestGroup::testCases, SizeIs(2))),
+            AllOf(Property(&TestGroup::id, -1), Property(&TestGroup::testCases, SizeIs(2)))));
 }
 
 TEST_F(BaseTestSpecTests, TestSuite_WithGroups) {
-    RawTestSuite rawTestSuite = specWithTestGroups.buildRawTestSuite();
-    EXPECT_THAT(rawTestSuite.sampleTests(), SizeIs(2));
-    EXPECT_THAT(rawTestSuite.officialTests(), ElementsAre(
-            AllOf(Property(&OfficialTestGroup::id, 1), Property(&OfficialTestGroup::officialTestCases, SizeIs(3))),
-            AllOf(Property(&OfficialTestGroup::id, 2), Property(&OfficialTestGroup::officialTestCases, SizeIs(2)))));
+    TestSuite testSuite = specWithTestGroups.buildTestSuite("foo");
+    EXPECT_THAT(testSuite.testGroups(), ElementsAre(
+            AllOf(Property(&TestGroup::id, 0), Property(&TestGroup::testCases, SizeIs(2))),
+            AllOf(Property(&TestGroup::id, 1), Property(&TestGroup::testCases, SizeIs(3))),
+            AllOf(Property(&TestGroup::id, 2), Property(&TestGroup::testCases, SizeIs(2)))));
 }
 
 }

@@ -40,9 +40,11 @@ public:
         engine_->logParagraph(0, "OK");
     }
 
-    virtual void logTestCaseFailedResult(const string& testCaseDescription) {
+    virtual void logTestCaseFailedResult(const optional<string>& testCaseDescription) {
         engine_->logParagraph(0, "FAILED");
-        engine_->logParagraph(2, "Description: " + testCaseDescription);
+        if (testCaseDescription) {
+            engine_->logParagraph(2, "Description: " + testCaseDescription.value());
+        }
         engine_->logParagraph(2, "Reasons:");
     }
 

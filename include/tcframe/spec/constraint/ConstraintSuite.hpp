@@ -69,9 +69,9 @@ public:
         return *this;
     }
 
-    ConstraintSuiteBuilder& addConstraint(Constraint constraint) {
+    ConstraintSuiteBuilder& addConstraint(function<bool()> predicate, string description) {
         if (isInMultipleTestCasesConstraints_) {
-            subject_.multipleTestCasesConstraints_.push_back(constraint);
+            subject_.multipleTestCasesConstraints_.push_back(Constraint(predicate, description));
             return *this;
         }
 
@@ -80,7 +80,7 @@ public:
             currentSubtaskId_ = -1;
         }
 
-        currentConstraints.push_back(constraint);
+        currentConstraints.push_back(Constraint(predicate, description));
 
         return *this;
     }

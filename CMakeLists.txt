@@ -90,11 +90,14 @@ set(SOURCE_FILES
     include/tcframe/spec/io/LinesIOSegment.hpp
     include/tcframe/spec/random.hpp
     include/tcframe/spec/random/Random.hpp
-    include/tcframe/spec/raw_testcase.hpp
-    include/tcframe/spec/raw_testcase/OfficialTestCase.hpp
-    include/tcframe/spec/raw_testcase/OfficialTestGroup.hpp
-    include/tcframe/spec/raw_testcase/RawTestSuite.hpp
-    include/tcframe/spec/raw_testcase/SampleTestCase.hpp
+    include/tcframe/spec/testcase.hpp
+    include/tcframe/spec/testcase/OfficialTestCaseData.hpp
+    include/tcframe/spec/testcase/SampleTestCaseData.hpp
+    include/tcframe/spec/testcase/TestCase.hpp
+    include/tcframe/spec/testcase/TestCaseData.hpp
+    include/tcframe/spec/testcase/TestCaseIdCreator.hpp
+    include/tcframe/spec/testcase/TestGroup.hpp
+    include/tcframe/spec/testcase/TestSuite.hpp
     include/tcframe/spec/variable.hpp
     include/tcframe/spec/variable/Scalar.hpp
     include/tcframe/spec/variable/Matrix.hpp
@@ -112,11 +115,6 @@ set(SOURCE_FILES
     include/tcframe/submitter/SubmitterLogger.hpp
     include/tcframe/submitter/TestCaseSubmitter.hpp
     include/tcframe/submitter/Verdict.hpp
-    include/tcframe/testcase.hpp
-    include/tcframe/testcase/TestCase.hpp
-    include/tcframe/testcase/TestCaseIdCreator.hpp
-    include/tcframe/testcase/TestGroup.hpp
-    include/tcframe/testcase/TestSuite.hpp
     include/tcframe/util.hpp
     include/tcframe/util/NotImplementedException.hpp
     include/tcframe/util/StringUtils.hpp
@@ -154,7 +152,8 @@ set(SOURCE_FILES
     test/tcframe/spec/io/LineIOSegmentBuilderTests.cpp
     test/tcframe/spec/io/LinesIOSegmentBuilderTests.cpp
     test/tcframe/spec/random/RandomTests.cpp
-    test/tcframe/spec/raw_testcase/RawTestSuiteBuilderTests.cpp
+    test/tcframe/spec/testcase/TestCaseIdCreatorTests.cpp
+    test/tcframe/spec/testcase/TestSuiteBuilderTests.cpp
     test/tcframe/spec/variable/FakeVariable.hpp
     test/tcframe/spec/variable/MatrixTests.cpp
     test/tcframe/spec/variable/ScalarTests.cpp
@@ -172,10 +171,9 @@ set(SOURCE_FILES
     test/tcframe/submitter/SubmitterLoggerTests.cpp
     test/tcframe/submitter/SubmitterTests.cpp
     test/tcframe/submitter/TestCaseSubmitterTests.cpp
-    test/tcframe/testcase/TestCaseIdCreatorTests.cpp
-    test/tcframe/testcase/TestSuiteProviderTests.cpp
     test/tcframe/util/OptionalTests.cpp
     test/tcframe/util/StringUtilsTests.cpp
+    test/tcframe/util/TestUtils.hpp
     test/tcframe/verifier/MockVerifier.hpp
     test/tcframe/verifier/VerifierTests.cpp
 

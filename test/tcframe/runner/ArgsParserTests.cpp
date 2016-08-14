@@ -13,7 +13,6 @@ class ArgsParserTests : public Test {};
 TEST_F(ArgsParserTests, Parsing_AllOptions) {
     char* argv[] = {
             (char*) "./runner",
-            (char*) "--slug=foo",
             (char*) "--solution=python Sol.py",
             (char*) "--tc-dir=my/testdata",
             (char*) "--time-limit=3",
@@ -23,7 +22,6 @@ TEST_F(ArgsParserTests, Parsing_AllOptions) {
     int argc = sizeof(argv) / sizeof(char*) - 1;
 
     Args args = ArgsParser::parse(argc, argv);
-    EXPECT_THAT(args.slug(), Eq(optional<string>("foo")));
     EXPECT_THAT(args.solution(), Eq(optional<string>("python Sol.py")));
     EXPECT_THAT(args.tcDir(), Eq(optional<string>("my/testdata")));
     EXPECT_THAT(args.timeLimit(), Eq(optional<int>(3)));
@@ -34,14 +32,12 @@ TEST_F(ArgsParserTests, Parsing_AllOptions) {
 TEST_F(ArgsParserTests, Parsing_SomeOptions) {
     char* argv[] = {
             (char*) "./runner",
-            (char*) "--slug=foo",
             (char*) "--tc-dir=my/testdata",
             (char*) "--seed=42",
             nullptr};
     int argc = sizeof(argv) / sizeof(char*) - 1;
 
     Args args = ArgsParser::parse(argc, argv);
-    EXPECT_THAT(args.slug(), Eq(optional<string>("foo")));
     EXPECT_THAT(args.solution(), Eq(optional<string>()));
     EXPECT_THAT(args.tcDir(), Eq(optional<string>("my/testdata")));
     EXPECT_THAT(args.seed(), Eq(optional<unsigned>(42)));
@@ -50,7 +46,7 @@ TEST_F(ArgsParserTests, Parsing_SomeOptions) {
 TEST_F(ArgsParserTests, Parsing_MissingOptionArgument) {
     char* argv[] = {
             (char*) "./runner",
-            (char*) "--slug",
+            (char*) "--seed",
             nullptr};
     int argc = sizeof(argv) / sizeof(char*) - 1;
 
@@ -58,7 +54,7 @@ TEST_F(ArgsParserTests, Parsing_MissingOptionArgument) {
         ArgsParser::parse(argc, argv);
         FAIL();
     } catch (runtime_error& e) {
-        EXPECT_THAT(e.what(), StrEq("tcframe: option --slug requires an argument"));
+        EXPECT_THAT(e.what(), StrEq("tcframe: option --seed requires an argument"));
     }
 }
 

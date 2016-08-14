@@ -1,6 +1,7 @@
 #include "gmock/gmock.h"
 #include "../mock.hpp"
 
+#include "../util/TestUtils.hpp"
 #include "MockTestCaseSubmitter.hpp"
 #include "MockSubmitterLogger.hpp"
 #include "tcframe/submitter/Submitter.hpp"
@@ -22,13 +23,13 @@ protected:
     Mock(TestCaseSubmitter) testCaseSubmitter;
     Mock(SubmitterLogger) logger;
 
-    TestCase stc1 = TestCaseBuilder().setId("foo_sample_1").setSubtaskIds({1, 2}).build();
-    TestCase stc2 = TestCaseBuilder().setId("foo_sample_2").setSubtaskIds({2}).build();
-    TestCase tc1 = TestCaseBuilder().setId("foo_1_1").setSubtaskIds({1, 2}).build();
-    TestCase tc2 = TestCaseBuilder().setId("foo_2_1").setSubtaskIds({2}).build();
-    TestCase tc3 = TestCaseBuilder().setId("foo_3_1").setSubtaskIds({3, 4}).build();
-    TestCase tc4 = TestCaseBuilder().setId("foo_4_1").setSubtaskIds({4}).build();
-    TestCase tc5 = TestCaseBuilder().setId("foo_4_2").setSubtaskIds({4}).build();
+    TestCase stc1 = TestUtils::createFakeTestCase("foo_sample_1", {1, 2});
+    TestCase stc2 = TestUtils::createFakeTestCase("foo_sample_2", {2});
+    TestCase tc1 = TestUtils::createFakeTestCase("foo_1_1", {1, 2});
+    TestCase tc2 = TestUtils::createFakeTestCase("foo_2_1", {2});
+    TestCase tc3 = TestUtils::createFakeTestCase("foo_3_1", {3, 4});
+    TestCase tc4 = TestUtils::createFakeTestCase("foo_4_1", {4});
+    TestCase tc5 = TestUtils::createFakeTestCase("foo_4_2", {4});
 
     set<int> subtaskIds = {1, 2, 3, 4};
 
@@ -97,19 +98,19 @@ TEST_F(SubmitterTests, Submission_MultipleTestCases) {
         EXPECT_CALL(logger, logIntroduction());
         EXPECT_CALL(logger, logTestGroupIntroduction(0));
         EXPECT_CALL(testCaseSubmitter, submit(
-                TestCaseBuilder().setId("foo_sample").setSubtaskIds({1, 2}).build(), multipleTestCasesConfig));
+                TestUtils::createFakeTestCase("foo_sample", {1, 2}), multipleTestCasesConfig));
         EXPECT_CALL(logger, logTestGroupIntroduction(1));
         EXPECT_CALL(testCaseSubmitter, submit(
-                TestCaseBuilder().setId("foo_1").setSubtaskIds({1, 2}).build(), multipleTestCasesConfig));
+                TestUtils::createFakeTestCase("foo_1", {1, 2}), multipleTestCasesConfig));
         EXPECT_CALL(logger, logTestGroupIntroduction(2));
         EXPECT_CALL(testCaseSubmitter, submit(
-                TestCaseBuilder().setId("foo_2").setSubtaskIds({2}).build(), multipleTestCasesConfig));
+                TestUtils::createFakeTestCase("foo_2", {2}), multipleTestCasesConfig));
         EXPECT_CALL(logger, logTestGroupIntroduction(3));
         EXPECT_CALL(testCaseSubmitter, submit(
-                TestCaseBuilder().setId("foo_3").setSubtaskIds({3, 4}).build(), multipleTestCasesConfig));
+                TestUtils::createFakeTestCase("foo_3", {3, 4}), multipleTestCasesConfig));
         EXPECT_CALL(logger, logTestGroupIntroduction(4));
         EXPECT_CALL(testCaseSubmitter, submit(
-                TestCaseBuilder().setId("foo_4").setSubtaskIds({4}).build(), multipleTestCasesConfig));
+                TestUtils::createFakeTestCase("foo_4", {4}), multipleTestCasesConfig));
 
         EXPECT_CALL(logger, logResult(map<int, Verdict>{
                 {1, Verdict::ac()},

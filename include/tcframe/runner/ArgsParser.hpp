@@ -20,10 +20,9 @@ public:
         option longopts[] = {
                 { "memory-limit",   required_argument, nullptr, 'a'},
                 { "seed",           required_argument, nullptr, 'b'},
-                { "slug",           required_argument, nullptr, 'c'},
-                { "solution",       required_argument, nullptr, 'd'},
-                { "tc-dir",         required_argument, nullptr, 'e'},
-                { "time-limit",     required_argument, nullptr, 'f'},
+                { "solution",       required_argument, nullptr, 'c'},
+                { "tc-dir",         required_argument, nullptr, 'd'},
+                { "time-limit",     required_argument, nullptr, 'e'},
                 { 0, 0, 0, 0 }};
 
         Args args;
@@ -52,15 +51,12 @@ public:
                     args.seed_ = optional<unsigned>(seed);
                     break;
                 case 'c':
-                    args.slug_ = optional<string>(optarg);
-                    break;
-                case 'd':
                     args.solution_ = optional<string>(optarg);
                     break;
-                case 'e':
+                case 'd':
                     args.tcDir_ = optional<string>(optarg);
                     break;
-                case 'f':
+                case 'e':
                     sscanf(optarg, "%d", &timeLimit);
                     args.timeLimit_ = optional<int>(timeLimit);
                     break;

@@ -22,8 +22,6 @@ using ::testing::Throw;
 
 namespace tcframe {
 
-bool applied;
-
 class TestCaseGeneratorTests : public Test {
 protected:
     Mock(Verifier) verifier;
@@ -31,26 +29,31 @@ protected:
     Mock(OperatingSystem) os;
     Mock(GeneratorLogger) logger;
 
-    TestCase testCase = TestCaseBuilder()
+    static int N;
+
+    TestCase sampleTestCase = TestCaseBuilder()
+            .setId("foo_sample_1")
+            .setSubtaskIds({1, 2})
+            .setData(new SampleTestCaseData("42\n"))
+            .build();
+    TestCase officialTestCase = TestCaseBuilder()
             .setId("foo_1")
             .setDescription("N = 42")
             .setSubtaskIds({1, 2})
-            .setApplier([&] {applied = true;})
+            .setData(new OfficialTestCaseData([&]{N = 42;}))
             .build();
     GeneratorConfig config = GeneratorConfigBuilder()
             .setSlug("foo")
             .setSolutionCommand("python Sol.py")
             .setTestCasesDir("dir")
             .build();
-    ostream* out = new ostringstream();
+    ostringstream* out = new ostringstream();
     ExecutionInfo executionInfo = ExecutionInfoBuilder().setExitCode(0).build();
     ExecutionResult executionResult = ExecutionResult(executionInfo, new istringstream(), new istringstream());
 
     TestCaseGenerator generator = TestCaseGenerator(&verifier, &ioManipulator, &os, &logger);
 
     void SetUp() {
-        applied = false;
-
         ON_CALL(verifier, verifyConstraints(_))
                 .WillByDefault(Return(ConstraintsVerificationResult::validResult()));
         ON_CALL(os, openForWriting(_))
@@ -60,7 +63,27 @@ protected:
     }
 };
 
-TEST_F(TestCaseGeneratorTests, Generation_Successful) {
+int TestCaseGeneratorTests::N;
+
+TEST_F(TestCaseGeneratorTests, Generation_Successful_Sample) {
+    {
+        InSequence sequence;
+        EXPECT_CALL(logger, logTestCaseIntroduction("foo_sample_1"));
+        EXPECT_CALL(verifier, verifyConstraints(set<int>{1, 2}));
+        EXPECT_CALL(os, openForWriting("dir/foo_sample_1.in"));
+        EXPECT_CALL(os, closeOpenedWritingStream(out));
+        EXPECT_CALL(os, execute(AllOf(
+                Property(&ExecutionRequest::command, "python Sol.py"),
+                Property(&ExecutionRequest::inputFilename, optional<string>("dir/foo_sample_1.in")),
+                Property(&ExecutionRequest::outputFilename, optional<string>("dir/foo_sample_1.out")))));
+        EXPECT_CALL(ioManipulator, parseOutput(executionResult.outputStream()));
+        EXPECT_CALL(logger, logTestCaseSuccessfulResult());
+    }
+    EXPECT_TRUE(generator.generate(sampleTestCase, config));
+    EXPECT_THAT(out->str(), Eq("42\n"));
+}
+
+TEST_F(TestCaseGeneratorTests, Generation_Successful_Official) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
@@ -75,8 +98,8 @@ TEST_F(TestCaseGeneratorTests, Generation_Successful) {
         EXPECT_CALL(ioManipulator, parseOutput(executionResult.outputStream()));
         EXPECT_CALL(logger, logTestCaseSuccessfulResult());
     }
-    EXPECT_TRUE(generator.generate(testCase, config));
-    EXPECT_TRUE(applied);
+    EXPECT_TRUE(generator.generate(officialTestCase, config));
+    EXPECT_THAT(N, Eq(42));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Failed_Verification) {
@@ -85,10 +108,10 @@ TEST_F(TestCaseGeneratorTests, Generation_Failed_Verification) {
             .WillByDefault(Return(verificationResult));
     {
         InSequence sequence;
-        EXPECT_CALL(logger, logTestCaseFailedResult("N = 42"));
+        EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>("N = 42")));
         EXPECT_CALL(logger, logConstraintsVerificationFailure(verificationResult));
     }
-    EXPECT_FALSE(generator.generate(testCase, config));
+    EXPECT_FALSE(generator.generate(officialTestCase, config));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Failed_InputGeneration) {
@@ -97,10 +120,10 @@ TEST_F(TestCaseGeneratorTests, Generation_Failed_InputGeneration) {
             .WillByDefault(Throw(runtime_error(message)));
     {
         InSequence sequence;
-        EXPECT_CALL(logger, logTestCaseFailedResult("N = 42"));
+        EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>("N = 42")));
         EXPECT_CALL(logger, logSimpleFailure(message));
     }
-    EXPECT_FALSE(generator.generate(testCase, config));
+    EXPECT_FALSE(generator.generate(officialTestCase, config));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Failed_OutputGeneration) {
@@ -109,10 +132,10 @@ TEST_F(TestCaseGeneratorTests, Generation_Failed_OutputGeneration) {
             .WillByDefault(Throw(runtime_error(message)));
     {
         InSequence sequence;
-        EXPECT_CALL(logger, logTestCaseFailedResult("N = 42"));
+        EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>("N = 42")));
         EXPECT_CALL(logger, logSimpleFailure(message));
     }
-    EXPECT_FALSE(generator.generate(testCase, config));
+    EXPECT_FALSE(generator.generate(officialTestCase, config));
 }
 
 }

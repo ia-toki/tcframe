@@ -22,7 +22,7 @@ protected:
         }
     };
 
-    class CASE_Tester : public RawTestSuiteBuilder {
+    class CASE_Tester : public TestSuiteBuilder {
     protected:
         int A, B;
 
@@ -33,7 +33,7 @@ protected:
         }
     };
 
-    class SAMPLE_CASE_Tester : public RawTestSuiteBuilder {
+    class SAMPLE_CASE_Tester : public TestSuiteBuilder {
     public:
         void testValid() {
             SAMPLE_CASE({
@@ -128,28 +128,28 @@ TEST_F(MagicTests, CONS_Valid) {
     ConstraintSuite constraintSuite = tester.build();
 
     EXPECT_THAT(constraintSuite, ConstraintSuiteBuilder()
-            .addConstraint(Constraint([]{return true;}, "1 <= A && A <= 100"))
-            .addConstraint(Constraint([]{return true;}, "1 <= B && B <= 100"))
+            .addConstraint([]{return true;}, "1 <= A && A <= 100")
+            .addConstraint([]{return true;}, "1 <= B && B <= 100")
             .build());
 }
 
 TEST_F(MagicTests, CASE_Valid) {
     CASE_Tester tester;
     tester.testValid();
-    RawTestSuite rawTestSuite = tester.build();
+    TestSuite testSuite = tester.build();
 
-    EXPECT_THAT(rawTestSuite, Eq(RawTestSuiteBuilder()
-            .addOfficialTestCase(OfficialTestCase([]{}, "A = 1, B = 2"))
-            .addOfficialTestCase(OfficialTestCase([]{}, "A = 3, B = 4"))
+    EXPECT_THAT(testSuite, Eq(TestSuiteBuilder()
+            .addOfficialTestCase([]{}, "A = 1, B = 2")
+            .addOfficialTestCase([]{}, "A = 3, B = 4")
             .build()));
 }
 
 TEST_F(MagicTests, SAMPLE_CASE_Valid) {
     SAMPLE_CASE_Tester tester;
     tester.testValid();
-    RawTestSuite rawTestSuite = tester.build();
+    TestSuite testSuite = tester.build();
 
-    EXPECT_THAT(rawTestSuite, Eq(RawTestSuiteBuilder()
+    EXPECT_THAT(testSuite, Eq(TestSuiteBuilder()
               .addSampleTestCase({"10 20", "30"})
               .addSampleTestCase({"40 50", "60"})
               .build()));
@@ -158,9 +158,9 @@ TEST_F(MagicTests, SAMPLE_CASE_Valid) {
 TEST_F(MagicTests, SAMPLE_CASE_WithGroups_Valid) {
     SAMPLE_CASE_Tester tester;
     tester.testValidWithGroups();
-    RawTestSuite rawTestSuite = tester.build();
+    TestSuite testSuite = tester.build();
 
-    EXPECT_THAT(rawTestSuite, Eq(RawTestSuiteBuilder()
+    EXPECT_THAT(testSuite, Eq(TestSuiteBuilder()
             .addSampleTestCase({"10 20", "30"}, {1, 2})
             .addSampleTestCase({"40 50", "60"}, {2})
             .build()));

@@ -53,7 +53,16 @@ TEST_F(GeneratorLoggerTests, TestCaseResult_Failed) {
         EXPECT_CALL(engine, logParagraph(2, "Description: N = 1"));
         EXPECT_CALL(engine, logParagraph(2, "Reasons:"));
     }
-    logger.logTestCaseFailedResult("N = 1");
+    logger.logTestCaseFailedResult(optional<string>("N = 1"));
+}
+
+TEST_F(GeneratorLoggerTests, TestCaseResult_Failed_WithoutDescription) {
+    {
+        InSequence sequence;
+        EXPECT_CALL(engine, logParagraph(0, "FAILED"));
+        EXPECT_CALL(engine, logParagraph(2, "Reasons:"));
+    }
+    logger.logTestCaseFailedResult(optional<string>());
 }
 
 TEST_F(GeneratorLoggerTests, ConstraintsVerificationFailure) {

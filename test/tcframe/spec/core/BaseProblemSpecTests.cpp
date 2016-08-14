@@ -63,29 +63,29 @@ protected:
         void InputFormat() {}
 
         void MultipleTestCasesConstraints() {
-            addConstraint(Constraint([=] {return 1 <= T && T <= 20;}, "1 <= T && T <= 100"));
+            addConstraint([=] {return 1 <= T && T <= 20;}, "1 <= T && T <= 100");
         }
     };
 
     class ProblemSpecWithConstraints : public ProblemSpec {
     protected:
         void Constraints() {
-            addConstraint(Constraint([=] {return 1 <= A && A <= 100;}, "1 <= A && A <= 100"));
-            addConstraint(Constraint([=] {return 1 <= B && B <= 100;}, "1 <= B && B <= 100"));
+            addConstraint([=] {return 1 <= A && A <= 100;}, "1 <= A && A <= 100");
+            addConstraint([=] {return 1 <= B && B <= 100;}, "1 <= B && B <= 100");
         }
     };
 
     class ProblemSpecWithSubtasks : public ProblemSpec {
     protected:
         void Subtask1() {
-            addConstraint(Constraint([=] {return 1 <= A && A <= 100;}, "1 <= A && A <= 100"));
-            addConstraint(Constraint([=] {return 1 <= B && B <= 100;}, "1 <= B && B <= 100"));
-            addConstraint(Constraint([=] {return A != B;}, "A != B"));
+            addConstraint([=] {return 1 <= A && A <= 100;}, "1 <= A && A <= 100");
+            addConstraint([=] {return 1 <= B && B <= 100;}, "1 <= B && B <= 100");
+            addConstraint([=] {return A != B;}, "A != B");
         }
 
         void Subtask2() {
-            addConstraint(Constraint([=] {return 1 <= A && A <= 1000;}, "1 <= A && A <= 1000"));
-            addConstraint(Constraint([=] {return 1 <= B && B <= 1000;}, "1 <= B && B <= 1000"));
+            addConstraint([=] {return 1 <= A && A <= 1000;}, "1 <= A && A <= 1000");
+            addConstraint([=] {return 1 <= B && B <= 1000;}, "1 <= B && B <= 1000");
         }
     };
     

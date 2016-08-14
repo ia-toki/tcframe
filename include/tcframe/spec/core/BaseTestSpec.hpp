@@ -4,8 +4,9 @@
 #include <vector>
 
 #include "CoreSpec.hpp"
+#include "DefaultValues.hpp"
 #include "tcframe/spec/random.hpp"
-#include "tcframe/spec/raw_testcase.hpp"
+#include "tcframe/spec/testcase.hpp"
 #include "tcframe/util.hpp"
 
 using std::vector;
@@ -14,7 +15,7 @@ using std::set;
 namespace tcframe {
 
 template<typename TProblemSpec /* extends BaseProblemSpec */>
-class BaseTestSpec : public TProblemSpec, protected RawTestSuiteBuilder {
+class BaseTestSpec : public TProblemSpec, protected TestSuiteBuilder {
 private:
     vector<void(BaseTestSpec::*)()> testGroups_ = {
             &BaseTestSpec::TestGroup1,
@@ -46,34 +47,36 @@ private:
 public:
     virtual ~BaseTestSpec() {}
 
-    RawTestSuite buildRawTestSuite() {
-        RawTestSuiteBuilder::setInputFinalizer([this] {
+    TestSuite buildTestSuite(const string& slug) {
+        TestSuiteBuilder::setSlug(slug);
+        TestSuiteBuilder::setInputFinalizer([this] {
             InputFinalizer();
         });
+
         SampleTestCases();
 
         try {
             TestCases();
-            return RawTestSuiteBuilder::build();
+            return TestSuiteBuilder::build();
         } catch (NotImplementedException&) {
             for (auto testGroup : testGroups_) {
                 try {
-                    RawTestSuiteBuilder::newTestGroup();
+                    TestSuiteBuilder::newTestGroup();
                     (this->*testGroup)();
                 } catch (NotImplementedException&) {
                     break;
                 }
             }
-            return RawTestSuiteBuilder::buildWithoutLastTestGroup();
+            return TestSuiteBuilder::buildWithoutLastTestGroup();
         }
     }
 
     virtual CoreSpec buildCoreSpec() {
-        return CoreSpec(
-                TProblemSpec::buildProblemConfig(),
-                TProblemSpec::buildIOFormat(),
-                TProblemSpec::buildConstraintSuite(),
-                buildRawTestSuite());
+        ProblemConfig problemConfig = TProblemSpec::buildProblemConfig();
+        IOFormat ioFormat = TProblemSpec::buildIOFormat();
+        ConstraintSuite constraintSuite = TProblemSpec::buildConstraintSuite();
+        TestSuite testSuite = buildTestSuite(problemConfig.slug().value_or(DefaultValues::slug()));
+        return CoreSpec(problemConfig, ioFormat, constraintSuite, testSuite);
     }
 
 protected:

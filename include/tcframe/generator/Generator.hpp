@@ -9,7 +9,6 @@
 #include "GeneratorLogger.hpp"
 #include "TestCaseGenerator.hpp"
 #include "tcframe/os.hpp"
-#include "tcframe/testcase.hpp"
 #include "tcframe/verifier.hpp"
 
 using std::function;

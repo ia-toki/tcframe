@@ -1,6 +1,6 @@
 #include "gmock/gmock.h"
 
-#include "tcframe/testcase/TestCaseIdCreator.hpp"
+#include "tcframe/spec/testcase/TestCaseIdCreator.hpp"
 
 using ::testing::Eq;
 using ::testing::Test;

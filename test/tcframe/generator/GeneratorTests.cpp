@@ -3,6 +3,7 @@
 
 #include "../io_manipulator/MockIOManipulator.hpp"
 #include "../os/MockOperatingSystem.hpp"
+#include "../util/TestUtils.hpp"
 #include "../verifier/MockVerifier.hpp"
 #include "MockGeneratorLogger.hpp"
 #include "MockTestCaseGenerator.hpp"
@@ -25,11 +26,11 @@ protected:
     Mock(OperatingSystem) os;
     Mock(GeneratorLogger) logger;
 
-    TestCase stc1 = TestCaseBuilder().setId("foo_sample_1").build();
-    TestCase stc2 = TestCaseBuilder().setId("foo_sample_2").build();
-    TestCase tc1 = TestCaseBuilder().setId("foo_1_1").build();
-    TestCase tc2 = TestCaseBuilder().setId("foo_1_2").build();
-    TestCase tc3 = TestCaseBuilder().setId("foo_2_1").build();
+    TestCase stc1 = TestUtils::createFakeTestCase("foo_sample_1");
+    TestCase stc2 = TestUtils::createFakeTestCase("foo_sample_2");
+    TestCase tc1 = TestUtils::createFakeTestCase("foo_1_1");
+    TestCase tc2 = TestUtils::createFakeTestCase("foo_1_2");
+    TestCase tc3 = TestUtils::createFakeTestCase("foo_2_1");
 
     TestSuite simpleTestSuite = TestSuite({
             TestGroup(0, {stc1, stc2})});

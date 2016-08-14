@@ -3,7 +3,7 @@
 #include "ProblemConfig.hpp"
 #include "tcframe/spec/constraint.hpp"
 #include "tcframe/spec/io.hpp"
-#include "tcframe/spec/raw_testcase.hpp"
+#include "tcframe/spec/testcase.hpp"
 
 namespace tcframe {
 
@@ -12,18 +12,18 @@ private:
     ProblemConfig problemConfig_;
     IOFormat ioFormat_;
     ConstraintSuite constraintSuite_;
-    RawTestSuite rawTestSuite_;
+    TestSuite testSuite_;
 
 public:
     CoreSpec(
             const ProblemConfig& problemConfig,
             const IOFormat& ioFormat,
             const ConstraintSuite& constraintSuite,
-            const RawTestSuite& rawTestSuite)
+            const TestSuite& testSuite)
             : problemConfig_(problemConfig)
             , ioFormat_(ioFormat)
             , constraintSuite_(constraintSuite)
-            , rawTestSuite_(rawTestSuite) {}
+            , testSuite_(testSuite) {}
 
     const ProblemConfig& problemConfig() const {
         return problemConfig_;
@@ -37,8 +37,8 @@ public:
         return constraintSuite_;
     }
 
-    const RawTestSuite& rawTestSuite() const {
-        return rawTestSuite_;
+    const TestSuite& testSuite() const {
+        return testSuite_;
     }
 };
 

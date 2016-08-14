@@ -1,12 +1,12 @@
 #pragma once
 
-#include <functional>
 #include <set>
 #include <string>
 #include <tuple>
 #include <utility>
 
-using std::function;
+#include "tcframe/util.hpp"
+
 using std::move;
 using std::set;
 using std::string;
@@ -19,16 +19,16 @@ struct TestCase {
 
 private:
     string id_;
-    string description_;
+    optional<string> description_;
     set<int> subtaskIds_;
-    function<void()> applier_;
+    TestCaseData* data_;
 
 public:
     const string& id() const {
         return id_;
     }
 
-    const string& description() const {
+    const optional<string>& description() const {
         return description_;
     }
 
@@ -36,15 +36,19 @@ public:
         return subtaskIds_;
     }
 
-    const function<void()> applier() const {
-        return applier_;
+    TestCaseData* data() const {
+        return data_;
     }
 
     bool operator==(const TestCase& o) const {
-        return tie(id_, description_, subtaskIds_) == tie(o.id_, o.description_, o.subtaskIds_);
+        if (tie(id_, description_, subtaskIds_) != tie(o.id_, o.description_, o.subtaskIds_)) {
+            return false;
+        }
+        if ((data_ == nullptr) != (o.data_ == nullptr)) {
+            return false;
+        }
+        return data_ == nullptr || data_->equals(o.data_);
     }
-
-
 };
 
 class TestCaseBuilder {
@@ -67,8 +71,8 @@ public:
         return *this;
     }
 
-    TestCaseBuilder& setApplier(function<void()> applier) {
-        subject_.applier_ = applier;
+    TestCaseBuilder& setData(TestCaseData* data) {
+        subject_.data_ = data;
         return *this;
     }
 

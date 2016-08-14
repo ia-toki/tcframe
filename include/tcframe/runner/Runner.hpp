@@ -10,7 +10,6 @@
 #include "tcframe/os.hpp"
 #include "tcframe/spec.hpp"
 #include "tcframe/submitter.hpp"
-#include "tcframe/testcase.hpp"
 #include "tcframe/util.hpp"
 #include "tcframe/verifier.hpp"
 
@@ -97,7 +96,7 @@ private:
         GeneratorConfig config = GeneratorConfigBuilder()
                 .setMultipleTestCasesCount(problemConfig.multipleTestCasesCount().value_or(nullptr))
                 .setSeed(args.seed().value_or(DefaultValues::seed()))
-                .setSlug(args.slug().value_or(problemConfig.slug().value_or(DefaultValues::slug())))
+                .setSlug(problemConfig.slug().value_or(DefaultValues::slug()))
                 .setSolutionCommand(args.solution().value_or(DefaultValues::solutionCommand()))
                 .setTestCasesDir(args.tcDir().value_or(DefaultValues::testCasesDir()))
                 .build();
@@ -108,12 +107,7 @@ private:
         auto testCaseGenerator = new TestCaseGenerator(verifier, ioManipulator, os_, logger);
         auto generator = generatorFactory_->create(testCaseGenerator, verifier, os_, logger);
 
-        auto testSuite = TestSuiteProvider::provide(
-                coreSpec.rawTestSuite(),
-                config.slug(),
-                optional<IOManipulator*>(ioManipulator));
-
-        return generator->generate(testSuite, config) ? 0 : 1;
+        return generator->generate(coreSpec.testSuite(), config) ? 0 : 1;
     }
 
     int submit(const Args& args, const CoreSpec& coreSpec) {
@@ -121,7 +115,7 @@ private:
 
         SubmitterConfigBuilder configBuilder = SubmitterConfigBuilder()
                 .setHasMultipleTestCasesCount(problemConfig.multipleTestCasesCount())
-                .setSlug(args.slug().value_or(problemConfig.slug().value_or(DefaultValues::slug())))
+                .setSlug(problemConfig.slug().value_or(DefaultValues::slug()))
                 .setSolutionCommand(args.solution().value_or(DefaultValues::solutionCommand()))
                 .setTestCasesDir(args.tcDir().value_or(DefaultValues::testCasesDir()));
 
@@ -144,17 +138,12 @@ private:
         auto testCaseSubmitter = new TestCaseSubmitter(evaluator, scorer, logger);
         auto submitter = submitterFactory_->create(testCaseSubmitter, logger);
 
-        auto testSuite = TestSuiteProvider::provide(
-                coreSpec.rawTestSuite(),
-                config.slug(),
-                optional<IOManipulator*>());
-
         set<int> subtaskIds;
         for (const Subtask& subtask : coreSpec.constraintSuite().constraints()) {
             subtaskIds.insert(subtask.id());
         }
 
-        submitter->submit(testSuite, subtaskIds, config);
+        submitter->submit(coreSpec.testSuite(), subtaskIds, config);
         return 0;
     }
 };

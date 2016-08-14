@@ -19,7 +19,7 @@ public:
     MOCK_METHOD0(logSuccessfulResult, void());
     MOCK_METHOD0(logFailedResult, void());
     MOCK_METHOD0(logTestCaseSuccessfulResult, void());
-    MOCK_METHOD1(logTestCaseFailedResult, void(const string&));
+    MOCK_METHOD1(logTestCaseFailedResult, void(const optional<string>&));
     MOCK_METHOD1(logMultipleTestCasesCombinationIntroduction, void(const string&));
     MOCK_METHOD0(logMultipleTestCasesCombinationSuccessfulResult, void());
     MOCK_METHOD0(logMultipleTestCasesCombinationFailedResult, void());

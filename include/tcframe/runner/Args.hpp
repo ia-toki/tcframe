@@ -19,7 +19,6 @@ public:
 
 private:
     Command command_;
-    optional<string> slug_;
     optional<string> solution_;
     optional<string> tcDir_;
     optional<int> timeLimit_;
@@ -29,10 +28,6 @@ private:
 public:
     Command command() const {
         return command_;
-    }
-
-    const optional<string>& slug() const {
-        return slug_;
     }
 
     const optional<string>& solution() const {

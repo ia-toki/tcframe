@@ -14,8 +14,8 @@ using std::queue;
 using std::string;
 using std::vector;
 
-#define CONS(predicate) addConstraint(Constraint([=] {return predicate;}, #predicate))
-#define CASE(...) addOfficialTestCase(OfficialTestCase([=] {__VA_ARGS__;}, #__VA_ARGS__))
+#define CONS(predicate) addConstraint([=] {return predicate;}, #predicate)
+#define CASE(...) addOfficialTestCase([=] {__VA_ARGS__;}, #__VA_ARGS__)
 #define SAMPLE_CASE(...) addSampleTestCase(__VA_ARGS__)
 #define EMPTY_LINE() MagicLineIOSegmentBuilder(newLineIOSegment(), "")
 #define LINE(...) MagicLineIOSegmentBuilder(newLineIOSegment(), #__VA_ARGS__), __VA_ARGS__

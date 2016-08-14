@@ -11,7 +11,6 @@
 #include "tcframe/io_manipulator.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/spec.hpp"
-#include "tcframe/testcase.hpp"
 #include "tcframe/verifier.hpp"
 
 using std::endl;
@@ -48,10 +47,10 @@ public:
         string outputFilename = config.testCasesDir() + "/" + testCase.id() + ".out";
 
         try {
-            apply(testCase.applier());
-            verify(testCase.subtaskIds());
-            generateInput(inputFilename, config);
-            generateOutput(inputFilename, outputFilename, config.solutionCommand());
+            applyInput(testCase);
+            verifyInput(testCase);
+            generateInput(testCase, inputFilename, config);
+            generateOutput(inputFilename, outputFilename, config);
         } catch (GenerationException& e) {
             logger_->logTestCaseFailedResult(testCase.description());
             e.callback()();
@@ -67,29 +66,42 @@ public:
     }
 
 private:
-    void apply(const function<void()>& applier) {
-        applier();
+    void applyInput(const TestCase& testCase) {
+        if (testCase.data()->type() == TestCaseDataType::SAMPLE) {
+            SampleTestCaseData* data = (SampleTestCaseData*) testCase.data();
+            istringstream sin(data->content());
+            ioManipulator_->parseInput(&sin);
+        } else {
+            OfficialTestCaseData* data = (OfficialTestCaseData*) testCase.data();
+            data->closure()();
+        }
     }
 
-    void verify(const set<int>& subtaskIds) {
-        ConstraintsVerificationResult result = verifier_->verifyConstraints(subtaskIds);
+    void verifyInput(const TestCase& testCase) {
+        ConstraintsVerificationResult result = verifier_->verifyConstraints(testCase.subtaskIds());
         if (!result.isValid()) {
             throw GenerationException([=] {logger_->logConstraintsVerificationFailure(result);});
         }
     }
 
-    void generateInput(const string& inputFilename, const GeneratorConfig& config) {
+    void generateInput(const TestCase& testCase, const string& inputFilename, const GeneratorConfig& config) {
         ostream* testCaseInput = os_->openForWriting(inputFilename);
         if (config.multipleTestCasesCount() != nullptr) {
             *testCaseInput << "1" << endl;
         }
-        ioManipulator_->printInput(testCaseInput);
+
+        if (testCase.data()->type() == TestCaseDataType::SAMPLE) {
+            SampleTestCaseData* data = (SampleTestCaseData*) testCase.data();
+            *testCaseInput << data->content();
+        } else {
+            ioManipulator_->printInput(testCaseInput);
+        }
         os_->closeOpenedWritingStream(testCaseInput);
     }
 
-    void generateOutput(const string& inputFilename, const string& outputFilename, const string& solutionCommand) {
+    void generateOutput(const string& inputFilename, const string& outputFilename, const GeneratorConfig& config) {
         ExecutionResult result = os_->execute(ExecutionRequestBuilder()
-                .setCommand(solutionCommand)
+                .setCommand(config.solutionCommand())
                 .setInputFilename(inputFilename)
                 .setOutputFilename(outputFilename)
                 .setErrorFilename("_error.out")

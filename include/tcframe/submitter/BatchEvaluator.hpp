@@ -5,7 +5,6 @@
 #include "SubmitterLogger.hpp"
 #include "Verdict.hpp"
 #include "tcframe/os.hpp"
-#include "tcframe/testcase.hpp"
 #include "tcframe/util.hpp"
 
 namespace tcframe {
