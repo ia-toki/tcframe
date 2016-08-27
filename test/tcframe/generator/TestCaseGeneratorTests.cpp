@@ -23,13 +23,14 @@ using ::testing::Throw;
 namespace tcframe {
 
 class TestCaseGeneratorTests : public Test {
+public:
+    static int N;
+
 protected:
     Mock(Verifier) verifier;
     Mock(IOManipulator) ioManipulator;
     Mock(OperatingSystem) os;
     Mock(GeneratorLogger) logger;
-
-    static int N;
 
     TestCase sampleTestCase = TestCaseBuilder()
             .setId("foo_sample_1")
