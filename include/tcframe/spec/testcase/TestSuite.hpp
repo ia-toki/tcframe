@@ -105,7 +105,10 @@ public:
         return *this;
     }
 
-    TestSuiteBuilder& addOfficialTestCase(function<void()> closure, string description) {
+    TestSuiteBuilder& addOfficialTestCase(function<void()> clozure, string description) {
+        // Note: GCC will be angry at you if the parameter name is "closure".
+        // https://bugs.archlinux.org/task/35803
+
         if (subject_.testGroups_.empty()) {
             subject_.testGroups_.push_back(TestGroup(0, curTestCases_));
             curTestGroupId_ = -1;
@@ -117,7 +120,7 @@ public:
                 .setId(TestCaseIdCreator::create(slug_, curTestGroupId_, (int) curTestCases_.size() + 1))
                 .setSubtaskIds(curSubtaskIds_)
                 .setDescription(description)
-                .setData(new OfficialTestCaseData([=]{closure(); inputFinalizer_();}))
+                .setData(new OfficialTestCaseData([=]{clozure(); inputFinalizer_();}))
                 .build());
 
         return *this;
