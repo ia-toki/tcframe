@@ -4,7 +4,6 @@
 #include <set>
 #include <string>
 #include <tuple>
-#include <utility>
 #include <vector>
 
 #include "OfficialTestCaseData.hpp"
@@ -14,7 +13,6 @@
 #include "TestGroup.hpp"
 
 using std::function;
-using std::move;
 using std::set;
 using std::string;
 using std::tie;
@@ -44,21 +42,33 @@ public:
 
 class TestSuiteBuilder {
 private:
-    TestSuite subject_;
-
     string slug_;
     function<void()> inputFinalizer_;
-    int curTestGroupId_;
-    set<int> curSubtaskIds_;
-    vector<TestCase> curTestCases_;
+
+    set<int>* curSubtaskIds_;
+
+    int curOfficialTestGroupId_;
+    bool hasCurOfficialTestGroup_;
+    set<int> curOfficialSubtaskIds_;
+    vector<TestGroup> curOfficialTestGroups_;
+    vector<TestCase> curOfficialTestCases_;
+
+    bool hasCurSampleTestCase_;
+    set<int> curSampleSubtaskIds_;
+    vector<TestCase> curSampleTestCases_;
+    optional<vector<string>> curSampleInputLines_;
+    optional<vector<string>> curSampleOutputLines_;
 
 public:
     virtual ~TestSuiteBuilder() {}
 
     TestSuiteBuilder()
             : inputFinalizer_([]{})
-            , curTestGroupId_(0)
-            , curSubtaskIds_({-1}) {
+            , curSampleSubtaskIds_({-1})
+            , curOfficialSubtaskIds_({-1})
+            , curOfficialTestGroupId_(-1)
+            , hasCurOfficialTestGroup_(false)
+            , hasCurSampleTestCase_(false) {
     }
 
     TestSuiteBuilder& setSlug(string slug) {
@@ -71,37 +81,48 @@ public:
         return *this;
     }
 
-    TestSuiteBuilder& addSampleTestCase(vector<string> lines, set<int> subtaskIds) {
-        string content;
-        for (const string& line : lines) {
-            content += line + "\n";
+    TestSuiteBuilder& newSampleTestCase() {
+        if (hasCurSampleTestCase_) {
+            addCurrentSampleTestCase();
         }
 
-        curTestCases_.push_back(TestCaseBuilder()
-                .setId(TestCaseIdCreator::create(slug_, 0, (int) curTestCases_.size() + 1))
-                .setSubtaskIds(subtaskIds)
-                .setData(new SampleTestCaseData(content))
-                .build());
+        hasCurSampleTestCase_ = true;
+        curSampleSubtaskIds_ = {-1};
+        curSubtaskIds_ = &curSampleSubtaskIds_;
+        curSampleInputLines_ = optional<vector<string>>();
+        curSampleOutputLines_ = optional<vector<string>>();
 
         return *this;
     }
 
-    TestSuiteBuilder& addSampleTestCase(vector<string> lines) {
-        return addSampleTestCase(lines, {-1});
-    }
-
     TestSuiteBuilder& newTestGroup() {
-        subject_.testGroups_.push_back(TestGroup(curTestGroupId_, curTestCases_));
+        if (hasCurOfficialTestGroup_) {
+            addCurrentOfficialTestCase();
+        } else {
+            curOfficialTestGroupId_ = 0;
+        }
 
-        curTestGroupId_++;
-        curSubtaskIds_ = {-1};
-        curTestCases_.clear();
+        hasCurOfficialTestGroup_ = true;
+        curOfficialTestGroupId_++;
+        curOfficialSubtaskIds_ = {-1};
+        curSubtaskIds_ = &curOfficialSubtaskIds_;
+        curOfficialTestCases_.clear();
 
         return *this;
     }
 
     TestSuiteBuilder& Subtasks(set<int> subtaskIds) {
-        curSubtaskIds_ = subtaskIds;
+        *curSubtaskIds_ = subtaskIds;
+        return *this;
+    }
+
+    TestSuiteBuilder& Input(vector<string> lines) {
+        curSampleInputLines_ = optional<vector<string>>(lines);
+        return *this;
+    }
+
+    TestSuiteBuilder& Output(vector<string> lines) {
+        curSampleOutputLines_ = optional<vector<string>>(lines);
         return *this;
     }
 
@@ -109,16 +130,9 @@ public:
         // Note: GCC will be angry at you if the parameter name is "closure".
         // https://bugs.archlinux.org/task/35803
 
-        if (subject_.testGroups_.empty()) {
-            subject_.testGroups_.push_back(TestGroup(0, curTestCases_));
-            curTestGroupId_ = -1;
-            curSubtaskIds_ = {-1};
-            curTestCases_.clear();
-        }
-
-        curTestCases_.push_back(TestCaseBuilder()
-                .setId(TestCaseIdCreator::create(slug_, curTestGroupId_, (int) curTestCases_.size() + 1))
-                .setSubtaskIds(curSubtaskIds_)
+        curOfficialTestCases_.push_back(TestCaseBuilder()
+                .setId(TestCaseIdCreator::create(slug_, curOfficialTestGroupId_, (int) curOfficialTestCases_.size() + 1))
+                .setSubtaskIds(curOfficialSubtaskIds_)
                 .setDescription(description)
                 .setData(new OfficialTestCaseData([=]{clozure(); inputFinalizer_();}))
                 .build());
@@ -127,12 +141,57 @@ public:
     }
 
     TestSuite build() {
-        subject_.testGroups_.push_back(TestGroup(curTestGroupId_, curTestCases_));
-        return move(subject_);
+        if (hasCurSampleTestCase_ && curSampleInputLines_) {
+            addCurrentSampleTestCase();
+        }
+        if (!curOfficialTestCases_.empty()) {
+            addCurrentOfficialTestCase();
+        }
+
+        vector<TestGroup> testGroups;
+        testGroups.push_back(TestGroup(0, curSampleTestCases_));
+        for (TestGroup testGroup : curOfficialTestGroups_) {
+            testGroups.push_back(testGroup);
+        }
+
+        return TestSuite(testGroups);
     }
 
-    TestSuite buildWithoutLastTestGroup() {
-        return move(subject_);
+private:
+    TestSuiteBuilder& addCurrentSampleTestCase() {
+        if (!curSampleInputLines_) {
+            // TODO: throw exception
+        }
+
+        SampleTestCaseData* data;
+
+        string input;
+        for (const string& line : curSampleInputLines_.value()) {
+            input += line + "\n";
+        }
+
+        if (curSampleOutputLines_) {
+            string output;
+            for (const string& line : curSampleOutputLines_.value()) {
+                output += line + "\n";
+            }
+            data = new SampleTestCaseData(input, output);
+        } else {
+            data = new SampleTestCaseData(input);
+        }
+
+        curSampleTestCases_.push_back(TestCaseBuilder()
+                .setId(TestCaseIdCreator::create(slug_, 0, (int) curSampleTestCases_.size() + 1))
+                .setSubtaskIds(curSampleSubtaskIds_)
+                .setData(data)
+                .build());
+
+        return *this;
+    }
+
+    TestSuiteBuilder& addCurrentOfficialTestCase() {
+        curOfficialTestGroups_.push_back(TestGroup(curOfficialTestGroupId_, curOfficialTestCases_));
+        return *this;
     }
 };
 

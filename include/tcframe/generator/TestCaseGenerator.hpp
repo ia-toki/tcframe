@@ -50,7 +50,7 @@ public:
             applyInput(testCase);
             verifyInput(testCase);
             generateInput(testCase, inputFilename, config);
-            generateOutput(inputFilename, outputFilename, config);
+            generateAndApplyOutput(testCase, inputFilename, outputFilename, config);
         } catch (GenerationException& e) {
             logger_->logTestCaseFailedResult(testCase.description());
             e.callback()();
@@ -69,8 +69,8 @@ private:
     void applyInput(const TestCase& testCase) {
         if (testCase.data()->type() == TestCaseDataType::SAMPLE) {
             SampleTestCaseData* data = (SampleTestCaseData*) testCase.data();
-            istringstream sin(data->content());
-            ioManipulator_->parseInput(&sin);
+            istringstream input(data->input());
+            ioManipulator_->parseInput(&input);
         } else {
             OfficialTestCaseData* data = (OfficialTestCaseData*) testCase.data();
             data->closure()();
@@ -85,31 +85,53 @@ private:
     }
 
     void generateInput(const TestCase& testCase, const string& inputFilename, const GeneratorConfig& config) {
-        ostream* testCaseInput = os_->openForWriting(inputFilename);
+        ostream* input = os_->openForWriting(inputFilename);
         if (config.multipleTestCasesCount() != nullptr) {
-            *testCaseInput << "1" << endl;
+            *input << "1" << endl;
         }
 
         if (testCase.data()->type() == TestCaseDataType::SAMPLE) {
             SampleTestCaseData* data = (SampleTestCaseData*) testCase.data();
-            *testCaseInput << data->content();
+            *input << data->input();
         } else {
-            ioManipulator_->printInput(testCaseInput);
+            ioManipulator_->printInput(input);
         }
-        os_->closeOpenedWritingStream(testCaseInput);
+        os_->closeOpenedWritingStream(input);
     }
 
-    void generateOutput(const string& inputFilename, const string& outputFilename, const GeneratorConfig& config) {
-        ExecutionResult result = os_->execute(ExecutionRequestBuilder()
-                .setCommand(config.solutionCommand())
-                .setInputFilename(inputFilename)
-                .setOutputFilename(outputFilename)
-                .setErrorFilename("_error.out")
-                .build());
-        if (!result.info().isSuccessful()) {
-            throw GenerationException([=] {logger_->logSolutionExecutionFailure(result);});
+    void generateAndApplyOutput(
+            const TestCase& testCase,
+            const string& inputFilename,
+            const string& outputFilename,
+            const GeneratorConfig& config) {
+
+        istream* output;
+
+        optional<string> outputString;
+        if (testCase.data()->type() == TestCaseDataType::SAMPLE ) {
+            outputString = ((SampleTestCaseData*) testCase.data())->output();
         }
-        ioManipulator_->parseOutput(result.outputStream());
+
+        if (outputString) {
+            ostream* _output = os_->openForWriting(outputFilename);
+            *_output << outputString.value();
+            os_->closeOpenedWritingStream(_output);
+
+            output = new istringstream(outputString.value());
+        } else {
+            ExecutionResult result = os_->execute(ExecutionRequestBuilder()
+                    .setCommand(config.solutionCommand())
+                    .setInputFilename(inputFilename)
+                    .setOutputFilename(outputFilename)
+                    .setErrorFilename("_error.out")
+                    .build());
+            if (!result.info().isSuccessful()) {
+                throw GenerationException([=] { logger_->logSolutionExecutionFailure(result); });
+            }
+            output = result.outputStream();
+        }
+
+        ioManipulator_->parseOutput(output);
     }
 };
 

@@ -2,7 +2,7 @@
 
 #include "tcframe/spec/testcase/TestSuite.hpp"
 
-using ::testing::ElementsAre;
+using ::testing::Eq;
 using ::testing::Test;
 
 namespace tcframe {
@@ -10,22 +10,105 @@ namespace tcframe {
 class TestSuiteBuilderTests : public Test {
 protected:
     TestSuiteBuilder builder = TestSuiteBuilder().setSlug("foo");
+    TestSuiteBuilder builder1 = TestSuiteBuilder().setSlug("foo");
+    TestSuiteBuilder builder2 = TestSuiteBuilder().setSlug("foo");
 };
 
-TEST_F(TestSuiteBuilderTests, Building) {
-    TestSuite testSuite = builder
-            .addSampleTestCase({"10", "20"})
-            .addSampleTestCase({"30"})
-            .addOfficialTestCase([]{}, "N = 1")
-            .addOfficialTestCase([]{}, "N = 2")
-            .build();
+TEST_F(TestSuiteBuilderTests, Building_Nothing) {
+    TestSuite testSuite = builder.build();
+    TestSuite expected({
+            TestGroup(0, {})});
 
-    EXPECT_THAT(testSuite.testGroups(), ElementsAre(
+    EXPECT_THAT(testSuite, Eq(expected));
+}
+
+TEST_F(TestSuiteBuilderTests, Building_OnlySample) {
+    TestSuite testSuite1 = builder1
+            .newSampleTestCase()
+            .Input({"10", "20"})
+            .Output({"yes"})
+            .newSampleTestCase()
+            .Input({"30"})
+            .build();
+    TestSuite testSuite2 = builder2
+            .newSampleTestCase()
+            .Input({"10", "20"})
+            .Output({"yes"})
+            .newSampleTestCase()
+            .Input({"30"})
+            .newSampleTestCase() // should be ignored
+            .build();
+    TestSuite expected({
             TestGroup(0, {
                     TestCaseBuilder()
                             .setId("foo_sample_1")
                             .setSubtaskIds({-1})
-                            .setData(new SampleTestCaseData("10\n20\n"))
+                            .setData(new SampleTestCaseData("10\n20\n", "yes\n"))
+                            .build(),
+                    TestCaseBuilder()
+                            .setId("foo_sample_2")
+                            .setSubtaskIds({-1})
+                            .setData(new SampleTestCaseData("30\n"))
+                            .build()})});
+
+    EXPECT_THAT(testSuite1, Eq(expected));
+    EXPECT_THAT(testSuite2, Eq(expected));
+}
+
+TEST_F(TestSuiteBuilderTests, Building_OnlyOfficial) {
+    TestSuite testSuite = builder
+            .addOfficialTestCase([]{}, "N = 1")
+            .addOfficialTestCase([]{}, "N = 2")
+            .build();
+
+    TestGroup tg0 = testSuite.testGroups()[0];
+    TestGroup tg1 = testSuite.testGroups()[1];
+
+    TestSuite expected({
+            TestGroup(0, {}),
+            TestGroup(-1, {
+                    TestCaseBuilder()
+                            .setId("foo_1")
+                            .setSubtaskIds({-1})
+                            .setDescription("N = 1")
+                            .setData(new OfficialTestCaseData([]{}))
+                            .build(),
+                    TestCaseBuilder()
+                            .setId("foo_2")
+                            .setSubtaskIds({-1})
+                            .setDescription("N = 2")
+                            .setData(new OfficialTestCaseData([]{}))
+                            .build()})});
+
+    EXPECT_THAT(testSuite, Eq(expected));
+}
+
+TEST_F(TestSuiteBuilderTests, Building_Both) {
+    TestSuite testSuite1 = builder1
+            .newSampleTestCase()
+            .Input({"10", "20"})
+            .Output({"yes"})
+            .newSampleTestCase()
+            .Input({"30"})
+            .addOfficialTestCase([]{}, "N = 1")
+            .addOfficialTestCase([]{}, "N = 2")
+            .build();
+    TestSuite testSuite2 = builder2
+            .newSampleTestCase()
+            .Input({"10", "20"})
+            .Output({"yes"})
+            .newSampleTestCase()
+            .Input({"30"})
+            .newSampleTestCase() // should be ignored
+            .addOfficialTestCase([]{}, "N = 1")
+            .addOfficialTestCase([]{}, "N = 2")
+            .build();
+    TestSuite expected({
+            TestGroup(0, {
+                    TestCaseBuilder()
+                            .setId("foo_sample_1")
+                            .setSubtaskIds({-1})
+                            .setData(new SampleTestCaseData("10\n20\n", "yes\n"))
                             .build(),
                     TestCaseBuilder()
                             .setId("foo_sample_2")
@@ -44,116 +127,155 @@ TEST_F(TestSuiteBuilderTests, Building) {
                             .setSubtaskIds({-1})
                             .setDescription("N = 2")
                             .setData(new OfficialTestCaseData([]{}))
-                            .build()})));
+                            .build()})});
+
+    EXPECT_THAT(testSuite1, Eq(expected));
+    EXPECT_THAT(testSuite2, Eq(expected));
 }
 
-TEST_F(TestSuiteBuilderTests, Building_WithGroups) {
-    TestSuite testSuite = builder
-            .addSampleTestCase({"10", "20"}, {1, 2})
-            .addSampleTestCase({"30"}, {2})
+TEST_F(TestSuiteBuilderTests, Building_WithGroups_OnlyOfficial) {
+    TestSuite testSuite1 = builder1
             .newTestGroup()
-            .Subtasks({1, 2})
+            .Subtasks({1, 2, 3})
             .addOfficialTestCase([]{}, "N = 1")
             .addOfficialTestCase([]{}, "N = 2")
+            .newTestGroup() // must not be ignored
+            .Subtasks({2, 3})
             .newTestGroup()
-            .Subtasks({2})
+            .Subtasks({3})
             .addOfficialTestCase([]{}, "N = 3")
             .addOfficialTestCase([]{}, "N = 4")
             .build();
-
-    EXPECT_THAT(testSuite.testGroups(), ElementsAre(
-            TestGroup(0, {
-                    TestCaseBuilder()
-                            .setId("foo_sample_1")
-                            .setSubtaskIds({1, 2})
-                            .setData(new SampleTestCaseData("10\n20\n"))
-                            .build(),
-                    TestCaseBuilder()
-                            .setId("foo_sample_2")
-                            .setSubtaskIds({2})
-                            .setData(new SampleTestCaseData("30\n"))
-                            .build()}),
-            TestGroup(1, {
-                    TestCaseBuilder()
-                            .setId("foo_1_1")
-                            .setSubtaskIds({1, 2})
-                            .setDescription("N = 1")
-                            .setData(new OfficialTestCaseData([]{}))
-                            .build(),
-                    TestCaseBuilder()
-                            .setId("foo_1_2")
-                            .setSubtaskIds({1, 2})
-                            .setDescription("N = 2")
-                            .setData(new OfficialTestCaseData([]{}))
-                            .build()}),
-            TestGroup(2, {
-                    TestCaseBuilder()
-                            .setId("foo_2_1")
-                            .setSubtaskIds({2})
-                            .setDescription("N = 3")
-                            .setData(new OfficialTestCaseData([]{}))
-                            .build(),
-                    TestCaseBuilder()
-                            .setId("foo_2_2")
-                            .setSubtaskIds({2})
-                            .setDescription("N = 4")
-                            .setData(new OfficialTestCaseData([]{}))
-                            .build()})));
-}
-
-TEST_F(TestSuiteBuilderTests, Building_WithGroups_WithoutLastGroup) {
-    TestSuite testSuite = builder
-            .addSampleTestCase({"10", "20"}, {1, 2})
-            .addSampleTestCase({"30"}, {2})
+    TestSuite testSuite2 = builder2
             .newTestGroup()
-            .Subtasks({1, 2})
+            .Subtasks({1, 2, 3})
             .addOfficialTestCase([]{}, "N = 1")
             .addOfficialTestCase([]{}, "N = 2")
+            .newTestGroup() // must not be ignored
+            .Subtasks({2, 3})
             .newTestGroup()
-            .Subtasks({2})
+            .Subtasks({3})
             .addOfficialTestCase([]{}, "N = 3")
             .addOfficialTestCase([]{}, "N = 4")
-            .newTestGroup()
-            .buildWithoutLastTestGroup();
-
-    EXPECT_THAT(testSuite.testGroups(), ElementsAre(
-            TestGroup(0, {
-                    TestCaseBuilder()
-                            .setId("foo_sample_1")
-                            .setSubtaskIds({1, 2})
-                            .setData(new SampleTestCaseData("10\n20\n"))
-                            .build(),
-                    TestCaseBuilder()
-                            .setId("foo_sample_2")
-                            .setSubtaskIds({2})
-                            .setData(new SampleTestCaseData("30\n"))
-                            .build()}),
+            .newTestGroup() // should be ignored
+            .build();
+    TestSuite expected({
+            TestGroup(0, {}),
             TestGroup(1, {
                     TestCaseBuilder()
                             .setId("foo_1_1")
-                            .setSubtaskIds({1, 2})
+                            .setSubtaskIds({1, 2, 3})
                             .setDescription("N = 1")
                             .setData(new OfficialTestCaseData([]{}))
                             .build(),
                     TestCaseBuilder()
                             .setId("foo_1_2")
-                            .setSubtaskIds({1, 2})
+                            .setSubtaskIds({1, 2, 3})
                             .setDescription("N = 2")
                             .setData(new OfficialTestCaseData([]{}))
                             .build()}),
-            TestGroup(2, {
+            TestGroup(2, {}),
+            TestGroup(3, {
                     TestCaseBuilder()
-                            .setId("foo_2_1")
-                            .setSubtaskIds({2})
+                            .setId("foo_3_1")
+                            .setSubtaskIds({3})
                             .setDescription("N = 3")
                             .setData(new OfficialTestCaseData([]{}))
                             .build(),
                     TestCaseBuilder()
-                            .setId("foo_2_2")
-                            .setSubtaskIds({2})
+                            .setId("foo_3_2")
+                            .setSubtaskIds({3})
                             .setDescription("N = 4")
                             .setData(new OfficialTestCaseData([]{}))
-                            .build()})));
+                            .build()})});
+
+    EXPECT_THAT(testSuite1, Eq(expected));
+    EXPECT_THAT(testSuite2, Eq(expected));
+}
+
+TEST_F(TestSuiteBuilderTests, Building_WithGroups_Both) {
+    TestSuite testSuite1 = builder1
+            .newSampleTestCase()
+            .Subtasks({1, 2, 3})
+            .Input({"10", "20"})
+            .Output({"yes"})
+            .newSampleTestCase()
+            .Subtasks({2, 3})
+            .Input({"30"})
+            .newTestGroup()
+            .Subtasks({1, 2, 3})
+            .addOfficialTestCase([]{}, "N = 1")
+            .addOfficialTestCase([]{}, "N = 2")
+            .newTestGroup() // must not be ignored
+            .Subtasks({2, 3})
+            .newTestGroup()
+            .Subtasks({3})
+            .addOfficialTestCase([]{}, "N = 3")
+            .addOfficialTestCase([]{}, "N = 4")
+            .build();
+    TestSuite testSuite2 = builder2
+            .newSampleTestCase()
+            .Subtasks({1, 2, 3})
+            .Input({"10", "20"})
+            .Output({"yes"})
+            .newSampleTestCase()
+            .Subtasks({2, 3})
+            .Input({"30"})
+            .newSampleTestCase() // should be ignored
+            .newTestGroup()
+            .Subtasks({1, 2, 3})
+            .addOfficialTestCase([]{}, "N = 1")
+            .addOfficialTestCase([]{}, "N = 2")
+            .newTestGroup() // must not be ignored
+            .Subtasks({2, 3})
+            .newTestGroup()
+            .Subtasks({3})
+            .addOfficialTestCase([]{}, "N = 3")
+            .addOfficialTestCase([]{}, "N = 4")
+            .newTestGroup() // should be ignored
+            .build();
+    TestSuite expected({
+            TestGroup(0, {
+                    TestCaseBuilder()
+                            .setId("foo_sample_1")
+                            .setSubtaskIds({1, 2, 3})
+                            .setData(new SampleTestCaseData("10\n20\n", "yes\n"))
+                            .build(),
+                    TestCaseBuilder()
+                            .setId("foo_sample_2")
+                            .setSubtaskIds({2, 3})
+                            .setData(new SampleTestCaseData("30\n"))
+                            .build()}),
+            TestGroup(1, {
+                    TestCaseBuilder()
+                            .setId("foo_1_1")
+                            .setSubtaskIds({1, 2, 3})
+                            .setDescription("N = 1")
+                            .setData(new OfficialTestCaseData([]{}))
+                            .build(),
+                    TestCaseBuilder()
+                            .setId("foo_1_2")
+                            .setSubtaskIds({1, 2, 3})
+                            .setDescription("N = 2")
+                            .setData(new OfficialTestCaseData([]{}))
+                            .build()}),
+            TestGroup(2, {}),
+            TestGroup(3, {
+                    TestCaseBuilder()
+                            .setId("foo_3_1")
+                            .setSubtaskIds({3})
+                            .setDescription("N = 3")
+                            .setData(new OfficialTestCaseData([]{}))
+                            .build(),
+                    TestCaseBuilder()
+                            .setId("foo_3_2")
+                            .setSubtaskIds({3})
+                            .setDescription("N = 4")
+                            .setData(new OfficialTestCaseData([]{}))
+                            .build()})});
+
+    EXPECT_THAT(testSuite1, Eq(expected));
+    EXPECT_THAT(testSuite2, Eq(expected));
 }
 
 }

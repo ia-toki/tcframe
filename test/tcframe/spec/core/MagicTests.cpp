@@ -33,31 +33,6 @@ protected:
         }
     };
 
-    class SAMPLE_CASE_Tester : public TestSuiteBuilder {
-    public:
-        void testValid() {
-            SAMPLE_CASE({
-                "10 20",
-                "30"
-            });
-            SAMPLE_CASE({
-                "40 50",
-                "60"
-            });
-        }
-
-        void testValidWithGroups() {
-            SAMPLE_CASE({
-                "10 20",
-                "30"
-            }, {1, 2});
-            SAMPLE_CASE({
-                "40 50",
-                "60"
-            }, {2});
-        }
-    };
-
     class LINE_Tester : public IOFormatBuilder {
     protected:
         int A, B;
@@ -141,28 +116,6 @@ TEST_F(MagicTests, CASE_Valid) {
     EXPECT_THAT(testSuite, Eq(TestSuiteBuilder()
             .addOfficialTestCase([]{}, "A = 1, B = 2")
             .addOfficialTestCase([]{}, "A = 3, B = 4")
-            .build()));
-}
-
-TEST_F(MagicTests, SAMPLE_CASE_Valid) {
-    SAMPLE_CASE_Tester tester;
-    tester.testValid();
-    TestSuite testSuite = tester.build();
-
-    EXPECT_THAT(testSuite, Eq(TestSuiteBuilder()
-              .addSampleTestCase({"10 20", "30"})
-              .addSampleTestCase({"40 50", "60"})
-              .build()));
-}
-
-TEST_F(MagicTests, SAMPLE_CASE_WithGroups_Valid) {
-    SAMPLE_CASE_Tester tester;
-    tester.testValidWithGroups();
-    TestSuite testSuite = tester.build();
-
-    EXPECT_THAT(testSuite, Eq(TestSuiteBuilder()
-            .addSampleTestCase({"10 20", "30"}, {1, 2})
-            .addSampleTestCase({"40 50", "60"}, {2})
             .build()));
 }
 

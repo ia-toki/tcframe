@@ -30,9 +30,13 @@ protected:
 
     class TestSpecWithTestCases : public TestSpec {
     protected:
-        void SampleTestCases() {
-            addSampleTestCase({"10", "20"});
-            addSampleTestCase({"30", "40"});
+        void SampleTestCase1() {
+            Input({"10", "20"});
+            Output({"yes"});
+        }
+
+        void SampleTestCase2() {
+            Input({"30", "40"});
         }
 
         void TestCases() {
@@ -43,9 +47,15 @@ protected:
 
     class TestSpecWithTestGroups : public TestSpec {
     protected:
-        void SampleTestCases() {
-            addSampleTestCase({"10", "20"}, {1, 2});
-            addSampleTestCase({"30", "40"}, {2});
+        void SampleTestCase1() {
+            Subtasks({1, 2});
+            Input({"10", "20"});
+            Output({"yes"});
+        }
+
+        void SampleTestCase2() {
+            Subtasks({2});
+            Input({"30", "40"});
         }
 
         void TestGroup1() {
@@ -84,7 +94,7 @@ TEST_F(BaseTestSpecTests, InputFinalizer) {
     EXPECT_THAT(specWithTestCases.A, Eq(3 * 2));
 }
 
-TEST_F(BaseTestSpecTests, RawTestSuite) {
+TEST_F(BaseTestSpecTests, TestSuite) {
     TestSuite testSuite = specWithTestCases.buildTestSuite("foo");
     EXPECT_THAT(testSuite.testGroups(), ElementsAre(
             AllOf(Property(&TestGroup::id, 0), Property(&TestGroup::testCases, SizeIs(2))),
