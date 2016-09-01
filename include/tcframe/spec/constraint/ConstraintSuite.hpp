@@ -21,6 +21,12 @@ private:
     vector<Constraint> multipleTestCasesConstraints_;
 
 public:
+    ConstraintSuite() {}
+
+    ConstraintSuite(const vector<Subtask>& constraints, const vector<Constraint>& multipleTestCasesConstraints)
+            : constraints_(constraints)
+            , multipleTestCasesConstraints_(multipleTestCasesConstraints) {}
+
     const vector<Subtask>& constraints() const {
         return constraints_;
     }
@@ -40,26 +46,28 @@ private:
     ConstraintSuite subject_;
 
     bool hasCurrentSubtask_;
-    int currentSubtaskId_;
+    int curSubtaskId_;
     bool isInMultipleTestCasesConstraints_;
-    vector<Constraint> currentConstraints;
+    vector<Constraint> curConstraints;
 
 public:
     virtual ~ConstraintSuiteBuilder() {}
 
     ConstraintSuiteBuilder()
             : hasCurrentSubtask_(false)
-            , currentSubtaskId_(0)
+            , curSubtaskId_(-1)
             , isInMultipleTestCasesConstraints_(false) {}
 
     ConstraintSuiteBuilder& newSubtask() {
         if (hasCurrentSubtask_) {
-            subject_.constraints_.push_back(Subtask(currentSubtaskId_, currentConstraints));
+            addCurrentSubtask();
+        } else {
+            curSubtaskId_ = 0;
         }
 
         hasCurrentSubtask_ = true;
-        currentSubtaskId_++;
-        currentConstraints.clear();
+        curSubtaskId_++;
+        curConstraints.clear();
 
         return *this;
     }
@@ -72,28 +80,22 @@ public:
     ConstraintSuiteBuilder& addConstraint(function<bool()> predicate, string description) {
         if (isInMultipleTestCasesConstraints_) {
             subject_.multipleTestCasesConstraints_.push_back(Constraint(predicate, description));
-            return *this;
+        } else {
+            curConstraints.push_back(Constraint(predicate, description));
         }
-
-        if (!hasCurrentSubtask_) {
-            hasCurrentSubtask_ = true;
-            currentSubtaskId_ = -1;
-        }
-
-        currentConstraints.push_back(Constraint(predicate, description));
-
         return *this;
     }
 
     ConstraintSuite build() {
-        if (hasCurrentSubtask_) {
-            subject_.constraints_.push_back(Subtask(currentSubtaskId_, currentConstraints));
+        if (!curConstraints.empty()) {
+            addCurrentSubtask();
         }
         return move(subject_);
     }
 
-    ConstraintSuite buildWithoutLastSubtask() {
-        return move(subject_);
+private:
+    void addCurrentSubtask() {
+        subject_.constraints_.push_back(Subtask(curSubtaskId_, curConstraints));
     }
 };
 

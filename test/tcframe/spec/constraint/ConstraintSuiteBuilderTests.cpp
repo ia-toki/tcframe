@@ -2,7 +2,7 @@
 
 #include "tcframe/spec/constraint/ConstraintSuite.hpp"
 
-using ::testing::ElementsAre;
+using ::testing::Eq;
 using ::testing::Test;
 
 namespace tcframe {
@@ -10,22 +10,58 @@ namespace tcframe {
 class ConstraintSuiteBuilderTests : public Test {
 protected:
     ConstraintSuiteBuilder builder;
+    ConstraintSuiteBuilder builder1;
+    ConstraintSuiteBuilder builder2;
 };
 
-TEST_F(ConstraintSuiteBuilderTests, Building) {
+TEST_F(ConstraintSuiteBuilderTests, Building_Nothing) {
+    ConstraintSuite constraintSuite = builder
+            .build();
+    ConstraintSuite expected({}, {});
+
+    EXPECT_THAT(constraintSuite, Eq(expected));
+}
+
+TEST_F(ConstraintSuiteBuilderTests, Building_OnlyConstraints) {
     ConstraintSuite constraintSuite = builder
             .addConstraint([]{return true;}, "1 <= A && A <= 10")
             .addConstraint([]{return true;}, "1 <= B && B <= 10")
             .build();
+    ConstraintSuite expected({Subtask(-1, {
+            Constraint([]{return true;}, "1 <= A && A <= 10"),
+            Constraint([]{return true;}, "1 <= B && B <= 10")})}, {});
 
-    EXPECT_THAT(constraintSuite.constraints(), ElementsAre(
-            Subtask(-1, {
-                    Constraint([]{return true;}, "1 <= A && A <= 10"),
-                    Constraint([]{return true;}, "1 <= B && B <= 10")})));
+    EXPECT_THAT(constraintSuite, Eq(expected));
+}
+
+TEST_F(ConstraintSuiteBuilderTests, Building_OnlyMultipleTestCasesConstraints) {
+    ConstraintSuite constraintSuite = builder
+            .prepareForMultipleTestCasesConstraints()
+            .addConstraint([]{return true;}, "1 <= T && T <= 10")
+            .build();
+    ConstraintSuite expected({}, {
+            Constraint([]{return true;}, "1 <= T && T <= 10")});
+
+    EXPECT_THAT(constraintSuite, Eq(expected));
+}
+
+TEST_F(ConstraintSuiteBuilderTests, Building_Both) {
+    ConstraintSuite constraintSuite = builder
+            .addConstraint([]{return true;}, "1 <= A && A <= 10")
+            .addConstraint([]{return true;}, "1 <= B && B <= 10")
+            .prepareForMultipleTestCasesConstraints()
+            .addConstraint([]{return true;}, "1 <= T && T <= 10")
+            .build();
+    ConstraintSuite expected({Subtask(-1, {
+            Constraint([]{return true;}, "1 <= A && A <= 10"),
+            Constraint([]{return true;}, "1 <= B && B <= 10")})}, {
+            Constraint([]{return true;}, "1 <= T && T <= 10")});
+
+    EXPECT_THAT(constraintSuite, Eq(expected));
 }
 
 TEST_F(ConstraintSuiteBuilderTests, Building_WithSubtasks) {
-    ConstraintSuite constraintSuite = builder
+    ConstraintSuite constraintSuite1 = builder1
             .newSubtask()
             .addConstraint([]{return true;}, "1 <= A && A <= 10")
             .addConstraint([]{return true;}, "1 <= B && B <= 10")
@@ -33,34 +69,25 @@ TEST_F(ConstraintSuiteBuilderTests, Building_WithSubtasks) {
             .addConstraint([]{return true;}, "1 <= C && C <= 10")
             .addConstraint([]{return true;}, "1 <= D && D <= 10")
             .build();
-
-    EXPECT_THAT(constraintSuite.constraints(), ElementsAre(
-            Subtask(1, {
-                    Constraint([]{return true;}, "1 <= A && A <= 10"),
-                    Constraint([]{return true;}, "1 <= B && B <= 10")}),
-            Subtask(2, {
-                    Constraint([]{return true;}, "1 <= C && C <= 10"),
-                    Constraint([]{return true;}, "1 <= D && D <= 10")})));
-}
-
-TEST_F(ConstraintSuiteBuilderTests, Building_WithSubtasks_WithoutLastSubtask) {
-    ConstraintSuite constraintSuite = builder
+    ConstraintSuite constraintSuite2 = builder2
             .newSubtask()
             .addConstraint([]{return true;}, "1 <= A && A <= 10")
             .addConstraint([]{return true;}, "1 <= B && B <= 10")
             .newSubtask()
             .addConstraint([]{return true;}, "1 <= C && C <= 10")
             .addConstraint([]{return true;}, "1 <= D && D <= 10")
-            .newSubtask()
-            .buildWithoutLastSubtask();
-
-    EXPECT_THAT(constraintSuite.constraints(), ElementsAre(
+            .newSubtask() // should be ignored
+            .build();
+    ConstraintSuite expected({
             Subtask(1, {
                     Constraint([]{return true;}, "1 <= A && A <= 10"),
                     Constraint([]{return true;}, "1 <= B && B <= 10")}),
             Subtask(2, {
                     Constraint([]{return true;}, "1 <= C && C <= 10"),
-                    Constraint([]{return true;}, "1 <= D && D <= 10")})));
+                    Constraint([]{return true;}, "1 <= D && D <= 10")})}, {});
+
+    EXPECT_THAT(constraintSuite1, Eq(expected));
+    EXPECT_THAT(constraintSuite2, Eq(expected));
 }
 
 }

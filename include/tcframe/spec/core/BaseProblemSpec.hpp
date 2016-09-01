@@ -49,9 +49,9 @@ public:
     }
 
     IOFormat buildIOFormat() {
-        prepareForInputFormat();
+        IOFormatBuilder::prepareForInputFormat();
         InputFormat();
-        prepareForOutputFormat();
+        IOFormatBuilder::prepareForOutputFormat();
         OutputFormat();
         return IOFormatBuilder::build();
     }
@@ -59,9 +59,6 @@ public:
     ConstraintSuite buildConstraintSuite() {
         try {
             Constraints();
-            ConstraintSuiteBuilder::prepareForMultipleTestCasesConstraints();
-            MultipleTestCasesConstraints();
-            return ConstraintSuiteBuilder::build();
         } catch (NotImplementedException&) {
             for (auto subtask : subtasks_) {
                 try {
@@ -71,10 +68,11 @@ public:
                     break;
                 }
             }
-            ConstraintSuiteBuilder::prepareForMultipleTestCasesConstraints();
-            MultipleTestCasesConstraints();
-            return ConstraintSuiteBuilder::buildWithoutLastSubtask();
         }
+
+        ConstraintSuiteBuilder::prepareForMultipleTestCasesConstraints();
+        MultipleTestCasesConstraints();
+        return ConstraintSuiteBuilder::build();
     }
 
 protected:

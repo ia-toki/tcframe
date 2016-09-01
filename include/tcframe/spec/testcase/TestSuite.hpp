@@ -158,7 +158,7 @@ public:
     }
 
 private:
-    TestSuiteBuilder& addCurrentSampleTestCase() {
+    void addCurrentSampleTestCase() {
         if (!curSampleInputLines_) {
             // TODO: throw exception
         }
@@ -185,13 +185,10 @@ private:
                 .setSubtaskIds(curSampleSubtaskIds_)
                 .setData(data)
                 .build());
-
-        return *this;
     }
 
-    TestSuiteBuilder& addCurrentOfficialTestCase() {
+    void addCurrentOfficialTestCase() {
         curOfficialTestGroups_.push_back(TestGroup(curOfficialTestGroupId_, curOfficialTestCases_));
-        return *this;
     }
 };
 
