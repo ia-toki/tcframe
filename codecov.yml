@@ -1,0 +1,14 @@
+coverage:
+  parsers:
+    gcov:
+      branch_detection:
+        macro: no
+        loop: no
+        conditional: no
+        method: no
+  ignore:
+    - include/tcframe/deprecated/.*
+    - test/.*
+    - usr/include/.*
+
+
