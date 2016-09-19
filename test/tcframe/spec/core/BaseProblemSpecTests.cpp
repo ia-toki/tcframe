@@ -57,13 +57,12 @@ protected:
 
         void Config() {
             Slug("ab");
-            MultipleTestCasesCount(T);
         }
 
         void InputFormat() {}
 
         void MultipleTestCasesConstraints() {
-            addConstraint([=] {return 1 <= T && T <= 20;}, "1 <= T && T <= 100");
+            addConstraint([=] {return 1 <= T && T <= 20;}, "1 <= T && T <= 20");
         }
     };
 

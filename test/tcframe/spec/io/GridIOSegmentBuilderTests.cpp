@@ -10,7 +10,7 @@ namespace tcframe {
 
 class GridIOSegmentBuilderTests : public Test {
 protected:
-    vector<vector<int>> M;
+    vector<vector<int>> M, N;
 
     GridIOSegmentBuilder builder;
 };
@@ -29,6 +29,19 @@ TEST_F(GridIOSegmentBuilderTests, Building_Successful) {
 TEST_F(GridIOSegmentBuilderTests, Building_Failed_NoVariables) {
     try {
         builder
+                .setSize(2, 3)
+                .build();
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Grid segment must have exactly one variable"));
+    }
+}
+
+TEST_F(GridIOSegmentBuilderTests, Building_Failed_MultipleVariables) {
+    try {
+        builder
+                .addMatrixVariable(Matrix::create(M, "M"))
+                .addMatrixVariable(Matrix::create(N, "N"))
                 .setSize(2, 3)
                 .build();
         FAIL();

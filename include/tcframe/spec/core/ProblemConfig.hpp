@@ -50,7 +50,7 @@ private:
 public:
     virtual ~ProblemConfigBuilder() {}
 
-    ProblemConfigBuilder& MultipleTestCasesCount(int &var) {
+    ProblemConfigBuilder& MultipleTestCasesCount(int& var) {
         subject_.multipleTestCasesCount_ = optional<int*>(&var);
         return *this;
     }

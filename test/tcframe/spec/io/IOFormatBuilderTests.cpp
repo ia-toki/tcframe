@@ -10,22 +10,51 @@ namespace tcframe {
 
 class IOFormatBuilderTests : public Test {
 protected:
+    int X;
+    vector<int> Y;
+    vector<vector<int>> Z;
+
     IOFormatBuilder builder;
 };
 
 TEST_F(IOFormatBuilderTests, Building) {
     builder.prepareForInputFormat();
-    builder.newLineIOSegment();
-    builder.newLineIOSegment();
+    builder
+            .newLineIOSegment()
+            .addScalarVariable(Scalar::create(X, "X"));
+    builder
+            .newLinesIOSegment()
+            .addVectorVariable(Vector::create(Y, "Y"))
+            .setSize(3);
+    builder
+            .newGridIOSegment()
+            .addMatrixVariable(Matrix::create(Z, "Z"))
+            .setSize(2, 3)
+            .build();
+
     builder.prepareForOutputFormat();
-    builder.newLineIOSegment();
+    builder
+            .newGridIOSegment()
+            .addMatrixVariable(Matrix::create(Z, "Z"))
+            .setSize(2, 3)
+            .build();
+    builder
+            .newLinesIOSegment()
+            .addVectorVariable(Vector::create(Y, "Y"))
+            .setSize(3);
+    builder
+            .newLineIOSegment()
+            .addScalarVariable(Scalar::create(X, "X"));
     IOFormat ioFormat = builder.build();
 
     EXPECT_THAT(ioFormat.inputFormat(), ElementsAre(
             A<LineIOSegment*>(),
-            A<LineIOSegment*>()));
+            A<LinesIOSegment*>(),
+            A<GridIOSegment*>()));
 
     EXPECT_THAT(ioFormat.outputFormat(), ElementsAre(
+            A<GridIOSegment*>(),
+            A<LinesIOSegment*>(),
             A<LineIOSegment*>()));
 }
 

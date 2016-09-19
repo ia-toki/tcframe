@@ -60,7 +60,7 @@ protected:
         ON_CALL(testCaseSubmitter, submit(Property(&TestCase::id, StartsWith("foo_3")), _))
                 .WillByDefault(Return(Verdict::wa()));
         ON_CALL(testCaseSubmitter, submit(Property(&TestCase::id, StartsWith("foo_4")), _))
-                .WillByDefault(Return(Verdict::wa()));
+                .WillByDefault(Return(Verdict::tle()));
     }
 };
 
@@ -87,7 +87,7 @@ TEST_F(SubmitterTests, Submission) {
                 {1, Verdict::ac()},
                 {2, Verdict::rte()},
                 {3, Verdict::wa()},
-                {4, Verdict::wa()}}));
+                {4, Verdict::tle()}}));
     }
     submitter.submit(testSuite, subtaskIds, config);
 }
@@ -116,7 +116,7 @@ TEST_F(SubmitterTests, Submission_MultipleTestCases) {
                 {1, Verdict::ac()},
                 {2, Verdict::rte()},
                 {3, Verdict::wa()},
-                {4, Verdict::wa()}}));
+                {4, Verdict::tle()}}));
     }
     submitter.submit(testSuite, subtaskIds, multipleTestCasesConfig);
 }

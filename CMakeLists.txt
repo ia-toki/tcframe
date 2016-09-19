@@ -137,6 +137,7 @@ set(SOURCE_FILES
     test/tcframe/io_manipulator/MockIOManipulator.hpp
     test/tcframe/logger/BaseLogggerTests.cpp
     test/tcframe/logger/MockLoggerEngine.hpp
+    test/tcframe/logger/SimpleLoggerEngineTests.cpp
     test/tcframe/os/MockOperatingSystem.hpp
     test/tcframe/runner/ArgsParserTests.cpp
     test/tcframe/runner/RunnerTests.cpp

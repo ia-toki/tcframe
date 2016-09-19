@@ -41,7 +41,7 @@ public:
             engine_->logListItem2(3, "Standard error: " + string(
                     istreambuf_iterator<char>(*result.errorStream()), istreambuf_iterator<char>()));
         } else {
-            engine_->logListItem2(3, result.info().exitSignal().value());
+            engine_->logListItem2(3, "Exit signal: " + result.info().exitSignal().value());
         }
     }
 };

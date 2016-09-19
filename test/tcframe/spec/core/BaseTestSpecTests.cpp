@@ -49,13 +49,21 @@ protected:
     protected:
         void SampleTestCase1() {
             Subtasks({1, 2});
-            Input({"10", "20"});
-            Output({"yes"});
+            Input({
+                "1",
+                "2"
+            });
+            Output({
+                "yes"
+            });
         }
 
         void SampleTestCase2() {
             Subtasks({2});
-            Input({"30", "40"});
+            Input({
+                "123",
+                "456"
+            });
         }
 
         void TestGroup1() {

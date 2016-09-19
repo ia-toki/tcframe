@@ -43,6 +43,7 @@ public:
 
         if (result.info().exceededCpuLimits()) {
             logger_->logTestCaseVerdict(Verdict::tle());
+            logger_->logSolutionExecutionFailure(result);
             return optional<Verdict>(Verdict::tle());
         }
 

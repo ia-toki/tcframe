@@ -9,13 +9,10 @@ using ::testing::Test;
 
 namespace tcframe {
 
-bool b1;
-bool b2;
-bool b3;
-bool b4;
-bool b5;
-
 class VerifierTests : public Test {
+public:
+    static bool b0, b1, b2, b3, b4, b5;
+
 protected:
     ConstraintSuite constraintSuite = ConstraintSuiteBuilder()
             .addConstraint([=]{return b1;}, "1 <= A && A <= 10")
@@ -31,18 +28,28 @@ protected:
             .newSubtask()
             .addConstraint([=]{return b5;}, "1 <= E && E <= 10")
             .build();
+    ConstraintSuite constraintSuiteWithMultipleTestCasesConstraints = ConstraintSuiteBuilder()
+            .addConstraint([=]{return b1;}, "1 <= A && A <= 10")
+            .addConstraint([=]{return b2;}, "1 <= B && B <= 10")
+            .prepareForMultipleTestCasesConstraints()
+            .addConstraint([=]{return b0;}, "1 <= T && T <= 10")
+            .build();
 
     Verifier verifier = Verifier(constraintSuite);
     Verifier verifierWithSubtasks = Verifier(constraintSuiteWithSubtasks);
+    Verifier verifierWithMultipleTestCasesConstraints = Verifier(constraintSuiteWithMultipleTestCasesConstraints);
 
     void SetUp() {
-        b1 = true;
-        b2 = true;
-        b3 = true;
-        b4 = true;
-        b5 = true;
+        b0 = b1 = b2 = b3 = b4 = b5 = true;
     }
 };
+
+bool VerifierTests::b0;
+bool VerifierTests::b1;
+bool VerifierTests::b2;
+bool VerifierTests::b3;
+bool VerifierTests::b4;
+bool VerifierTests::b5;
 
 TEST_F(VerifierTests, Verification_Valid_AllConstraintsValid) {
     ConstraintsVerificationResult result = verifier.verifyConstraints({-1});
@@ -87,6 +94,24 @@ TEST_F(VerifierTests, Verification_WithSubtasks_Invalid_SomeConstraintsInvalid) 
     EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), ElementsAre(1));
     EXPECT_THAT(result.unsatisfiedConstraintDescriptionsBySubtaskId(), ElementsAre(
             Pair(2, ElementsAre("1 <= D && D <= 10"))));
+}
+
+TEST_F(VerifierTests, Verification_MultipleTestCases_Valid_AllConstraintsValid) {
+    MultipleTestCasesConstraintsVerificationResult result =
+            verifierWithMultipleTestCasesConstraints.verifyMultipleTestCasesConstraints();
+
+    EXPECT_TRUE(result.isValid());
+    EXPECT_THAT(result.unsatisfiedConstraintDescriptions(), IsEmpty());
+}
+
+TEST_F(VerifierTests, Verification_MultipleTestCases_Invalid_SomeConstraintsInvalid) {
+    b0 = false;
+    MultipleTestCasesConstraintsVerificationResult result =
+            verifierWithMultipleTestCasesConstraints.verifyMultipleTestCasesConstraints();
+
+    EXPECT_FALSE(result.isValid());
+    EXPECT_THAT(result.unsatisfiedConstraintDescriptions(), ElementsAre(
+            "1 <= T && T <= 10"));
 }
 
 }

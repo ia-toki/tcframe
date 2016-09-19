@@ -17,6 +17,9 @@ using ::testing::Test;
 namespace tcframe {
 
 class RunnerTests : public Test {
+public:
+    static int T;
+
 protected:
     class ProblemSpec : public BaseProblemSpec {
     protected:
@@ -27,6 +30,7 @@ protected:
     protected:
         void Config() {
             Slug("foo");
+            MultipleTestCasesCount(T);
             TimeLimit(3);
             MemoryLimit(128);
         }
@@ -63,6 +67,8 @@ protected:
         ON_CALL(submitterFactory, create(_, _)).WillByDefault(Return(&submitter));
     }
 };
+
+int RunnerTests::T;
 
 TEST_F(RunnerTests, Run_ArgsParsing_Failed) {
     Runner<ProblemSpec> runner(new TestSpec(), loggerEngine, &os, &loggerFactory, &generatorFactory, &submitterFactory);
@@ -109,6 +115,7 @@ TEST_F(RunnerTests, Run_Generation_UseSuppliedOptions) {
     EXPECT_CALL(generator, generate(_, GeneratorConfigBuilder()
             .setSeed(0)
             .setSlug("foo")
+            .setMultipleTestCasesCount(&T)
             .setSolutionCommand("./solution")
             .setTestCasesDir("tc")
             .build()));
@@ -122,6 +129,7 @@ TEST_F(RunnerTests, Run_Generation_UseArgsOptions) {
     EXPECT_CALL(generator, generate(_, GeneratorConfigBuilder()
             .setSeed(42)
             .setSlug("foo")
+            .setMultipleTestCasesCount(&T)
             .setSolutionCommand("\"java Solution\"")
             .setTestCasesDir("testdata")
             .build()));
@@ -165,6 +173,7 @@ TEST_F(RunnerTests, Run_Submission_UseSuppliedOptions) {
             new TestSpecWithConfig(), loggerEngine, &os, &loggerFactory, &generatorFactory, &submitterFactory);
     EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder()
             .setSlug("foo")
+            .setHasMultipleTestCasesCount(true)
             .setSolutionCommand("./solution")
             .setTestCasesDir("tc")
             .setTimeLimit(3)
@@ -182,6 +191,7 @@ TEST_F(RunnerTests, Run_Submission_UseArgsOptions) {
             new TestSpecWithConfig(), loggerEngine, &os, &loggerFactory, &generatorFactory, &submitterFactory);
     EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder()
             .setSlug("foo")
+            .setHasMultipleTestCasesCount(true)
             .setSolutionCommand("\"java Solution\"")
             .setTestCasesDir("testdata")
             .setTimeLimit(4)

@@ -48,7 +48,7 @@ TEST_F(BatchEvaluatorTests, Evaluation_OK) {
     EXPECT_THAT(evaluator.evaluate(testCase, config), Eq(optional<Verdict>()));
 }
 
-TEST_F(BatchEvaluatorTests, Evaluation_RTE) {
+TEST_F(BatchEvaluatorTests, Evaluation_RTE_ExitCode) {
     ON_CALL(os, execute(AllOf(
             Property(&ExecutionRequest::command, "python Sol.py"),
             Property(&ExecutionRequest::inputFilename, optional<string>("dir/foo_1.in")))))
@@ -61,6 +61,39 @@ TEST_F(BatchEvaluatorTests, Evaluation_RTE) {
     }
 
     EXPECT_THAT(evaluator.evaluate(testCase, config), Eq(optional<Verdict>(Verdict::rte())));
+}
+
+TEST_F(BatchEvaluatorTests, Evaluation_RTE_ExitSignal) {
+    ON_CALL(os, execute(AllOf(
+            Property(&ExecutionRequest::command, "python Sol.py"),
+            Property(&ExecutionRequest::inputFilename, optional<string>("dir/foo_1.in")))))
+            .WillByDefault(Return(ExecutionResult(
+                    ExecutionInfoBuilder().setExitSignal("SIGSEGV").build(), new istringstream(), new istringstream())));
+    {
+        InSequence sequence;
+        EXPECT_CALL(logger, logTestCaseVerdict(Verdict::rte()));
+        EXPECT_CALL(logger, logSolutionExecutionFailure(_));
+    }
+
+    EXPECT_THAT(evaluator.evaluate(testCase, config), Eq(optional<Verdict>(Verdict::rte())));
+}
+
+TEST_F(BatchEvaluatorTests, Evaluation_TLE) {
+    ON_CALL(os, execute(AllOf(
+            Property(&ExecutionRequest::command, "python Sol.py"),
+            Property(&ExecutionRequest::inputFilename, optional<string>("dir/foo_1.in")))))
+            .WillByDefault(Return(ExecutionResult(
+                    ExecutionInfoBuilder()
+                            .setExitSignal("SIGXCPU")
+                            .setExceededCpuLimits(true)
+                            .build(), new istringstream(), new istringstream())));
+    {
+        InSequence sequence;
+        EXPECT_CALL(logger, logTestCaseVerdict(Verdict::tle()));
+        EXPECT_CALL(logger, logSolutionExecutionFailure(_));
+    }
+
+    EXPECT_THAT(evaluator.evaluate(testCase, config), Eq(optional<Verdict>(Verdict::tle())));
 }
 
 }

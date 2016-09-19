@@ -36,4 +36,29 @@ TEST_F(BaseLoggerTests, TestCaseIntroduction) {
     logger.logTestCaseIntroduction("foo_1");
 }
 
+TEST_F(BaseLoggerTests, SolutionExecutionFailure_ExitCode) {
+    {
+        InSequence sequence;
+        EXPECT_CALL(engine, logListItem1(2, "Execution of solution failed:"));
+        EXPECT_CALL(engine, logListItem2(3, "Exit code: 1"));
+        EXPECT_CALL(engine, logListItem2(3, "Standard error: err"));
+    }
+
+    ExecutionInfo info = ExecutionInfoBuilder().setExitCode(1).build();
+    ExecutionResult result(info, new istringstream(), new istringstream("err"));
+    logger.logSolutionExecutionFailure(result);
+}
+
+TEST_F(BaseLoggerTests, SolutionExecutionFailure_ExitSignal) {
+    {
+        InSequence sequence;
+        EXPECT_CALL(engine, logListItem1(2, "Execution of solution failed:"));
+        EXPECT_CALL(engine, logListItem2(3, "Exit signal: SIGSEGV"));
+    }
+
+    ExecutionInfo info = ExecutionInfoBuilder().setExitSignal("SIGSEGV").build();
+    ExecutionResult result(info, new istringstream(), new istringstream());
+    logger.logSolutionExecutionFailure(result);
+}
+
 }

@@ -3,6 +3,8 @@
 #include <iostream>
 #include <string>
 
+#include "LoggerEngine.hpp"
+
 using std::cout;
 using std::endl;
 using std::flush;

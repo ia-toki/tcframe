@@ -111,7 +111,7 @@ private:
     }
 
     int submit(const Args& args, const CoreSpec& coreSpec) {
-        const ProblemConfig &problemConfig = coreSpec.problemConfig();
+        const ProblemConfig& problemConfig = coreSpec.problemConfig();
 
         SubmitterConfigBuilder configBuilder = SubmitterConfigBuilder()
                 .setHasMultipleTestCasesCount(problemConfig.multipleTestCasesCount())

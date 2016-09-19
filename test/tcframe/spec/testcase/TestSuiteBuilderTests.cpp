@@ -8,11 +8,16 @@ using ::testing::Test;
 namespace tcframe {
 
 class TestSuiteBuilderTests : public Test {
+public:
+    static int N;
+
 protected:
     TestSuiteBuilder builder = TestSuiteBuilder().setSlug("foo");
     TestSuiteBuilder builder1 = TestSuiteBuilder().setSlug("foo");
     TestSuiteBuilder builder2 = TestSuiteBuilder().setSlug("foo");
 };
+
+int TestSuiteBuilderTests::N;
 
 TEST_F(TestSuiteBuilderTests, Building_Nothing) {
     TestSuite testSuite = builder.build();
@@ -20,6 +25,16 @@ TEST_F(TestSuiteBuilderTests, Building_Nothing) {
             TestGroup(0, {})});
 
     EXPECT_THAT(testSuite, Eq(expected));
+}
+
+TEST_F(TestSuiteBuilderTests, Building_InputFinalizer) {
+    TestSuite testSuite = builder
+            .setInputFinalizer([&]{N *= 2;})
+            .addOfficialTestCase([&]{N = 3;}, "N = 3")
+            .build();
+    OfficialTestCaseData* data = (OfficialTestCaseData*) testSuite.testGroups()[1].testCases()[0].data();
+    data->closure()();
+    EXPECT_THAT(N, Eq(3 * 2));
 }
 
 TEST_F(TestSuiteBuilderTests, Building_OnlySample) {
@@ -60,9 +75,6 @@ TEST_F(TestSuiteBuilderTests, Building_OnlyOfficial) {
             .addOfficialTestCase([]{}, "N = 1")
             .addOfficialTestCase([]{}, "N = 2")
             .build();
-
-    TestGroup tg0 = testSuite.testGroups()[0];
-    TestGroup tg1 = testSuite.testGroups()[1];
 
     TestSuite expected({
             TestGroup(0, {}),
