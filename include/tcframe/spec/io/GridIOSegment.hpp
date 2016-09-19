@@ -64,8 +64,7 @@ private:
 
 public:
     GridIOSegmentBuilder()
-            : subject_(new GridIOSegment())
-    {}
+            : subject_(new GridIOSegment()) {}
 
     GridIOSegmentBuilder& addMatrixVariable(Matrix* variable) {
         checkMatrix();

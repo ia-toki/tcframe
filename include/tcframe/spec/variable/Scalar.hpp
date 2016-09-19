@@ -39,8 +39,7 @@ private:
 public:
     ScalarImpl(T& var, const string& name)
             : Scalar(name)
-            , var_(ref(var))
-    {}
+            , var_(ref(var)) {}
 
     void printTo(ostream* out) {
         *out << var_;

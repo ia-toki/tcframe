@@ -44,8 +44,7 @@ private:
 public:
     VectorImpl(vector<T>& var, const string& name)
             : Vector(name)
-            , var_(ref(var))
-    {}
+            , var_(ref(var)) {}
 
     int size() const {
         return (int) var_.get().size();

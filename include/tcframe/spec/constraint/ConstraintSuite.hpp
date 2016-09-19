@@ -36,8 +36,7 @@ public:
     }
 
     bool operator==(const ConstraintSuite& o) const {
-        return tie(constraints_, multipleTestCasesConstraints_)
-               == tie(o.constraints_, multipleTestCasesConstraints_);
+        return tie(constraints_, multipleTestCasesConstraints_) == tie(o.constraints_, multipleTestCasesConstraints_);
     }
 };
 

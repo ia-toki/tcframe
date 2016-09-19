@@ -54,7 +54,7 @@ private:
     queue<string> names_;
 
 public:
-    VariableNamesExtractor(string names) {
+    VariableNamesExtractor(const string& names) {
         for (string name : extractVariableNames(names)) {
             names_.push(name);
         }
@@ -83,7 +83,7 @@ private:
     VariableNamesExtractor extractor_;
 
 public:
-    MagicLineIOSegmentBuilder(LineIOSegmentBuilder& builder, string names)
+    MagicLineIOSegmentBuilder(LineIOSegmentBuilder& builder, const string& names)
             : builder_(&builder)
             , extractor_(VariableNamesExtractor(names)) {}
 
@@ -119,7 +119,7 @@ private:
     VariableNamesExtractor extractor_;
 
 public:
-    MagicLinesIOSegmentBuilder(LinesIOSegmentBuilder& builder, string names)
+    MagicLinesIOSegmentBuilder(LinesIOSegmentBuilder& builder, const string& names)
             : builder_(&builder)
             , extractor_(VariableNamesExtractor(names)) {}
 
@@ -154,7 +154,7 @@ private:
     VariableNamesExtractor extractor_;
 
 public:
-    MagicGridIOSegmentBuilder(GridIOSegmentBuilder& builder, string names)
+    MagicGridIOSegmentBuilder(GridIOSegmentBuilder& builder, const string& names)
             : builder_(&builder)
             , extractor_(VariableNamesExtractor(names)) {}
 

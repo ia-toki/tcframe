@@ -19,8 +19,7 @@ public:
     virtual ~GeneratorLogger() {}
 
     GeneratorLogger(LoggerEngine* engine)
-            : BaseLogger(engine)
-    {}
+            : BaseLogger(engine) {}
 
     virtual void logIntroduction() {
         engine_->logParagraph(0, "Generating test cases...");

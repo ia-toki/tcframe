@@ -49,8 +49,7 @@ public:
     MatrixImpl(vector<vector<T>>& var, const string& name)
             : Matrix(name)
             , var_(var)
-            , hasSpaces_(!is_same<T, char>::value)
-    {}
+            , hasSpaces_(!is_same<T, char>::value) {}
 
     int rows() const {
         return (int) var_.get().size();

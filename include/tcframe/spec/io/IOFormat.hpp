@@ -55,8 +55,7 @@ private:
 
 public:
     IOFormatBuilder()
-            : lastBuilder_(nullptr)
-    {}
+            : lastBuilder_(nullptr) {}
 
     virtual ~IOFormatBuilder() {}
 

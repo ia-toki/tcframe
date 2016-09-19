@@ -10,11 +10,11 @@ class LoggerEngine {
 public:
     virtual ~LoggerEngine() {}
 
-    virtual void logHeading(string message) = 0;
-    virtual void logParagraph(int level, string message) = 0;
-    virtual void logHangingParagraph(int level, string message) = 0;
-    virtual void logListItem1(int level, string message) = 0;
-    virtual void logListItem2(int level, string message) = 0;
+    virtual void logHeading(const string& message) = 0;
+    virtual void logParagraph(int level, const string& message) = 0;
+    virtual void logHangingParagraph(int level, const string& message) = 0;
+    virtual void logListItem1(int level, const string& message) = 0;
+    virtual void logListItem2(int level, const string& message) = 0;
 };
 
 }

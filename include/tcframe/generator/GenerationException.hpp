@@ -16,8 +16,7 @@ public:
     ~GenerationException() noexcept {}
 
     GenerationException(const function<void()>& callback)
-            : callback_(callback)
-    {}
+            : callback_(callback) {}
 
     const function<void()>& callback() const {
         return callback_;

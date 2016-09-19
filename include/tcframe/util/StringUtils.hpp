@@ -24,7 +24,7 @@ public:
         return out.str();
     }
 
-    static vector<string> split(string s, char delimiter) {
+    static vector<string> split(const string& s, char delimiter) {
         vector<string> result;
 
         istringstream in(s);
@@ -36,7 +36,7 @@ public:
         return result;
     }
 
-    static vector<string> splitAndTrimBySpace(string s) {
+    static vector<string> splitAndTrimBySpace(const string& s) {
         vector<string> result;
 
         istringstream in(s);

@@ -20,8 +20,7 @@ public:
     ExecutionResult(ExecutionInfo info, istream* outputStream, istream* errorStream)
             : info_(info)
             , outputStream_(outputStream)
-            , errorStream_(errorStream)
-    {}
+            , errorStream_(errorStream) {}
 
     ExecutionInfo info() const {
         return info_;

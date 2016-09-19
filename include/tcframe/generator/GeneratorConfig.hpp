@@ -56,8 +56,7 @@ private:
 
 public:
     GeneratorConfigBuilder(const GeneratorConfig& from)
-            : subject_(from)
-    {}
+            : subject_(from) {}
 
     GeneratorConfigBuilder() {
         subject_.multipleTestCasesCount_ = nullptr;

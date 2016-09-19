@@ -14,27 +14,27 @@ namespace tcframe {
 
 class SimpleLoggerEngine : public LoggerEngine {
 public:
-    void logHeading(string message) {
+    void logHeading(const string& message) {
         cout << endl;
         cout << "[ " << message << " ]" << endl;
     }
 
-    void logParagraph(int level, string message) {
+    void logParagraph(int level, const string& message) {
         indent(level);
         cout << message << endl;
     }
 
-    void logHangingParagraph(int level, string message) {
+    void logHangingParagraph(int level, const string& message) {
         indent(level);
         cout << message << flush;
     }
 
-    void logListItem1(int level, string message) {
+    void logListItem1(int level, const string& message) {
         indent(level);
         cout << "* " << message << endl;
     }
 
-    void logListItem2(int level, string message) {
+    void logListItem2(int level, const string& message) {
         indent(level);
         cout << "- " << message << endl;
     }

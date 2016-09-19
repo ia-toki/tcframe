@@ -21,13 +21,11 @@ private:
 public:
     LineIOSegmentVariable(Variable* variable, int size)
             : variable_(variable)
-            , size_(size)
-    {}
+            , size_(size) {}
 
     LineIOSegmentVariable(Variable* variable)
             : variable_(variable)
-            , size_(-1)
-    {}
+            , size_(-1) {}
 
     Variable* variable() const {
         return variable_;

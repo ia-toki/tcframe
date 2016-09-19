@@ -12,7 +12,7 @@ class TokenFormatter {
 public:
     TokenFormatter() = delete;
 
-    static string formatVariable(const string &name) {
+    static string formatVariable(const string& name) {
         return "'" + name + "'";
     }
 
