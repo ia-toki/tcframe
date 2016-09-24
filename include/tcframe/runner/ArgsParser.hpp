@@ -18,11 +18,13 @@ class ArgsParser {
 public:
     static Args parse(int argc, char* argv[]) {
         option longopts[] = {
-                { "memory-limit",   required_argument, nullptr, 'a'},
-                { "seed",           required_argument, nullptr, 'b'},
-                { "solution",       required_argument, nullptr, 'c'},
-                { "tc-dir",         required_argument, nullptr, 'd'},
-                { "time-limit",     required_argument, nullptr, 'e'},
+                { "memory-limit",    required_argument, nullptr, 'a'},
+                { "no-memory-limit", no_argument      , nullptr, 'b'},
+                { "no-time-limit",   no_argument      , nullptr, 'c'},
+                { "seed",            required_argument, nullptr, 'd'},
+                { "solution",        required_argument, nullptr, 'e'},
+                { "tc-dir",          required_argument, nullptr, 'f'},
+                { "time-limit",      required_argument, nullptr, 'g'},
                 { 0, 0, 0, 0 }};
 
         Args args;
@@ -47,16 +49,22 @@ public:
                     args.memoryLimit_ = optional<int>(memoryLimit);
                     break;
                 case 'b':
+                    args.noMemoryLimit_ = true;
+                    break;
+                case 'c':
+                    args.noTimeLimit_ = true;
+                    break;
+                case 'd':
                     sscanf(optarg, "%u", &seed);
                     args.seed_ = optional<unsigned>(seed);
                     break;
-                case 'c':
+                case 'e':
                     args.solution_ = optional<string>(optarg);
                     break;
-                case 'd':
+                case 'f':
                     args.tcDir_ = optional<string>(optarg);
                     break;
-                case 'e':
+                case 'g':
                     sscanf(optarg, "%d", &timeLimit);
                     args.timeLimit_ = optional<int>(timeLimit);
                     break;

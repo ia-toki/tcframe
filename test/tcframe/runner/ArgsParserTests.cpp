@@ -13,31 +13,37 @@ class ArgsParserTests : public Test {};
 TEST_F(ArgsParserTests, Parsing_AllOptions) {
     char* argv[] = {
             (char*) "./runner",
+            (char*) "--memory-limit=128",
+            (char*) "--seed=42",
             (char*) "--solution=python Sol.py",
             (char*) "--tc-dir=my/testdata",
             (char*) "--time-limit=3",
-            (char*) "--memory-limit=128",
-            (char*) "--seed=42",
             nullptr};
     int argc = sizeof(argv) / sizeof(char*) - 1;
 
     Args args = ArgsParser::parse(argc, argv);
+    EXPECT_FALSE(args.noMemoryLimit());
+    EXPECT_FALSE(args.noTimeLimit());
+    EXPECT_THAT(args.memoryLimit(), Eq(optional<int>(128)));
+    EXPECT_THAT(args.seed(), Eq(optional<unsigned>(42)));
     EXPECT_THAT(args.solution(), Eq(optional<string>("python Sol.py")));
     EXPECT_THAT(args.tcDir(), Eq(optional<string>("my/testdata")));
     EXPECT_THAT(args.timeLimit(), Eq(optional<int>(3)));
-    EXPECT_THAT(args.memoryLimit(), Eq(optional<int>(128)));
-    EXPECT_THAT(args.seed(), Eq(optional<unsigned>(42)));
 }
 
 TEST_F(ArgsParserTests, Parsing_SomeOptions) {
     char* argv[] = {
             (char*) "./runner",
-            (char*) "--tc-dir=my/testdata",
+            (char*) "--no-memory-limit",
+            (char*) "--no-time-limit",
             (char*) "--seed=42",
+            (char*) "--tc-dir=my/testdata",
             nullptr};
     int argc = sizeof(argv) / sizeof(char*) - 1;
 
     Args args = ArgsParser::parse(argc, argv);
+    EXPECT_TRUE(args.noMemoryLimit());
+    EXPECT_TRUE(args.noTimeLimit());
     EXPECT_THAT(args.solution(), Eq(optional<string>()));
     EXPECT_THAT(args.tcDir(), Eq(optional<string>("my/testdata")));
     EXPECT_THAT(args.seed(), Eq(optional<unsigned>(42)));

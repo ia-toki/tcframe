@@ -208,4 +208,24 @@ TEST_F(RunnerTests, Run_Submission_UseArgsOptions) {
             nullptr});
 }
 
+TEST_F(RunnerTests, Run_Submission_UseArgsOptions_NoLimits) {
+    Runner<ProblemSpecWithConfig> runner(
+            new TestSpecWithConfig(), loggerEngine, &os, &loggerFactory, &generatorFactory, &submitterFactory);
+    EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder()
+            .setSlug("foo")
+            .setHasMultipleTestCasesCount(true)
+            .setSolutionCommand("\"java Solution\"")
+            .setTestCasesDir("testdata")
+            .build()));
+
+    runner.run(6, new char*[7]{
+            (char*) "./runner",
+            (char*) "submit",
+            (char*) "--solution=\"java Solution\"",
+            (char*) "--tc-dir=testdata",
+            (char*) "--no-time-limit",
+            (char*) "--no-memory-limit",
+            nullptr});
+}
+
 }

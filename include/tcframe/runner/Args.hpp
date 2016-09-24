@@ -19,15 +19,38 @@ public:
 
 private:
     Command command_;
+
+    optional<int> memoryLimit_;
+    bool noMemoryLimit_;
+    bool noTimeLimit_;
+    optional<unsigned> seed_;
     optional<string> solution_;
     optional<string> tcDir_;
     optional<int> timeLimit_;
-    optional<int> memoryLimit_;
-    optional<unsigned> seed_;
 
 public:
+    Args()
+            : noMemoryLimit_(false)
+            , noTimeLimit_(false) {}
+
     Command command() const {
         return command_;
+    }
+
+    const optional<int>& memoryLimit() const {
+        return memoryLimit_;
+    }
+
+    bool noMemoryLimit() const {
+        return noMemoryLimit_;
+    }
+
+    bool noTimeLimit() const {
+        return noTimeLimit_;
+    }
+
+    const optional<unsigned>& seed() const {
+        return seed_;
     }
 
     const optional<string>& solution() const {
@@ -40,14 +63,6 @@ public:
 
     const optional<int>& timeLimit() const {
         return timeLimit_;
-    }
-
-    const optional<int>& memoryLimit() const {
-        return memoryLimit_;
-    }
-
-    const optional<unsigned>& seed() const {
-        return seed_;
     }
 };
 

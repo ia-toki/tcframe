@@ -119,15 +119,19 @@ private:
                 .setSolutionCommand(args.solution().value_or(DefaultValues::solutionCommand()))
                 .setTestCasesDir(args.tcDir().value_or(DefaultValues::testCasesDir()));
 
-        if (args.timeLimit()) {
-            configBuilder.setTimeLimit(args.timeLimit().value());
-        } else if (problemConfig.timeLimit()) {
-            configBuilder.setTimeLimit(problemConfig.timeLimit().value());
+        if (!args.noTimeLimit()) {
+            if (args.timeLimit()) {
+                configBuilder.setTimeLimit(args.timeLimit().value());
+            } else if (problemConfig.timeLimit()) {
+                configBuilder.setTimeLimit(problemConfig.timeLimit().value());
+            }
         }
-        if (args.memoryLimit()) {
-            configBuilder.setMemoryLimit(args.memoryLimit().value());
-        } else if (problemConfig.memoryLimit()) {
-            configBuilder.setMemoryLimit(problemConfig.memoryLimit().value());
+        if (!args.noMemoryLimit()) {
+            if (args.memoryLimit()) {
+                configBuilder.setMemoryLimit(args.memoryLimit().value());
+            } else if (problemConfig.memoryLimit()) {
+                configBuilder.setMemoryLimit(problemConfig.memoryLimit().value());
+            }
         }
 
         SubmitterConfig config = configBuilder.build();
