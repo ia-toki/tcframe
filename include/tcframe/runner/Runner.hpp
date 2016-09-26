@@ -31,15 +31,6 @@ private:
     SubmitterFactory* submitterFactory_;
 
 public:
-    Runner(BaseTestSpec<TProblemSpec>* testSpec)
-            : testSpec_(testSpec)
-            , loggerEngine_(new SimpleLoggerEngine())
-            , os_(new UnixOperatingSystem())
-            , loggerFactory_(new RunnerLoggerFactory())
-            , generatorFactory_(new GeneratorFactory())
-            , submitterFactory_(new SubmitterFactory()) {}
-
-    /* Visible for testing. */
     Runner(
             BaseTestSpec<TProblemSpec>* testSpec,
             LoggerEngine* loggerEngine,
