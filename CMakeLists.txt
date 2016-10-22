@@ -67,18 +67,21 @@ set(SOURCE_FILES
     include/tcframe/runner.hpp
     include/tcframe/runner/Args.hpp
     include/tcframe/runner/ArgsParser.hpp
+    include/tcframe/runner/ConfigParser.hpp
     include/tcframe/runner/Runner.hpp
     include/tcframe/runner/RunnerLogger.hpp
     include/tcframe/runner/RunnerLoggerFactory.hpp
+    include/tcframe/runner/SimpleYamlParser.hpp
     include/tcframe/spec.hpp
     include/tcframe/spec/constraint.hpp
     include/tcframe/spec/constraint/Constraint.hpp
     include/tcframe/spec/constraint/ConstraintSuite.hpp
     include/tcframe/spec/constraint/Subtask.hpp
+    include/tcframe/spec/Spec.hpp
     include/tcframe/spec/core.hpp
     include/tcframe/spec/core/BaseTestSpec.hpp
     include/tcframe/spec/core/BaseProblemSpec.hpp
-    include/tcframe/spec/core/CoreSpec.hpp
+    include/tcframe/spec/core/Config.hpp
     include/tcframe/spec/core/DefaultValues.hpp
     include/tcframe/spec/core/Magic.hpp
     include/tcframe/spec/core/ProblemConfig.hpp
@@ -140,10 +143,13 @@ set(SOURCE_FILES
     test/tcframe/logger/SimpleLoggerEngineTests.cpp
     test/tcframe/os/MockOperatingSystem.hpp
     test/tcframe/runner/ArgsParserTests.cpp
-    test/tcframe/runner/RunnerTests.cpp
-    test/tcframe/runner/RunnerLoggerTests.cpp
+    test/tcframe/runner/ConfigParserTests.cpp
+    test/tcframe/runner/MockConfigParser.hpp
     test/tcframe/runner/MockRunnerLogger.hpp
     test/tcframe/runner/MockRunnerLoggerFactory.hpp
+    test/tcframe/runner/RunnerTests.cpp
+    test/tcframe/runner/RunnerLoggerTests.cpp
+    test/tcframe/runner/SimpleYamlParserTests.cpp
     test/tcframe/spec/constraint/ConstraintSuiteBuilderTests.cpp
     test/tcframe/spec/core/BaseTestSpecTests.cpp
     test/tcframe/spec/core/BaseProblemSpecTests.cpp

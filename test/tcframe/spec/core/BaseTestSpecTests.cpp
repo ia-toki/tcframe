@@ -90,27 +90,27 @@ protected:
         }
     };
 
-    TestSpecWithTestCases specWithTestCases;
-    TestSpecWithTestGroups specWithTestGroups;
+    TestSpecWithTestCases problemSpecWithTestCases;
+    TestSpecWithTestGroups problemSpecWithTestGroups;
 };
 
 TEST_F(BaseTestSpecTests, InputFinalizer) {
-    TestSuite testSuite = specWithTestCases.buildTestSuite("foo");
+    TestSuite testSuite = problemSpecWithTestCases.buildTestSuite("foo");
     OfficialTestCaseData* data = (OfficialTestCaseData*) testSuite.testGroups()[1].testCases()[1].data();
 
     data->closure()();
-    EXPECT_THAT(specWithTestCases.A, Eq(3 * 2));
+    EXPECT_THAT(problemSpecWithTestCases.A, Eq(3 * 2));
 }
 
 TEST_F(BaseTestSpecTests, TestSuite) {
-    TestSuite testSuite = specWithTestCases.buildTestSuite("foo");
+    TestSuite testSuite = problemSpecWithTestCases.buildTestSuite("foo");
     EXPECT_THAT(testSuite.testGroups(), ElementsAre(
             AllOf(Property(&TestGroup::id, 0), Property(&TestGroup::testCases, SizeIs(2))),
             AllOf(Property(&TestGroup::id, -1), Property(&TestGroup::testCases, SizeIs(2)))));
 }
 
 TEST_F(BaseTestSpecTests, TestSuite_WithGroups) {
-    TestSuite testSuite = specWithTestGroups.buildTestSuite("foo");
+    TestSuite testSuite = problemSpecWithTestGroups.buildTestSuite("foo");
     EXPECT_THAT(testSuite.testGroups(), ElementsAre(
             AllOf(Property(&TestGroup::id, 0), Property(&TestGroup::testCases, SizeIs(2))),
             AllOf(Property(&TestGroup::id, 1), Property(&TestGroup::testCases, SizeIs(3))),

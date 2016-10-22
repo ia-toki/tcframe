@@ -4,6 +4,7 @@
 #include "../generator/MockGenerator.hpp"
 #include "../os/MockOperatingSystem.hpp"
 #include "../submitter/MockSubmitter.hpp"
+#include "MockConfigParser.hpp"
 #include "MockRunnerLogger.hpp"
 #include "MockRunnerLoggerFactory.hpp"
 #include "tcframe/experimental/runner.hpp"
@@ -24,45 +25,48 @@ protected:
     class ProblemSpec : public BaseProblemSpec {
     protected:
         void InputFormat() {}
-    };
 
-    class ProblemSpecWithConfig : public ProblemSpec {
-    protected:
         void Config() {
-            Slug("foo");
             MultipleTestCasesCount(T);
-            TimeLimit(3);
-            MemoryLimit(128);
         }
     };
 
     class TestSpec : public BaseTestSpec<ProblemSpec> {};
 
-    class TestSpecWithConfig : public BaseTestSpec<ProblemSpecWithConfig> {};
-
     class BadTestSpec : public BaseTestSpec<ProblemSpec> {
     public:
-        CoreSpec buildCoreSpec() {
+        Spec buildSpec(const tcframe::Config& config) {
             throw runtime_error("An error");
         }
     };
 
     int argc = 1;
-    char** argv =  new char*[1]{(char*) "./runner"};
+    char** argv =  new char*[1]{(char*) "./slug"};
+
+    tcframe::Config config = ConfigBuilder("slug")
+            .setTimeLimit(3)
+            .setMemoryLimit(128)
+            .build();
 
     LoggerEngine* loggerEngine = new SimpleLoggerEngine();
 
-    Mock(RunnerLogger) logger;
+    Mock(ConfigParser) configParser;
+    Mock(RunnerLogger) runnerLogger;
     Mock(Generator) generator;
     Mock(Submitter) submitter;
 
     Mock(OperatingSystem) os;
-    Mock(RunnerLoggerFactory) loggerFactory;
+    Mock(RunnerLoggerFactory) runnerLoggerFactory;
     Mock(GeneratorFactory) generatorFactory;
     Mock(SubmitterFactory) submitterFactory;
 
+    Runner<ProblemSpec> runner = Runner<ProblemSpec>(
+            new TestSpec(), loggerEngine, &os, &configParser,
+            &runnerLoggerFactory, &generatorFactory, &submitterFactory);
+
     void SetUp() {
-        ON_CALL(loggerFactory, create(_)).WillByDefault(Return(&logger));
+        ON_CALL(configParser, parse(_)).WillByDefault(Return(config));
+        ON_CALL(runnerLoggerFactory, create(_)).WillByDefault(Return(&runnerLogger));
         ON_CALL(generatorFactory, create(_, _, _, _)).WillByDefault(Return(&generator));
         ON_CALL(submitterFactory, create(_, _)).WillByDefault(Return(&submitter));
     }
@@ -71,50 +75,36 @@ protected:
 int RunnerTests::T;
 
 TEST_F(RunnerTests, Run_ArgsParsing_Failed) {
-    Runner<ProblemSpec> runner(new TestSpec(), loggerEngine, &os, &loggerFactory, &generatorFactory, &submitterFactory);
-    EXPECT_THAT(runner.run(2, new char*[2]{(char*) "./runner", (char*) "--blah"}), Ne(0));
+    EXPECT_THAT(runner.run(2, new char*[2]{(char*) "./slug", (char*) "--blah"}), Ne(0));
 }
 
 TEST_F(RunnerTests, Run_Specification_Failed) {
-    Runner<ProblemSpec> runner(new BadTestSpec(), loggerEngine, &os, &loggerFactory, &generatorFactory, &submitterFactory);
-    EXPECT_CALL(generator, generate(_, _)).Times(0);
-    EXPECT_CALL(logger, logSpecificationFailure(vector<string>{"An error"}));
+    Runner<ProblemSpec> badRunner = Runner<ProblemSpec>(
+            new BadTestSpec(), loggerEngine, &os, &configParser,
+            &runnerLoggerFactory, &generatorFactory, &submitterFactory);
 
-    EXPECT_THAT(runner.run(argc, argv), Ne(0));
+    EXPECT_CALL(generator, generate(_, _)).Times(0);
+    EXPECT_CALL(runnerLogger, logSpecificationFailure(vector<string>{"An error"}));
+
+    EXPECT_THAT(badRunner.run(argc, argv), Ne(0));
 }
 
 TEST_F(RunnerTests, Run_Generation_Successful) {
-    Runner<ProblemSpec> runner(new TestSpec(), loggerEngine, &os, &loggerFactory, &generatorFactory, &submitterFactory);
     ON_CALL(generator, generate(_, _)).WillByDefault(Return(true));
 
     EXPECT_THAT(runner.run(argc, argv), Eq(0));
 }
 
 TEST_F(RunnerTests, Run_Generation_Failed) {
-    Runner<ProblemSpec> runner(new TestSpec(), loggerEngine, &os, &loggerFactory, &generatorFactory, &submitterFactory);
     ON_CALL(generator, generate(_, _)).WillByDefault(Return(false));
 
     EXPECT_THAT(runner.run(argc, argv), Ne(0));
 }
 
-TEST_F(RunnerTests, Run_Generation_UseDefaultOptions) {
-    Runner<ProblemSpec> runner(new TestSpec(), loggerEngine, &os, &loggerFactory, &generatorFactory, &submitterFactory);
+TEST_F(RunnerTests, Run_Generation_UseConfigOptions) {
     EXPECT_CALL(generator, generate(_, GeneratorConfigBuilder()
             .setSeed(0)
-            .setSlug("problem")
-            .setSolutionCommand("./solution")
-            .setTestCasesDir("tc")
-            .build()));
-
-    runner.run(argc, argv);
-}
-
-TEST_F(RunnerTests, Run_Generation_UseSuppliedOptions) {
-    Runner<ProblemSpecWithConfig> runner(
-            new TestSpecWithConfig(), loggerEngine, &os, &loggerFactory, &generatorFactory, &submitterFactory);
-    EXPECT_CALL(generator, generate(_, GeneratorConfigBuilder()
-            .setSeed(0)
-            .setSlug("foo")
+            .setSlug("slug")
             .setMultipleTestCasesCount(&T)
             .setSolutionCommand("./solution")
             .setTestCasesDir("tc")
@@ -124,18 +114,16 @@ TEST_F(RunnerTests, Run_Generation_UseSuppliedOptions) {
 }
 
 TEST_F(RunnerTests, Run_Generation_UseArgsOptions) {
-    Runner<ProblemSpecWithConfig> runner(
-            new TestSpecWithConfig(), loggerEngine, &os, &loggerFactory, &generatorFactory, &submitterFactory);
     EXPECT_CALL(generator, generate(_, GeneratorConfigBuilder()
             .setSeed(42)
-            .setSlug("foo")
+            .setSlug("slug")
             .setMultipleTestCasesCount(&T)
             .setSolutionCommand("\"java Solution\"")
             .setTestCasesDir("testdata")
             .build()));
 
     runner.run(4, new char*[5]{
-            (char*) "./runner",
+            (char*) "./slug",
             (char*) "--seed=42",
             (char*) "--solution=\"java Solution\"",
             (char*) "--tc-dir=testdata",
@@ -143,11 +131,10 @@ TEST_F(RunnerTests, Run_Generation_UseArgsOptions) {
 }
 
 TEST_F(RunnerTests, Run_Submission) {
-    Runner<ProblemSpec> runner(new TestSpec(), loggerEngine, &os, &loggerFactory, &generatorFactory, &submitterFactory);
     EXPECT_CALL(submitter, submit(_, _, _));
 
     int exitStatus = runner.run(2, new char*[3]{
-            (char*) "./runner",
+            (char*) "./slug",
             (char*) "submit",
             nullptr});
 
@@ -155,24 +142,24 @@ TEST_F(RunnerTests, Run_Submission) {
 }
 
 TEST_F(RunnerTests, Run_Submission_UseDefaultOptions) {
-    Runner<ProblemSpec> runner(new TestSpec(), loggerEngine, &os, &loggerFactory, &generatorFactory, &submitterFactory);
+    ON_CALL(configParser, parse(_)).WillByDefault(Return(ConfigBuilder("slug").build()));
+
     EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder()
-            .setSlug("problem")
+            .setSlug("slug")
+            .setHasMultipleTestCasesCount(true)
             .setSolutionCommand("./solution")
             .setTestCasesDir("tc")
             .build()));
 
     runner.run(2, new char*[3]{
-            (char*) "./runner",
+            (char*) "./slug",
             (char*) "submit",
             nullptr});
 }
 
-TEST_F(RunnerTests, Run_Submission_UseSuppliedOptions) {
-    Runner<ProblemSpecWithConfig> runner(
-            new TestSpecWithConfig(), loggerEngine, &os, &loggerFactory, &generatorFactory, &submitterFactory);
+TEST_F(RunnerTests, Run_Submission_UseConfigOptions) {
     EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder()
-            .setSlug("foo")
+            .setSlug("slug")
             .setHasMultipleTestCasesCount(true)
             .setSolutionCommand("./solution")
             .setTestCasesDir("tc")
@@ -181,16 +168,14 @@ TEST_F(RunnerTests, Run_Submission_UseSuppliedOptions) {
             .build()));
 
     runner.run(2, new char*[3]{
-            (char*) "./runner",
+            (char*) "./slug",
             (char*) "submit",
             nullptr});
 }
 
 TEST_F(RunnerTests, Run_Submission_UseArgsOptions) {
-    Runner<ProblemSpecWithConfig> runner(
-            new TestSpecWithConfig(), loggerEngine, &os, &loggerFactory, &generatorFactory, &submitterFactory);
     EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder()
-            .setSlug("foo")
+            .setSlug("slug")
             .setHasMultipleTestCasesCount(true)
             .setSolutionCommand("\"java Solution\"")
             .setTestCasesDir("testdata")
@@ -199,7 +184,7 @@ TEST_F(RunnerTests, Run_Submission_UseArgsOptions) {
             .build()));
 
     runner.run(6, new char*[7]{
-            (char*) "./runner",
+            (char*) "./slug",
             (char*) "submit",
             (char*) "--solution=\"java Solution\"",
             (char*) "--tc-dir=testdata",
@@ -209,17 +194,15 @@ TEST_F(RunnerTests, Run_Submission_UseArgsOptions) {
 }
 
 TEST_F(RunnerTests, Run_Submission_UseArgsOptions_NoLimits) {
-    Runner<ProblemSpecWithConfig> runner(
-            new TestSpecWithConfig(), loggerEngine, &os, &loggerFactory, &generatorFactory, &submitterFactory);
     EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder()
-            .setSlug("foo")
+            .setSlug("slug")
             .setHasMultipleTestCasesCount(true)
             .setSolutionCommand("\"java Solution\"")
             .setTestCasesDir("testdata")
             .build()));
 
     runner.run(6, new char*[7]{
-            (char*) "./runner",
+            (char*) "./slug",
             (char*) "submit",
             (char*) "--solution=\"java Solution\"",
             (char*) "--tc-dir=testdata",

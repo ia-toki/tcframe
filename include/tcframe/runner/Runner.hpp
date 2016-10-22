@@ -4,6 +4,7 @@
 
 #include "Args.hpp"
 #include "ArgsParser.hpp"
+#include "ConfigParser.hpp"
 #include "RunnerLogger.hpp"
 #include "RunnerLoggerFactory.hpp"
 #include "tcframe/generator.hpp"
@@ -26,7 +27,8 @@ private:
     LoggerEngine* loggerEngine_;
     OperatingSystem* os_;
 
-    RunnerLoggerFactory* loggerFactory_;
+    ConfigParser* configParser_;
+    RunnerLoggerFactory* runnerLoggerFactory_;
     GeneratorFactory* generatorFactory_;
     SubmitterFactory* submitterFactory_;
 
@@ -35,27 +37,30 @@ public:
             BaseTestSpec<TProblemSpec>* testSpec,
             LoggerEngine* loggerEngine,
             OperatingSystem* os,
+            ConfigParser* configParser,
             RunnerLoggerFactory* runnerLoggerFactory,
             GeneratorFactory* generatorFactory,
             SubmitterFactory* submitterFactory)
             : testSpec_(testSpec)
             , loggerEngine_(loggerEngine)
+            , configParser_(configParser)
             , os_(os)
-            , loggerFactory_(runnerLoggerFactory)
+            , runnerLoggerFactory_(runnerLoggerFactory)
             , generatorFactory_(generatorFactory)
             , submitterFactory_(submitterFactory) {}
 
     int run(int argc, char* argv[]) {
-        auto logger = loggerFactory_->create(loggerEngine_);
+        auto runnerLogger = runnerLoggerFactory_->create(loggerEngine_);
 
         try {
             Args args = parseArgs(argc, argv);
-            CoreSpec coreSpec = buildCoreSpec(logger);
+            Config config = parseConfig(argv[0]);
+            Spec spec = buildSpec(config, runnerLogger);
 
             if (args.command() == Args::Command::GEN) {
-                return generate(args, coreSpec);
+                return generate(args, spec);
             } else {
-                return submit(args, coreSpec);
+                return submit(args, spec);
             }
         } catch (...) {
             return 1;
@@ -72,60 +77,71 @@ private:
         }
     }
 
-    CoreSpec buildCoreSpec(RunnerLogger* logger) {
+    Config parseConfig(const string& runnerPath) {
         try {
-            return testSpec_->buildCoreSpec();
+            return configParser_->parse(runnerPath);
+        } catch (runtime_error& e) {
+            cout << e.what() << endl;
+            throw;
+        }
+    }
+
+    Spec buildSpec(const Config& config, RunnerLogger* logger) {
+        try {
+            return testSpec_->buildSpec(config);
         } catch (runtime_error& e) {
             logger->logSpecificationFailure({e.what()});
             throw;
         }
     }
 
-    int generate(const Args& args, const CoreSpec& coreSpec) {
-        const ProblemConfig& problemConfig = coreSpec.problemConfig();
+    int generate(const Args& args, const Spec& spec) {
+        const Config& config = spec.config();
+        const ProblemConfig& problemConfig = spec.problemConfig();
 
-        GeneratorConfig config = GeneratorConfigBuilder()
+        GeneratorConfig generatorConfig = GeneratorConfigBuilder()
                 .setMultipleTestCasesCount(problemConfig.multipleTestCasesCount().value_or(nullptr))
                 .setSeed(args.seed().value_or(DefaultValues::seed()))
-                .setSlug(problemConfig.slug().value_or(DefaultValues::slug()))
+                .setSlug(config.slug())
                 .setSolutionCommand(args.solution().value_or(DefaultValues::solutionCommand()))
                 .setTestCasesDir(args.tcDir().value_or(DefaultValues::testCasesDir()))
                 .build();
 
-        auto ioManipulator = new IOManipulator(coreSpec.ioFormat());
-        auto verifier = new Verifier(coreSpec.constraintSuite());
+        auto ioManipulator = new IOManipulator(spec.ioFormat());
+        auto verifier = new Verifier(spec.constraintSuite());
         auto logger = new GeneratorLogger(loggerEngine_);
         auto testCaseGenerator = new TestCaseGenerator(verifier, ioManipulator, os_, logger);
         auto generator = generatorFactory_->create(testCaseGenerator, verifier, os_, logger);
 
-        return generator->generate(coreSpec.testSuite(), config) ? 0 : 1;
+        return generator->generate(spec.testSuite(), generatorConfig) ? 0 : 1;
     }
 
-    int submit(const Args& args, const CoreSpec& coreSpec) {
-        const ProblemConfig& problemConfig = coreSpec.problemConfig();
+    int submit(const Args& args, const Spec& spec) {
+        const Config& config = spec.config();
+        const ProblemConfig& problemConfig = spec.problemConfig();
 
         SubmitterConfigBuilder configBuilder = SubmitterConfigBuilder()
                 .setHasMultipleTestCasesCount(problemConfig.multipleTestCasesCount())
-                .setSlug(problemConfig.slug().value_or(DefaultValues::slug()))
+                .setSlug(config.slug())
                 .setSolutionCommand(args.solution().value_or(DefaultValues::solutionCommand()))
                 .setTestCasesDir(args.tcDir().value_or(DefaultValues::testCasesDir()));
 
         if (!args.noTimeLimit()) {
             if (args.timeLimit()) {
                 configBuilder.setTimeLimit(args.timeLimit().value());
-            } else if (problemConfig.timeLimit()) {
-                configBuilder.setTimeLimit(problemConfig.timeLimit().value());
+            } else if (config.timeLimit()) {
+                configBuilder.setTimeLimit(config.timeLimit().value());
             }
         }
         if (!args.noMemoryLimit()) {
             if (args.memoryLimit()) {
                 configBuilder.setMemoryLimit(args.memoryLimit().value());
-            } else if (problemConfig.memoryLimit()) {
-                configBuilder.setMemoryLimit(problemConfig.memoryLimit().value());
+            } else if (config.memoryLimit()) {
+                configBuilder.setMemoryLimit(config.memoryLimit().value());
             }
         }
 
-        SubmitterConfig config = configBuilder.build();
+        SubmitterConfig submitterConfig = configBuilder.build();
 
         auto logger = new SubmitterLogger(loggerEngine_);
         auto evaluator = new BatchEvaluator(os_, logger);
@@ -134,11 +150,11 @@ private:
         auto submitter = submitterFactory_->create(testCaseSubmitter, logger);
 
         set<int> subtaskIds;
-        for (const Subtask& subtask : coreSpec.constraintSuite().constraints()) {
+        for (const Subtask& subtask : spec.constraintSuite().constraints()) {
             subtaskIds.insert(subtask.id());
         }
 
-        submitter->submit(coreSpec.testSuite(), subtaskIds, config);
+        submitter->submit(spec.testSuite(), subtaskIds, submitterConfig);
         return 0;
     }
 };

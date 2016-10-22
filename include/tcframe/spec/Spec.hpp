@@ -1,29 +1,36 @@
 #pragma once
 
-#include "ProblemConfig.hpp"
 #include "tcframe/spec/constraint.hpp"
+#include "tcframe/spec/core.hpp"
 #include "tcframe/spec/io.hpp"
 #include "tcframe/spec/testcase.hpp"
 
 namespace tcframe {
 
-struct CoreSpec {
+struct Spec {
 private:
+    Config config_;
     ProblemConfig problemConfig_;
     IOFormat ioFormat_;
     ConstraintSuite constraintSuite_;
     TestSuite testSuite_;
 
 public:
-    CoreSpec(
+    Spec(
+            const Config& config,
             const ProblemConfig& problemConfig,
             const IOFormat& ioFormat,
             const ConstraintSuite& constraintSuite,
             const TestSuite& testSuite)
-            : problemConfig_(problemConfig)
+            : config_(config)
+            , problemConfig_(problemConfig)
             , ioFormat_(ioFormat)
             , constraintSuite_(constraintSuite)
             , testSuite_(testSuite) {}
+
+    const Config& config() const {
+        return config_;
+    }
 
     const ProblemConfig& problemConfig() const {
         return problemConfig_;

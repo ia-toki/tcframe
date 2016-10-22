@@ -16,12 +16,13 @@ class BaseProblemSpecTests : public Test {
 protected:
     class ProblemSpec : public BaseProblemSpec {
     protected:
+        int T;
         int A, B;
         vector<int> X;
         vector<vector<int>> M;
 
         void Config() {
-            Slug("ab");
+            MultipleTestCasesCount(T);
         }
 
         void InputFormat() {
@@ -55,10 +56,6 @@ protected:
     protected:
         int T;
 
-        void Config() {
-            Slug("ab");
-        }
-
         void InputFormat() {}
 
         void MultipleTestCasesConstraints() {
@@ -88,19 +85,19 @@ protected:
         }
     };
     
-    ProblemSpec spec;
-    ProblemSpecWithConstraints specWithConstraints;
-    ProblemSpecWithMultipleTestCasesConstraints specWithMultipleTestCasesConstraints;
-    ProblemSpecWithSubtasks specWithSubtasks;
+    ProblemSpec problemSpec;
+    ProblemSpecWithConstraints problemSpecWithConstraints;
+    ProblemSpecWithMultipleTestCasesConstraints problemSpecWithMultipleTestCasesConstraints;
+    ProblemSpecWithSubtasks problemSpecWithSubtasks;
 };
 
 TEST_F(BaseProblemSpecTests, Config) {
-    ProblemConfig config = spec.buildProblemConfig();
-    EXPECT_THAT(config.slug(), Eq(optional<string>("ab")));
+    ProblemConfig problemConfig = problemSpec.buildProblemConfig();
+    EXPECT_TRUE(problemConfig.multipleTestCasesCount());
 }
 
 TEST_F(BaseProblemSpecTests, IOFormat) {
-    IOFormat ioFormat = spec.buildIOFormat();
+    IOFormat ioFormat = problemSpec.buildIOFormat();
     EXPECT_THAT(ioFormat.inputFormat(), ElementsAre(
         A<LineIOSegment*>(),
         A<LinesIOSegment*>(),
@@ -109,21 +106,21 @@ TEST_F(BaseProblemSpecTests, IOFormat) {
             A<LinesIOSegment*>(),
             A<GridIOSegment*>(),
             A<LineIOSegment*>()));
-    }
+}
 
 TEST_F(BaseProblemSpecTests, Constraints) {
-    ConstraintSuite constraintSuite = specWithConstraints.buildConstraintSuite();
+    ConstraintSuite constraintSuite = problemSpecWithConstraints.buildConstraintSuite();
     EXPECT_THAT(constraintSuite.constraints(), ElementsAre(
         AllOf(Property(&Subtask::id, -1), Property(&Subtask::constraints, SizeIs(2)))));
 }
 
 TEST_F(BaseProblemSpecTests, MultipleTestCasesConstraints) {
-    ConstraintSuite constraintSuite = specWithMultipleTestCasesConstraints.buildConstraintSuite();
+    ConstraintSuite constraintSuite = problemSpecWithMultipleTestCasesConstraints.buildConstraintSuite();
     EXPECT_THAT(constraintSuite.multipleTestCasesConstraints(), SizeIs(1));
 }
 
 TEST_F(BaseProblemSpecTests, Subtasks) {
-    ConstraintSuite constraintSuite = specWithSubtasks.buildConstraintSuite();
+    ConstraintSuite constraintSuite = problemSpecWithSubtasks.buildConstraintSuite();
     EXPECT_THAT(constraintSuite.constraints(), ElementsAre(
             AllOf(Property(&Subtask::id, 1), Property(&Subtask::constraints, SizeIs(3))),
             AllOf(Property(&Subtask::id, 2), Property(&Subtask::constraints, SizeIs(2)))));

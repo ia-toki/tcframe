@@ -12,10 +12,6 @@ public:
         return 0;
     }
 
-    static string slug() {
-        return "problem";
-    }
-
     static string solutionCommand() {
         return "./solution";
     }

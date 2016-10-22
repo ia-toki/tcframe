@@ -1,5 +1,6 @@
 #pragma once
 
+#include "tcframe/spec/Spec.hpp"
 #include "tcframe/spec/constraint.hpp"
 #include "tcframe/spec/core.hpp"
 #include "tcframe/spec/io.hpp"

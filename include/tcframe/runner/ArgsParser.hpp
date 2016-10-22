@@ -39,14 +39,10 @@ public:
         opterr = 0;
 
         int c;
-        int memoryLimit;
-        unsigned seed;
-        int timeLimit;
         while ((c = getopt_long_only(argc, argv, ":", longopts, nullptr)) != -1) {
             switch (c) {
                 case 'a':
-                    sscanf(optarg, "%d", &memoryLimit);
-                    args.memoryLimit_ = optional<int>(memoryLimit);
+                    args.memoryLimit_ = StringUtils::toNumber<int>(optarg);
                     break;
                 case 'b':
                     args.noMemoryLimit_ = true;
@@ -55,8 +51,7 @@ public:
                     args.noTimeLimit_ = true;
                     break;
                 case 'd':
-                    sscanf(optarg, "%u", &seed);
-                    args.seed_ = optional<unsigned>(seed);
+                    args.seed_ = StringUtils::toNumber<unsigned>(optarg);
                     break;
                 case 'e':
                     args.solution_ = optional<string>(optarg);
@@ -65,8 +60,7 @@ public:
                     args.tcDir_ = optional<string>(optarg);
                     break;
                 case 'g':
-                    sscanf(optarg, "%d", &timeLimit);
-                    args.timeLimit_ = optional<int>(timeLimit);
+                    args.timeLimit_ = StringUtils::toNumber<int>(optarg);
                     break;
                 case ':':
                     throw runtime_error("tcframe: option " + string(argv[optind - 1]) + " requires an argument");

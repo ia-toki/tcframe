@@ -61,7 +61,6 @@ public:
     GeneratorConfigBuilder() {
         subject_.multipleTestCasesCount_ = nullptr;
         subject_.seed_ = DefaultValues::seed();
-        subject_.slug_ = DefaultValues::slug();
         subject_.solutionCommand_ = DefaultValues::solutionCommand();
         subject_.testCasesDir_ = DefaultValues::testCasesDir();
     }

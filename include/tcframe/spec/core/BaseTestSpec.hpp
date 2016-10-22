@@ -3,8 +3,9 @@
 #include <set>
 #include <vector>
 
-#include "CoreSpec.hpp"
+#include "Config.hpp"
 #include "DefaultValues.hpp"
+#include "tcframe/spec/Spec.hpp"
 #include "tcframe/spec/random.hpp"
 #include "tcframe/spec/testcase.hpp"
 #include "tcframe/util.hpp"
@@ -104,12 +105,12 @@ public:
         return TestSuiteBuilder::build();
     }
 
-    virtual CoreSpec buildCoreSpec() {
+    virtual Spec buildSpec(const Config& config) {
         ProblemConfig problemConfig = TProblemSpec::buildProblemConfig();
         IOFormat ioFormat = TProblemSpec::buildIOFormat();
         ConstraintSuite constraintSuite = TProblemSpec::buildConstraintSuite();
-        TestSuite testSuite = buildTestSuite(problemConfig.slug().value_or(DefaultValues::slug()));
-        return CoreSpec(problemConfig, ioFormat, constraintSuite, testSuite);
+        TestSuite testSuite = buildTestSuite(config.slug());
+        return Spec(config, problemConfig, ioFormat, constraintSuite, testSuite);
     }
 
 protected:
