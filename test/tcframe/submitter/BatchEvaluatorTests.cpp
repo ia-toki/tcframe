@@ -87,11 +87,8 @@ TEST_F(BatchEvaluatorTests, Evaluation_TLE) {
                             .setExitSignal("SIGXCPU")
                             .setExceededCpuLimits(true)
                             .build(), new istringstream(), new istringstream())));
-    {
-        InSequence sequence;
-        EXPECT_CALL(logger, logTestCaseVerdict(Verdict::tle()));
-        EXPECT_CALL(logger, logSolutionExecutionFailure(_));
-    }
+
+    EXPECT_CALL(logger, logTestCaseVerdict(Verdict::tle()));
 
     EXPECT_THAT(evaluator.evaluate(testCase, config), Eq(optional<Verdict>(Verdict::tle())));
 }
