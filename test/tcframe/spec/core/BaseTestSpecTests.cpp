@@ -17,18 +17,28 @@ protected:
     class ProblemSpec : public BaseProblemSpec {
     public: // intentionaly public so that input values can be inspected
         int A, B;
+        vector<int> V;
 
         void InputFormat() {}
     };
 
-    class TestSpec : public BaseTestSpec<ProblemSpec> {
+    class TestSpecWithLifecycle : public BaseTestSpec<ProblemSpec> {
     protected:
-        void InputFinalizer() {
-            A *= 2;
+        void BeforeTestCase() {
+            V.clear();
+        }
+
+        void AfterTestCase() {
+            V.push_back(0);
+        }
+
+        void TestCases() {
+            addOfficialTestCase([=] {V.push_back(1);}, "V.push_back(1)");
+            addOfficialTestCase([=] {V.push_back(2);}, "V.push_back(2)");
         }
     };
 
-    class TestSpecWithTestCases : public TestSpec {
+    class TestSpecWithTestCases : public BaseTestSpec<ProblemSpec> {
     protected:
         void SampleTestCase1() {
             Input({"10", "20"});
@@ -45,7 +55,7 @@ protected:
         }
     };
 
-    class TestSpecWithTestGroups : public TestSpec {
+    class TestSpecWithTestGroups : public BaseTestSpec<ProblemSpec> {
     protected:
         void SampleTestCase1() {
             Subtasks({1, 2});
@@ -83,34 +93,39 @@ protected:
     };
 
     // Testing that rnd is available in TestSpec
-    class TestSpecWithRandom : public TestSpec {
+    class TestSpecWithRandom : public BaseTestSpec<ProblemSpec> {
     protected:
         void TestCases() {
             addOfficialTestCase([=] {A = rnd.nextInt(1, 100);}, "A = rnd.nextInt(1, 100)");
         }
     };
 
-    TestSpecWithTestCases problemSpecWithTestCases;
-    TestSpecWithTestGroups problemSpecWithTestGroups;
+    TestSpecWithLifecycle testSpecWithLifecycle;
+    TestSpecWithTestCases testSpecWithTestCases;
+    TestSpecWithTestGroups testSpecWithTestGroups;
 };
 
-TEST_F(BaseTestSpecTests, InputFinalizer) {
-    TestSuite testSuite = problemSpecWithTestCases.buildTestSuite("foo");
-    OfficialTestCaseData* data = (OfficialTestCaseData*) testSuite.testGroups()[1].testCases()[1].data();
+TEST_F(BaseTestSpecTests, Lifecycle) {
+    TestSuite testSuite = testSpecWithLifecycle.buildTestSuite("foo");
+    OfficialTestCaseData* tc1 = (OfficialTestCaseData*) testSuite.testGroups()[1].testCases()[0].data();
+    OfficialTestCaseData* tc2 = (OfficialTestCaseData*) testSuite.testGroups()[1].testCases()[1].data();
 
-    data->closure()();
-    EXPECT_THAT(problemSpecWithTestCases.A, Eq(3 * 2));
+    tc1->closure()();
+    EXPECT_THAT(testSpecWithLifecycle.V, Eq(vector<int>{1, 0}));
+
+    tc2->closure()();
+    EXPECT_THAT(testSpecWithLifecycle.V, Eq(vector<int>{2, 0}));
 }
 
 TEST_F(BaseTestSpecTests, TestSuite) {
-    TestSuite testSuite = problemSpecWithTestCases.buildTestSuite("foo");
+    TestSuite testSuite = testSpecWithTestCases.buildTestSuite("foo");
     EXPECT_THAT(testSuite.testGroups(), ElementsAre(
             AllOf(Property(&TestGroup::id, 0), Property(&TestGroup::testCases, SizeIs(2))),
             AllOf(Property(&TestGroup::id, -1), Property(&TestGroup::testCases, SizeIs(2)))));
 }
 
 TEST_F(BaseTestSpecTests, TestSuite_WithGroups) {
-    TestSuite testSuite = problemSpecWithTestGroups.buildTestSuite("foo");
+    TestSuite testSuite = testSpecWithTestGroups.buildTestSuite("foo");
     EXPECT_THAT(testSuite.testGroups(), ElementsAre(
             AllOf(Property(&TestGroup::id, 0), Property(&TestGroup::testCases, SizeIs(2))),
             AllOf(Property(&TestGroup::id, 1), Property(&TestGroup::testCases, SizeIs(3))),

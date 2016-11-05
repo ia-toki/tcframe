@@ -43,7 +43,8 @@ public:
 class TestSuiteBuilder {
 private:
     string slug_;
-    function<void()> inputFinalizer_;
+    function<void()> beforeClosure_;
+    function<void()> afterClosure_;
 
     set<int>* curSubtaskIds_;
 
@@ -63,7 +64,8 @@ public:
     virtual ~TestSuiteBuilder() {}
 
     TestSuiteBuilder()
-            : inputFinalizer_([]{})
+            : beforeClosure_([]{})
+            , afterClosure_([]{})
             , curSampleSubtaskIds_({-1})
             , curOfficialSubtaskIds_({-1})
             , curOfficialTestGroupId_(-1)
@@ -76,8 +78,13 @@ public:
         return *this;
     }
 
-    TestSuiteBuilder& setInputFinalizer(function<void()> inputFinalizer) {
-        inputFinalizer_ = inputFinalizer;
+    TestSuiteBuilder& setBeforeClosure(function<void()> beforeClosure) {
+        beforeClosure_ = beforeClosure;
+        return *this;
+    }
+
+    TestSuiteBuilder& setAfterClosure(function<void()> afterClosure) {
+        afterClosure_ = afterClosure;
         return *this;
     }
 
@@ -134,7 +141,10 @@ public:
                 .setId(TestCaseIdCreator::create(slug_, curOfficialTestGroupId_, (int) curOfficialTestCases_.size() + 1))
                 .setSubtaskIds(curOfficialSubtaskIds_)
                 .setDescription(description)
-                .setData(new OfficialTestCaseData([=]{clozure(); inputFinalizer_();}))
+                .setData(new OfficialTestCaseData([=]{
+                    beforeClosure_();
+                    clozure();
+                    afterClosure_();}))
                 .build());
 
         return *this;

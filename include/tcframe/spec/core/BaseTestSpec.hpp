@@ -77,8 +77,11 @@ public:
 
     TestSuite buildTestSuite(const string& slug) {
         TestSuiteBuilder::setSlug(slug);
-        TestSuiteBuilder::setInputFinalizer([this] {
-            InputFinalizer();
+        TestSuiteBuilder::setBeforeClosure([this] {
+            BeforeTestCase();
+        });
+        TestSuiteBuilder::setAfterClosure([this] {
+            AfterTestCase();
         });
 
         for (auto sampleTestCase : sampleTestCases_) {
@@ -116,7 +119,8 @@ public:
 protected:
     Random rnd;
 
-    virtual void InputFinalizer() {}
+    virtual void BeforeTestCase() {}
+    virtual void AfterTestCase() {}
     virtual void SampleTestCase1() {throw NotImplementedException();}
     virtual void SampleTestCase2() {throw NotImplementedException();}
     virtual void SampleTestCase3() {throw NotImplementedException();}

@@ -27,14 +27,15 @@ TEST_F(TestSuiteBuilderTests, Building_Nothing) {
     EXPECT_THAT(testSuite, Eq(expected));
 }
 
-TEST_F(TestSuiteBuilderTests, Building_InputFinalizer) {
+TEST_F(TestSuiteBuilderTests, Building_Lifecycle) {
     TestSuite testSuite = builder
-            .setInputFinalizer([&]{N *= 2;})
-            .addOfficialTestCase([&]{N = 3;}, "N = 3")
+            .setBeforeClosure([&]{N = 2;})
+            .setAfterClosure([&]{N *= 4;})
+            .addOfficialTestCase([&]{N *= 3;}, "N *= 3")
             .build();
     OfficialTestCaseData* data = (OfficialTestCaseData*) testSuite.testGroups()[1].testCases()[0].data();
     data->closure()();
-    EXPECT_THAT(N, Eq(3 * 2));
+    EXPECT_THAT(N, Eq(2 * 3 * 4));
 }
 
 TEST_F(TestSuiteBuilderTests, Building_OnlySample) {
