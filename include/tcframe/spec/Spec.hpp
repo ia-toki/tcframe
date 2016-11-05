@@ -9,7 +9,7 @@ namespace tcframe {
 
 struct Spec {
 private:
-    Config config_;
+    Metadata metadata_;
     ProblemConfig problemConfig_;
     IOFormat ioFormat_;
     ConstraintSuite constraintSuite_;
@@ -17,19 +17,19 @@ private:
 
 public:
     Spec(
-            const Config& config,
+            const Metadata& metadata,
             const ProblemConfig& problemConfig,
             const IOFormat& ioFormat,
             const ConstraintSuite& constraintSuite,
             const TestSuite& testSuite)
-            : config_(config)
+            : metadata_(metadata)
             , problemConfig_(problemConfig)
             , ioFormat_(ioFormat)
             , constraintSuite_(constraintSuite)
             , testSuite_(testSuite) {}
 
-    const Config& config() const {
-        return config_;
+    const Metadata& metadata() const {
+        return metadata_;
     }
 
     const ProblemConfig& problemConfig() const {

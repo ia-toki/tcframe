@@ -16,19 +16,19 @@ using std::string;
 
 namespace tcframe {
 
-class ConfigParser {
+class MetadataParser {
 private:
     OperatingSystem* os_;
 
 public:
-    virtual ~ConfigParser() {}
+    virtual ~MetadataParser() {}
 
-    ConfigParser(OperatingSystem* os)
+    MetadataParser(OperatingSystem* os)
             : os_(os) {}
 
-    virtual Config parse(const string& runnerFilename) {
+    virtual Metadata parse(const string& runnerFilename) {
         string slug = getSlug(runnerFilename);
-        ConfigBuilder config(slug);
+        MetadataBuilder config(slug);
 
         string configFilename = getConfigFilename(runnerFilename);
         istream* configStream = os_->openForReading(configFilename);

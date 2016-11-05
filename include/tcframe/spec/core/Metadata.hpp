@@ -12,8 +12,8 @@ using std::tie;
 
 namespace tcframe {
 
-struct Config {
-    friend class ConfigBuilder;
+struct Metadata {
+    friend class MetadataBuilder;
 
 private:
     string slug_;
@@ -33,32 +33,32 @@ public:
         return memoryLimit_;
     }
 
-    bool operator==(const Config& o) const {
+    bool operator==(const Metadata& o) const {
         return tie(slug_, timeLimit_, memoryLimit_) == tie(o.slug_, o.timeLimit_, o.memoryLimit_);
     }
 };
 
-class ConfigBuilder {
+class MetadataBuilder {
 private:
-    Config subject_;
+    Metadata subject_;
 
 public:
-    ConfigBuilder(const string& slug) {
+    MetadataBuilder(const string& slug) {
         subject_.slug_ = slug;
     }
 
 public:
-    ConfigBuilder& setTimeLimit(int timeLimit) {
+    MetadataBuilder& setTimeLimit(int timeLimit) {
         subject_.timeLimit_ = optional<int>(timeLimit);
         return *this;
     }
 
-    ConfigBuilder& setMemoryLimit(int memoryLimit) {
+    MetadataBuilder& setMemoryLimit(int memoryLimit) {
         subject_.memoryLimit_ = optional<int>(memoryLimit);
         return *this;
     }
 
-    Config build() {
+    Metadata build() {
         return move(subject_);
     }
 };

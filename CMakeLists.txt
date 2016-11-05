@@ -67,7 +67,7 @@ set(SOURCES
     include/tcframe/runner.hpp
     include/tcframe/runner/Args.hpp
     include/tcframe/runner/ArgsParser.hpp
-    include/tcframe/runner/ConfigParser.hpp
+    include/tcframe/runner/MetadataParser.hpp
     include/tcframe/runner/Runner.hpp
     include/tcframe/runner/RunnerLogger.hpp
     include/tcframe/runner/RunnerLoggerFactory.hpp
@@ -81,9 +81,9 @@ set(SOURCES
     include/tcframe/spec/core.hpp
     include/tcframe/spec/core/BaseTestSpec.hpp
     include/tcframe/spec/core/BaseProblemSpec.hpp
-    include/tcframe/spec/core/Config.hpp
     include/tcframe/spec/core/DefaultValues.hpp
     include/tcframe/spec/core/Magic.hpp
+    include/tcframe/spec/core/Metadata.hpp
     include/tcframe/spec/core/ProblemConfig.hpp
     include/tcframe/spec/io.hpp
     include/tcframe/spec/io/GridIOSegment.hpp
@@ -143,8 +143,8 @@ set(SOURCES
     test/tcframe/logger/SimpleLoggerEngineTests.cpp
     test/tcframe/os/MockOperatingSystem.hpp
     test/tcframe/runner/ArgsParserTests.cpp
-    test/tcframe/runner/ConfigParserTests.cpp
-    test/tcframe/runner/MockConfigParser.hpp
+    test/tcframe/runner/MetadataParserTests.cpp
+    test/tcframe/runner/MockMetadataParser.hpp
     test/tcframe/runner/MockRunnerLogger.hpp
     test/tcframe/runner/MockRunnerLoggerFactory.hpp
     test/tcframe/runner/RunnerTests.cpp

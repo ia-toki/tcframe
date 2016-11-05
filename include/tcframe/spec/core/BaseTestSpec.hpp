@@ -3,7 +3,7 @@
 #include <set>
 #include <vector>
 
-#include "Config.hpp"
+#include "Metadata.hpp"
 #include "DefaultValues.hpp"
 #include "tcframe/spec/Spec.hpp"
 #include "tcframe/spec/random.hpp"
@@ -108,12 +108,12 @@ public:
         return TestSuiteBuilder::build();
     }
 
-    virtual Spec buildSpec(const Config& config) {
+    virtual Spec buildSpec(const Metadata& metadata) {
         ProblemConfig problemConfig = TProblemSpec::buildProblemConfig();
         IOFormat ioFormat = TProblemSpec::buildIOFormat();
         ConstraintSuite constraintSuite = TProblemSpec::buildConstraintSuite();
-        TestSuite testSuite = buildTestSuite(config.slug());
-        return Spec(config, problemConfig, ioFormat, constraintSuite, testSuite);
+        TestSuite testSuite = buildTestSuite(metadata.slug());
+        return Spec(metadata, problemConfig, ioFormat, constraintSuite, testSuite);
     }
 
 protected:

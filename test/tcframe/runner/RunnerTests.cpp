@@ -4,7 +4,7 @@
 #include "../generator/MockGenerator.hpp"
 #include "../os/MockOperatingSystem.hpp"
 #include "../submitter/MockSubmitter.hpp"
-#include "MockConfigParser.hpp"
+#include "MockMetadataParser.hpp"
 #include "MockRunnerLogger.hpp"
 #include "MockRunnerLoggerFactory.hpp"
 #include "tcframe/experimental/runner.hpp"
@@ -35,7 +35,7 @@ protected:
 
     class BadTestSpec : public BaseTestSpec<ProblemSpec> {
     public:
-        Spec buildSpec(const tcframe::Config& config) {
+        Spec buildSpec(const tcframe::Metadata& config) {
             throw runtime_error("An error");
         }
     };
@@ -43,14 +43,14 @@ protected:
     int argc = 1;
     char** argv =  new char*[1]{(char*) "./slug"};
 
-    tcframe::Config config = ConfigBuilder("slug")
+    Metadata metadata = MetadataBuilder("slug")
             .setTimeLimit(3)
             .setMemoryLimit(128)
             .build();
 
     LoggerEngine* loggerEngine = new SimpleLoggerEngine();
 
-    MOCK(ConfigParser) configParser;
+    MOCK(MetadataParser) metadataParser;
     MOCK(RunnerLogger) runnerLogger;
     MOCK(Generator) generator;
     MOCK(Submitter) submitter;
@@ -61,11 +61,11 @@ protected:
     MOCK(SubmitterFactory) submitterFactory;
 
     Runner<ProblemSpec> runner = Runner<ProblemSpec>(
-            new TestSpec(), loggerEngine, &os, &configParser,
+            new TestSpec(), loggerEngine, &os, &metadataParser,
             &runnerLoggerFactory, &generatorFactory, &submitterFactory);
 
     void SetUp() {
-        ON_CALL(configParser, parse(_)).WillByDefault(Return(config));
+        ON_CALL(metadataParser, parse(_)).WillByDefault(Return(metadata));
         ON_CALL(runnerLoggerFactory, create(_)).WillByDefault(Return(&runnerLogger));
         ON_CALL(generatorFactory, create(_, _, _, _)).WillByDefault(Return(&generator));
         ON_CALL(submitterFactory, create(_, _)).WillByDefault(Return(&submitter));
@@ -82,7 +82,7 @@ TEST_F(RunnerTests, Run_ArgsParsing_Failed) {
 
 TEST_F(RunnerTests, Run_Specification_Failed) {
     Runner<ProblemSpec> badRunner = Runner<ProblemSpec>(
-            new BadTestSpec(), loggerEngine, &os, &configParser,
+            new BadTestSpec(), loggerEngine, &os, &metadataParser,
             &runnerLoggerFactory, &generatorFactory, &submitterFactory);
 
     EXPECT_CALL(generator, generate(_, _)).Times(0);
@@ -144,7 +144,7 @@ TEST_F(RunnerTests, Run_Submission) {
 }
 
 TEST_F(RunnerTests, Run_Submission_UseDefaultOptions) {
-    ON_CALL(configParser, parse(_)).WillByDefault(Return(ConfigBuilder("slug").build()));
+    ON_CALL(metadataParser, parse(_)).WillByDefault(Return(MetadataBuilder("slug").build()));
 
     EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder()
             .setSlug("slug")

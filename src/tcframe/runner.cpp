@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
     auto testSpec = new TestSpec();
     auto loggerEngine = new SimpleLoggerEngine();
     auto os = new UnixOperatingSystem();
-    auto configParser = new ConfigParser(os);
+    auto metadataParser = new MetadataParser(os);
     auto runnerLoggerFactory = new RunnerLoggerFactory();
     auto generatorFactory = new GeneratorFactory();
     auto submitterFactory = new SubmitterFactory();
@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
             testSpec,
             loggerEngine,
             os,
-            configParser,
+            metadataParser,
             runnerLoggerFactory,
             generatorFactory,
             submitterFactory);

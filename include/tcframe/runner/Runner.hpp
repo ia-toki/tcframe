@@ -4,7 +4,7 @@
 
 #include "Args.hpp"
 #include "ArgsParser.hpp"
-#include "ConfigParser.hpp"
+#include "MetadataParser.hpp"
 #include "RunnerLogger.hpp"
 #include "RunnerLoggerFactory.hpp"
 #include "tcframe/generator.hpp"
@@ -27,7 +27,7 @@ private:
     LoggerEngine* loggerEngine_;
     OperatingSystem* os_;
 
-    ConfigParser* configParser_;
+    MetadataParser* metadataParser_;
     RunnerLoggerFactory* runnerLoggerFactory_;
     GeneratorFactory* generatorFactory_;
     SubmitterFactory* submitterFactory_;
@@ -37,13 +37,13 @@ public:
             BaseTestSpec<TProblemSpec>* testSpec,
             LoggerEngine* loggerEngine,
             OperatingSystem* os,
-            ConfigParser* configParser,
+            MetadataParser* metadataParser,
             RunnerLoggerFactory* runnerLoggerFactory,
             GeneratorFactory* generatorFactory,
             SubmitterFactory* submitterFactory)
             : testSpec_(testSpec)
             , loggerEngine_(loggerEngine)
-            , configParser_(configParser)
+            , metadataParser_(metadataParser)
             , os_(os)
             , runnerLoggerFactory_(runnerLoggerFactory)
             , generatorFactory_(generatorFactory)
@@ -54,8 +54,8 @@ public:
 
         try {
             Args args = parseArgs(argc, argv);
-            Config config = parseConfig(argv[0]);
-            Spec spec = buildSpec(config, runnerLogger);
+            Metadata metadata = parseMetadata(argv[0]);
+            Spec spec = buildSpec(metadata, runnerLogger);
 
             int result;
             if (args.command() == Args::Command::GEN) {
@@ -80,18 +80,18 @@ private:
         }
     }
 
-    Config parseConfig(const string& runnerPath) {
+    Metadata parseMetadata(const string& runnerPath) {
         try {
-            return configParser_->parse(runnerPath);
+            return metadataParser_->parse(runnerPath);
         } catch (runtime_error& e) {
             cout << e.what() << endl;
             throw;
         }
     }
 
-    Spec buildSpec(const Config& config, RunnerLogger* logger) {
+    Spec buildSpec(const Metadata& metadata, RunnerLogger* logger) {
         try {
-            return testSpec_->buildSpec(config);
+            return testSpec_->buildSpec(metadata);
         } catch (runtime_error& e) {
             logger->logSpecificationFailure({e.what()});
             throw;
@@ -99,7 +99,7 @@ private:
     }
 
     int generate(const Args& args, const Spec& spec) {
-        const Config& config = spec.config();
+        const Metadata& config = spec.metadata();
         const ProblemConfig& problemConfig = spec.problemConfig();
 
         GeneratorConfig generatorConfig = GeneratorConfigBuilder()
@@ -120,27 +120,27 @@ private:
     }
 
     int submit(const Args& args, const Spec& spec) {
-        const Config& config = spec.config();
+        const Metadata& metadata = spec.metadata();
         const ProblemConfig& problemConfig = spec.problemConfig();
 
         SubmitterConfigBuilder configBuilder = SubmitterConfigBuilder()
                 .setHasMultipleTestCasesCount(problemConfig.multipleTestCasesCount())
-                .setSlug(config.slug())
+                .setSlug(metadata.slug())
                 .setSolutionCommand(args.solution().value_or(DefaultValues::solutionCommand()))
                 .setTestCasesDir(args.output().value_or(DefaultValues::outputDir()));
 
         if (!args.noTimeLimit()) {
             if (args.timeLimit()) {
                 configBuilder.setTimeLimit(args.timeLimit().value());
-            } else if (config.timeLimit()) {
-                configBuilder.setTimeLimit(config.timeLimit().value());
+            } else if (metadata.timeLimit()) {
+                configBuilder.setTimeLimit(metadata.timeLimit().value());
             }
         }
         if (!args.noMemoryLimit()) {
             if (args.memoryLimit()) {
                 configBuilder.setMemoryLimit(args.memoryLimit().value());
-            } else if (config.memoryLimit()) {
-                configBuilder.setMemoryLimit(config.memoryLimit().value());
+            } else if (metadata.memoryLimit()) {
+                configBuilder.setMemoryLimit(metadata.memoryLimit().value());
             }
         }
 
