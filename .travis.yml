@@ -10,7 +10,7 @@ install:
   - sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-4.7 90
 
 script:
-  - cmake . && cmake --build . && ./all_tests
+  - cmake . && cmake --build . && ./tests && ./ete_tests
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

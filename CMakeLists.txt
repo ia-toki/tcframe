@@ -41,7 +41,7 @@ include_directories("${source_dir}/googlemock/include")
 
 include_directories(include)
 
-set(SOURCE_FILES
+set(SOURCES
     include/tcframe/experimental/runner.hpp
     include/tcframe/generator.hpp
     include/tcframe/generator/GenerationException.hpp
@@ -264,11 +264,34 @@ set(SOURCE_FILES
     test/tcframe/deprecated/submitter/SubmitterTests.cpp
 )
 
-add_executable(all_tests ${SOURCE_FILES})
+add_executable(tests ${SOURCES})
 
-target_link_libraries(all_tests
+target_link_libraries(tests
     gtest
     gmock
     ${CMAKE_THREAD_LIBS_INIT}
     gcov
+)
+
+set(ETE_SOURCES
+    ete-test/tcframe/BaseEteTests.cpp
+    ete-test/tcframe/GenerationEteTests.cpp
+)
+
+add_executable(ete_tests ${ETE_SOURCES})
+
+target_link_libraries(ete_tests
+    gtest
+    gmock
+    ${CMAKE_THREAD_LIBS_INIT}
+    gcov
+)
+
+add_custom_command(
+    TARGET ete_tests
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/include $<TARGET_FILE_DIR:ete_tests>/tcframe/include
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src $<TARGET_FILE_DIR:ete_tests>/tcframe/src
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/scripts $<TARGET_FILE_DIR:ete_tests>/tcframe/scripts
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/ete-test/resources $<TARGET_FILE_DIR:ete_tests>/ete
 )
