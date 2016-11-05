@@ -1,6 +1,39 @@
 #!/usr/bin/env bash
 
-SPEC=$(basename $PWD)
-SPEC_FILE="$PWD/$SPEC.cpp"
+print_usage() {
+    echo "usage: tcframe <command>"
+    echo
+    echo "Available commands:"
+    echo -e "  build\t\tCompile spec file into runner program"
+}
 
-g++ -std=c++11 -D__TCFRAME_SPEC_FILE__="\"$SPEC_FILE\"" -I "$TCFRAME_HOME/include" -o $SPEC "$TCFRAME_HOME/src/tcframe/runner.cpp"
+build() {
+    SPEC=$(basename $PWD)
+    SPEC_FILE="$PWD/$SPEC.cpp"
+
+    if [ ! -f $SPEC_FILE ]; then
+        echo "tcframe: build error: spec file ${SPEC}.cpp does not exist"
+        exit 1
+    fi
+
+    g++ -std=c++11 -D__TCFRAME_SPEC_FILE__="\"$SPEC_FILE\"" -I "$TCFRAME_HOME/include" -o $SPEC "$TCFRAME_HOME/src/tcframe/runner.cpp"
+}
+
+if [ -z "$TCFRAME_HOME" ]; then
+    echo "tcframe: error: env variable TCFRAME_HOME not set"
+    exit 1
+fi
+
+if [ $# -eq 0 ]; then
+    print_usage
+    exit 1
+fi
+
+command=$1
+
+if [ $1 = "build" ]; then
+    build
+else
+    print_usage
+    exit 1
+fi
