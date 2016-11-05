@@ -23,7 +23,7 @@ public:
                 { "no-time-limit",   no_argument      , nullptr, 'c'},
                 { "seed",            required_argument, nullptr, 'd'},
                 { "solution",        required_argument, nullptr, 'e'},
-                { "tc-dir",          required_argument, nullptr, 'f'},
+                { "output",          required_argument, nullptr, 'f'},
                 { "time-limit",      required_argument, nullptr, 'g'},
                 { 0, 0, 0, 0 }};
 
@@ -57,7 +57,7 @@ public:
                     args.solution_ = optional<string>(optarg);
                     break;
                 case 'f':
-                    args.tcDir_ = optional<string>(optarg);
+                    args.output_ = optional<string>(optarg);
                     break;
                 case 'g':
                     args.timeLimit_ = StringUtils::toNumber<int>(optarg);

@@ -65,7 +65,7 @@ public:
     SubmitterConfigBuilder() {
         subject_.hasMultipleTestCasesCount_ = false;
         subject_.solutionCommand_ = DefaultValues::solutionCommand();
-        subject_.testCasesDir_ = DefaultValues::testCasesDir();
+        subject_.testCasesDir_ = DefaultValues::outputDir();
     }
 
     SubmitterConfigBuilder& setHasMultipleTestCasesCount(bool hasMultipleTestCasesCount) {

@@ -43,8 +43,8 @@ public:
     virtual bool generate(const TestCase& testCase, const GeneratorConfig& config) {
         logger_->logTestCaseIntroduction(testCase.id());
 
-        string inputFilename = config.testCasesDir() + "/" + testCase.id() + ".in";
-        string outputFilename = config.testCasesDir() + "/" + testCase.id() + ".out";
+        string inputFilename = config.outputDir() + "/" + testCase.id() + ".in";
+        string outputFilename = config.outputDir() + "/" + testCase.id() + ".out";
 
         try {
             applyInput(testCase);

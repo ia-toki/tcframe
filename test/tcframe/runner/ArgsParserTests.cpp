@@ -16,7 +16,7 @@ TEST_F(ArgsParserTests, Parsing_AllOptions) {
             (char*) "--memory-limit=128",
             (char*) "--seed=42",
             (char*) "--solution=python Sol.py",
-            (char*) "--tc-dir=my/testdata",
+            (char*) "--output=my/testdata",
             (char*) "--time-limit=3",
             nullptr};
     int argc = sizeof(argv) / sizeof(char*) - 1;
@@ -27,7 +27,7 @@ TEST_F(ArgsParserTests, Parsing_AllOptions) {
     EXPECT_THAT(args.memoryLimit(), Eq(optional<int>(128)));
     EXPECT_THAT(args.seed(), Eq(optional<unsigned>(42)));
     EXPECT_THAT(args.solution(), Eq(optional<string>("python Sol.py")));
-    EXPECT_THAT(args.tcDir(), Eq(optional<string>("my/testdata")));
+    EXPECT_THAT(args.output(), Eq(optional<string>("my/testdata")));
     EXPECT_THAT(args.timeLimit(), Eq(optional<int>(3)));
 }
 
@@ -37,7 +37,7 @@ TEST_F(ArgsParserTests, Parsing_SomeOptions) {
             (char*) "--no-memory-limit",
             (char*) "--no-time-limit",
             (char*) "--seed=42",
-            (char*) "--tc-dir=my/testdata",
+            (char*) "--output=my/testdata",
             nullptr};
     int argc = sizeof(argv) / sizeof(char*) - 1;
 
@@ -45,7 +45,7 @@ TEST_F(ArgsParserTests, Parsing_SomeOptions) {
     EXPECT_TRUE(args.noMemoryLimit());
     EXPECT_TRUE(args.noTimeLimit());
     EXPECT_THAT(args.solution(), Eq(optional<string>()));
-    EXPECT_THAT(args.tcDir(), Eq(optional<string>("my/testdata")));
+    EXPECT_THAT(args.output(), Eq(optional<string>("my/testdata")));
     EXPECT_THAT(args.seed(), Eq(optional<unsigned>(42)));
 }
 

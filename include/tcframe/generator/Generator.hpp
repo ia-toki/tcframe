@@ -42,7 +42,7 @@ public:
     virtual bool generate(const TestSuite& testSuite, const GeneratorConfig& config) {
         logger_->logIntroduction();
 
-        os_->forceMakeDir(config.testCasesDir());
+        os_->forceMakeDir(config.outputDir());
 
         bool successful = true;
         for (const TestGroup& testGroup : testSuite.testGroups()) {
@@ -102,7 +102,7 @@ private:
 
     void combine(const TestGroup& testGroup, const GeneratorConfig& config) {
         string baseId = TestCaseIdCreator::createBaseId(config.slug(), testGroup.id());
-        string baseFilename = config.testCasesDir() + "/" + baseId;
+        string baseFilename = config.outputDir() + "/" + baseId;
         os_->combineMultipleTestCases(baseFilename, (int) testGroup.testCases().size());
     }
 };

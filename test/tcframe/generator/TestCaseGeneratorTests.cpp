@@ -59,7 +59,7 @@ protected:
     GeneratorConfig config = GeneratorConfigBuilder()
             .setSlug("foo")
             .setSolutionCommand("python Sol.py")
-            .setTestCasesDir("dir")
+            .setOutputDir("dir")
             .build();
     ostringstream* outForInput = new ostringstream();
     ostringstream* outForOutput = new ostringstream();

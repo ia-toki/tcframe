@@ -25,7 +25,7 @@ private:
     bool noTimeLimit_;
     optional<unsigned> seed_;
     optional<string> solution_;
-    optional<string> tcDir_;
+    optional<string> output_;
     optional<int> timeLimit_;
 
 public:
@@ -57,8 +57,8 @@ public:
         return solution_;
     }
 
-    const optional<string>& tcDir() const {
-        return tcDir_;
+    const optional<string>& output() const {
+        return output_;
     }
 
     const optional<int>& timeLimit() const {

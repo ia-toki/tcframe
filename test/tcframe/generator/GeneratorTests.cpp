@@ -43,7 +43,7 @@ protected:
     GeneratorConfig config = GeneratorConfigBuilder()
             .setSlug("foo")
             .setSolutionCommand("python Sol.py")
-            .setTestCasesDir("dir")
+            .setOutputDir("dir")
             .build();
 
     GeneratorConfig multipleTestCasesConfig = GeneratorConfigBuilder(config)

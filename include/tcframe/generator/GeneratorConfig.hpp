@@ -21,7 +21,7 @@ private:
     unsigned seed_;
     string slug_;
     string solutionCommand_;
-    string testCasesDir_;
+    string outputDir_;
 
 public:
     int* multipleTestCasesCount() const {
@@ -40,13 +40,13 @@ public:
         return solutionCommand_;
     }
 
-    const string& testCasesDir() const {
-        return testCasesDir_;
+    const string& outputDir() const {
+        return outputDir_;
     }
 
     bool operator==(const GeneratorConfig& o) const {
-        return tie(multipleTestCasesCount_, seed_, slug_, solutionCommand_, testCasesDir_) ==
-                tie(o.multipleTestCasesCount_, o.seed_, o.slug_, o.solutionCommand_, o.testCasesDir_);
+        return tie(multipleTestCasesCount_, seed_, slug_, solutionCommand_, outputDir_) ==
+                tie(o.multipleTestCasesCount_, o.seed_, o.slug_, o.solutionCommand_, o.outputDir_);
     }
 };
 
@@ -62,7 +62,7 @@ public:
         subject_.multipleTestCasesCount_ = nullptr;
         subject_.seed_ = DefaultValues::seed();
         subject_.solutionCommand_ = DefaultValues::solutionCommand();
-        subject_.testCasesDir_ = DefaultValues::testCasesDir();
+        subject_.outputDir_ = DefaultValues::outputDir();
     }
 
     GeneratorConfigBuilder& setMultipleTestCasesCount(int* var) {
@@ -85,8 +85,8 @@ public:
         return *this;
     }
 
-    GeneratorConfigBuilder& setTestCasesDir(string testCasesDir) {
-        subject_.testCasesDir_ = testCasesDir;
+    GeneratorConfigBuilder& setOutputDir(string outputDir) {
+        subject_.outputDir_ = outputDir;
         return *this;
     }
 

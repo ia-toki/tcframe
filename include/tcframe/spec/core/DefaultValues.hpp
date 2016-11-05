@@ -16,7 +16,7 @@ public:
         return "./solution";
     }
 
-    static string testCasesDir() {
+    static string outputDir() {
         return "tc";
     }
 };

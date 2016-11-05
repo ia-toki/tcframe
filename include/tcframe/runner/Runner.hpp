@@ -104,7 +104,7 @@ private:
                 .setSeed(args.seed().value_or(DefaultValues::seed()))
                 .setSlug(config.slug())
                 .setSolutionCommand(args.solution().value_or(DefaultValues::solutionCommand()))
-                .setTestCasesDir(args.tcDir().value_or(DefaultValues::testCasesDir()))
+                .setOutputDir(args.output().value_or(DefaultValues::outputDir()))
                 .build();
 
         auto ioManipulator = new IOManipulator(spec.ioFormat());
@@ -124,7 +124,7 @@ private:
                 .setHasMultipleTestCasesCount(problemConfig.multipleTestCasesCount())
                 .setSlug(config.slug())
                 .setSolutionCommand(args.solution().value_or(DefaultValues::solutionCommand()))
-                .setTestCasesDir(args.tcDir().value_or(DefaultValues::testCasesDir()));
+                .setTestCasesDir(args.output().value_or(DefaultValues::outputDir()));
 
         if (!args.noTimeLimit()) {
             if (args.timeLimit()) {

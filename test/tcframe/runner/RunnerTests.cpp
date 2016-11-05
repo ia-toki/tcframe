@@ -107,7 +107,7 @@ TEST_F(RunnerTests, Run_Generation_UseConfigOptions) {
             .setSlug("slug")
             .setMultipleTestCasesCount(&T)
             .setSolutionCommand("./solution")
-            .setTestCasesDir("tc")
+            .setOutputDir("tc")
             .build()));
 
     runner.run(argc, argv);
@@ -119,14 +119,14 @@ TEST_F(RunnerTests, Run_Generation_UseArgsOptions) {
             .setSlug("slug")
             .setMultipleTestCasesCount(&T)
             .setSolutionCommand("\"java Solution\"")
-            .setTestCasesDir("testdata")
+            .setOutputDir("testdata")
             .build()));
 
     runner.run(4, new char*[5]{
             (char*) "./slug",
             (char*) "--seed=42",
             (char*) "--solution=\"java Solution\"",
-            (char*) "--tc-dir=testdata",
+            (char*) "--output=testdata",
             nullptr});
 }
 
@@ -187,7 +187,7 @@ TEST_F(RunnerTests, Run_Submission_UseArgsOptions) {
             (char*) "./slug",
             (char*) "submit",
             (char*) "--solution=\"java Solution\"",
-            (char*) "--tc-dir=testdata",
+            (char*) "--output=testdata",
             (char*) "--time-limit=4",
             (char*) "--memory-limit=256",
             nullptr});
@@ -205,7 +205,7 @@ TEST_F(RunnerTests, Run_Submission_UseArgsOptions_NoLimits) {
             (char*) "./slug",
             (char*) "submit",
             (char*) "--solution=\"java Solution\"",
-            (char*) "--tc-dir=testdata",
+            (char*) "--output=testdata",
             (char*) "--no-time-limit",
             (char*) "--no-memory-limit",
             nullptr});
