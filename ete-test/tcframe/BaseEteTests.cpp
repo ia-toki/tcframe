@@ -9,6 +9,7 @@
 
 using ::testing::Test;
 
+using std::cout;
 using std::istringstream;
 using std::shared_ptr;
 using std::string;
@@ -29,6 +30,7 @@ protected:
         while (!feof(pipe.get())) {
             if (fgets(buf, 128, pipe.get()) != nullptr) {
                 res += buf;
+                cout << buf;
             }
         }
         return res;

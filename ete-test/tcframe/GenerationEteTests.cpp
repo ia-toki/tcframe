@@ -19,7 +19,9 @@ TEST_F(GenerationEteTests, Normal) {
            "normal_1.in",
            "normal_1.out",
            "normal_2.in",
-           "normal_2.out"
+           "normal_2.out",
+           "normal_3.in",
+           "normal_3.out"
     ));
 }
 

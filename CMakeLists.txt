@@ -276,6 +276,7 @@ target_link_libraries(tests
 set(ETE_SOURCES
     ete-test/tcframe/BaseEteTests.cpp
     ete-test/tcframe/GenerationEteTests.cpp
+    ete-test/tcframe/SubmissionEteTests.cpp
 )
 
 add_executable(ete_tests ${ETE_SOURCES})

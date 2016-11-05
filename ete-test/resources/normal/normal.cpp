@@ -35,5 +35,6 @@ protected:
     void TestCases() {
         CASE(A = 1, B = 3);
         CASE(A = 2, B = 4);
+        CASE(A = 5, B = 6);
     }
 };
