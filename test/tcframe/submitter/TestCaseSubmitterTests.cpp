@@ -16,9 +16,9 @@ namespace tcframe {
 
 class TestCaseSubmitterTests : public Test {
 protected:
-    Mock(Evaluator) evaluator;
-    Mock(Scorer) scorer;
-    Mock(SubmitterLogger) logger;
+    MOCK(Evaluator) evaluator;
+    MOCK(Scorer) scorer;
+    MOCK(SubmitterLogger) logger;
 
     TestCase testCase = TestCaseBuilder().setId("foo_1").build();
 

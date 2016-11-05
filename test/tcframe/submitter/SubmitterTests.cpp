@@ -20,8 +20,8 @@ class SubmitterTests : public Test {
 protected:
     static int T;
 
-    Mock(TestCaseSubmitter) testCaseSubmitter;
-    Mock(SubmitterLogger) logger;
+    MOCK(TestCaseSubmitter) testCaseSubmitter;
+    MOCK(SubmitterLogger) logger;
 
     TestCase stc1 = TestUtils::createFakeTestCase("foo_sample_1", {1, 2});
     TestCase stc2 = TestUtils::createFakeTestCase("foo_sample_2", {2});

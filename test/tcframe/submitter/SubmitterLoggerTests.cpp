@@ -11,7 +11,7 @@ namespace tcframe {
 
 class SubmitterLoggerTests : public Test {
 protected:
-    Mock(LoggerEngine) engine;
+    MOCK(LoggerEngine) engine;
 
     SubmitterLogger logger = SubmitterLogger(&engine);
 };

@@ -21,8 +21,8 @@ namespace tcframe {
 
 class BatchEvaluatorTests : public Test {
 protected:
-    Mock(OperatingSystem) os;
-    Mock(SubmitterLogger) logger;
+    MOCK(OperatingSystem) os;
+    MOCK(SubmitterLogger) logger;
 
     TestCase testCase = TestCaseBuilder().setId("foo_1").build();
 

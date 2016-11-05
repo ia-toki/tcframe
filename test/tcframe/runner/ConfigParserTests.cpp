@@ -14,7 +14,7 @@ namespace tcframe {
 
 class ConfigParserTests : public Test {
 protected:
-    Mock(OperatingSystem) os;
+    MOCK(OperatingSystem) os;
 
     ConfigParser parser = ConfigParser(&os);
 };

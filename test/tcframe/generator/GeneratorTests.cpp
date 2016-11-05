@@ -21,10 +21,10 @@ int T;
 
 class GeneratorTests : public Test {
 protected:
-    Mock(TestCaseGenerator) testCaseGenerator;
-    Mock(Verifier) verifier;
-    Mock(OperatingSystem) os;
-    Mock(GeneratorLogger) logger;
+    MOCK(TestCaseGenerator) testCaseGenerator;
+    MOCK(Verifier) verifier;
+    MOCK(OperatingSystem) os;
+    MOCK(GeneratorLogger) logger;
 
     TestCase stc1 = TestUtils::createFakeTestCase("foo_sample_1");
     TestCase stc2 = TestUtils::createFakeTestCase("foo_sample_2");

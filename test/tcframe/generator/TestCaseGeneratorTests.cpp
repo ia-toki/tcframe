@@ -29,10 +29,10 @@ public:
     static int N;
 
 protected:
-    Mock(Verifier) verifier;
-    Mock(IOManipulator) ioManipulator;
-    Mock(OperatingSystem) os;
-    Mock(GeneratorLogger) logger;
+    MOCK(Verifier) verifier;
+    MOCK(IOManipulator) ioManipulator;
+    MOCK(OperatingSystem) os;
+    MOCK(GeneratorLogger) logger;
 
     TestCase sampleTestCase = TestCaseBuilder()
             .setId("foo_sample_1")

@@ -4,4 +4,4 @@
 
 using ::testing::NiceMock;
 
-#define Mock(T) NiceMock<Mock ## T>
+#define MOCK(T) NiceMock<Mock ## T>

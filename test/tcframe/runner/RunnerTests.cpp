@@ -50,15 +50,15 @@ protected:
 
     LoggerEngine* loggerEngine = new SimpleLoggerEngine();
 
-    Mock(ConfigParser) configParser;
-    Mock(RunnerLogger) runnerLogger;
-    Mock(Generator) generator;
-    Mock(Submitter) submitter;
+    MOCK(ConfigParser) configParser;
+    MOCK(RunnerLogger) runnerLogger;
+    MOCK(Generator) generator;
+    MOCK(Submitter) submitter;
 
-    Mock(OperatingSystem) os;
-    Mock(RunnerLoggerFactory) runnerLoggerFactory;
-    Mock(GeneratorFactory) generatorFactory;
-    Mock(SubmitterFactory) submitterFactory;
+    MOCK(OperatingSystem) os;
+    MOCK(RunnerLoggerFactory) runnerLoggerFactory;
+    MOCK(GeneratorFactory) generatorFactory;
+    MOCK(SubmitterFactory) submitterFactory;
 
     Runner<ProblemSpec> runner = Runner<ProblemSpec>(
             new TestSpec(), loggerEngine, &os, &configParser,

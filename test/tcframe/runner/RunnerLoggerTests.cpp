@@ -11,7 +11,7 @@ namespace tcframe {
 
 class RunnerLoggerTests : public Test {
 protected:
-    Mock(LoggerEngine) engine;
+    MOCK(LoggerEngine) engine;
 
     RunnerLogger logger = RunnerLogger(&engine);
 };

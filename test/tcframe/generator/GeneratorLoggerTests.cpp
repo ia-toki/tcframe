@@ -11,7 +11,7 @@ namespace tcframe {
 
 class GeneratorLoggerTests : public Test {
 protected:
-    Mock(LoggerEngine) engine;
+    MOCK(LoggerEngine) engine;
 
     GeneratorLogger logger = GeneratorLogger(&engine);
 };
