@@ -69,6 +69,8 @@ protected:
         ON_CALL(runnerLoggerFactory, create(_)).WillByDefault(Return(&runnerLogger));
         ON_CALL(generatorFactory, create(_, _, _, _)).WillByDefault(Return(&generator));
         ON_CALL(submitterFactory, create(_, _)).WillByDefault(Return(&submitter));
+        ON_CALL(os, execute(_)).WillByDefault(Return(
+                ExecutionResult(ExecutionInfoBuilder().setExitCode(0).build(), nullptr, nullptr)));
     }
 };
 

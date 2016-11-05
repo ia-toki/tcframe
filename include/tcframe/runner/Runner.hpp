@@ -57,11 +57,14 @@ public:
             Config config = parseConfig(argv[0]);
             Spec spec = buildSpec(config, runnerLogger);
 
+            int result;
             if (args.command() == Args::Command::GEN) {
-                return generate(args, spec);
+                result = generate(args, spec);
             } else {
-                return submit(args, spec);
+                result = submit(args, spec);
             }
+            cleanUp();
+            return result;
         } catch (...) {
             return 1;
         }
@@ -156,6 +159,10 @@ private:
 
         submitter->submit(spec.testSuite(), subtaskIds, submitterConfig);
         return 0;
+    }
+
+    void cleanUp() {
+        os_->execute(ExecutionRequestBuilder().setCommand("rm _*.out").build());
     }
 };
 
