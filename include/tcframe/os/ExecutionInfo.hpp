@@ -48,6 +48,10 @@ private:
     ExecutionInfo subject_;
 
 public:
+    ExecutionInfoBuilder() {
+        subject_.exceededCpuLimits_ = false;
+    }
+
     ExecutionInfoBuilder& setExitCode(int exitCode) {
         subject_.exitCode_ = optional<int>(exitCode);
         return *this;
