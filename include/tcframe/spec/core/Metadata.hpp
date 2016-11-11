@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdexcept>
 #include <string>
 #include <tuple>
 #include <utility>
@@ -7,6 +8,7 @@
 #include "tcframe/util.hpp"
 
 using std::move;
+using std::runtime_error;
 using std::string;
 using std::tie;
 
@@ -21,6 +23,8 @@ private:
     optional<int> memoryLimit_;
 
 public:
+    static constexpr const char* METADATA_YML = "metadata.yml";
+
     const string& slug() const {
         return slug_;
     }
@@ -42,12 +46,18 @@ class MetadataBuilder {
 private:
     Metadata subject_;
 
-public:
-    MetadataBuilder(const string& slug) {
-        subject_.slug_ = slug;
-    }
+    bool slugSet_;
 
 public:
+    MetadataBuilder()
+            : slugSet_(false) {}
+
+    MetadataBuilder& setSlug(string slug) {
+        subject_.slug_ = slug;
+        slugSet_ = true;
+        return *this;
+    }
+
     MetadataBuilder& setTimeLimit(int timeLimit) {
         subject_.timeLimit_ = optional<int>(timeLimit);
         return *this;
@@ -59,6 +69,9 @@ public:
     }
 
     Metadata build() {
+        if (!slugSet_) {
+            throw runtime_error(string(Metadata::METADATA_YML) + " must contain 'slug'");
+        }
         return move(subject_);
     }
 };

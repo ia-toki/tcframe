@@ -8,6 +8,7 @@ using std::ios_base;
 
 using ::testing::Eq;
 using ::testing::Return;
+using ::testing::StrEq;
 using ::testing::Test;
 
 namespace tcframe {
@@ -21,37 +22,57 @@ protected:
 
 TEST_F(MetadataParserTests, Parse_Successful) {
     string yaml =
+            "slug: foo\n"
             "timeLimit: 3\n"
             "memoryLimit: 256\n";
-    ON_CALL(os, openForReading("./contest/foo/foo.yml")).WillByDefault(Return(new istringstream(yaml)));
+    ON_CALL(os, openForReading("./contest/a-foo/metadata.yml")).WillByDefault(Return(new istringstream(yaml)));
 
-    Metadata metadata = parser.parse("./contest/foo/foo");
+    Metadata metadata = parser.parse("./contest/a-foo/runner");
     EXPECT_THAT(metadata.slug(), Eq("foo"));
     EXPECT_THAT(metadata.timeLimit(), Eq(optional<int>(3)));
     EXPECT_THAT(metadata.memoryLimit(), Eq(optional<int>(256)));
 }
 
-TEST_F(MetadataParserTests, Parse_Failed_NoConfigFile) {
+TEST_F(MetadataParserTests, Parse_Failed_NoMetadataFile) {
     istream* notFound = new istringstream();
     notFound->setstate(ios_base::failbit);
-    ON_CALL(os, openForReading("./contest/foo/foo.yml")).WillByDefault(Return(notFound));
+    ON_CALL(os, openForReading("./contest/a-foo/metadata.yml")).WillByDefault(Return(notFound));
 
-    Metadata metadata = parser.parse("./contest/foo/foo");
-    EXPECT_THAT(metadata.slug(), Eq("foo"));
-    EXPECT_THAT(metadata.timeLimit(), Eq(optional<int>()));
-    EXPECT_THAT(metadata.memoryLimit(), Eq(optional<int>()));
+    try {
+        parser.parse("./contest/a-foo/runner");
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("metadata.yml not found"));
+    }
 }
 
-TEST_F(MetadataParserTests, Parse_Failed_InvalidYaml) {
+TEST_F(MetadataParserTests, Parse_Failed_NoSlug) {
     string yaml =
             "timeLimit: 3\n"
-            "memoryLimit: abc\n";
-    ON_CALL(os, openForReading("./contest/foo/foo.yml")).WillByDefault(Return(new istringstream(yaml)));
+            "memoryLimit: 256\n";
+    ON_CALL(os, openForReading("./contest/a-foo/metadata.yml")).WillByDefault(Return(new istringstream(yaml)));
 
-    Metadata metadata = parser.parse("./contest/foo/foo");
-    EXPECT_THAT(metadata.slug(), Eq("foo"));
-    EXPECT_THAT(metadata.timeLimit(), Eq(optional<int>(3)));
-    EXPECT_THAT(metadata.memoryLimit(), Eq(optional<int>()));
+    try {
+        parser.parse("./contest/a-foo/runner");
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("metadata.yml must contain 'slug'"));
+    }
+}
+
+TEST_F(MetadataParserTests, Parse_Failed_MalformedYaml) {
+    string yaml =
+            "slug: foo\n"
+            "timeLimit: 3\n"
+            "memoryLimit: abc\n";
+    ON_CALL(os, openForReading("./contest/a-foo/metadata.yml")).WillByDefault(Return(new istringstream(yaml)));
+
+    try {
+        parser.parse("./contest/a-foo/runner");
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("metadata.yml contains malformed YAML: cannot parse for 'memoryLimit'"));
+    }
 }
 
 }

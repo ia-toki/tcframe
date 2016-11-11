@@ -12,7 +12,7 @@ class ArgsParserTests : public Test {};
 
 TEST_F(ArgsParserTests, Parsing_AllOptions) {
     char* argv[] = {
-            (char*) "./slug",
+            (char*) "./runner",
             (char*) "--memory-limit=128",
             (char*) "--seed=42",
             (char*) "--solution=python Sol.py",
@@ -33,7 +33,7 @@ TEST_F(ArgsParserTests, Parsing_AllOptions) {
 
 TEST_F(ArgsParserTests, Parsing_SomeOptions) {
     char* argv[] = {
-            (char*) "./slug",
+            (char*) "./runner",
             (char*) "--no-memory-limit",
             (char*) "--no-time-limit",
             (char*) "--seed=42",
@@ -51,7 +51,7 @@ TEST_F(ArgsParserTests, Parsing_SomeOptions) {
 
 TEST_F(ArgsParserTests, Parsing_MissingOptionArgument) {
     char* argv[] = {
-            (char*) "./slug",
+            (char*) "./runner",
             (char*) "--seed",
             nullptr};
     int argc = sizeof(argv) / sizeof(char*) - 1;
@@ -66,7 +66,7 @@ TEST_F(ArgsParserTests, Parsing_MissingOptionArgument) {
 
 TEST_F(ArgsParserTests, Parsing_InvalidOption) {
     char* argv[] = {
-            (char*) "./slug",
+            (char*) "./runner",
             (char*) "--blah",
             nullptr};
     int argc = sizeof(argv) / sizeof(char*) - 1;
