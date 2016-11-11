@@ -4,7 +4,8 @@ print_usage() {
     echo "usage: tcframe <command>"
     echo
     echo "Available commands:"
-    echo -e "  build\t\tCompile spec file into runner program"
+    echo "  build         Compile spec file into runner program"
+    echo "  version       Print tcframe version"
 }
 
 build() {
@@ -17,6 +18,10 @@ build() {
     fi
 
     g++ -std=c++11 -D__TCFRAME_SPEC_FILE__="\"$SPEC_FILE\"" -I "$TCFRAME_HOME/include" -o $RUNNER_EXEC "$TCFRAME_HOME/src/tcframe/runner.cpp"
+}
+
+version() {
+    echo "tcframe 1.0.0"
 }
 
 if [ -z "$TCFRAME_HOME" ]; then
@@ -33,6 +38,8 @@ command=$1
 
 if [ $1 = "build" ]; then
     build
+elif [ $1 = "version" ]; then
+    version
 else
     print_usage
     exit 1
