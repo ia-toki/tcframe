@@ -17,7 +17,7 @@ struct GeneratorConfig {
     friend class GeneratorConfigBuilder;
 
 private:
-    int* multipleTestCasesCount_;
+    int* multipleTestCasesCounter_;
     unsigned seed_;
     string slug_;
     string solutionCommand_;
@@ -25,7 +25,7 @@ private:
 
 public:
     int* multipleTestCasesCount() const {
-        return multipleTestCasesCount_;
+        return multipleTestCasesCounter_;
     }
 
     unsigned int seed() const {
@@ -45,8 +45,8 @@ public:
     }
 
     bool operator==(const GeneratorConfig& o) const {
-        return tie(multipleTestCasesCount_, seed_, slug_, solutionCommand_, outputDir_) ==
-                tie(o.multipleTestCasesCount_, o.seed_, o.slug_, o.solutionCommand_, o.outputDir_);
+        return tie(multipleTestCasesCounter_, seed_, slug_, solutionCommand_, outputDir_) ==
+                tie(o.multipleTestCasesCounter_, o.seed_, o.slug_, o.solutionCommand_, o.outputDir_);
     }
 };
 
@@ -59,14 +59,14 @@ public:
             : subject_(from) {}
 
     GeneratorConfigBuilder() {
-        subject_.multipleTestCasesCount_ = nullptr;
+        subject_.multipleTestCasesCounter_ = nullptr;
         subject_.seed_ = DefaultValues::seed();
         subject_.solutionCommand_ = DefaultValues::solutionCommand();
         subject_.outputDir_ = DefaultValues::outputDir();
     }
 
-    GeneratorConfigBuilder& setMultipleTestCasesCount(int* var) {
-        subject_.multipleTestCasesCount_ = var;
+    GeneratorConfigBuilder& setMultipleTestCasesCounter(int* var) {
+        subject_.multipleTestCasesCounter_ = var;
         return *this;
     }
 

@@ -47,7 +47,7 @@ protected:
             .build();
 
     GeneratorConfig multipleTestCasesConfig = GeneratorConfigBuilder(config)
-            .setMultipleTestCasesCount(&T)
+            .setMultipleTestCasesCounter(&T)
             .build();
 
     Generator generator = Generator(&testCaseGenerator, &verifier, &os, &logger);

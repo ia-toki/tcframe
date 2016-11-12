@@ -21,8 +21,8 @@ protected:
         LINE(res);
     }
 
-    void Config() {
-        MultipleTestCasesCount(T);
+    void MultipleTestCasesConfig() {
+        Counter(T);
     }
 
     void MultipleTestCasesConstraints() {

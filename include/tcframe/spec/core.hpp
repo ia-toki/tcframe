@@ -5,4 +5,4 @@
 #include "tcframe/spec/core/DefaultValues.hpp"
 #include "tcframe/spec/core/GradingConfig.hpp"
 #include "tcframe/spec/core/Magic.hpp"
-#include "tcframe/spec/core/ProblemConfig.hpp"
+#include "tcframe/spec/core/MultipleTestCasesConfig.hpp"

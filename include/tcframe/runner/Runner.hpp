@@ -95,10 +95,10 @@ private:
     }
 
     int generate(const string& slug, const Args& args, const Spec& spec) {
-        const ProblemConfig& problemConfig = spec.problemConfig();
+        const MultipleTestCasesConfig& multipleTestCasesConfig = spec.multipleTestCasesConfig();
 
         GeneratorConfig generatorConfig = GeneratorConfigBuilder()
-                .setMultipleTestCasesCount(problemConfig.multipleTestCasesCount().value_or(nullptr))
+                .setMultipleTestCasesCounter(multipleTestCasesConfig.counter().value_or(nullptr))
                 .setSeed(args.seed().value_or(DefaultValues::seed()))
                 .setSlug(slug)
                 .setSolutionCommand(args.solution().value_or(DefaultValues::solutionCommand()))
@@ -115,11 +115,11 @@ private:
     }
 
     int submit(const string& slug, const Args& args, const Spec& spec) {
+        const MultipleTestCasesConfig& multipleTestCasesConfig = spec.multipleTestCasesConfig();
         const GradingConfig& gradingConfig = spec.gradingConfig();
-        const ProblemConfig& problemConfig = spec.problemConfig();
 
         SubmitterConfigBuilder configBuilder = SubmitterConfigBuilder()
-                .setHasMultipleTestCasesCount(problemConfig.multipleTestCasesCount())
+                .setHasMultipleTestCases(multipleTestCasesConfig.counter())
                 .setSlug(slug)
                 .setSolutionCommand(args.solution().value_or(DefaultValues::solutionCommand()))
                 .setTestCasesDir(args.output().value_or(DefaultValues::outputDir()));

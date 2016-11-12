@@ -15,7 +15,7 @@ class SubmitterConfig {
     friend class SubmitterConfigBuilder;
 
 private:
-    bool hasMultipleTestCasesCount_;
+    bool hasMultipleTestCases_;
     string slug_;
     string solutionCommand_;
     string testCasesDir_;
@@ -23,8 +23,8 @@ private:
     optional<int> memoryLimit_;
 
 public:
-    bool hasMultipleTestCasesCount() const {
-        return hasMultipleTestCasesCount_;
+    bool hasMultipleTestCases() const {
+        return hasMultipleTestCases_;
     }
 
     const string& slug() const {
@@ -48,8 +48,8 @@ public:
     }
 
     bool operator==(const SubmitterConfig& o) const {
-        return tie(hasMultipleTestCasesCount_, slug_, solutionCommand_, testCasesDir_, timeLimit_, memoryLimit_) ==
-                tie(o.hasMultipleTestCasesCount_,o.slug_, o.solutionCommand_, o.testCasesDir_, o.timeLimit_,
+        return tie(hasMultipleTestCases_, slug_, solutionCommand_, testCasesDir_, timeLimit_, memoryLimit_) ==
+                tie(o.hasMultipleTestCases_,o.slug_, o.solutionCommand_, o.testCasesDir_, o.timeLimit_,
                     o.memoryLimit_);
     }
 };
@@ -63,13 +63,13 @@ public:
             : subject_(from) {}
 
     SubmitterConfigBuilder() {
-        subject_.hasMultipleTestCasesCount_ = false;
+        subject_.hasMultipleTestCases_ = false;
         subject_.solutionCommand_ = DefaultValues::solutionCommand();
         subject_.testCasesDir_ = DefaultValues::outputDir();
     }
 
-    SubmitterConfigBuilder& setHasMultipleTestCasesCount(bool hasMultipleTestCasesCount) {
-        subject_.hasMultipleTestCasesCount_ = hasMultipleTestCasesCount;
+    SubmitterConfigBuilder& setHasMultipleTestCases(bool hasMultipleTestCases) {
+        subject_.hasMultipleTestCases_ = hasMultipleTestCases;
         return *this;
     }
 

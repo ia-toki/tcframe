@@ -56,7 +56,7 @@ private:
 
         logger_->logTestGroupIntroduction(testGroup.id());
 
-        if (config.hasMultipleTestCasesCount()) {
+        if (config.hasMultipleTestCases()) {
             TestCase testCase = TestCaseBuilder()
                     .setId(TestCaseIdCreator::createBaseId(config.slug(), testGroup.id()))
                     .setSubtaskIds(testGroup.testCases()[0].subtaskIds())

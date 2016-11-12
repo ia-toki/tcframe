@@ -47,7 +47,7 @@ protected:
             .build();
 
     SubmitterConfig multipleTestCasesConfig = SubmitterConfigBuilder(config)
-            .setHasMultipleTestCasesCount(true)
+            .setHasMultipleTestCases(true)
             .build();
 
     Submitter submitter = Submitter(&testCaseSubmitter, &logger);

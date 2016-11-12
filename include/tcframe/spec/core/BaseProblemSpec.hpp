@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "GradingConfig.hpp"
-#include "ProblemConfig.hpp"
+#include "MultipleTestCasesConfig.hpp"
 #include "tcframe/spec/constraint.hpp"
 #include "tcframe/spec/io.hpp"
 #include "tcframe/util.hpp"
@@ -13,7 +13,7 @@ using std::vector;
 namespace tcframe {
 
 class BaseProblemSpec
-        : protected ProblemConfigBuilder,
+        : protected MultipleTestCasesConfigBuilder,
           protected GradingConfigBuilder,
           protected IOFormatBuilder,
           protected ConstraintSuiteBuilder {
@@ -48,9 +48,9 @@ private:
 public:
     virtual ~BaseProblemSpec() {}
 
-    ProblemConfig buildProblemConfig() {
-        Config();
-        return ProblemConfigBuilder::build();
+    tcframe::MultipleTestCasesConfig buildMultipleTestCasesConfig() {
+        MultipleTestCasesConfig();
+        return MultipleTestCasesConfigBuilder::build();
     }
 
     tcframe::GradingConfig buildGradingConfig() {
@@ -86,7 +86,7 @@ public:
     }
 
 protected:
-    virtual void Config() {}
+    virtual void MultipleTestCasesConfig() {}
     virtual void GradingConfig() {}
     virtual void InputFormat() = 0;
     virtual void OutputFormat() {}

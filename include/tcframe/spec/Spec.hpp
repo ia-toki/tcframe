@@ -9,7 +9,7 @@ namespace tcframe {
 
 struct Spec {
 private:
-    ProblemConfig problemConfig_;
+    MultipleTestCasesConfig multipleTestCasesConfig_;
     GradingConfig gradingConfig_;
     IOFormat ioFormat_;
     ConstraintSuite constraintSuite_;
@@ -17,19 +17,19 @@ private:
 
 public:
     Spec(
-            const ProblemConfig& problemConfig,
+            const MultipleTestCasesConfig& multipleTestCasesConfig,
             const GradingConfig& gradingConfig,
             const IOFormat& ioFormat,
             const ConstraintSuite& constraintSuite,
             const TestSuite& testSuite)
-            : problemConfig_(problemConfig)
+            : multipleTestCasesConfig_(multipleTestCasesConfig)
             , gradingConfig_(gradingConfig)
             , ioFormat_(ioFormat)
             , constraintSuite_(constraintSuite)
             , testSuite_(testSuite) {}
 
-    const ProblemConfig& problemConfig() const {
-        return problemConfig_;
+    const MultipleTestCasesConfig& multipleTestCasesConfig() const {
+        return multipleTestCasesConfig_;
     }
 
     const GradingConfig& gradingConfig() const {

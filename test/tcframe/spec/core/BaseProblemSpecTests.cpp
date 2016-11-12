@@ -21,10 +21,6 @@ protected:
         vector<int> X;
         vector<vector<int>> M;
 
-        void Config() {
-            MultipleTestCasesCount(T);
-        }
-
         void InputFormat() {
             newLineIOSegment()
                     .addScalarVariable(Scalar::create(A, "A"))
@@ -49,6 +45,13 @@ protected:
             newLineIOSegment()
                     .addScalarVariable(Scalar::create(A, "A"))
                     .addScalarVariable(Scalar::create(B, "B"));
+        }
+    };
+
+    class ProblemSpecWithMultipleTestCasesConfig : public ProblemSpec {
+    protected:
+        void MultipleTestCasesConfig() {
+            Counter(T);
         }
     };
 
@@ -90,27 +93,21 @@ protected:
             addConstraint([=] {return 1 <= B && B <= 1000;}, "1 <= B && B <= 1000");
         }
     };
-    
-    ProblemSpec problemSpec;
-    ProblemSpecWithGradingConfig problemSpecWithGradingConfig;
-    ProblemSpecWithConstraints problemSpecWithConstraints;
-    ProblemSpecWithMultipleTestCasesConstraints problemSpecWithMultipleTestCasesConstraints;
-    ProblemSpecWithSubtasks problemSpecWithSubtasks;
 };
 
-TEST_F(BaseProblemSpecTests, Config) {
-    ProblemConfig problemConfig = problemSpec.buildProblemConfig();
-    EXPECT_TRUE(problemConfig.multipleTestCasesCount());
+TEST_F(BaseProblemSpecTests, MultipleTestCasesConfig) {
+    MultipleTestCasesConfig config = ProblemSpecWithMultipleTestCasesConfig().buildMultipleTestCasesConfig();
+    EXPECT_TRUE(config.counter());
 }
 
 TEST_F(BaseProblemSpecTests, GradingConfig) {
-    GradingConfig gradingConfig = problemSpecWithGradingConfig.buildGradingConfig();
-    EXPECT_THAT(gradingConfig.timeLimit(), Eq(3));
-    EXPECT_THAT(gradingConfig.memoryLimit(), Eq(128));
+    GradingConfig config = ProblemSpecWithGradingConfig().buildGradingConfig();
+    EXPECT_THAT(config.timeLimit(), Eq(3));
+    EXPECT_THAT(config.memoryLimit(), Eq(128));
 }
 
 TEST_F(BaseProblemSpecTests, IOFormat) {
-    IOFormat ioFormat = problemSpec.buildIOFormat();
+    IOFormat ioFormat = ProblemSpec().buildIOFormat();
     EXPECT_THAT(ioFormat.inputFormat(), ElementsAre(
         A<LineIOSegment*>(),
         A<LinesIOSegment*>(),
@@ -122,18 +119,18 @@ TEST_F(BaseProblemSpecTests, IOFormat) {
 }
 
 TEST_F(BaseProblemSpecTests, Constraints) {
-    ConstraintSuite constraintSuite = problemSpecWithConstraints.buildConstraintSuite();
+    ConstraintSuite constraintSuite = ProblemSpecWithConstraints().buildConstraintSuite();
     EXPECT_THAT(constraintSuite.constraints(), ElementsAre(
         AllOf(Property(&Subtask::id, -1), Property(&Subtask::constraints, SizeIs(2)))));
 }
 
 TEST_F(BaseProblemSpecTests, MultipleTestCasesConstraints) {
-    ConstraintSuite constraintSuite = problemSpecWithMultipleTestCasesConstraints.buildConstraintSuite();
+    ConstraintSuite constraintSuite = ProblemSpecWithMultipleTestCasesConstraints().buildConstraintSuite();
     EXPECT_THAT(constraintSuite.multipleTestCasesConstraints(), SizeIs(1));
 }
 
 TEST_F(BaseProblemSpecTests, Subtasks) {
-    ConstraintSuite constraintSuite = problemSpecWithSubtasks.buildConstraintSuite();
+    ConstraintSuite constraintSuite = ProblemSpecWithSubtasks().buildConstraintSuite();
     EXPECT_THAT(constraintSuite.constraints(), ElementsAre(
             AllOf(Property(&Subtask::id, 1), Property(&Subtask::constraints, SizeIs(3))),
             AllOf(Property(&Subtask::id, 2), Property(&Subtask::constraints, SizeIs(2)))));

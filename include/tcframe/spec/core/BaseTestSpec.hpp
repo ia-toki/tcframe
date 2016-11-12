@@ -107,12 +107,12 @@ public:
     }
 
     virtual Spec buildSpec(const string& slug) {
-        ProblemConfig problemConfig = TProblemSpec::buildProblemConfig();
+        MultipleTestCasesConfig multipleTestCasesConfig = TProblemSpec::buildMultipleTestCasesConfig();
         GradingConfig gradingConfig = TProblemSpec::buildGradingConfig();
         IOFormat ioFormat = TProblemSpec::buildIOFormat();
         ConstraintSuite constraintSuite = TProblemSpec::buildConstraintSuite();
         TestSuite testSuite = buildTestSuite(slug);
-        return Spec(problemConfig, gradingConfig, ioFormat, constraintSuite, testSuite);
+        return Spec(multipleTestCasesConfig, gradingConfig, ioFormat, constraintSuite, testSuite);
     }
 
 protected:

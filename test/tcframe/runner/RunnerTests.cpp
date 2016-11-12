@@ -24,14 +24,14 @@ protected:
     class ProblemSpec : public BaseProblemSpec {
     protected:
         void InputFormat() {}
-
-        void Config() {
-            MultipleTestCasesCount(T);
-        }
     };
 
     class ProblemSpecWithConfig : public ProblemSpec {
     protected:
+        void MultipleTestCasesConfig() {
+            Counter(T);
+        }
+
         void GradingConfig() {
             TimeLimit(3);
             MemoryLimit(128);
@@ -64,6 +64,7 @@ protected:
     MOCK(SubmitterFactory) submitterFactory;
 
     Runner<ProblemSpec> runner = createRunner(new TestSpec());
+    Runner<ProblemSpecWithConfig> runnerWithConfig = createRunner(new TestSpecWithConfig());
 
     void SetUp() {
         ON_CALL(runnerLoggerFactory, create(_)).WillByDefault(Return(&runnerLogger));
@@ -107,11 +108,10 @@ TEST_F(RunnerTests, Run_Generation_Failed) {
     EXPECT_THAT(runner.run(argc, argv), Ne(0));
 }
 
-TEST_F(RunnerTests, Run_Generation_UseConfigOptions) {
+TEST_F(RunnerTests, Run_Generation_UseDefaultOptions) {
     EXPECT_CALL(generator, generate(_, GeneratorConfigBuilder()
             .setSeed(0)
             .setSlug("slug")
-            .setMultipleTestCasesCount(&T)
             .setSolutionCommand("./solution")
             .setOutputDir("tc")
             .build()));
@@ -119,16 +119,27 @@ TEST_F(RunnerTests, Run_Generation_UseConfigOptions) {
     runner.run(argc, argv);
 }
 
+TEST_F(RunnerTests, Run_Generation_UseConfigOptions) {
+    EXPECT_CALL(generator, generate(_, GeneratorConfigBuilder()
+            .setSlug("slug")
+            .setMultipleTestCasesCounter(&T)
+            .setSolutionCommand("./solution")
+            .setOutputDir("tc")
+            .build()));
+
+    runnerWithConfig.run(argc, argv);
+}
+
 TEST_F(RunnerTests, Run_Generation_UseArgsOptions) {
     EXPECT_CALL(generator, generate(_, GeneratorConfigBuilder()
             .setSeed(42)
             .setSlug("slug")
-            .setMultipleTestCasesCount(&T)
+            .setMultipleTestCasesCounter(&T)
             .setSolutionCommand("\"java Solution\"")
             .setOutputDir("testdata")
             .build()));
 
-    runner.run(4, new char*[5]{
+    runnerWithConfig.run(4, new char*[5]{
             (char*) "./slug",
             (char*) "--seed=42",
             (char*) "--solution=\"java Solution\"",
@@ -150,7 +161,7 @@ TEST_F(RunnerTests, Run_Submission) {
 TEST_F(RunnerTests, Run_Submission_UseDefaultOptions) {
     EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder()
             .setSlug("slug")
-            .setHasMultipleTestCasesCount(true)
+            .setHasMultipleTestCases(false)
             .setTimeLimit(2)
             .setMemoryLimit(64)
             .setSolutionCommand("./solution")
@@ -164,11 +175,9 @@ TEST_F(RunnerTests, Run_Submission_UseDefaultOptions) {
 }
 
 TEST_F(RunnerTests, Run_Submission_UseConfigOptions) {
-    Runner<ProblemSpecWithConfig> runnerWithConfig = createRunner(new TestSpecWithConfig());
-
     EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder()
             .setSlug("slug")
-            .setHasMultipleTestCasesCount(true)
+            .setHasMultipleTestCases(true)
             .setSolutionCommand("./solution")
             .setTestCasesDir("tc")
             .setTimeLimit(3)
@@ -184,14 +193,14 @@ TEST_F(RunnerTests, Run_Submission_UseConfigOptions) {
 TEST_F(RunnerTests, Run_Submission_UseArgsOptions) {
     EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder()
             .setSlug("slug")
-            .setHasMultipleTestCasesCount(true)
+            .setHasMultipleTestCases(true)
             .setSolutionCommand("\"java Solution\"")
             .setTestCasesDir("testdata")
             .setTimeLimit(4)
             .setMemoryLimit(256)
             .build()));
 
-    runner.run(6, new char*[7]{
+    runnerWithConfig.run(6, new char*[7]{
             (char*) "./slug",
             (char*) "submit",
             (char*) "--solution=\"java Solution\"",
@@ -204,12 +213,12 @@ TEST_F(RunnerTests, Run_Submission_UseArgsOptions) {
 TEST_F(RunnerTests, Run_Submission_UseArgsOptions_NoLimits) {
     EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder()
             .setSlug("slug")
-            .setHasMultipleTestCasesCount(true)
+            .setHasMultipleTestCases(true)
             .setSolutionCommand("\"java Solution\"")
             .setTestCasesDir("testdata")
             .build()));
 
-    runner.run(6, new char*[7]{
+    runnerWithConfig.run(6, new char*[7]{
             (char*) "./slug",
             (char*) "submit",
             (char*) "--solution=\"java Solution\"",
