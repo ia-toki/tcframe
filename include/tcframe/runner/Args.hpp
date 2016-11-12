@@ -13,8 +13,8 @@ struct Args {
 
 public:
     enum class Command {
-        GEN,
-        SUBMIT
+        GENERATE,
+        GRADE
     };
 
 private:

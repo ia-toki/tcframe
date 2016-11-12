@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SubmitterConfig.hpp"
+#include "GraderConfig.hpp"
 #include "Verdict.hpp"
 #include "tcframe/util.hpp"
 
@@ -10,7 +10,7 @@ class Evaluator {
 public:
     virtual ~Evaluator() {}
 
-    virtual optional<Verdict> evaluate(const TestCase& testCase, const SubmitterConfig& config) = 0;
+    virtual optional<Verdict> evaluate(const TestCase& testCase, const GraderConfig& config) = 0;
 };
 
 }

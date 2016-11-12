@@ -2,14 +2,14 @@
 
 #include "gmock/gmock.h"
 
-#include "tcframe/submitter/SubmitterLogger.hpp"
+#include "tcframe/grader/GraderLogger.hpp"
 
 namespace tcframe {
 
-class MockSubmitterLogger : public SubmitterLogger {
+class MockGraderLogger : public GraderLogger {
 public:
-    MockSubmitterLogger()
-            : SubmitterLogger(nullptr) {}
+    MockGraderLogger()
+            : GraderLogger(nullptr) {}
 
     MOCK_METHOD1(logTestGroupIntroduction, void(int));
     MOCK_METHOD1(logTestCaseIntroduction, void(string));

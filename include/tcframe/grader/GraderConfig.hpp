@@ -11,8 +11,8 @@ using std::string;
 
 namespace tcframe {
 
-class SubmitterConfig {
-    friend class SubmitterConfigBuilder;
+class GraderConfig {
+    friend class GraderConfigBuilder;
 
 private:
     string slug_;
@@ -48,75 +48,75 @@ public:
         return memoryLimit_;
     }
 
-    bool operator==(const SubmitterConfig& o) const {
+    bool operator==(const GraderConfig& o) const {
         return tie(hasMultipleTestCases_, slug_, solutionCommand_, outputDir_, timeLimit_, memoryLimit_) ==
                 tie(o.hasMultipleTestCases_,o.slug_, o.solutionCommand_, o.outputDir_, o.timeLimit_,
                     o.memoryLimit_);
     }
 };
 
-class SubmitterConfigBuilder {
+class GraderConfigBuilder {
 private:
-    SubmitterConfig subject_;
+    GraderConfig subject_;
 
 public:
-    SubmitterConfigBuilder(const SubmitterConfig& from)
+    GraderConfigBuilder(const GraderConfig& from)
             : subject_(from) {}
 
-    SubmitterConfigBuilder(string slug) {
+    GraderConfigBuilder(string slug) {
         subject_.slug_ = slug;
         subject_.hasMultipleTestCases_ = false;
         subject_.solutionCommand_ = CommonConfig::solutionCommand();
         subject_.outputDir_ = CommonConfig::outputDir();
     }
 
-    SubmitterConfigBuilder& setHasMultipleTestCases(optional<bool> hasMultipleTestCases) {
+    GraderConfigBuilder& setHasMultipleTestCases(optional<bool> hasMultipleTestCases) {
         if (hasMultipleTestCases) {
             setHasMultipleTestCases(hasMultipleTestCases.value());
         }
         return *this;
     }
 
-    SubmitterConfigBuilder& setHasMultipleTestCases(bool hasMultipleTestCases) {
+    GraderConfigBuilder& setHasMultipleTestCases(bool hasMultipleTestCases) {
         subject_.hasMultipleTestCases_ = hasMultipleTestCases;
         return *this;
     }
 
-    SubmitterConfigBuilder& setSolutionCommand(optional<string> solutionCommand) {
+    GraderConfigBuilder& setSolutionCommand(optional<string> solutionCommand) {
         if (solutionCommand) {
             setSolutionCommand(solutionCommand.value());
         }
         return *this;
     }
 
-    SubmitterConfigBuilder& setSolutionCommand(string solutionCommand) {
+    GraderConfigBuilder& setSolutionCommand(string solutionCommand) {
         subject_.solutionCommand_ = solutionCommand;
         return *this;
     }
 
-    SubmitterConfigBuilder& setOutputDir(optional<string> outputDir) {
+    GraderConfigBuilder& setOutputDir(optional<string> outputDir) {
         if (outputDir) {
             setOutputDir(outputDir.value());
         }
         return *this;
     }
 
-    SubmitterConfigBuilder& setOutputDir(string outputDir) {
+    GraderConfigBuilder& setOutputDir(string outputDir) {
         subject_.outputDir_ = outputDir;
         return *this;
     }
 
-    SubmitterConfigBuilder& setTimeLimit(int timeLimit) {
+    GraderConfigBuilder& setTimeLimit(int timeLimit) {
         subject_.timeLimit_ = optional<int>(timeLimit);
         return *this;
     }
 
-    SubmitterConfigBuilder& setMemoryLimit(int memoryLimit) {
+    GraderConfigBuilder& setMemoryLimit(int memoryLimit) {
         subject_.memoryLimit_ = optional<int>(memoryLimit);
         return *this;
     }
 
-    SubmitterConfig build() {
+    GraderConfig build() {
         return move(subject_);
     }
 };

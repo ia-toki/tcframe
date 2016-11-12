@@ -6,9 +6,9 @@
 #include <string>
 #include <vector>
 
-#include "SubmitterConfig.hpp"
-#include "SubmitterLogger.hpp"
-#include "TestCaseSubmitter.hpp"
+#include "GraderConfig.hpp"
+#include "GraderLogger.hpp"
+#include "TestCaseGrader.hpp"
 #include "Verdict.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/util.hpp"
@@ -21,19 +21,19 @@ using std::vector;
 
 namespace tcframe {
 
-class Submitter {
+class Grader {
 private:
-    TestCaseSubmitter* testCaseSubmitter_;
-    SubmitterLogger* logger_;
+    TestCaseGrader* testCaseGrader_;
+    GraderLogger* logger_;
 
 public:
-    virtual ~Submitter() {}
+    virtual ~Grader() {}
 
-    Submitter(TestCaseSubmitter* testCaseSubmitter, SubmitterLogger* logger)
-            : testCaseSubmitter_(testCaseSubmitter)
+    Grader(TestCaseGrader* testCaseGrader, GraderLogger* logger)
+            : testCaseGrader_(testCaseGrader)
             , logger_(logger) {}
 
-    virtual void submit(const TestSuite& testSuite, const set<int>& subtaskIds, const SubmitterConfig& config) {
+    virtual void grade(const TestSuite& testSuite, const set<int>& subtaskIds, const GraderConfig& config) {
         logger_->logIntroduction();
 
         map<int, Verdict> subtaskVerdicts;
@@ -42,16 +42,16 @@ public:
         }
 
         for (const TestGroup& testGroup : testSuite.testGroups()) {
-            submitOnTestGroup(testGroup, config, subtaskVerdicts);
+            gradeOnTestGroup(testGroup, config, subtaskVerdicts);
         }
 
         logger_->logResult(subtaskVerdicts);
     }
 
 private:
-    void submitOnTestGroup(
+    void gradeOnTestGroup(
             const TestGroup& testGroup,
-            const SubmitterConfig& config,
+            const GraderConfig& config,
             map<int, Verdict>& subtaskVerdicts) {
 
         logger_->logTestGroupIntroduction(testGroup.id());
@@ -61,26 +61,26 @@ private:
                     .setId(TestCaseIdCreator::createBaseId(config.slug(), testGroup.id()))
                     .setSubtaskIds(testGroup.testCases()[0].subtaskIds())
                     .build();
-            submitOnTestCase(testCase, config, subtaskVerdicts);
+            gradeOnTestCase(testCase, config, subtaskVerdicts);
         } else {
             for (const TestCase& testCase : testGroup.testCases()) {
-                submitOnTestCase(testCase, config, subtaskVerdicts);
+                gradeOnTestCase(testCase, config, subtaskVerdicts);
             }
         }
     }
 
-    void submitOnTestCase(const TestCase& testCase, const SubmitterConfig& config, map<int, Verdict>& subtaskVerdicts) {
-        Verdict verdict = testCaseSubmitter_->submit(testCase, config);
+    void gradeOnTestCase(const TestCase& testCase, const GraderConfig& config, map<int, Verdict>& subtaskVerdicts) {
+        Verdict verdict = testCaseGrader_->grade(testCase, config);
         for (int subtaskId : testCase.subtaskIds()) {
             subtaskVerdicts[subtaskId] = max(subtaskVerdicts[subtaskId], verdict);
         }
     }
 };
 
-class SubmitterFactory {
+class GraderFactory {
 public:
-    virtual Submitter* create(TestCaseSubmitter* testCaseSubmitter, SubmitterLogger* logger) {
-        return new Submitter(testCaseSubmitter, logger);
+    virtual Grader* create(TestCaseGrader* testCaseGrader, GraderLogger* logger) {
+        return new Grader(testCaseGrader, logger);
     }
 };
 

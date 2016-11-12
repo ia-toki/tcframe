@@ -1,25 +1,25 @@
 #pragma once
 
 #include "Evaluator.hpp"
+#include "GraderLogger.hpp"
 #include "Scorer.hpp"
-#include "SubmitterLogger.hpp"
 
 namespace tcframe {
 
-class TestCaseSubmitter {
+class TestCaseGrader {
 private:
     Evaluator* evaluator_;
     Scorer* scorer_;
-    SubmitterLogger* logger_;
+    GraderLogger* logger_;
 public:
-    virtual ~TestCaseSubmitter() {}
+    virtual ~TestCaseGrader() {}
 
-    TestCaseSubmitter(Evaluator* evaluator, Scorer* scorer, SubmitterLogger* logger)
+    TestCaseGrader(Evaluator* evaluator, Scorer* scorer, GraderLogger* logger)
             : evaluator_(evaluator)
             , scorer_(scorer)
             , logger_(logger) {}
 
-    virtual Verdict submit(const TestCase &testCase, const SubmitterConfig &config) {
+    virtual Verdict grade(const TestCase& testCase, const GraderConfig& config) {
         logger_->logTestCaseIntroduction(testCase.id());
 
         optional<Verdict> verdict = evaluator_->evaluate(testCase, config);

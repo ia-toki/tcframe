@@ -2,9 +2,9 @@
 #include "../mock.hpp"
 
 #include "MockEvaluator.hpp"
+#include "MockGraderLogger.hpp"
 #include "MockScorer.hpp"
-#include "MockSubmitterLogger.hpp"
-#include "tcframe/submitter/Submitter.hpp"
+#include "tcframe/grader/Grader.hpp"
 
 using ::testing::_;
 using ::testing::Eq;
@@ -14,20 +14,20 @@ using ::testing::Test;
 
 namespace tcframe {
 
-class TestCaseSubmitterTests : public Test {
+class TestCaseGraderTests : public Test {
 protected:
     MOCK(Evaluator) evaluator;
     MOCK(Scorer) scorer;
-    MOCK(SubmitterLogger) logger;
+    MOCK(GraderLogger) logger;
 
     TestCase testCase = TestCaseBuilder().setId("foo_1").build();
 
-    SubmitterConfig config = SubmitterConfigBuilder("foo")
+    GraderConfig config = GraderConfigBuilder("foo")
             .setSolutionCommand("python Sol.py")
             .setOutputDir("dir")
             .build();
 
-    TestCaseSubmitter submitter = TestCaseSubmitter(&evaluator, &scorer, &logger);
+    TestCaseGrader grader = TestCaseGrader(&evaluator, &scorer, &logger);
 
     void SetUp() {
         ON_CALL(evaluator, evaluate(_, _))
@@ -37,17 +37,17 @@ protected:
     }
 };
 
-TEST_F(TestCaseSubmitterTests, Submission_AC) {
+TEST_F(TestCaseGraderTests, Grading_AC) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
         EXPECT_CALL(evaluator, evaluate(testCase, config));
         EXPECT_CALL(scorer, score(testCase, config));
     }
-    EXPECT_THAT(submitter.submit(testCase, config), Eq(Verdict::ac()));
+    EXPECT_THAT(grader.grade(testCase, config), Eq(Verdict::ac()));
 }
 
-TEST_F(TestCaseSubmitterTests, Submission_WA) {
+TEST_F(TestCaseGraderTests, Grading_WA) {
     ON_CALL(scorer, score(testCase, _))
             .WillByDefault(Return(Verdict::wa()));
     {
@@ -56,10 +56,10 @@ TEST_F(TestCaseSubmitterTests, Submission_WA) {
         EXPECT_CALL(evaluator, evaluate(testCase, config));
         EXPECT_CALL(scorer, score(testCase, config));
     }
-    EXPECT_THAT(submitter.submit(testCase, config), Eq(Verdict::wa()));
+    EXPECT_THAT(grader.grade(testCase, config), Eq(Verdict::wa()));
 }
 
-TEST_F(TestCaseSubmitterTests, Submission_RTE) {
+TEST_F(TestCaseGraderTests, Grading_RTE) {
     ON_CALL(evaluator, evaluate(_, _))
             .WillByDefault(Return(optional<Verdict>(Verdict::rte())));
     {
@@ -67,7 +67,7 @@ TEST_F(TestCaseSubmitterTests, Submission_RTE) {
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
         EXPECT_CALL(evaluator, evaluate(testCase, config));
     }
-    EXPECT_THAT(submitter.submit(testCase, config), Eq(Verdict::rte()));
+    EXPECT_THAT(grader.grade(testCase, config), Eq(Verdict::rte()));
 }
 
 }

@@ -1,8 +1,8 @@
 #include "tcframe/generator.hpp"
+#include "tcframe/grader.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/experimental/runner.hpp"
 #include "tcframe/spec.hpp"
-#include "tcframe/submitter.hpp"
 
 #include __TCFRAME_SPEC_FILE__
 
@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
     auto os = new UnixOperatingSystem();
     auto runnerLoggerFactory = new RunnerLoggerFactory();
     auto generatorFactory = new GeneratorFactory();
-    auto submitterFactory = new SubmitterFactory();
+    auto graderFactory = new GraderFactory();
 
     Runner<ProblemSpec> runner(
             testSpec,
@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
             os,
             runnerLoggerFactory,
             generatorFactory,
-            submitterFactory);
+            graderFactory);
 
     return runner.run(argc, argv);
 }

@@ -4,8 +4,8 @@
 #include <sstream>
 
 #include "../os/MockOperatingSystem.hpp"
-#include "MockSubmitterLogger.hpp"
-#include "tcframe/submitter/BatchEvaluator.hpp"
+#include "MockGraderLogger.hpp"
+#include "tcframe/grader/BatchEvaluator.hpp"
 
 using ::testing::_;
 using ::testing::AllOf;
@@ -22,11 +22,11 @@ namespace tcframe {
 class BatchEvaluatorTests : public Test {
 protected:
     MOCK(OperatingSystem) os;
-    MOCK(SubmitterLogger) logger;
+    MOCK(GraderLogger) logger;
 
     TestCase testCase = TestCaseBuilder().setId("foo_1").build();
 
-    SubmitterConfig config = SubmitterConfigBuilder("foo")
+    GraderConfig config = GraderConfigBuilder("foo")
             .setSolutionCommand("python Sol.py")
             .setOutputDir("dir")
             .setTimeLimit(3)

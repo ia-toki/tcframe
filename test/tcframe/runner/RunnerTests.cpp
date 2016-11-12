@@ -2,8 +2,8 @@
 #include "../mock.hpp"
 
 #include "../generator/MockGenerator.hpp"
+#include "../grader/MockGrader.hpp"
 #include "../os/MockOperatingSystem.hpp"
-#include "../submitter/MockSubmitter.hpp"
 #include "MockRunnerLogger.hpp"
 #include "MockRunnerLoggerFactory.hpp"
 #include "tcframe/experimental/runner.hpp"
@@ -56,12 +56,12 @@ protected:
 
     MOCK(RunnerLogger) runnerLogger;
     MOCK(Generator) generator;
-    MOCK(Submitter) submitter;
+    MOCK(Grader) grader;
 
     MOCK(OperatingSystem) os;
     MOCK(RunnerLoggerFactory) runnerLoggerFactory;
     MOCK(GeneratorFactory) generatorFactory;
-    MOCK(SubmitterFactory) submitterFactory;
+    MOCK(GraderFactory) graderFactory;
 
     Runner<ProblemSpec> runner = createRunner(new TestSpec());
     Runner<ProblemSpecWithConfig> runnerWithConfig = createRunner(new TestSpecWithConfig());
@@ -69,7 +69,7 @@ protected:
     void SetUp() {
         ON_CALL(runnerLoggerFactory, create(_)).WillByDefault(Return(&runnerLogger));
         ON_CALL(generatorFactory, create(_, _, _, _, _)).WillByDefault(Return(&generator));
-        ON_CALL(submitterFactory, create(_, _)).WillByDefault(Return(&submitter));
+        ON_CALL(graderFactory, create(_, _)).WillByDefault(Return(&grader));
         ON_CALL(os, execute(_)).WillByDefault(Return(
                 ExecutionResult(ExecutionInfoBuilder().setExitCode(0).build(), nullptr, nullptr)));
     }
@@ -77,7 +77,7 @@ protected:
     template<typename TProblem>
     Runner<TProblem> createRunner(BaseTestSpec<TProblem>* testSpec) {
         return Runner<TProblem>(
-                testSpec, loggerEngine, &os, &runnerLoggerFactory, &generatorFactory, &submitterFactory);
+                testSpec, loggerEngine, &os, &runnerLoggerFactory, &generatorFactory, &graderFactory);
     }
 };
 
@@ -144,19 +144,19 @@ TEST_F(RunnerTests, Run_Generation_UseArgsOptions) {
             nullptr});
 }
 
-TEST_F(RunnerTests, Run_Submission) {
-    EXPECT_CALL(submitter, submit(_, _, _));
+TEST_F(RunnerTests, Run_Grading) {
+    EXPECT_CALL(grader, grade(_, _, _));
 
     int exitStatus = runner.run(2, new char*[3]{
             (char*) "./slug",
-            (char*) "submit",
+            (char*) "grade",
             nullptr});
 
     EXPECT_THAT(exitStatus, Eq(0));
 }
 
-TEST_F(RunnerTests, Run_Submission_UseDefaultOptions) {
-    EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder("slug")
+TEST_F(RunnerTests, Run_Grading_UseDefaultOptions) {
+    EXPECT_CALL(grader, grade(_, _, GraderConfigBuilder("slug")
             .setHasMultipleTestCases(false)
             .setTimeLimit(2)
             .setMemoryLimit(64)
@@ -166,12 +166,12 @@ TEST_F(RunnerTests, Run_Submission_UseDefaultOptions) {
 
     runner.run(2, new char*[3]{
             (char*) "./slug",
-            (char*) "submit",
+            (char*) "grade",
             nullptr});
 }
 
-TEST_F(RunnerTests, Run_Submission_UseConfigOptions) {
-    EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder("slug")
+TEST_F(RunnerTests, Run_Grading_UseConfigOptions) {
+    EXPECT_CALL(grader, grade(_, _, GraderConfigBuilder("slug")
             .setHasMultipleTestCases(true)
             .setSolutionCommand("./solution")
             .setOutputDir("tc")
@@ -181,12 +181,12 @@ TEST_F(RunnerTests, Run_Submission_UseConfigOptions) {
 
     runnerWithConfig.run(2, new char*[3]{
             (char*) "./slug",
-            (char*) "submit",
+            (char*) "grade",
             nullptr});
 }
 
-TEST_F(RunnerTests, Run_Submission_UseArgsOptions) {
-    EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder("slug")
+TEST_F(RunnerTests, Run_Grading_UseArgsOptions) {
+    EXPECT_CALL(grader, grade(_, _, GraderConfigBuilder("slug")
             .setHasMultipleTestCases(true)
             .setSolutionCommand("\"java Solution\"")
             .setOutputDir("testdata")
@@ -196,7 +196,7 @@ TEST_F(RunnerTests, Run_Submission_UseArgsOptions) {
 
     runnerWithConfig.run(6, new char*[7]{
             (char*) "./slug",
-            (char*) "submit",
+            (char*) "grade",
             (char*) "--solution=\"java Solution\"",
             (char*) "--output=testdata",
             (char*) "--time-limit=4",
@@ -204,8 +204,8 @@ TEST_F(RunnerTests, Run_Submission_UseArgsOptions) {
             nullptr});
 }
 
-TEST_F(RunnerTests, Run_Submission_UseArgsOptions_NoLimits) {
-    EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder("slug")
+TEST_F(RunnerTests, Run_Grading_UseArgsOptions_NoLimits) {
+    EXPECT_CALL(grader, grade(_, _, GraderConfigBuilder("slug")
             .setHasMultipleTestCases(true)
             .setSolutionCommand("\"java Solution\"")
             .setOutputDir("testdata")
@@ -213,7 +213,7 @@ TEST_F(RunnerTests, Run_Submission_UseArgsOptions_NoLimits) {
 
     runnerWithConfig.run(6, new char*[7]{
             (char*) "./slug",
-            (char*) "submit",
+            (char*) "grade",
             (char*) "--solution=\"java Solution\"",
             (char*) "--output=testdata",
             (char*) "--no-time-limit",

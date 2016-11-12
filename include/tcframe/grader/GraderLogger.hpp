@@ -10,15 +10,15 @@ using std::map;
 
 namespace tcframe {
 
-class SubmitterLogger : public BaseLogger {
+class GraderLogger : public BaseLogger {
 public:
-    virtual ~SubmitterLogger() {}
+    virtual ~GraderLogger() {}
 
-    SubmitterLogger(LoggerEngine* engine)
+    GraderLogger(LoggerEngine* engine)
             : BaseLogger(engine) {}
 
     virtual void logIntroduction() {
-        engine_->logParagraph(0, "Submitting...");
+        engine_->logParagraph(0, "Grading...");
     }
 
     virtual void logTestCaseVerdict(const Verdict& verdict) {

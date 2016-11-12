@@ -7,9 +7,9 @@
 #include "RunnerLogger.hpp"
 #include "RunnerLoggerFactory.hpp"
 #include "tcframe/generator.hpp"
+#include "tcframe/grader.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/spec.hpp"
-#include "tcframe/submitter.hpp"
 #include "tcframe/util.hpp"
 #include "tcframe/verifier.hpp"
 
@@ -28,7 +28,7 @@ private:
 
     RunnerLoggerFactory* runnerLoggerFactory_;
     GeneratorFactory* generatorFactory_;
-    SubmitterFactory* submitterFactory_;
+    GraderFactory* graderFactory_;
 
 public:
     Runner(
@@ -37,13 +37,13 @@ public:
             OperatingSystem* os,
             RunnerLoggerFactory* runnerLoggerFactory,
             GeneratorFactory* generatorFactory,
-            SubmitterFactory* submitterFactory)
+            GraderFactory* graderFactory)
             : testSpec_(testSpec)
             , loggerEngine_(loggerEngine)
             , os_(os)
             , runnerLoggerFactory_(runnerLoggerFactory)
             , generatorFactory_(generatorFactory)
-            , submitterFactory_(submitterFactory) {}
+            , graderFactory_(graderFactory) {}
 
     int run(int argc, char* argv[]) {
         auto runnerLogger = runnerLoggerFactory_->create(loggerEngine_);
@@ -55,10 +55,10 @@ public:
             Spec spec = buildSpec(slug, runnerLogger);
 
             int result;
-            if (args.command() == Args::Command::GEN) {
+            if (args.command() == Args::Command::GENERATE) {
                 result = generate(slug, args, spec);
             } else {
-                result = submit(slug, args, spec);
+                result = grade(slug, args, spec);
             }
             cleanUp();
             return result;
@@ -113,11 +113,11 @@ private:
         return generator->generate(spec.testSuite(), generatorConfig) ? 0 : 1;
     }
 
-    int submit(const string& slug, const Args& args, const Spec& spec) {
+    int grade(const string& slug, const Args& args, const Spec& spec) {
         const MultipleTestCasesConfig& multipleTestCasesConfig = spec.multipleTestCasesConfig();
         const GradingConfig& gradingConfig = spec.gradingConfig();
 
-        SubmitterConfigBuilder configBuilder = SubmitterConfigBuilder(slug)
+        GraderConfigBuilder configBuilder = GraderConfigBuilder(slug)
                 .setHasMultipleTestCases(optional<bool>(multipleTestCasesConfig.counter()))
                 .setSolutionCommand(args.solution())
                 .setOutputDir(args.output());
@@ -129,20 +129,20 @@ private:
             configBuilder.setMemoryLimit(args.memoryLimit().value_or(gradingConfig.memoryLimit()));
         }
 
-        SubmitterConfig submitterConfig = configBuilder.build();
+        GraderConfig graderConfig = configBuilder.build();
 
-        auto logger = new SubmitterLogger(loggerEngine_);
+        auto logger = new GraderLogger(loggerEngine_);
         auto evaluator = new BatchEvaluator(os_, logger);
         auto scorer = new DiffScorer(os_, logger);
-        auto testCaseSubmitter = new TestCaseSubmitter(evaluator, scorer, logger);
-        auto submitter = submitterFactory_->create(testCaseSubmitter, logger);
+        auto testCaseGrader = new TestCaseGrader(evaluator, scorer, logger);
+        auto grader = graderFactory_->create(testCaseGrader, logger);
 
         set<int> subtaskIds;
         for (const Subtask& subtask : spec.constraintSuite().constraints()) {
             subtaskIds.insert(subtask.id());
         }
 
-        submitter->submit(spec.testSuite(), subtaskIds, submitterConfig);
+        grader->grade(spec.testSuite(), subtaskIds, graderConfig);
         return 0;
     }
 

@@ -2,33 +2,33 @@
 #include "../mock.hpp"
 
 #include "../logger/MockLoggerEngine.hpp"
-#include "tcframe/submitter/SubmitterLogger.hpp"
+#include "tcframe/grader/GraderLogger.hpp"
 
 using ::testing::InSequence;
 using ::testing::Test;
 
 namespace tcframe {
 
-class SubmitterLoggerTests : public Test {
+class GraderLoggerTests : public Test {
 protected:
     MOCK(LoggerEngine) engine;
 
-    SubmitterLogger logger = SubmitterLogger(&engine);
+    GraderLogger logger = GraderLogger(&engine);
 };
 
-TEST_F(SubmitterLoggerTests, Introduction) {
-    EXPECT_CALL(engine, logParagraph(0, "Submitting..."));
+TEST_F(GraderLoggerTests, Introduction) {
+    EXPECT_CALL(engine, logParagraph(0, "Grading..."));
 
     logger.logIntroduction();
 }
 
-TEST_F(SubmitterLoggerTests, TestCaseVerdict) {
+TEST_F(GraderLoggerTests, TestCaseVerdict) {
     EXPECT_CALL(engine, logParagraph(0, Verdict::ac().name()));
 
     logger.logTestCaseVerdict(Verdict::ac());
 }
 
-TEST_F(SubmitterLoggerTests, DiffFailure) {
+TEST_F(GraderLoggerTests, DiffFailure) {
     {
         InSequence sequence;
         EXPECT_CALL(engine, logListItem1(2, "Diff:"));
@@ -37,7 +37,7 @@ TEST_F(SubmitterLoggerTests, DiffFailure) {
     logger.logDiffFailure("lorem");
 }
 
-TEST_F(SubmitterLoggerTests, Result) {
+TEST_F(GraderLoggerTests, Result) {
     {
         InSequence sequence;
         EXPECT_CALL(engine, logHeading("RESULT"));
@@ -46,7 +46,7 @@ TEST_F(SubmitterLoggerTests, Result) {
     logger.logResult(map<int, Verdict>{{-1, Verdict::ac()}});
 }
 
-TEST_F(SubmitterLoggerTests, Result_WithSubtasks) {
+TEST_F(GraderLoggerTests, Result_WithSubtasks) {
     {
         InSequence sequence;
         EXPECT_CALL(engine, logHeading("RESULT"));

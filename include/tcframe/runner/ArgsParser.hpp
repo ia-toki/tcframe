@@ -28,9 +28,9 @@ public:
                 { 0, 0, 0, 0 }};
 
         Args args;
-        args.command_ = Args::Command::GEN;
-        if (argc >= 2 && strcmp(argv[1], "submit") == 0) {
-            args.command_ = Args::Command::SUBMIT;
+        args.command_ = Args::Command::GENERATE;
+        if (argc >= 2 && strcmp(argv[1], "grade") == 0) {
+            args.command_ = Args::Command::GRADE;
             argc--;
             argv++;
         }

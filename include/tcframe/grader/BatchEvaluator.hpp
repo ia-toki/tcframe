@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Evaluator.hpp"
-#include "SubmitterConfig.hpp"
-#include "SubmitterLogger.hpp"
+#include "GraderConfig.hpp"
+#include "GraderLogger.hpp"
 #include "Verdict.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/util.hpp"
@@ -12,14 +12,14 @@ namespace tcframe {
 class BatchEvaluator : public Evaluator {
 private:
     OperatingSystem* os_;
-    SubmitterLogger* logger_;
+    GraderLogger* logger_;
 
 public:
-    BatchEvaluator(OperatingSystem* os, SubmitterLogger* logger)
+    BatchEvaluator(OperatingSystem* os, GraderLogger* logger)
             : os_(os)
             , logger_(logger) {}
 
-    optional<Verdict> evaluate(const TestCase& testCase, const SubmitterConfig& config) {
+    optional<Verdict> evaluate(const TestCase& testCase, const GraderConfig& config) {
         string inputFilename = config.testCasesDir() + "/" + testCase.id() + ".in";
 
         ExecutionRequestBuilder request = ExecutionRequestBuilder()

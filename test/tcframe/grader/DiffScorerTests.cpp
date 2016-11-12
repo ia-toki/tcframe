@@ -4,8 +4,8 @@
 #include <sstream>
 
 #include "../os/MockOperatingSystem.hpp"
-#include "MockSubmitterLogger.hpp"
-#include "tcframe/submitter/DiffScorer.hpp"
+#include "MockGraderLogger.hpp"
+#include "tcframe/grader/DiffScorer.hpp"
 
 using ::testing::_;
 using ::testing::Eq;
@@ -22,11 +22,11 @@ namespace tcframe {
 class DiffScorerTests : public Test {
 protected:
     MOCK(OperatingSystem) os;
-    MOCK(SubmitterLogger) logger;
+    MOCK(GraderLogger) logger;
 
     TestCase testCase = TestCaseBuilder().setId("foo_1").build();
 
-    SubmitterConfig config = SubmitterConfigBuilder("foo")
+    GraderConfig config = GraderConfigBuilder("foo")
             .setOutputDir("dir")
             .build();
 

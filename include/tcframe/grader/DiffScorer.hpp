@@ -5,7 +5,7 @@
 
 #include "Scorer.hpp"
 #include "Verdict.hpp"
-#include "SubmitterLogger.hpp"
+#include "GraderLogger.hpp"
 #include "tcframe/os.hpp"
 
 using std::istreambuf_iterator;
@@ -16,14 +16,14 @@ namespace tcframe {
 class DiffScorer : public Scorer {
 private:
     OperatingSystem* os_;
-    SubmitterLogger* logger_;
+    GraderLogger* logger_;
 
 public:
-    DiffScorer(OperatingSystem* os, SubmitterLogger* logger)
+    DiffScorer(OperatingSystem* os, GraderLogger* logger)
             : os_(os)
             , logger_(logger) {}
 
-    Verdict score(const TestCase& testCase, const SubmitterConfig& config) {
+    Verdict score(const TestCase& testCase, const GraderConfig& config) {
         string outputFilename = config.testCasesDir() + "/" + testCase.id() + ".out";
 
         string briefDiffCommand = "diff --brief _evaluation.out " + outputFilename;

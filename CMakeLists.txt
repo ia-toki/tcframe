@@ -49,6 +49,16 @@ set(SOURCES
     include/tcframe/generator/GeneratorConfig.hpp
     include/tcframe/generator/GeneratorLogger.hpp
     include/tcframe/generator/TestCaseGenerator.hpp
+    include/tcframe/grader.hpp
+    include/tcframe/grader/BatchEvaluator.hpp
+    include/tcframe/grader/DiffScorer.hpp
+    include/tcframe/grader/Evaluator.hpp
+    include/tcframe/grader/Grader.hpp
+    include/tcframe/grader/GraderConfig.hpp
+    include/tcframe/grader/GraderLogger.hpp
+    include/tcframe/grader/Scorer.hpp
+    include/tcframe/grader/TestCaseGrader.hpp
+    include/tcframe/grader/Verdict.hpp
     include/tcframe/io_manipulator.hpp
     include/tcframe/io_manipulator/GridIOSegmentManipulator.hpp
     include/tcframe/io_manipulator/IOManipulator.hpp
@@ -107,16 +117,6 @@ set(SOURCES
     include/tcframe/spec/variable/Variable.hpp
     include/tcframe/spec/variable/Vector.hpp
     include/tcframe/spec/variable/WhitespaceManipulator.hpp
-    include/tcframe/submitter.hpp
-    include/tcframe/submitter/BatchEvaluator.hpp
-    include/tcframe/submitter/DiffScorer.hpp
-    include/tcframe/submitter/Evaluator.hpp
-    include/tcframe/submitter/Scorer.hpp
-    include/tcframe/submitter/Submitter.hpp
-    include/tcframe/submitter/SubmitterConfig.hpp
-    include/tcframe/submitter/SubmitterLogger.hpp
-    include/tcframe/submitter/TestCaseSubmitter.hpp
-    include/tcframe/submitter/Verdict.hpp
     include/tcframe/util.hpp
     include/tcframe/util/NotImplementedException.hpp
     include/tcframe/util/StringUtils.hpp
@@ -165,16 +165,16 @@ set(SOURCES
     test/tcframe/spec/variable/VariableTests.cpp
     test/tcframe/spec/variable/VectorTests.cpp
     test/tcframe/spec/variable/WhitespaceManipulatorTests.cpp
-    test/tcframe/submitter/BatchEvaluatorTests.cpp
-    test/tcframe/submitter/DiffScorerTests.cpp
-    test/tcframe/submitter/MockEvaluator.hpp
-    test/tcframe/submitter/MockScorer.hpp
-    test/tcframe/submitter/MockSubmitter.hpp
-    test/tcframe/submitter/MockSubmitterLogger.hpp
-    test/tcframe/submitter/MockTestCaseSubmitter.hpp
-    test/tcframe/submitter/SubmitterLoggerTests.cpp
-    test/tcframe/submitter/SubmitterTests.cpp
-    test/tcframe/submitter/TestCaseSubmitterTests.cpp
+    test/tcframe/grader/BatchEvaluatorTests.cpp
+    test/tcframe/grader/DiffScorerTests.cpp
+    test/tcframe/grader/GraderTests.cpp
+    test/tcframe/grader/GraderLoggerTests.cpp
+    test/tcframe/grader/MockEvaluator.hpp
+    test/tcframe/grader/MockScorer.hpp
+    test/tcframe/grader/MockGrader.hpp
+    test/tcframe/grader/MockGraderLogger.hpp
+    test/tcframe/grader/MockTestCaseGrader.hpp
+    test/tcframe/grader/TestCaseGraderTests.cpp
     test/tcframe/util/OptionalTests.cpp
     test/tcframe/util/StringUtilsTests.cpp
     test/tcframe/util/TestUtils.hpp
@@ -273,7 +273,7 @@ target_link_libraries(tests
 set(ETE_SOURCES
     ete-test/tcframe/BaseEteTests.cpp
     ete-test/tcframe/GenerationEteTests.cpp
-    ete-test/tcframe/SubmissionEteTests.cpp
+        ete-test/tcframe/GradingEteTests.cpp
 )
 
 add_executable(ete_tests ${ETE_SOURCES})
