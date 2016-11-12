@@ -41,10 +41,9 @@ protected:
     };
 
     int argc = 1;
-    char** argv =  new char*[1]{(char*) "./runner"};
+    char** argv =  new char*[1]{(char*) "./slug"};
 
-    Metadata metadata = MetadataBuilder()
-            .setSlug("slug")
+    Metadata metadata = MetadataBuilder("slug")
             .setTimeLimit(3)
             .setMemoryLimit(128)
             .build();
@@ -78,7 +77,7 @@ protected:
 int RunnerTests::T;
 
 TEST_F(RunnerTests, Run_ArgsParsing_Failed) {
-    EXPECT_THAT(runner.run(2, new char*[2]{(char*) "./runner", (char*) "--blah"}), Ne(0));
+    EXPECT_THAT(runner.run(2, new char*[2]{(char*) "./slug", (char*) "--blah"}), Ne(0));
 }
 
 TEST_F(RunnerTests, Run_Specification_Failed) {
@@ -126,7 +125,7 @@ TEST_F(RunnerTests, Run_Generation_UseArgsOptions) {
             .build()));
 
     runner.run(4, new char*[5]{
-            (char*) "./runner",
+            (char*) "./slug",
             (char*) "--seed=42",
             (char*) "--solution=\"java Solution\"",
             (char*) "--output=testdata",
@@ -137,7 +136,7 @@ TEST_F(RunnerTests, Run_Submission) {
     EXPECT_CALL(submitter, submit(_, _, _));
 
     int exitStatus = runner.run(2, new char*[3]{
-            (char*) "./runner",
+            (char*) "./slug",
             (char*) "submit",
             nullptr});
 
@@ -145,7 +144,7 @@ TEST_F(RunnerTests, Run_Submission) {
 }
 
 TEST_F(RunnerTests, Run_Submission_UseDefaultOptions) {
-    ON_CALL(metadataParser, parse(_)).WillByDefault(Return(MetadataBuilder().setSlug("slug").build()));
+    ON_CALL(metadataParser, parse(_)).WillByDefault(Return(MetadataBuilder("slug").build()));
 
     EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder()
             .setSlug("slug")
@@ -155,7 +154,7 @@ TEST_F(RunnerTests, Run_Submission_UseDefaultOptions) {
             .build()));
 
     runner.run(2, new char*[3]{
-            (char*) "./runner",
+            (char*) "./slug",
             (char*) "submit",
             nullptr});
 }
@@ -171,7 +170,7 @@ TEST_F(RunnerTests, Run_Submission_UseConfigOptions) {
             .build()));
 
     runner.run(2, new char*[3]{
-            (char*) "./runner",
+            (char*) "./slug",
             (char*) "submit",
             nullptr});
 }
@@ -187,7 +186,7 @@ TEST_F(RunnerTests, Run_Submission_UseArgsOptions) {
             .build()));
 
     runner.run(6, new char*[7]{
-            (char*) "./runner",
+            (char*) "./slug",
             (char*) "submit",
             (char*) "--solution=\"java Solution\"",
             (char*) "--output=testdata",
@@ -205,7 +204,7 @@ TEST_F(RunnerTests, Run_Submission_UseArgsOptions_NoLimits) {
             .build()));
 
     runner.run(6, new char*[7]{
-            (char*) "./runner",
+            (char*) "./slug",
             (char*) "submit",
             (char*) "--solution=\"java Solution\"",
             (char*) "--output=testdata",

@@ -4,6 +4,7 @@ set -ex
 
 export TCFRAME_HOME=../../tcframe
 
-g++ -o solution solution.cpp
+slug=$1
+g++ -o ${slug}_solution ${slug}_solution.cpp
 $TCFRAME_HOME/scripts/tcframe build
-./runner
+./${slug} --solution=./${slug}_solution

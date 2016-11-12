@@ -4,5 +4,6 @@ set -ex
 
 export TCFRAME_HOME=../../tcframe
 
-g++ -o solution_alt solution_alt.cpp
-./runner submit --solution=./solution_alt
+slug=$1
+g++ -o ${slug}_solution_alt ${slug}_solution_alt.cpp
+./${slug} submit --solution=./${slug}_solution_alt

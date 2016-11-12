@@ -6,71 +6,63 @@
 #include <string>
 
 #include "SimpleYamlParser.hpp"
-#include "tcframe/os.hpp"
 #include "tcframe/spec/core.hpp"
+#include "tcframe/os.hpp"
 #include "tcframe/util.hpp"
 
 using std::istreambuf_iterator;
 using std::map;
-using std::runtime_error;
 using std::string;
 
 namespace tcframe {
 
 class MetadataParser {
+private:
     OperatingSystem* os_;
 
 public:
-
     virtual ~MetadataParser() {}
 
     MetadataParser(OperatingSystem* os)
             : os_(os) {}
 
-    virtual Metadata parse(const string& runnerPath) {
-        MetadataBuilder metadata;
+    virtual Metadata parse(const string& runnerFilename) {
+        string slug = getSlug(runnerFilename);
+        MetadataBuilder config(slug);
 
-        string metadataPath = getMetadataPath(runnerPath);
-        istream* configStream = os_->openForReading(metadataPath);
-        if (!*configStream) {
-            throw runtime_error(string(Metadata::METADATA_YML) + " not found");
-        }
+        string configFilename = getConfigFilename(runnerFilename);
+        istream* configStream = os_->openForReading(configFilename);
+        if (*configStream) {
+            string contents(istreambuf_iterator<char>(*configStream), {});
+            map<string, string> yaml = SimpleYamlParser::parse(contents);
 
-        string contents(istreambuf_iterator<char>(*configStream), {});
-        map<string, string> yaml = SimpleYamlParser::parse(contents);
-
-        if (yaml.count("slug")) {
-            metadata.setSlug(yaml["slug"]);
-        }
-        if (yaml.count("timeLimit")) {
-            optional<int> timeLimit = StringUtils::toNumber<int>(yaml["timeLimit"]);
-            if (!timeLimit) {
-                throwMalformed("timeLimit");
+            if (yaml.count("timeLimit")) {
+                optional<int> timeLimit = StringUtils::toNumber<int>(yaml["timeLimit"]);
+                if (timeLimit) {
+                    config.setTimeLimit(timeLimit.value());
+                }
             }
-            metadata.setTimeLimit(timeLimit.value());
-        }
-        if (yaml.count("memoryLimit")) {
-            optional<int> memoryLimit = StringUtils::toNumber<int>(yaml["memoryLimit"]);
-            if (!memoryLimit) {
-                throwMalformed("memoryLimit");
+            if (yaml.count("memoryLimit")) {
+                optional<int> memoryLimit = StringUtils::toNumber<int>(yaml["memoryLimit"]);
+                if (memoryLimit) {
+                    config.setMemoryLimit(memoryLimit.value());
+                }
             }
-            metadata.setMemoryLimit(memoryLimit.value());
         }
-        return metadata.build();
+        return config.build();
     }
 
 private:
-    static string getMetadataPath(const string& runnerPath) {
-        size_t slashPos = runnerPath.find_last_of('/');
-        if (slashPos != string::npos) {
-            return runnerPath.substr(0, slashPos + 1) + Metadata::METADATA_YML;
-        }
-        return Metadata::METADATA_YML;
+    static string getConfigFilename(const string& runnerFilename) {
+        return runnerFilename + ".yml";
     }
 
-    static void throwMalformed(const string key) {
-        throw runtime_error(string(Metadata::METADATA_YML)
-                            + " contains malformed YAML: cannot parse for '" + key + "'");
+    static string getSlug(const string& runnerFilename) {
+        size_t slashPos = runnerFilename.find_last_of('/');
+        if (slashPos != string::npos) {
+            return runnerFilename.substr(slashPos + 1, runnerFilename.length() - slashPos);
+        }
+        return runnerFilename;
     }
 };
 

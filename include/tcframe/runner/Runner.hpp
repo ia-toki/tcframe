@@ -22,10 +22,6 @@ namespace tcframe {
 template<typename TProblemSpec>
 class Runner {
 private:
-    const int DEFAULT_SEED = 0;
-    const char* DEFAULT_SOLUTION_COMMAND = "./solution";
-    const char* DEFAULT_OUTPUT_DIR = "tc";
-
     BaseTestSpec<TProblemSpec>* testSpec_;
 
     LoggerEngine* loggerEngine_;
@@ -103,15 +99,15 @@ private:
     }
 
     int generate(const Args& args, const Spec& spec) {
-        const Metadata& metadata = spec.metadata();
+        const Metadata& config = spec.metadata();
         const ProblemConfig& problemConfig = spec.problemConfig();
 
         GeneratorConfig generatorConfig = GeneratorConfigBuilder()
                 .setMultipleTestCasesCount(problemConfig.multipleTestCasesCount().value_or(nullptr))
-                .setSeed(args.seed().value_or(DEFAULT_SEED))
-                .setSlug(metadata.slug())
-                .setSolutionCommand(args.solution().value_or(DEFAULT_SOLUTION_COMMAND))
-                .setOutputDir(args.output().value_or(DEFAULT_OUTPUT_DIR))
+                .setSeed(args.seed().value_or(DefaultValues::seed()))
+                .setSlug(config.slug())
+                .setSolutionCommand(args.solution().value_or(DefaultValues::solutionCommand()))
+                .setOutputDir(args.output().value_or(DefaultValues::outputDir()))
                 .build();
 
         auto ioManipulator = new IOManipulator(spec.ioFormat());
@@ -130,8 +126,8 @@ private:
         SubmitterConfigBuilder configBuilder = SubmitterConfigBuilder()
                 .setHasMultipleTestCasesCount(problemConfig.multipleTestCasesCount())
                 .setSlug(metadata.slug())
-                .setSolutionCommand(args.solution().value_or(DEFAULT_SOLUTION_COMMAND))
-                .setTestCasesDir(args.output().value_or(DEFAULT_OUTPUT_DIR));
+                .setSolutionCommand(args.solution().value_or(DefaultValues::solutionCommand()))
+                .setTestCasesDir(args.output().value_or(DefaultValues::outputDir()));
 
         if (!args.noTimeLimit()) {
             if (args.timeLimit()) {
