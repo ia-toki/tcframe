@@ -40,8 +40,7 @@ protected:
             TestGroup(1, {tc1, tc2}),
             TestGroup(2, {tc3})});
 
-    GeneratorConfig config = GeneratorConfigBuilder()
-            .setSlug("foo")
+    GeneratorConfig config = GeneratorConfigBuilder("foo")
             .setSolutionCommand("python Sol.py")
             .setOutputDir("dir")
             .build();

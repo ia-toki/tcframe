@@ -26,9 +26,8 @@ protected:
 
     TestCase testCase = TestCaseBuilder().setId("foo_1").build();
 
-    SubmitterConfig config = SubmitterConfigBuilder()
-            .setSlug("foo")
-            .setTestCasesDir("dir")
+    SubmitterConfig config = SubmitterConfigBuilder("foo")
+            .setOutputDir("dir")
             .build();
 
     DiffScorer scorer = DiffScorer(&os, &logger);

@@ -26,10 +26,9 @@ protected:
 
     TestCase testCase = TestCaseBuilder().setId("foo_1").build();
 
-    SubmitterConfig config = SubmitterConfigBuilder()
-            .setSlug("foo")
+    SubmitterConfig config = SubmitterConfigBuilder("foo")
             .setSolutionCommand("python Sol.py")
-            .setTestCasesDir("dir")
+            .setOutputDir("dir")
             .setTimeLimit(3)
             .setMemoryLimit(128)
             .build();

@@ -64,7 +64,7 @@ private:
         for (const TestCase& testCase : testGroup.testCases()) {
             successful &= testCaseGenerator_->generate(testCase, config);
         }
-        if (successful && config.multipleTestCasesCount() != nullptr && !testGroup.testCases().empty()) {
+        if (successful && config.multipleTestCasesCounter() != nullptr && !testGroup.testCases().empty()) {
             return combineMultipleTestCases(testGroup, config);
         }
         return successful;
@@ -74,7 +74,7 @@ private:
         string baseId = TestCaseIdCreator::createBaseId(config.slug(), testGroup.id());
         logger_->logMultipleTestCasesCombinationIntroduction(baseId);
 
-        *config.multipleTestCasesCount() = (int) testGroup.testCases().size();
+        *config.multipleTestCasesCounter() = (int) testGroup.testCases().size();
 
         try {
             verify();

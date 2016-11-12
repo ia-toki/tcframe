@@ -6,7 +6,7 @@ using std::string;
 
 namespace tcframe {
 
-class DefaultValues {
+class CommonConfig {
 public:
     static unsigned seed() {
         return 0;

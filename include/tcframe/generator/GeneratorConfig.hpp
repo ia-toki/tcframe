@@ -5,6 +5,7 @@
 #include <tuple>
 #include <utility>
 
+#include "tcframe/util.hpp"
 #include "tcframe/spec/core.hpp"
 
 using std::move;
@@ -17,23 +18,24 @@ struct GeneratorConfig {
     friend class GeneratorConfigBuilder;
 
 private:
+    string slug_;
+
     int* multipleTestCasesCounter_;
     unsigned seed_;
-    string slug_;
     string solutionCommand_;
     string outputDir_;
 
 public:
-    int* multipleTestCasesCount() const {
+    const string& slug() const {
+        return slug_;
+    }
+
+    int* multipleTestCasesCounter() const {
         return multipleTestCasesCounter_;
     }
 
     unsigned int seed() const {
         return seed_;
-    }
-
-    const string& slug() const {
-        return slug_;
     }
 
     const string& solutionCommand() const {
@@ -58,15 +60,30 @@ public:
     GeneratorConfigBuilder(const GeneratorConfig& from)
             : subject_(from) {}
 
-    GeneratorConfigBuilder() {
+    GeneratorConfigBuilder(string slug) {
+        subject_.slug_ = slug;
         subject_.multipleTestCasesCounter_ = nullptr;
-        subject_.seed_ = DefaultValues::seed();
-        subject_.solutionCommand_ = DefaultValues::solutionCommand();
-        subject_.outputDir_ = DefaultValues::outputDir();
+        subject_.seed_ = CommonConfig::seed();
+        subject_.solutionCommand_ = CommonConfig::solutionCommand();
+        subject_.outputDir_ = CommonConfig::outputDir();
     }
 
-    GeneratorConfigBuilder& setMultipleTestCasesCounter(int* var) {
-        subject_.multipleTestCasesCounter_ = var;
+    GeneratorConfigBuilder& setMultipleTestCasesCounter(optional<int*> counter) {
+        if (counter) {
+            setMultipleTestCasesCounter(counter.value());
+        }
+        return *this;
+    }
+
+    GeneratorConfigBuilder& setMultipleTestCasesCounter(int* counter) {
+        subject_.multipleTestCasesCounter_ = counter;
+        return *this;
+    }
+
+    GeneratorConfigBuilder& setSeed(optional<unsigned> seed) {
+        if (seed) {
+            setSeed(seed.value());
+        }
         return *this;
     }
 
@@ -75,13 +92,22 @@ public:
         return *this;
     }
 
-    GeneratorConfigBuilder& setSlug(string slug) {
-        subject_.slug_ = slug;
+    GeneratorConfigBuilder& setSolutionCommand(optional<string> solutionCommand) {
+        if (solutionCommand) {
+            setSolutionCommand(solutionCommand.value());
+        }
         return *this;
     }
 
     GeneratorConfigBuilder& setSolutionCommand(string solutionCommand) {
         subject_.solutionCommand_ = solutionCommand;
+        return *this;
+    }
+
+    GeneratorConfigBuilder& setOutputDir(optional<string> outputDir) {
+        if (outputDir) {
+            setOutputDir(outputDir.value());
+        }
         return *this;
     }
 

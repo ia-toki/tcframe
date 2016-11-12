@@ -15,20 +15,21 @@ class SubmitterConfig {
     friend class SubmitterConfigBuilder;
 
 private:
-    bool hasMultipleTestCases_;
     string slug_;
+
+    bool hasMultipleTestCases_;
     string solutionCommand_;
-    string testCasesDir_;
+    string outputDir_;
     optional<int> timeLimit_;
     optional<int> memoryLimit_;
 
 public:
-    bool hasMultipleTestCases() const {
-        return hasMultipleTestCases_;
-    }
-
     const string& slug() const {
         return slug_;
+    }
+
+    bool hasMultipleTestCases() const {
+        return hasMultipleTestCases_;
     }
 
     const string& solutionCommand() const {
@@ -36,7 +37,7 @@ public:
     }
 
     const string& testCasesDir() const {
-        return testCasesDir_;
+        return outputDir_;
     }
 
     const optional<int>& timeLimit() const {
@@ -48,8 +49,8 @@ public:
     }
 
     bool operator==(const SubmitterConfig& o) const {
-        return tie(hasMultipleTestCases_, slug_, solutionCommand_, testCasesDir_, timeLimit_, memoryLimit_) ==
-                tie(o.hasMultipleTestCases_,o.slug_, o.solutionCommand_, o.testCasesDir_, o.timeLimit_,
+        return tie(hasMultipleTestCases_, slug_, solutionCommand_, outputDir_, timeLimit_, memoryLimit_) ==
+                tie(o.hasMultipleTestCases_,o.slug_, o.solutionCommand_, o.outputDir_, o.timeLimit_,
                     o.memoryLimit_);
     }
 };
@@ -62,10 +63,18 @@ public:
     SubmitterConfigBuilder(const SubmitterConfig& from)
             : subject_(from) {}
 
-    SubmitterConfigBuilder() {
+    SubmitterConfigBuilder(string slug) {
+        subject_.slug_ = slug;
         subject_.hasMultipleTestCases_ = false;
-        subject_.solutionCommand_ = DefaultValues::solutionCommand();
-        subject_.testCasesDir_ = DefaultValues::outputDir();
+        subject_.solutionCommand_ = CommonConfig::solutionCommand();
+        subject_.outputDir_ = CommonConfig::outputDir();
+    }
+
+    SubmitterConfigBuilder& setHasMultipleTestCases(optional<bool> hasMultipleTestCases) {
+        if (hasMultipleTestCases) {
+            setHasMultipleTestCases(hasMultipleTestCases.value());
+        }
+        return *this;
     }
 
     SubmitterConfigBuilder& setHasMultipleTestCases(bool hasMultipleTestCases) {
@@ -73,8 +82,10 @@ public:
         return *this;
     }
 
-    SubmitterConfigBuilder& setSlug(string slug) {
-        subject_.slug_ = slug;
+    SubmitterConfigBuilder& setSolutionCommand(optional<string> solutionCommand) {
+        if (solutionCommand) {
+            setSolutionCommand(solutionCommand.value());
+        }
         return *this;
     }
 
@@ -83,8 +94,15 @@ public:
         return *this;
     }
 
-    SubmitterConfigBuilder& setTestCasesDir(string testCasesDir) {
-        subject_.testCasesDir_ = testCasesDir;
+    SubmitterConfigBuilder& setOutputDir(optional<string> outputDir) {
+        if (outputDir) {
+            setOutputDir(outputDir.value());
+        }
+        return *this;
+    }
+
+    SubmitterConfigBuilder& setOutputDir(string outputDir) {
+        subject_.outputDir_ = outputDir;
         return *this;
     }
 

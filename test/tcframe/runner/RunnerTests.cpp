@@ -109,9 +109,8 @@ TEST_F(RunnerTests, Run_Generation_Failed) {
 }
 
 TEST_F(RunnerTests, Run_Generation_UseDefaultOptions) {
-    EXPECT_CALL(generator, generate(_, GeneratorConfigBuilder()
+    EXPECT_CALL(generator, generate(_, GeneratorConfigBuilder("slug")
             .setSeed(0)
-            .setSlug("slug")
             .setSolutionCommand("./solution")
             .setOutputDir("tc")
             .build()));
@@ -120,8 +119,7 @@ TEST_F(RunnerTests, Run_Generation_UseDefaultOptions) {
 }
 
 TEST_F(RunnerTests, Run_Generation_UseConfigOptions) {
-    EXPECT_CALL(generator, generate(_, GeneratorConfigBuilder()
-            .setSlug("slug")
+    EXPECT_CALL(generator, generate(_, GeneratorConfigBuilder("slug")
             .setMultipleTestCasesCounter(&T)
             .setSolutionCommand("./solution")
             .setOutputDir("tc")
@@ -131,9 +129,8 @@ TEST_F(RunnerTests, Run_Generation_UseConfigOptions) {
 }
 
 TEST_F(RunnerTests, Run_Generation_UseArgsOptions) {
-    EXPECT_CALL(generator, generate(_, GeneratorConfigBuilder()
+    EXPECT_CALL(generator, generate(_, GeneratorConfigBuilder("slug")
             .setSeed(42)
-            .setSlug("slug")
             .setMultipleTestCasesCounter(&T)
             .setSolutionCommand("\"java Solution\"")
             .setOutputDir("testdata")
@@ -159,13 +156,12 @@ TEST_F(RunnerTests, Run_Submission) {
 }
 
 TEST_F(RunnerTests, Run_Submission_UseDefaultOptions) {
-    EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder()
-            .setSlug("slug")
+    EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder("slug")
             .setHasMultipleTestCases(false)
             .setTimeLimit(2)
             .setMemoryLimit(64)
             .setSolutionCommand("./solution")
-            .setTestCasesDir("tc")
+            .setOutputDir("tc")
             .build()));
 
     runner.run(2, new char*[3]{
@@ -175,11 +171,10 @@ TEST_F(RunnerTests, Run_Submission_UseDefaultOptions) {
 }
 
 TEST_F(RunnerTests, Run_Submission_UseConfigOptions) {
-    EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder()
-            .setSlug("slug")
+    EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder("slug")
             .setHasMultipleTestCases(true)
             .setSolutionCommand("./solution")
-            .setTestCasesDir("tc")
+            .setOutputDir("tc")
             .setTimeLimit(3)
             .setMemoryLimit(128)
             .build()));
@@ -191,11 +186,10 @@ TEST_F(RunnerTests, Run_Submission_UseConfigOptions) {
 }
 
 TEST_F(RunnerTests, Run_Submission_UseArgsOptions) {
-    EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder()
-            .setSlug("slug")
+    EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder("slug")
             .setHasMultipleTestCases(true)
             .setSolutionCommand("\"java Solution\"")
-            .setTestCasesDir("testdata")
+            .setOutputDir("testdata")
             .setTimeLimit(4)
             .setMemoryLimit(256)
             .build()));
@@ -211,11 +205,10 @@ TEST_F(RunnerTests, Run_Submission_UseArgsOptions) {
 }
 
 TEST_F(RunnerTests, Run_Submission_UseArgsOptions_NoLimits) {
-    EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder()
-            .setSlug("slug")
+    EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder("slug")
             .setHasMultipleTestCases(true)
             .setSolutionCommand("\"java Solution\"")
-            .setTestCasesDir("testdata")
+            .setOutputDir("testdata")
             .build()));
 
     runnerWithConfig.run(6, new char*[7]{

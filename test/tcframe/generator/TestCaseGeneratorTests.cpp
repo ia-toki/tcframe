@@ -56,8 +56,7 @@ protected:
             .setSubtaskIds({1, 2})
             .setData(new OfficialTestCaseData([&]{throw runtime_error("closure error");}))
             .build();
-    GeneratorConfig config = GeneratorConfigBuilder()
-            .setSlug("foo")
+    GeneratorConfig config = GeneratorConfigBuilder("foo")
             .setSolutionCommand("python Sol.py")
             .setOutputDir("dir")
             .build();

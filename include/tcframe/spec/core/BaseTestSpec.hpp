@@ -3,7 +3,7 @@
 #include <set>
 #include <vector>
 
-#include "DefaultValues.hpp"
+#include "CommonConfig.hpp"
 #include "GradingConfig.hpp"
 #include "tcframe/spec.hpp"
 #include "tcframe/util.hpp"

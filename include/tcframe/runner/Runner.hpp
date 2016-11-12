@@ -97,12 +97,11 @@ private:
     int generate(const string& slug, const Args& args, const Spec& spec) {
         const MultipleTestCasesConfig& multipleTestCasesConfig = spec.multipleTestCasesConfig();
 
-        GeneratorConfig generatorConfig = GeneratorConfigBuilder()
-                .setMultipleTestCasesCounter(multipleTestCasesConfig.counter().value_or(nullptr))
-                .setSeed(args.seed().value_or(DefaultValues::seed()))
-                .setSlug(slug)
-                .setSolutionCommand(args.solution().value_or(DefaultValues::solutionCommand()))
-                .setOutputDir(args.output().value_or(DefaultValues::outputDir()))
+        GeneratorConfig generatorConfig = GeneratorConfigBuilder(slug)
+                .setMultipleTestCasesCounter(multipleTestCasesConfig.counter())
+                .setSeed(args.seed())
+                .setSolutionCommand(args.solution())
+                .setOutputDir(args.output())
                 .build();
 
         auto ioManipulator = new IOManipulator(spec.ioFormat());
@@ -118,11 +117,10 @@ private:
         const MultipleTestCasesConfig& multipleTestCasesConfig = spec.multipleTestCasesConfig();
         const GradingConfig& gradingConfig = spec.gradingConfig();
 
-        SubmitterConfigBuilder configBuilder = SubmitterConfigBuilder()
-                .setHasMultipleTestCases(multipleTestCasesConfig.counter())
-                .setSlug(slug)
-                .setSolutionCommand(args.solution().value_or(DefaultValues::solutionCommand()))
-                .setTestCasesDir(args.output().value_or(DefaultValues::outputDir()));
+        SubmitterConfigBuilder configBuilder = SubmitterConfigBuilder(slug)
+                .setHasMultipleTestCases(optional<bool>(multipleTestCasesConfig.counter()))
+                .setSolutionCommand(args.solution())
+                .setOutputDir(args.output());
 
         if (!args.noTimeLimit()) {
             configBuilder.setTimeLimit(args.timeLimit().value_or(gradingConfig.timeLimit()));

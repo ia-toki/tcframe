@@ -86,7 +86,7 @@ private:
 
     void generateInput(const TestCase& testCase, const string& inputFilename, const GeneratorConfig& config) {
         ostream* input = os_->openForWriting(inputFilename);
-        if (config.multipleTestCasesCount() != nullptr) {
+        if (config.multipleTestCasesCounter() != nullptr) {
             *input << "1" << endl;
         }
 
