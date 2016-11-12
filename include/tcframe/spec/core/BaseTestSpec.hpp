@@ -3,11 +3,9 @@
 #include <set>
 #include <vector>
 
-#include "Metadata.hpp"
 #include "DefaultValues.hpp"
-#include "tcframe/spec/Spec.hpp"
-#include "tcframe/spec/random.hpp"
-#include "tcframe/spec/testcase.hpp"
+#include "GradingConfig.hpp"
+#include "tcframe/spec.hpp"
 #include "tcframe/util.hpp"
 
 using std::vector;
@@ -108,12 +106,13 @@ public:
         return TestSuiteBuilder::build();
     }
 
-    virtual Spec buildSpec(const Metadata& metadata) {
+    virtual Spec buildSpec(const string& slug) {
         ProblemConfig problemConfig = TProblemSpec::buildProblemConfig();
+        GradingConfig gradingConfig = TProblemSpec::buildGradingConfig();
         IOFormat ioFormat = TProblemSpec::buildIOFormat();
         ConstraintSuite constraintSuite = TProblemSpec::buildConstraintSuite();
-        TestSuite testSuite = buildTestSuite(metadata.slug());
-        return Spec(metadata, problemConfig, ioFormat, constraintSuite, testSuite);
+        TestSuite testSuite = buildTestSuite(slug);
+        return Spec(problemConfig, gradingConfig, ioFormat, constraintSuite, testSuite);
     }
 
 protected:

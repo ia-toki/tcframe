@@ -4,7 +4,6 @@
 
 #include "Args.hpp"
 #include "ArgsParser.hpp"
-#include "MetadataParser.hpp"
 #include "RunnerLogger.hpp"
 #include "RunnerLoggerFactory.hpp"
 #include "tcframe/generator.hpp"
@@ -27,7 +26,6 @@ private:
     LoggerEngine* loggerEngine_;
     OperatingSystem* os_;
 
-    MetadataParser* metadataParser_;
     RunnerLoggerFactory* runnerLoggerFactory_;
     GeneratorFactory* generatorFactory_;
     SubmitterFactory* submitterFactory_;
@@ -37,13 +35,11 @@ public:
             BaseTestSpec<TProblemSpec>* testSpec,
             LoggerEngine* loggerEngine,
             OperatingSystem* os,
-            MetadataParser* metadataParser,
             RunnerLoggerFactory* runnerLoggerFactory,
             GeneratorFactory* generatorFactory,
             SubmitterFactory* submitterFactory)
             : testSpec_(testSpec)
             , loggerEngine_(loggerEngine)
-            , metadataParser_(metadataParser)
             , os_(os)
             , runnerLoggerFactory_(runnerLoggerFactory)
             , generatorFactory_(generatorFactory)
@@ -52,16 +48,17 @@ public:
     int run(int argc, char* argv[]) {
         auto runnerLogger = runnerLoggerFactory_->create(loggerEngine_);
 
+        string slug = parseSlug(argv[0]);
+
         try {
             Args args = parseArgs(argc, argv);
-            Metadata metadata = parseMetadata(argv[0]);
-            Spec spec = buildSpec(metadata, runnerLogger);
+            Spec spec = buildSpec(slug, runnerLogger);
 
             int result;
             if (args.command() == Args::Command::GEN) {
-                result = generate(args, spec);
+                result = generate(slug, args, spec);
             } else {
-                result = submit(args, spec);
+                result = submit(slug, args, spec);
             }
             cleanUp();
             return result;
@@ -71,6 +68,14 @@ public:
     }
 
 private:
+    string parseSlug(const string& runnerPath) {
+        size_t slashPos = runnerPath.find_last_of('/');
+        if (slashPos != string::npos) {
+            return runnerPath.substr(slashPos + 1, runnerPath.size() - slashPos);
+        }
+        return runnerPath;
+    }
+
     Args parseArgs(int argc, char* argv[]) {
         try {
             return ArgsParser::parse(argc, argv);
@@ -80,32 +85,22 @@ private:
         }
     }
 
-    Metadata parseMetadata(const string& runnerPath) {
+    Spec buildSpec(const string& slug, RunnerLogger* runnerLogger) {
         try {
-            return metadataParser_->parse(runnerPath);
+            return testSpec_->buildSpec(slug);
         } catch (runtime_error& e) {
-            cout << e.what() << endl;
+            runnerLogger->logSpecificationFailure({e.what()});
             throw;
         }
     }
 
-    Spec buildSpec(const Metadata& metadata, RunnerLogger* logger) {
-        try {
-            return testSpec_->buildSpec(metadata);
-        } catch (runtime_error& e) {
-            logger->logSpecificationFailure({e.what()});
-            throw;
-        }
-    }
-
-    int generate(const Args& args, const Spec& spec) {
-        const Metadata& config = spec.metadata();
+    int generate(const string& slug, const Args& args, const Spec& spec) {
         const ProblemConfig& problemConfig = spec.problemConfig();
 
         GeneratorConfig generatorConfig = GeneratorConfigBuilder()
                 .setMultipleTestCasesCount(problemConfig.multipleTestCasesCount().value_or(nullptr))
                 .setSeed(args.seed().value_or(DefaultValues::seed()))
-                .setSlug(config.slug())
+                .setSlug(slug)
                 .setSolutionCommand(args.solution().value_or(DefaultValues::solutionCommand()))
                 .setOutputDir(args.output().value_or(DefaultValues::outputDir()))
                 .build();
@@ -119,29 +114,21 @@ private:
         return generator->generate(spec.testSuite(), generatorConfig) ? 0 : 1;
     }
 
-    int submit(const Args& args, const Spec& spec) {
-        const Metadata& metadata = spec.metadata();
+    int submit(const string& slug, const Args& args, const Spec& spec) {
+        const GradingConfig& gradingConfig = spec.gradingConfig();
         const ProblemConfig& problemConfig = spec.problemConfig();
 
         SubmitterConfigBuilder configBuilder = SubmitterConfigBuilder()
                 .setHasMultipleTestCasesCount(problemConfig.multipleTestCasesCount())
-                .setSlug(metadata.slug())
+                .setSlug(slug)
                 .setSolutionCommand(args.solution().value_or(DefaultValues::solutionCommand()))
                 .setTestCasesDir(args.output().value_or(DefaultValues::outputDir()));
 
         if (!args.noTimeLimit()) {
-            if (args.timeLimit()) {
-                configBuilder.setTimeLimit(args.timeLimit().value());
-            } else if (metadata.timeLimit()) {
-                configBuilder.setTimeLimit(metadata.timeLimit().value());
-            }
+            configBuilder.setTimeLimit(args.timeLimit().value_or(gradingConfig.timeLimit()));
         }
         if (!args.noMemoryLimit()) {
-            if (args.memoryLimit()) {
-                configBuilder.setMemoryLimit(args.memoryLimit().value());
-            } else if (metadata.memoryLimit()) {
-                configBuilder.setMemoryLimit(metadata.memoryLimit().value());
-            }
+            configBuilder.setMemoryLimit(args.memoryLimit().value_or(gradingConfig.memoryLimit()));
         }
 
         SubmitterConfig submitterConfig = configBuilder.build();

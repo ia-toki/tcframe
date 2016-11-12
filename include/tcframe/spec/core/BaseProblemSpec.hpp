@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#include "GradingConfig.hpp"
 #include "ProblemConfig.hpp"
 #include "tcframe/spec/constraint.hpp"
 #include "tcframe/spec/io.hpp"
@@ -11,7 +12,11 @@ using std::vector;
 
 namespace tcframe {
 
-class BaseProblemSpec : protected ProblemConfigBuilder, protected IOFormatBuilder, protected ConstraintSuiteBuilder {
+class BaseProblemSpec
+        : protected ProblemConfigBuilder,
+          protected GradingConfigBuilder,
+          protected IOFormatBuilder,
+          protected ConstraintSuiteBuilder {
 private:
     vector<void(BaseProblemSpec::*)()> subtasks_ = {
             &BaseProblemSpec::Subtask1,
@@ -48,6 +53,11 @@ public:
         return ProblemConfigBuilder::build();
     }
 
+    tcframe::GradingConfig buildGradingConfig() {
+        GradingConfig();
+        return GradingConfigBuilder::build();
+    }
+
     IOFormat buildIOFormat() {
         IOFormatBuilder::prepareForInputFormat();
         InputFormat();
@@ -77,6 +87,7 @@ public:
 
 protected:
     virtual void Config() {}
+    virtual void GradingConfig() {}
     virtual void InputFormat() = 0;
     virtual void OutputFormat() {}
     virtual void Constraints() {throw NotImplementedException();}

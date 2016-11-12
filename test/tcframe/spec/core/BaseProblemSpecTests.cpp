@@ -52,11 +52,17 @@ protected:
         }
     };
 
-    class ProblemSpecWithMultipleTestCasesConstraints : public BaseProblemSpec {
+    class ProblemSpecWithGradingConfig : public ProblemSpec {
+    protected:
+        void GradingConfig() {
+            TimeLimit(3);
+            MemoryLimit(128);
+        }
+    };
+
+    class ProblemSpecWithMultipleTestCasesConstraints : public ProblemSpec {
     protected:
         int T;
-
-        void InputFormat() {}
 
         void MultipleTestCasesConstraints() {
             addConstraint([=] {return 1 <= T && T <= 20;}, "1 <= T && T <= 20");
@@ -86,6 +92,7 @@ protected:
     };
     
     ProblemSpec problemSpec;
+    ProblemSpecWithGradingConfig problemSpecWithGradingConfig;
     ProblemSpecWithConstraints problemSpecWithConstraints;
     ProblemSpecWithMultipleTestCasesConstraints problemSpecWithMultipleTestCasesConstraints;
     ProblemSpecWithSubtasks problemSpecWithSubtasks;
@@ -94,6 +101,12 @@ protected:
 TEST_F(BaseProblemSpecTests, Config) {
     ProblemConfig problemConfig = problemSpec.buildProblemConfig();
     EXPECT_TRUE(problemConfig.multipleTestCasesCount());
+}
+
+TEST_F(BaseProblemSpecTests, GradingConfig) {
+    GradingConfig gradingConfig = problemSpecWithGradingConfig.buildGradingConfig();
+    EXPECT_THAT(gradingConfig.timeLimit(), Eq(3));
+    EXPECT_THAT(gradingConfig.memoryLimit(), Eq(128));
 }
 
 TEST_F(BaseProblemSpecTests, IOFormat) {

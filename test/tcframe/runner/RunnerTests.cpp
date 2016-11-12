@@ -4,7 +4,6 @@
 #include "../generator/MockGenerator.hpp"
 #include "../os/MockOperatingSystem.hpp"
 #include "../submitter/MockSubmitter.hpp"
-#include "MockMetadataParser.hpp"
 #include "MockRunnerLogger.hpp"
 #include "MockRunnerLoggerFactory.hpp"
 #include "tcframe/experimental/runner.hpp"
@@ -31,11 +30,21 @@ protected:
         }
     };
 
+    class ProblemSpecWithConfig : public ProblemSpec {
+    protected:
+        void GradingConfig() {
+            TimeLimit(3);
+            MemoryLimit(128);
+        }
+    };
+
     class TestSpec : public BaseTestSpec<ProblemSpec> {};
+
+    class TestSpecWithConfig : public BaseTestSpec<ProblemSpecWithConfig> {};
 
     class BadTestSpec : public BaseTestSpec<ProblemSpec> {
     public:
-        Spec buildSpec(const tcframe::Metadata& config) {
+        Spec buildSpec(const string&) {
             throw runtime_error("An error");
         }
     };
@@ -43,14 +52,8 @@ protected:
     int argc = 1;
     char** argv =  new char*[1]{(char*) "./slug"};
 
-    Metadata metadata = MetadataBuilder("slug")
-            .setTimeLimit(3)
-            .setMemoryLimit(128)
-            .build();
-
     LoggerEngine* loggerEngine = new SimpleLoggerEngine();
 
-    MOCK(MetadataParser) metadataParser;
     MOCK(RunnerLogger) runnerLogger;
     MOCK(Generator) generator;
     MOCK(Submitter) submitter;
@@ -60,17 +63,20 @@ protected:
     MOCK(GeneratorFactory) generatorFactory;
     MOCK(SubmitterFactory) submitterFactory;
 
-    Runner<ProblemSpec> runner = Runner<ProblemSpec>(
-            new TestSpec(), loggerEngine, &os, &metadataParser,
-            &runnerLoggerFactory, &generatorFactory, &submitterFactory);
+    Runner<ProblemSpec> runner = createRunner(new TestSpec());
 
     void SetUp() {
-        ON_CALL(metadataParser, parse(_)).WillByDefault(Return(metadata));
         ON_CALL(runnerLoggerFactory, create(_)).WillByDefault(Return(&runnerLogger));
         ON_CALL(generatorFactory, create(_, _, _, _)).WillByDefault(Return(&generator));
         ON_CALL(submitterFactory, create(_, _)).WillByDefault(Return(&submitter));
         ON_CALL(os, execute(_)).WillByDefault(Return(
                 ExecutionResult(ExecutionInfoBuilder().setExitCode(0).build(), nullptr, nullptr)));
+    }
+
+    template<typename TProblem>
+    Runner<TProblem> createRunner(BaseTestSpec<TProblem>* testSpec) {
+        return Runner<TProblem>(
+                testSpec, loggerEngine, &os, &runnerLoggerFactory, &generatorFactory, &submitterFactory);
     }
 };
 
@@ -81,9 +87,7 @@ TEST_F(RunnerTests, Run_ArgsParsing_Failed) {
 }
 
 TEST_F(RunnerTests, Run_Specification_Failed) {
-    Runner<ProblemSpec> badRunner = Runner<ProblemSpec>(
-            new BadTestSpec(), loggerEngine, &os, &metadataParser,
-            &runnerLoggerFactory, &generatorFactory, &submitterFactory);
+    Runner<ProblemSpec> badRunner = createRunner(new BadTestSpec());
 
     EXPECT_CALL(generator, generate(_, _)).Times(0);
     EXPECT_CALL(runnerLogger, logSpecificationFailure(vector<string>{"An error"}));
@@ -144,11 +148,11 @@ TEST_F(RunnerTests, Run_Submission) {
 }
 
 TEST_F(RunnerTests, Run_Submission_UseDefaultOptions) {
-    ON_CALL(metadataParser, parse(_)).WillByDefault(Return(MetadataBuilder("slug").build()));
-
     EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder()
             .setSlug("slug")
             .setHasMultipleTestCasesCount(true)
+            .setTimeLimit(2)
+            .setMemoryLimit(64)
             .setSolutionCommand("./solution")
             .setTestCasesDir("tc")
             .build()));
@@ -160,6 +164,8 @@ TEST_F(RunnerTests, Run_Submission_UseDefaultOptions) {
 }
 
 TEST_F(RunnerTests, Run_Submission_UseConfigOptions) {
+    Runner<ProblemSpecWithConfig> runnerWithConfig = createRunner(new TestSpecWithConfig());
+
     EXPECT_CALL(submitter, submit(_, _, SubmitterConfigBuilder()
             .setSlug("slug")
             .setHasMultipleTestCasesCount(true)
@@ -169,7 +175,7 @@ TEST_F(RunnerTests, Run_Submission_UseConfigOptions) {
             .setMemoryLimit(128)
             .build()));
 
-    runner.run(2, new char*[3]{
+    runnerWithConfig.run(2, new char*[3]{
             (char*) "./slug",
             (char*) "submit",
             nullptr});
