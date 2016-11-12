@@ -108,7 +108,7 @@ private:
         auto verifier = new Verifier(spec.constraintSuite());
         auto logger = new GeneratorLogger(loggerEngine_);
         auto testCaseGenerator = new TestCaseGenerator(verifier, ioManipulator, os_, logger);
-        auto generator = generatorFactory_->create(testCaseGenerator, verifier, os_, logger);
+        auto generator = generatorFactory_->create(spec.seedSetter(), testCaseGenerator, verifier, os_, logger);
 
         return generator->generate(spec.testSuite(), generatorConfig) ? 0 : 1;
     }

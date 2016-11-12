@@ -9,14 +9,14 @@ namespace tcframe {
 class MockGenerator : public Generator {
 public:
     MockGenerator()
-            : Generator(nullptr, nullptr, nullptr, nullptr) {}
+            : Generator(nullptr, nullptr, nullptr, nullptr, nullptr) {}
 
     MOCK_METHOD2(generate, bool(const TestSuite&, const GeneratorConfig&));
 };
 
 class MockGeneratorFactory : public GeneratorFactory {
 public:
-    MOCK_METHOD4(create, Generator*(TestCaseGenerator*, Verifier*, OperatingSystem*, GeneratorLogger*));
+    MOCK_METHOD5(create, Generator*(SeedSetter*, TestCaseGenerator*, Verifier*, OperatingSystem*, GeneratorLogger*));
 };
 
 }

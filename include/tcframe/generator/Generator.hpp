@@ -9,6 +9,7 @@
 #include "GeneratorLogger.hpp"
 #include "TestCaseGenerator.hpp"
 #include "tcframe/os.hpp"
+#include "tcframe/spec/core.hpp"
 #include "tcframe/verifier.hpp"
 
 using std::function;
@@ -21,6 +22,7 @@ namespace tcframe {
 
 class Generator {
 private:
+    SeedSetter* seedSetter_;
     TestCaseGenerator* testCaseGenerator_;
     Verifier* verifier_;
     OperatingSystem* os_;
@@ -30,17 +32,21 @@ public:
     virtual ~Generator() {}
 
     Generator(
+            SeedSetter* seedSetter,
             TestCaseGenerator* testCaseGenerator,
             Verifier* verifier,
             OperatingSystem* os,
             GeneratorLogger* logger)
-            : testCaseGenerator_(testCaseGenerator)
+            : seedSetter_(seedSetter)
+            , testCaseGenerator_(testCaseGenerator)
             , verifier_(verifier)
             , os_(os)
             , logger_(logger) {}
 
     virtual bool generate(const TestSuite& testSuite, const GeneratorConfig& config) {
         logger_->logIntroduction();
+
+        seedSetter_->setSeed(config.seed());
 
         os_->forceMakeDir(config.outputDir());
 
@@ -112,12 +118,13 @@ public:
     virtual ~GeneratorFactory() {}
 
     virtual Generator* create(
+            SeedSetter* seedSetter,
             TestCaseGenerator* testCaseGenerator,
             Verifier* verifier,
             OperatingSystem* os,
             GeneratorLogger* logger) {
 
-        return new Generator(testCaseGenerator, verifier, os, logger);
+        return new Generator(seedSetter, testCaseGenerator, verifier, os, logger);
     }
 };
 

@@ -83,6 +83,7 @@ set(SOURCES
     include/tcframe/spec/core/GradingConfig.hpp
     include/tcframe/spec/core/Magic.hpp
     include/tcframe/spec/core/MultipleTestCasesConfig.hpp
+    include/tcframe/spec/core/SeedSetter.hpp
     include/tcframe/spec/io.hpp
     include/tcframe/spec/io/GridIOSegment.hpp
     include/tcframe/spec/io/IOFormat.hpp
@@ -149,6 +150,7 @@ set(SOURCES
     test/tcframe/spec/core/BaseTestSpecTests.cpp
     test/tcframe/spec/core/BaseProblemSpecTests.cpp
     test/tcframe/spec/core/MagicTests.cpp
+    test/tcframe/spec/core/MockSeedSetter.hpp
     test/tcframe/spec/io/GridIOSegmentBuilderTests.cpp
     test/tcframe/spec/io/IOFormatBuilderTests.cpp
     test/tcframe/spec/io/LineIOSegmentBuilderTests.cpp

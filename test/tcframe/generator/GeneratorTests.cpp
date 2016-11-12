@@ -3,6 +3,7 @@
 
 #include "../io_manipulator/MockIOManipulator.hpp"
 #include "../os/MockOperatingSystem.hpp"
+#include "../spec/core/MockSeedSetter.hpp"
 #include "../util/TestUtils.hpp"
 #include "../verifier/MockVerifier.hpp"
 #include "MockGeneratorLogger.hpp"
@@ -21,6 +22,7 @@ int T;
 
 class GeneratorTests : public Test {
 protected:
+    MOCK(SeedSetter) seedSetter;
     MOCK(TestCaseGenerator) testCaseGenerator;
     MOCK(Verifier) verifier;
     MOCK(OperatingSystem) os;
@@ -41,6 +43,7 @@ protected:
             TestGroup(2, {tc3})});
 
     GeneratorConfig config = GeneratorConfigBuilder("foo")
+            .setSeed(42)
             .setSolutionCommand("python Sol.py")
             .setOutputDir("dir")
             .build();
@@ -49,7 +52,7 @@ protected:
             .setMultipleTestCasesCounter(&T)
             .build();
 
-    Generator generator = Generator(&testCaseGenerator, &verifier, &os, &logger);
+    Generator generator = Generator(&seedSetter, &testCaseGenerator, &verifier, &os, &logger);
 
     void SetUp() {
         ON_CALL(testCaseGenerator, generate(_, _))
@@ -63,6 +66,7 @@ TEST_F(GeneratorTests, Generation_Successful) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction());
+        EXPECT_CALL(seedSetter, setSeed(42));
         EXPECT_CALL(os, forceMakeDir("dir"));
 
         EXPECT_CALL(logger, logTestGroupIntroduction(0));
