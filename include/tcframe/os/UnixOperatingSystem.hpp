@@ -9,6 +9,7 @@
 
 #include "ExecutionResult.hpp"
 #include "OperatingSystem.hpp"
+#include "tcframe/spec/testcase/TestCaseIdCreator.hpp"
 
 using std::ifstream;
 using std::istream;
@@ -110,21 +111,45 @@ public:
         return ExecutionResult(info.build(), outputStream, errorStream);
     }
 
-    void combineMultipleTestCases(const string& testCaseBaseFilename, int testCasesCount) {
+    void combineMultipleTestCases(
+            const string& slug,
+            int testGroupId,
+            int testCasesCount,
+            const string& outputDir,
+            const optional<string>& outputPrefix) {
+
+        string baseId = TestCaseIdCreator::createBaseId(slug, testGroupId);
+        string baseIn = outputDir + "/" + baseId + ".in";
+        string baseOut = outputDir + "/" + baseId + ".out";
+
         ostringstream sout;
-        sout << "echo " << testCasesCount << " > " << testCaseBaseFilename << ".in";
-        sout << " && touch " << testCaseBaseFilename << ".out";
+
+        sout << "echo " << testCasesCount << " > " << baseId << ".in && ";
+        sout << "touch " << baseId << ".out";
         system(sout.str().c_str());
 
         for (int i = 1; i <= testCasesCount; i++) {
+            string id = TestCaseIdCreator::create(slug, testGroupId, i);
+            string in = outputDir + "/" + id + ".in";
+            string out = outputDir + "/" + id + ".out";
+
             ostringstream sout2;
-            sout2 << "tail -n +2 " << testCaseBaseFilename << "_" << i << ".in >> " << testCaseBaseFilename << ".in";
-            sout2 << "&& cat " << testCaseBaseFilename << "_" << i << ".out >> " << testCaseBaseFilename << ".out";
+            sout2 << "tail -n +2 " << in << " >> " << baseIn << " && ";
+
+            if (i > 1 && outputPrefix) {
+                // Replace the prefix for the first tc, with the correct prefix for this tc
+                string firstPrefix = StringUtils::interpolate(outputPrefix.value(), 1);
+                string correctPrefix = StringUtils::interpolate(outputPrefix.value(), i);
+                sout2 << "printf \"" << correctPrefix << "\" >> " << baseOut << " && ";
+                sout2 << "cut -c " << (firstPrefix.size() + 1) << "- " << out << " >> " << baseOut;
+            } else {
+                sout2 << "cat " << out << " >> " << baseOut;
+            }
+
             system(sout2.str().c_str());
 
             ostringstream sout3;
-            sout3 << "rm " << testCaseBaseFilename << "_" << i << ".in ";
-            sout3 << testCaseBaseFilename << "_" << i << ".out";
+            sout3 << "rm " << in << " " << out;
             system(sout3.str().c_str());
         }
     }

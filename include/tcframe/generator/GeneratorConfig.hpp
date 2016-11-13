@@ -21,6 +21,8 @@ private:
     string slug_;
 
     int* multipleTestCasesCounter_;
+    optional<string> multipleTestCasesOutputPrefix_;
+    optional<string> multipleTestCasesFirstOutputPrefix_;
     unsigned seed_;
     string solutionCommand_;
     string outputDir_;
@@ -32,6 +34,14 @@ public:
 
     int* multipleTestCasesCounter() const {
         return multipleTestCasesCounter_;
+    }
+
+    const optional<string>& multipleTestCasesOutputPrefix() const {
+        return multipleTestCasesOutputPrefix_;
+    }
+
+    const optional<string>& multipleTestCasesFirstOutputPrefix() const {
+        return multipleTestCasesFirstOutputPrefix_;
     }
 
     unsigned int seed() const {
@@ -77,6 +87,19 @@ public:
 
     GeneratorConfigBuilder& setMultipleTestCasesCounter(int* counter) {
         subject_.multipleTestCasesCounter_ = counter;
+        return *this;
+    }
+
+    GeneratorConfigBuilder& setMultipleTestCasesOutputPrefix(optional<string> outputPrefix) {
+        if (outputPrefix) {
+            setMultipleTestCasesOutputPrefix(outputPrefix.value());
+        }
+        return *this;
+    }
+
+    GeneratorConfigBuilder& setMultipleTestCasesOutputPrefix(string outputPrefix) {
+        subject_.multipleTestCasesOutputPrefix_ = outputPrefix;
+        subject_.multipleTestCasesFirstOutputPrefix_ = StringUtils::interpolate(outputPrefix, 1);
         return *this;
     }
 

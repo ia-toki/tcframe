@@ -107,9 +107,12 @@ private:
     }
 
     void combine(const TestGroup& testGroup, const GeneratorConfig& config) {
-        string baseId = TestCaseIdCreator::createBaseId(config.slug(), testGroup.id());
-        string baseFilename = config.outputDir() + "/" + baseId;
-        os_->combineMultipleTestCases(baseFilename, (int) testGroup.testCases().size());
+        os_->combineMultipleTestCases(
+                config.slug(),
+                testGroup.id(),
+                (int) testGroup.testCases().size(),
+                config.outputDir(),
+                config.multipleTestCasesOutputPrefix());
     }
 };
 

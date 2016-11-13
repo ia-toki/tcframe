@@ -4,6 +4,7 @@
 #include <functional>
 #include <set>
 #include <string>
+#include <type_traits>
 
 #include "GenerationException.hpp"
 #include "GeneratorConfig.hpp"
@@ -13,6 +14,7 @@
 #include "tcframe/spec.hpp"
 #include "tcframe/verifier.hpp"
 
+using std::char_traits;
 using std::endl;
 using std::function;
 using std::set;
@@ -86,9 +88,7 @@ private:
 
     void generateInput(const TestCase& testCase, const string& inputFilename, const GeneratorConfig& config) {
         ostream* input = os_->openForWriting(inputFilename);
-        if (config.multipleTestCasesCounter() != nullptr) {
-            *input << "1" << endl;
-        }
+        modifyInputForMultipleTestCases(input, config);
 
         if (testCase.data()->type() == TestCaseDataType::SAMPLE) {
             SampleTestCaseData* data = (SampleTestCaseData*) testCase.data();
@@ -107,17 +107,19 @@ private:
 
         istream* output;
 
-        optional<string> outputString;
-        if (testCase.data()->type() == TestCaseDataType::SAMPLE ) {
-            outputString = ((SampleTestCaseData*) testCase.data())->output();
+        optional<string> maybeOutputString;
+        if (testCase.data()->type() == TestCaseDataType::SAMPLE) {
+            maybeOutputString = ((SampleTestCaseData*) testCase.data())->output();
         }
 
-        if (outputString) {
-            ostream* _output = os_->openForWriting(outputFilename);
-            *_output << outputString.value();
-            os_->closeOpenedWritingStream(_output);
+        if (maybeOutputString) {
+            string outputString = maybeOutputString.value();
+            output = new istringstream(outputString);
+            modifySampleOutputStringForMultipleTestCases(outputString, config);
 
-            output = new istringstream(outputString.value());
+            ostream* outputFile = os_->openForWriting(outputFilename);
+            *outputFile << outputString;
+            os_->closeOpenedWritingStream(outputFile);
         } else {
             ExecutionResult result = os_->execute(ExecutionRequestBuilder()
                     .setCommand(config.solutionCommand())
@@ -129,9 +131,38 @@ private:
                 throw GenerationException([=] { logger_->logSolutionExecutionFailure(result); });
             }
             output = result.outputStream();
+
+            modifyOutputForMultipleTestCases(output, config);
         }
 
         ioManipulator_->parseOutput(output);
+    }
+
+    void modifyInputForMultipleTestCases(ostream* input, const GeneratorConfig& config) {
+        if (config.multipleTestCasesCounter() != nullptr) {
+            int testCaseNo = 1;
+            *input << testCaseNo << endl;
+        }
+    }
+
+    void modifySampleOutputStringForMultipleTestCases(string& outputString, const GeneratorConfig& config) {
+        if (config.multipleTestCasesCounter() != nullptr && config.multipleTestCasesFirstOutputPrefix()) {
+            outputString = config.multipleTestCasesFirstOutputPrefix().value() + outputString;
+        }
+    }
+
+    void modifyOutputForMultipleTestCases(istream* output, const GeneratorConfig& config) {
+        if (config.multipleTestCasesCounter() != nullptr && config.multipleTestCasesFirstOutputPrefix()) {
+            string prefix = config.multipleTestCasesOutputPrefix().value();
+            string firstPrefix = config.multipleTestCasesFirstOutputPrefix().value();
+            for (char p : firstPrefix) {
+                int c = output->peek();
+                if (c == char_traits<char>::eof() || (char) c != p) {
+                    throw runtime_error("Output must start with \"" + prefix + "\"");
+                }
+                output->get();
+            }
+        }
     }
 };
 

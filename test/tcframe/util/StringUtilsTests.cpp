@@ -23,10 +23,8 @@ TEST_F(StringUtilsTests, ToNumber) {
     EXPECT_THAT(StringUtils::toNumber<int>(" 42 "), Eq(optional<int>()));
 }
 
-TEST_F(StringUtilsTests, Trim) {
-    EXPECT_THAT(StringUtils::trim("   \t "), Eq(""));
-    EXPECT_THAT(StringUtils::trim("clean"), Eq("clean"));
-    EXPECT_THAT(StringUtils::trim("  \t foo  bar   \r\n"), Eq("foo  bar"));
+TEST_F(StringUtilsTests, Interpolate) {
+    EXPECT_THAT(StringUtils::interpolate("abc %d def", 42), Eq("abc 42 def"));
 }
 
 TEST_F(StringUtilsTests, SplitAndTrimBySpace) {

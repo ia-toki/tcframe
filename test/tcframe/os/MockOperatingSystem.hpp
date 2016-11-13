@@ -14,7 +14,7 @@ public:
     MOCK_METHOD1(forceMakeDir, void(const string&));
     MOCK_METHOD1(removeFile, void(const string&));
     MOCK_METHOD1(execute, ExecutionResult(const ExecutionRequest&));
-    MOCK_METHOD2(combineMultipleTestCases, void(const string&, int));
+    MOCK_METHOD5(combineMultipleTestCases, void(const string&, int, int, const string&, const optional<string>&));
 };
 
 }

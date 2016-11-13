@@ -99,6 +99,7 @@ private:
 
         GeneratorConfig generatorConfig = GeneratorConfigBuilder(slug)
                 .setMultipleTestCasesCounter(multipleTestCasesConfig.counter())
+                .setMultipleTestCasesOutputPrefix(multipleTestCasesConfig.outputPrefix())
                 .setSeed(args.seed())
                 .setSolutionCommand(args.solution())
                 .setOutputDir(args.output())

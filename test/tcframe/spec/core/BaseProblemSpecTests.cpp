@@ -52,6 +52,7 @@ protected:
     protected:
         void MultipleTestCasesConfig() {
             Counter(T);
+            OutputPrefix("Case #%d: ");
         }
     };
 
@@ -98,6 +99,7 @@ protected:
 TEST_F(BaseProblemSpecTests, MultipleTestCasesConfig) {
     MultipleTestCasesConfig config = ProblemSpecWithMultipleTestCasesConfig().buildMultipleTestCasesConfig();
     EXPECT_TRUE(config.counter());
+    EXPECT_THAT(config.outputPrefix(), Eq(optional<string>("Case #%d: ")));
 }
 
 TEST_F(BaseProblemSpecTests, GradingConfig) {

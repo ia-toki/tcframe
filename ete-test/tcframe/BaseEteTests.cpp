@@ -45,6 +45,10 @@ protected:
         }
         return files;
     }
+
+    string readFile(const string& path) {
+        return exec("cat " + path);
+    }
 };
 
 }

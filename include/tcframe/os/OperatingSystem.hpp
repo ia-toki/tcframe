@@ -4,8 +4,9 @@
 #include <ostream>
 #include <string>
 
-#include "tcframe/os/ExecutionRequest.hpp"
-#include "tcframe/os/ExecutionResult.hpp"
+#include "ExecutionRequest.hpp"
+#include "ExecutionResult.hpp"
+#include "tcframe/util.hpp"
 
 using std::istream;
 using std::ostream;
@@ -23,7 +24,14 @@ public:
     virtual void forceMakeDir(const string& dirName) = 0;
     virtual void removeFile(const string& filename) = 0;
     virtual ExecutionResult execute(const ExecutionRequest& request) = 0;
-    virtual void combineMultipleTestCases(const string& testCaseBaseFilename, int testCasesCount) = 0;
+
+    // TODO: This should not live in this class
+    virtual void combineMultipleTestCases(
+            const string& slug,
+            int testGroupId,
+            int testCasesCount,
+            const string& outputDir,
+            const optional<string>& outputPrefix) = 0;
 };
 
 }

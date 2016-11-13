@@ -26,6 +26,7 @@ namespace tcframe {
 
 class TestCaseGeneratorTests : public Test {
 public:
+    static int T;
     static int N;
 
 protected:
@@ -60,6 +61,13 @@ protected:
             .setSolutionCommand("python Sol.py")
             .setOutputDir("dir")
             .build();
+    GeneratorConfig multipleTestCasesConfig = GeneratorConfigBuilder(config)
+            .setMultipleTestCasesCounter(&T)
+            .build();
+    GeneratorConfig multipleTestCasesConfigWithOutputPrefix = GeneratorConfigBuilder(multipleTestCasesConfig)
+            .setMultipleTestCasesCounter(&T)
+            .setMultipleTestCasesOutputPrefix("Case #%d: ")
+            .build();
     ostringstream* outForInput = new ostringstream();
     ostringstream* outForOutput = new ostringstream();
     ExecutionInfo executionInfo = ExecutionInfoBuilder().setExitCode(0).build();
@@ -91,6 +99,7 @@ protected:
     };
 };
 
+int TestCaseGeneratorTests::T;
 int TestCaseGeneratorTests::N;
 
 TEST_F(TestCaseGeneratorTests, Generation_Successful_Sample) {
@@ -147,6 +156,32 @@ TEST_F(TestCaseGeneratorTests, Generation_Successful_Official) {
     }
     EXPECT_TRUE(generator.generate(officialTestCase, config));
     EXPECT_THAT(N, Eq(42));
+}
+
+TEST_F(TestCaseGeneratorTests, Generation_MultipleTestCases_Successful) {
+    EXPECT_TRUE(generator.generate(officialTestCase, multipleTestCasesConfig));
+}
+
+TEST_F(TestCaseGeneratorTests, Generation_MultipleTestCases_WithOutputPrefix_Successful) {
+    ExecutionResult executionResult =
+            ExecutionResult(executionInfo, new istringstream("Case #1: 123"), new istringstream());
+    ON_CALL(os, execute(_))
+            .WillByDefault(Return(executionResult));
+
+    EXPECT_TRUE(generator.generate(officialTestCase, multipleTestCasesConfigWithOutputPrefix));
+}
+
+TEST_F(TestCaseGeneratorTests, Generation_MultipleTestCases_WithOutputPrefix_Failed) {
+    ExecutionResult executionResult =
+            ExecutionResult(executionInfo, new istringstream("123"), new istringstream());
+    ON_CALL(os, execute(_))
+            .WillByDefault(Return(executionResult));
+    {
+        InSequence sequence;
+        EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>("N = 42")));
+        EXPECT_CALL(logger, logSimpleFailure("Output must start with \"Case #%d: \""));
+    }
+    EXPECT_FALSE(generator.generate(officialTestCase, multipleTestCasesConfigWithOutputPrefix));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Failed_InputApplication_Sample) {

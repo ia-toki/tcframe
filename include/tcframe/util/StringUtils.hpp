@@ -37,15 +37,10 @@ public:
         return optional<T>();
     }
 
-    static string trim(const string& s) {
-        static const string delimiters = " \f\n\r\t\v";
-        size_t begin = s.find_first_not_of(delimiters);
-        size_t end = s.find_last_not_of(delimiters);
-
-        if (begin == string::npos) {
-            return "";
-        }
-        return s.substr(begin, end - begin + 1);
+    static string interpolate(const string& s, int data) {
+        char res[1024];
+        sprintf(res, s.c_str(), data);
+        return string(res);
     }
 
     static vector<string> split(const string& s, char delimiter) {

@@ -52,6 +52,11 @@ protected:
             .setMultipleTestCasesCounter(&T)
             .build();
 
+    GeneratorConfig multipleTestCasesConfigWithOutputPrefix = GeneratorConfigBuilder(multipleTestCasesConfig)
+            .setMultipleTestCasesCounter(&T)
+            .setMultipleTestCasesOutputPrefix("Case #%d: ")
+            .build();
+
     Generator generator = Generator(&seedSetter, &testCaseGenerator, &verifier, &os, &logger);
 
     void SetUp() {
@@ -108,7 +113,7 @@ TEST_F(GeneratorTests, Generation_MultipleTestCases_Successful) {
         EXPECT_CALL(testCaseGenerator, generate(stc2, multipleTestCasesConfig));
         EXPECT_CALL(logger, logMultipleTestCasesCombinationIntroduction("foo_sample"));
         EXPECT_CALL(verifier, verifyMultipleTestCasesConstraints());
-        EXPECT_CALL(os, combineMultipleTestCases("dir/foo_sample", 2));
+        EXPECT_CALL(os, combineMultipleTestCases("foo", 0, 2, "dir", optional<string>()));
         EXPECT_CALL(logger, logMultipleTestCasesCombinationSuccessfulResult());
 
         EXPECT_CALL(logger, logSuccessfulResult());
@@ -142,6 +147,16 @@ TEST_F(GeneratorTests, Generation_MultipleTestCases_Failed_Verification) {
         EXPECT_CALL(logger, logFailedResult());
     }
     EXPECT_FALSE(generator.generate(simpleTestSuite, multipleTestCasesConfig));
+}
+
+TEST_F(GeneratorTests, Generation_MultipleTestCases_WithOutputPrefix_Successful) {
+    {
+        InSequence sequence;
+        EXPECT_CALL(os, combineMultipleTestCases("foo", 0, 2, "dir", optional<string>("Case #%d: ")));
+        EXPECT_CALL(logger, logSuccessfulResult());
+    }
+    EXPECT_TRUE(generator.generate(simpleTestSuite, multipleTestCasesConfigWithOutputPrefix));
+    EXPECT_THAT(T, Eq(2));
 }
 
 }
