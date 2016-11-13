@@ -23,7 +23,7 @@ protected:
 
     void MultipleTestCasesConfig() {
         Counter(T);
-        OutputPrefix("Case #%d: ");
+        OutputPrefix("Case \"$%d\\\": ");
     }
 
     void MultipleTestCasesConstraints() {

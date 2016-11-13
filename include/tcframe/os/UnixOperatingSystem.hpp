@@ -140,7 +140,8 @@ public:
                 // Replace the prefix for the first tc, with the correct prefix for this tc
                 string firstPrefix = StringUtils::interpolate(outputPrefix.value(), 1);
                 string correctPrefix = StringUtils::interpolate(outputPrefix.value(), i);
-                sout2 << "printf \"" << correctPrefix << "\" >> " << baseOut << " && ";
+                string escapedCorrectPrefix = StringUtils::escape(correctPrefix, "\\$\"");
+                sout2 << "printf \"%s\" \"" << escapedCorrectPrefix << "\" >> " << baseOut << " && ";
                 sout2 << "cut -c " << (firstPrefix.size() + 1) << "- " << out << " >> " << baseOut;
             } else {
                 sout2 << "cat " << out << " >> " << baseOut;

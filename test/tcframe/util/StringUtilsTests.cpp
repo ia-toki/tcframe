@@ -27,6 +27,10 @@ TEST_F(StringUtilsTests, Interpolate) {
     EXPECT_THAT(StringUtils::interpolate("abc %d def", 42), Eq("abc 42 def"));
 }
 
+TEST_F(StringUtilsTests, Escape) {
+    EXPECT_THAT(StringUtils::escape("\"hello$world\"", "\"$"), Eq("\\\"hello\\$world\\\""));
+}
+
 TEST_F(StringUtilsTests, SplitAndTrimBySpace) {
     EXPECT_THAT(StringUtils::splitAndTrimBySpace(" A B C   D "), ElementsAre(
             "A", "B", "C", "D"));

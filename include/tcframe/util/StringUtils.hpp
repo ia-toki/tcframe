@@ -43,6 +43,17 @@ public:
         return string(res);
     }
 
+    static string escape(const string& s, const string& badChars) {
+        string res;
+        for (char c : s) {
+            if (badChars.find_first_of(c) != string::npos) {
+                res += "\\";
+            }
+            res += c;
+        }
+        return res;
+    }
+
     static vector<string> split(const string& s, char delimiter) {
         vector<string> result;
 
