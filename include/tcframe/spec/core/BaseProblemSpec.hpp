@@ -67,16 +67,13 @@ public:
     }
 
     ConstraintSuite buildConstraintSuite() {
-        try {
-            Constraints();
-        } catch (NotImplementedException&) {
-            for (auto subtask : subtasks_) {
-                try {
-                    ConstraintSuiteBuilder::newSubtask();
-                    (this->*subtask)();
-                } catch (NotImplementedException&) {
-                    break;
-                }
+        Constraints();
+        for (auto subtask : subtasks_) {
+            try {
+                ConstraintSuiteBuilder::newSubtask();
+                (this->*subtask)();
+            } catch (NotImplementedException&) {
+                break;
             }
         }
 
@@ -90,7 +87,7 @@ protected:
     virtual void GradingConfig() {}
     virtual void InputFormat() = 0;
     virtual void OutputFormat() {}
-    virtual void Constraints() {throw NotImplementedException();}
+    virtual void Constraints() {}
     virtual void MultipleTestCasesConstraints() {}
     virtual void Subtask1() {throw NotImplementedException();}
     virtual void Subtask2() {throw NotImplementedException();}

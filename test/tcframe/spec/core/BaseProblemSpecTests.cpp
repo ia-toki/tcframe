@@ -81,7 +81,7 @@ protected:
         }
     };
 
-    class ProblemSpecWithSubtasks : public ProblemSpec {
+    class ProblemSpecWithSubtasks : public ProblemSpecWithConstraints {
     protected:
         void Subtask1() {
             addConstraint([=] {return 1 <= A && A <= 100;}, "1 <= A && A <= 100");
@@ -134,6 +134,7 @@ TEST_F(BaseProblemSpecTests, MultipleTestCasesConstraints) {
 TEST_F(BaseProblemSpecTests, Subtasks) {
     ConstraintSuite constraintSuite = ProblemSpecWithSubtasks().buildConstraintSuite();
     EXPECT_THAT(constraintSuite.constraints(), ElementsAre(
+            AllOf(Property(&Subtask::id, -1), Property(&Subtask::constraints, SizeIs(2))),
             AllOf(Property(&Subtask::id, 1), Property(&Subtask::constraints, SizeIs(3))),
             AllOf(Property(&Subtask::id, 2), Property(&Subtask::constraints, SizeIs(2)))));
 }

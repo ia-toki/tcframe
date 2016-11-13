@@ -58,9 +58,11 @@ public:
             , isInMultipleTestCasesConstraints_(false) {}
 
     ConstraintSuiteBuilder& newSubtask() {
-        if (hasCurrentSubtask_) {
+        if (hasCurrentSubtask_ || !curConstraints.empty()) {
             addCurrentSubtask();
-        } else {
+        }
+
+        if (!hasCurrentSubtask_) {
             curSubtaskId_ = 0;
         }
 

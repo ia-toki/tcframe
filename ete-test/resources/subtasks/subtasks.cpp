@@ -20,6 +20,10 @@ protected:
         LINE(res);
     }
 
+    void Constraints() {
+        CONS(A <= B);
+    }
+
     void Subtask1() {
         CONS(1 <= A && A <= 10);
         CONS(1 <= B && B <= 10);

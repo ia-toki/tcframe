@@ -38,7 +38,7 @@ public:
                 }
             }
 
-            if (subtaskIds.count(subtask.id())) {
+            if (subtask.id() == -1 || subtaskIds.count(subtask.id())) {
                 if (!unsatisfiedConstraintDescriptions.empty()) {
                     unsatisfiedConstraintDescriptionsBySubtaskId[subtask.id()] = unsatisfiedConstraintDescriptions;
                 }

@@ -66,8 +66,8 @@ public:
     TestSuiteBuilder()
             : beforeClosure_([]{})
             , afterClosure_([]{})
-            , curSampleSubtaskIds_({-1})
-            , curOfficialSubtaskIds_({-1})
+            , curSampleSubtaskIds_({})
+            , curOfficialSubtaskIds_({})
             , curOfficialTestGroupId_(-1)
             , hasCurOfficialTestGroup_(false)
             , hasCurSampleTestCase_(false) {
@@ -94,7 +94,7 @@ public:
         }
 
         hasCurSampleTestCase_ = true;
-        curSampleSubtaskIds_ = {-1};
+        curSampleSubtaskIds_ = {};
         curSubtaskIds_ = &curSampleSubtaskIds_;
         curSampleInputLines_ = optional<vector<string>>();
         curSampleOutputLines_ = optional<vector<string>>();
@@ -111,7 +111,7 @@ public:
 
         hasCurOfficialTestGroup_ = true;
         curOfficialTestGroupId_++;
-        curOfficialSubtaskIds_ = {-1};
+        curOfficialSubtaskIds_ = {};
         curSubtaskIds_ = &curOfficialSubtaskIds_;
         curOfficialTestCases_.clear();
 

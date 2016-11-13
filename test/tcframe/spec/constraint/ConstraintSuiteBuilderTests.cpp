@@ -90,4 +90,29 @@ TEST_F(ConstraintSuiteBuilderTests, Building_WithSubtasks) {
     EXPECT_THAT(constraintSuite2, Eq(expected));
 }
 
+TEST_F(ConstraintSuiteBuilderTests, Building_GlobalConstraintsAndSubtasks) {
+    ConstraintSuite constraintSuite = builder
+            .addConstraint([]{return true;}, "1 <= X && X <= 100")
+            .addConstraint([]{return true;}, "1 <= Y && Y <= 100")
+            .newSubtask()
+            .addConstraint([]{return true;}, "1 <= A && A <= 10")
+            .addConstraint([]{return true;}, "1 <= B && B <= 10")
+            .newSubtask()
+            .addConstraint([]{return true;}, "1 <= C && C <= 10")
+            .addConstraint([]{return true;}, "1 <= D && D <= 10")
+            .build();
+    ConstraintSuite expected({
+             Subtask(-1, {
+                     Constraint([]{return true;}, "1 <= X && X <= 100"),
+                     Constraint([]{return true;}, "1 <= Y && Y <= 100")}),
+             Subtask(1, {
+                     Constraint([]{return true;}, "1 <= A && A <= 10"),
+                     Constraint([]{return true;}, "1 <= B && B <= 10")}),
+             Subtask(2, {
+                     Constraint([]{return true;}, "1 <= C && C <= 10"),
+                     Constraint([]{return true;}, "1 <= D && D <= 10")})}, {});
+
+    EXPECT_THAT(constraintSuite, Eq(expected));
+}
+
 }

@@ -76,7 +76,7 @@ TEST_F(GeneratorLoggerTests, ConstraintsVerificationFailure) {
     logger.logConstraintsVerificationFailure(result);
 }
 
-TEST_F(GeneratorLoggerTests, ConstraintsVerificationFailure_WithGroups) {
+TEST_F(GeneratorLoggerTests, ConstraintsVerificationFailure_WithSubtasks) {
     {
         InSequence sequence;
         EXPECT_CALL(engine, logListItem1(2, "Does not satisfy subtask 2, on constraints:"));
@@ -88,6 +88,20 @@ TEST_F(GeneratorLoggerTests, ConstraintsVerificationFailure_WithGroups) {
         EXPECT_CALL(engine, logListItem1(2, "Satisfies subtask 3 but is not assigned to it"));
     }
     ConstraintsVerificationResult result({{2, {"A <= 10", "B <= 10"}}, {4, {"A <= B"}}}, {1, 3});
+    logger.logConstraintsVerificationFailure(result);
+}
+
+TEST_F(GeneratorLoggerTests, ConstraintsVerificationFailure_WithConstraintsAndSubtasks) {
+    {
+        InSequence sequence;
+        EXPECT_CALL(engine, logListItem1(2, "Does not satisfy constraints, on:"));
+        EXPECT_CALL(engine, logListItem2(3, "X <= 10"));
+        EXPECT_CALL(engine, logListItem1(2, "Does not satisfy subtask 2, on constraints:"));
+        EXPECT_CALL(engine, logListItem2(3, "A <= 10"));
+        EXPECT_CALL(engine, logListItem2(3, "B <= 10"));
+        EXPECT_CALL(engine, logListItem1(2, "Satisfies subtask 1 but is not assigned to it"));
+    }
+    ConstraintsVerificationResult result({{-1, {"X <= 10"}}, {2, {"A <= 10", "B <= 10"}}}, {1});
     logger.logConstraintsVerificationFailure(result);
 }
 
