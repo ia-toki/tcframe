@@ -24,7 +24,7 @@ public:
             , logger_(logger) {}
 
     Verdict score(const TestCase& testCase, const GraderConfig& config) {
-        string outputFilename = config.testCasesDir() + "/" + testCase.id() + ".out";
+        string outputFilename = config.outputDir() + "/" + testCase.id() + ".out";
 
         string briefDiffCommand = "diff --brief _evaluation.out " + outputFilename;
         ExecutionResult briefResult = os_->execute(ExecutionRequestBuilder().setCommand(briefDiffCommand).build());

@@ -36,7 +36,7 @@ public:
         return solutionCommand_;
     }
 
-    const string& testCasesDir() const {
+    const string& outputDir() const {
         return outputDir_;
     }
 

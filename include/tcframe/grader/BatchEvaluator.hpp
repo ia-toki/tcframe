@@ -20,7 +20,7 @@ public:
             , logger_(logger) {}
 
     optional<Verdict> evaluate(const TestCase& testCase, const GraderConfig& config) {
-        string inputFilename = config.testCasesDir() + "/" + testCase.id() + ".in";
+        string inputFilename = config.outputDir() + "/" + testCase.id() + ".in";
 
         ExecutionRequestBuilder request = ExecutionRequestBuilder()
                 .setCommand(config.solutionCommand())
