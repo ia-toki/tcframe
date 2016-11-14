@@ -76,12 +76,16 @@ TEST_F(GenerationEteTests, Multi_WithOutputPrefix) {
     ));
 
     EXPECT_THAT(readFile("ete/multi-prefix/tc/multi-prefix_sample.out"), Eq(
-            "Case \"$1\\\": 6\n"
-            "Case \"$2\\\": 11\n"));
+            "Case\t\"$1\\\":\n"
+            "6\n"
+            "Case\t\"$2\\\":\n"
+            "11\n"));
 
     EXPECT_THAT(readFile("ete/multi-prefix/tc/multi-prefix_1.out"), Eq(
-            "Case \"$1\\\": 4\n"
-            "Case \"$2\\\": 6\n"));
+            "Case\t\"$1\\\":\n"
+            "4\n"
+            "Case\t\"$2\\\":\n"
+            "6\n"));
 }
 
 }

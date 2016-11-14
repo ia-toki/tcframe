@@ -43,13 +43,14 @@ public:
         return string(res);
     }
 
-    static string escape(const string& s, const string& badChars) {
+    static string replace(const string& s, char c, const string& replacement) {
         string res;
-        for (char c : s) {
-            if (badChars.find_first_of(c) != string::npos) {
-                res += "\\";
+        for (char t : s) {
+            if (t == c) {
+                res += replacement;
+            } else {
+                res += t;
             }
-            res += c;
         }
         return res;
     }

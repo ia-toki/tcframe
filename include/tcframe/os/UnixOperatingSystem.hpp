@@ -140,9 +140,8 @@ public:
                 // Replace the prefix for the first tc, with the correct prefix for this tc
                 string firstPrefix = StringUtils::interpolate(outputPrefix.value(), 1);
                 string correctPrefix = StringUtils::interpolate(outputPrefix.value(), i);
-                string escapedCorrectPrefix = StringUtils::escape(correctPrefix, "\\$\"");
-                sout2 << "printf \"%s\" \"" << escapedCorrectPrefix << "\" >> " << baseOut << " && ";
-                sout2 << "cut -c " << (firstPrefix.size() + 1) << "- " << out << " >> " << baseOut;
+                sout2 << "printf \"%b\" \"" << escapeForBash(correctPrefix) << "\" >> " << baseOut << " && ";
+                sout2 << "tail -c +" << (firstPrefix.size() + 1) << " " << out << " >> " << baseOut;
             } else {
                 sout2 << "cat " << out << " >> " << baseOut;
             }
@@ -165,6 +164,16 @@ private:
         removeFile(filename);
 
         return new istringstream(buffer.str());
+    }
+
+    string escapeForBash(const string& s) {
+        string res = s;
+        res = StringUtils::replace(res, '\\', "\\\\");
+        res = StringUtils::replace(res, '$', "\\$");
+        res = StringUtils::replace(res, '"', "\\\"");
+        res = StringUtils::replace(res, '\n', "\\n");
+        res = StringUtils::replace(res, '\t', "\\t");
+        return res;
     }
 
     void runCommand(const string& command) {
