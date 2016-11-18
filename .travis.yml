@@ -5,9 +5,9 @@ before_install:
   - sudo apt-get -qq update
 
 install:
-  - sudo apt-get -qq install g++-4.7
-  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.7 90
-  - sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-4.7 90
+  - sudo apt-get -qq install g++-4.8
+  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
+  - sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-4.8 90
 
 script:
   - cmake . && cmake --build . && ./tests && ./ete_tests
