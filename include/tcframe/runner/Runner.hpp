@@ -6,6 +6,7 @@
 #include "ArgsParser.hpp"
 #include "RunnerLogger.hpp"
 #include "RunnerLoggerFactory.hpp"
+#include "SlugParser.hpp"
 #include "tcframe/generator.hpp"
 #include "tcframe/grader.hpp"
 #include "tcframe/os.hpp"
@@ -21,6 +22,8 @@ namespace tcframe {
 template<typename TProblemSpec>
 class Runner {
 private:
+    string specPath_;
+
     BaseTestSpec<TProblemSpec>* testSpec_;
 
     LoggerEngine* loggerEngine_;
@@ -32,13 +35,15 @@ private:
 
 public:
     Runner(
+            const string& specPath,
             BaseTestSpec<TProblemSpec>* testSpec,
             LoggerEngine* loggerEngine,
             OperatingSystem* os,
             RunnerLoggerFactory* runnerLoggerFactory,
             GeneratorFactory* generatorFactory,
             GraderFactory* graderFactory)
-            : testSpec_(testSpec)
+            : specPath_(specPath)
+            , testSpec_(testSpec)
             , loggerEngine_(loggerEngine)
             , os_(os)
             , runnerLoggerFactory_(runnerLoggerFactory)
@@ -48,9 +53,9 @@ public:
     int run(int argc, char* argv[]) {
         auto runnerLogger = runnerLoggerFactory_->create(loggerEngine_);
 
-        string slug = parseSlug(argv[0]);
 
         try {
+            string slug = parseSlug();
             Args args = parseArgs(argc, argv);
             Spec spec = buildSpec(slug, runnerLogger);
 
@@ -68,12 +73,13 @@ public:
     }
 
 private:
-    string parseSlug(const string& runnerPath) {
-        size_t slashPos = runnerPath.find_last_of('/');
-        if (slashPos != string::npos) {
-            return runnerPath.substr(slashPos + 1, runnerPath.size() - slashPos);
+    string parseSlug() {
+        try {
+            return SlugParser::parse(specPath_);
+        } catch (runtime_error& e) {
+            cout << e.what() << endl;
+            throw;
         }
-        return runnerPath;
     }
 
     Args parseArgs(int argc, char* argv[]) {

@@ -17,6 +17,7 @@ int main(int argc, char* argv[]) {
     auto graderFactory = new GraderFactory();
 
     Runner<ProblemSpec> runner(
+            __TCFRAME_SPEC_FILE__,
             testSpec,
             loggerEngine,
             os,

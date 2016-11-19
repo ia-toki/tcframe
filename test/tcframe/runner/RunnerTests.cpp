@@ -49,8 +49,10 @@ protected:
         }
     };
 
+    string specPath = "/Users/fushar/january contest/c_slug/spec.cpp";
+
     int argc = 1;
-    char** argv =  new char*[1]{(char*) "./slug"};
+    char** argv =  new char*[1]{(char*) "./runner"};
 
     LoggerEngine* loggerEngine = new SimpleLoggerEngine();
 
@@ -74,17 +76,28 @@ protected:
                 ExecutionResult(ExecutionInfoBuilder().setExitCode(0).build(), nullptr, nullptr)));
     }
 
+    Runner<ProblemSpec> createRunner(const string& specPath) {
+        return Runner<ProblemSpec>(
+                specPath, new TestSpec(), loggerEngine, &os, &runnerLoggerFactory, &generatorFactory, &graderFactory);
+    }
+
     template<typename TProblem>
     Runner<TProblem> createRunner(BaseTestSpec<TProblem>* testSpec) {
         return Runner<TProblem>(
-                testSpec, loggerEngine, &os, &runnerLoggerFactory, &generatorFactory, &graderFactory);
+                specPath, testSpec, loggerEngine, &os, &runnerLoggerFactory, &generatorFactory, &graderFactory);
     }
 };
 
 int RunnerTests::T;
 
+TEST_F(RunnerTests, Run_SlugParsing_Failed) {
+    Runner<ProblemSpec> badRunner = createRunner("/Users/fushar/january contest/c_slug slug/spec.cpp");
+
+    EXPECT_THAT(badRunner.run(1, new char*[1]{(char*) "./runner"}), Ne(0));
+}
+
 TEST_F(RunnerTests, Run_ArgsParsing_Failed) {
-    EXPECT_THAT(runner.run(2, new char*[2]{(char*) "./slug", (char*) "--blah"}), Ne(0));
+    EXPECT_THAT(runner.run(2, new char*[2]{(char*) "./runner", (char*) "--blah"}), Ne(0));
 }
 
 TEST_F(RunnerTests, Run_Specification_Failed) {
@@ -137,7 +150,7 @@ TEST_F(RunnerTests, Run_Generation_UseArgsOptions) {
             .build()));
 
     runnerWithConfig.run(4, new char*[5]{
-            (char*) "./slug",
+            (char*) "./runner",
             (char*) "--seed=42",
             (char*) "--solution=\"java Solution\"",
             (char*) "--output=testdata",
@@ -148,7 +161,7 @@ TEST_F(RunnerTests, Run_Grading) {
     EXPECT_CALL(grader, grade(_, _, _));
 
     int exitStatus = runner.run(2, new char*[3]{
-            (char*) "./slug",
+            (char*) "./runner",
             (char*) "grade",
             nullptr});
 
@@ -165,7 +178,7 @@ TEST_F(RunnerTests, Run_Grading_UseDefaultOptions) {
             .build()));
 
     runner.run(2, new char*[3]{
-            (char*) "./slug",
+            (char*) "./runner",
             (char*) "grade",
             nullptr});
 }
@@ -180,7 +193,7 @@ TEST_F(RunnerTests, Run_Grading_UseConfigOptions) {
             .build()));
 
     runnerWithConfig.run(2, new char*[3]{
-            (char*) "./slug",
+            (char*) "./runner",
             (char*) "grade",
             nullptr});
 }
@@ -195,7 +208,7 @@ TEST_F(RunnerTests, Run_Grading_UseArgsOptions) {
             .build()));
 
     runnerWithConfig.run(6, new char*[7]{
-            (char*) "./slug",
+            (char*) "./runner",
             (char*) "grade",
             (char*) "--solution=\"java Solution\"",
             (char*) "--output=testdata",
@@ -212,7 +225,7 @@ TEST_F(RunnerTests, Run_Grading_UseArgsOptions_NoLimits) {
             .build()));
 
     runnerWithConfig.run(6, new char*[7]{
-            (char*) "./slug",
+            (char*) "./runner",
             (char*) "grade",
             (char*) "--solution=\"java Solution\"",
             (char*) "--output=testdata",

@@ -80,6 +80,7 @@ set(SOURCES
     include/tcframe/runner/Runner.hpp
     include/tcframe/runner/RunnerLogger.hpp
     include/tcframe/runner/RunnerLoggerFactory.hpp
+    include/tcframe/runner/SlugParser.hpp
     include/tcframe/spec.hpp
     include/tcframe/spec/constraint.hpp
     include/tcframe/spec/constraint/Constraint.hpp
@@ -146,6 +147,7 @@ set(SOURCES
     test/tcframe/runner/MockRunnerLoggerFactory.hpp
     test/tcframe/runner/RunnerTests.cpp
     test/tcframe/runner/RunnerLoggerTests.cpp
+    test/tcframe/runner/SlugParserTests.cpp
     test/tcframe/spec/constraint/ConstraintSuiteBuilderTests.cpp
     test/tcframe/spec/core/BaseTestSpecTests.cpp
     test/tcframe/spec/core/BaseProblemSpecTests.cpp

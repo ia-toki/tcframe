@@ -11,7 +11,7 @@ namespace tcframe {
 class GenerationEteTests : public BaseEteTests {};
 
 TEST_F(GenerationEteTests, Normal) {
-    ASSERT_THAT(execStatus("cd ete/normal && ../scripts/generate.sh normal"), Eq(0));
+    ASSERT_THAT(execStatus("cd ete/normal && ../scripts/generate.sh "), Eq(0));
 
     EXPECT_THAT(ls("ete/normal/tc"), UnorderedElementsAre(
            "normal_sample_1.in",
@@ -26,7 +26,7 @@ TEST_F(GenerationEteTests, Normal) {
 }
 
 TEST_F(GenerationEteTests, Subtasks) {
-    ASSERT_THAT(execStatus("cd ete/subtasks && ../scripts/generate.sh subtasks"), Eq(0));
+    ASSERT_THAT(execStatus("cd ete/subtasks && ../scripts/generate.sh"), Eq(0));
 
     EXPECT_THAT(ls("ete/subtasks/tc"), UnorderedElementsAre(
             "subtasks_sample_1.in",
@@ -43,7 +43,7 @@ TEST_F(GenerationEteTests, Subtasks) {
 }
 
 TEST_F(GenerationEteTests, Multi) {
-    ASSERT_THAT(execStatus("cd ete/multi && ../scripts/generate.sh multi"), Eq(0));
+    ASSERT_THAT(execStatus("cd ete/multi && ../scripts/generate.sh"), Eq(0));
 
     EXPECT_THAT(ls("ete/multi/tc"), UnorderedElementsAre(
             "multi_sample.in",
@@ -64,7 +64,7 @@ TEST_F(GenerationEteTests, Multi) {
 }
 
 TEST_F(GenerationEteTests, Multi_WithOutputPrefix) {
-    ASSERT_THAT(execStatus("cd ete/multi-prefix && ../scripts/generate.sh multi-prefix"), Eq(0));
+    ASSERT_THAT(execStatus("cd ete/multi-prefix && ../scripts/generate.sh"), Eq(0));
 
     EXPECT_THAT(ls("ete/multi-prefix/tc"), UnorderedElementsAre(
             "multi-prefix_sample.in",
