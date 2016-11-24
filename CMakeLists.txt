@@ -11,7 +11,7 @@ include(ExternalProject)
 
 ExternalProject_Add(googletest
     GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG d225acc90bc3a8c420a9bcd1f033033c1ccd7fe0
+    GIT_TAG release-1.8.0
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/googletest
     CMAKE_ARGS ${CMAKE_ARGS} -DBUILD_GTEST=ON -DBUILD_GMOCK=ON -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS} -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
     INSTALL_COMMAND ""
