@@ -33,6 +33,11 @@ protected:
             .setTimeLimit(3)
             .setMemoryLimit(128)
             .build();
+    EvaluatorConfig evaluatorConfig = EvaluatorConfigBuilder()
+            .setSolutionCommand("python Sol.py")
+            .setTimeLimit(3)
+            .setMemoryLimit(128)
+            .build();
 
     TestCaseGrader grader = TestCaseGrader(&evaluator, &scorer, &logger);
 
@@ -55,14 +60,7 @@ TEST_F(TestCaseGraderTests, Grading_AC) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
-        EXPECT_CALL(evaluator, evaluate(
-                "dir/foo_1.in",
-                _,
-                EvaluatorConfigBuilder()
-                        .setSolutionCommand("python Sol.py")
-                        .setTimeLimit(3)
-                        .setMemoryLimit(128)
-                        .build()));
+        EXPECT_CALL(evaluator, evaluate("dir/foo_1.in", _, evaluatorConfig));
         EXPECT_CALL(scorer, score("dir/foo_1.in", "dir/foo_1.out", _));
         EXPECT_CALL(logger, logTestCaseVerdict(Verdict::ac()));
     }
