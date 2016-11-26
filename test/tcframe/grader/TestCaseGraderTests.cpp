@@ -1,16 +1,21 @@
 #include "gmock/gmock.h"
+#include "../helper.hpp"
 #include "../mock.hpp"
 
-#include "MockEvaluator.hpp"
+#include "../evaluator/MockEvaluator.hpp"
+#include "../scorer/MockScorer.hpp"
 #include "MockGraderLogger.hpp"
-#include "MockScorer.hpp"
 #include "tcframe/grader/Grader.hpp"
 
 using ::testing::_;
+using ::testing::DoAll;
 using ::testing::Eq;
 using ::testing::InSequence;
+using ::testing::Invoke;
+using ::testing::InvokeWithoutArgs;
 using ::testing::Return;
 using ::testing::Test;
+using ::testing::WithArg;
 
 namespace tcframe {
 
@@ -25,15 +30,24 @@ protected:
     GraderConfig config = GraderConfigBuilder("foo")
             .setSolutionCommand("python Sol.py")
             .setOutputDir("dir")
+            .setTimeLimit(3)
+            .setMemoryLimit(128)
             .build();
 
     TestCaseGrader grader = TestCaseGrader(&evaluator, &scorer, &logger);
 
+    Captor<string> evaluationCaptor1;
+    Captor<string> evaluationCaptor2;
+
     void SetUp() {
-        ON_CALL(evaluator, evaluate(_, _))
-                .WillByDefault(Return(optional<Verdict>()));
-        ON_CALL(scorer, score(_, _))
-                .WillByDefault(Return(Verdict::ac()));
+        ON_CALL(evaluator, evaluate(_, _, _))
+                .WillByDefault(DoAll(
+                        WithArg<1>(Invoke(&evaluationCaptor1, &Captor<string>::capture)),
+                        InvokeWithoutArgs([] {return EvaluationResultBuilder().build();})));
+        ON_CALL(scorer, score(_, _, _))
+                .WillByDefault(DoAll(
+                        WithArg<2>(Invoke(&evaluationCaptor2, &Captor<string>::capture)),
+                        InvokeWithoutArgs([] {return ScoringResultBuilder().setVerdict(Verdict::ac()).build();})));
     }
 };
 
@@ -41,32 +55,52 @@ TEST_F(TestCaseGraderTests, Grading_AC) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
-        EXPECT_CALL(evaluator, evaluate(testCase, config));
-        EXPECT_CALL(scorer, score(testCase, config));
+        EXPECT_CALL(evaluator, evaluate(
+                "dir/foo_1.in",
+                _,
+                EvaluatorConfigBuilder()
+                        .setSolutionCommand("python Sol.py")
+                        .setTimeLimit(3)
+                        .setMemoryLimit(128)
+                        .build()));
+        EXPECT_CALL(scorer, score("dir/foo_1.in", "dir/foo_1.out", _));
+        EXPECT_CALL(logger, logTestCaseVerdict(Verdict::ac()));
     }
     EXPECT_THAT(grader.grade(testCase, config), Eq(Verdict::ac()));
+
+    EXPECT_THAT(evaluationCaptor1.arg(), Eq(evaluationCaptor2.arg()));
 }
 
 TEST_F(TestCaseGraderTests, Grading_WA) {
-    ON_CALL(scorer, score(testCase, _))
-            .WillByDefault(Return(Verdict::wa()));
+    ON_CALL(scorer, score(_, _, _))
+            .WillByDefault(Return(ScoringResultBuilder()
+                    .setVerdict(Verdict::wa())
+                    .setMessage("diff")
+                    .build()));
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
-        EXPECT_CALL(evaluator, evaluate(testCase, config));
-        EXPECT_CALL(scorer, score(testCase, config));
+        EXPECT_CALL(evaluator, evaluate(_, _, _));
+        EXPECT_CALL(scorer, score(_, _, _));
+        EXPECT_CALL(logger, logTestCaseVerdict(Verdict::wa()));
+        EXPECT_CALL(logger, logTestCaseScoringMessage("diff"));
     }
+
     EXPECT_THAT(grader.grade(testCase, config), Eq(Verdict::wa()));
 }
 
 TEST_F(TestCaseGraderTests, Grading_RTE) {
-    ON_CALL(evaluator, evaluate(_, _))
-            .WillByDefault(Return(optional<Verdict>(Verdict::rte())));
+    ON_CALL(evaluator, evaluate(_, _, _))
+            .WillByDefault(Return(EvaluationResultBuilder().setVerdict(Verdict::rte()).build()));
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
-        EXPECT_CALL(evaluator, evaluate(testCase, config));
+        EXPECT_CALL(evaluator, evaluate(_, _, _));
+        EXPECT_CALL(logger, logTestCaseVerdict(Verdict::rte()));
+        EXPECT_CALL(logger, logSolutionExecutionFailure(_));
     }
+    EXPECT_CALL(scorer, score(_, _, _)).Times(0);
+
     EXPECT_THAT(grader.grade(testCase, config), Eq(Verdict::rte()));
 }
 

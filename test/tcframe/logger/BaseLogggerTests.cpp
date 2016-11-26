@@ -45,7 +45,10 @@ TEST_F(BaseLoggerTests, SolutionExecutionFailure_ExitCode) {
     }
 
     ExecutionInfo info = ExecutionInfoBuilder().setExitCode(1).build();
-    ExecutionResult result(info, new istringstream(), new istringstream("err"));
+    ExecutionResult result = ExecutionResultBuilder()
+            .setInfo(info)
+            .setErrorStream(new istringstream("err"))
+            .build();
     logger.logSolutionExecutionFailure(result);
 }
 
@@ -57,7 +60,7 @@ TEST_F(BaseLoggerTests, SolutionExecutionFailure_ExitSignal) {
     }
 
     ExecutionInfo info = ExecutionInfoBuilder().setExitSignal("SIGSEGV").build();
-    ExecutionResult result(info, new istringstream(), new istringstream());
+    ExecutionResult result = ExecutionResultBuilder().setInfo(info).build();
     logger.logSolutionExecutionFailure(result);
 }
 

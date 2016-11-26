@@ -7,9 +7,11 @@
 #include "RunnerLogger.hpp"
 #include "RunnerLoggerFactory.hpp"
 #include "SlugParser.hpp"
+#include "tcframe/evaluator.hpp"
 #include "tcframe/generator.hpp"
 #include "tcframe/grader.hpp"
 #include "tcframe/os.hpp"
+#include "tcframe/scorer.hpp"
 #include "tcframe/spec.hpp"
 #include "tcframe/util.hpp"
 #include "tcframe/verifier.hpp"
@@ -113,8 +115,10 @@ private:
 
         auto ioManipulator = new IOManipulator(spec.ioFormat());
         auto verifier = new Verifier(spec.constraintSuite());
+        auto evaluator = new BatchEvaluator(os_);
+        auto scorer = new DiffScorer(os_);
         auto logger = new GeneratorLogger(loggerEngine_);
-        auto testCaseGenerator = new TestCaseGenerator(verifier, ioManipulator, os_, logger);
+        auto testCaseGenerator = new TestCaseGenerator(verifier, ioManipulator, os_, evaluator, logger);
         auto generator = generatorFactory_->create(spec.seedSetter(), testCaseGenerator, verifier, os_, logger);
 
         return generator->generate(spec.testSuite(), generatorConfig) ? 0 : 1;
@@ -139,8 +143,8 @@ private:
         GraderConfig graderConfig = configBuilder.build();
 
         auto logger = new GraderLogger(loggerEngine_);
-        auto evaluator = new BatchEvaluator(os_, logger);
-        auto scorer = new DiffScorer(os_, logger);
+        auto evaluator = new BatchEvaluator(os_);
+        auto scorer = new DiffScorer(os_);
         auto testCaseGrader = new TestCaseGrader(evaluator, scorer, logger);
         auto grader = graderFactory_->create(testCaseGrader, logger);
 

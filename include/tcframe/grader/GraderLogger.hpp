@@ -2,9 +2,9 @@
 
 #include <map>
 
-#include "Verdict.hpp"
 #include "tcframe/logger.hpp"
 #include "tcframe/util.hpp"
+#include "tcframe/verdict.hpp"
 
 using std::map;
 
@@ -25,9 +25,8 @@ public:
         engine_->logParagraph(0, verdict.name());
     }
 
-    virtual void logDiffFailure(const string& diff) {
-        engine_->logListItem1(2, "Diff:");
-        engine_->logParagraph(0, diff);
+    virtual void logTestCaseScoringMessage(const string& message) {
+        engine_->logListItem1(2, message);
     }
 
     virtual void logResult(const map<int, Verdict>& subtaskVerdicts) {

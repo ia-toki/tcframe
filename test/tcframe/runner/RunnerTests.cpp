@@ -72,8 +72,9 @@ protected:
         ON_CALL(runnerLoggerFactory, create(_)).WillByDefault(Return(&runnerLogger));
         ON_CALL(generatorFactory, create(_, _, _, _, _)).WillByDefault(Return(&generator));
         ON_CALL(graderFactory, create(_, _)).WillByDefault(Return(&grader));
-        ON_CALL(os, execute(_)).WillByDefault(Return(
-                ExecutionResult(ExecutionInfoBuilder().setExitCode(0).build(), nullptr, nullptr)));
+        ON_CALL(os, execute(_)).WillByDefault(Return(ExecutionResultBuilder()
+                .setInfo(ExecutionInfoBuilder().setExitCode(0).build())
+                .build()));
     }
 
     Runner<ProblemSpec> createRunner(const string& specPath) {

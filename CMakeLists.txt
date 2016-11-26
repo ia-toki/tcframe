@@ -43,6 +43,11 @@ include_directories(include)
 
 set(SOURCES
     include/tcframe/experimental/runner.hpp
+    include/tcframe/evaluator.hpp
+    include/tcframe/evaluator/BatchEvaluator.hpp
+    include/tcframe/evaluator/EvaluationResult.hpp
+    include/tcframe/evaluator/Evaluator.hpp
+    include/tcframe/evaluator/EvaluatorConfig.hpp
     include/tcframe/generator.hpp
     include/tcframe/generator/GenerationException.hpp
     include/tcframe/generator/Generator.hpp
@@ -50,15 +55,10 @@ set(SOURCES
     include/tcframe/generator/GeneratorLogger.hpp
     include/tcframe/generator/TestCaseGenerator.hpp
     include/tcframe/grader.hpp
-    include/tcframe/grader/BatchEvaluator.hpp
-    include/tcframe/grader/DiffScorer.hpp
-    include/tcframe/grader/Evaluator.hpp
     include/tcframe/grader/Grader.hpp
     include/tcframe/grader/GraderConfig.hpp
     include/tcframe/grader/GraderLogger.hpp
-    include/tcframe/grader/Scorer.hpp
     include/tcframe/grader/TestCaseGrader.hpp
-    include/tcframe/grader/Verdict.hpp
     include/tcframe/io_manipulator.hpp
     include/tcframe/io_manipulator/GridIOSegmentManipulator.hpp
     include/tcframe/io_manipulator/IOManipulator.hpp
@@ -81,6 +81,10 @@ set(SOURCES
     include/tcframe/runner/RunnerLogger.hpp
     include/tcframe/runner/RunnerLoggerFactory.hpp
     include/tcframe/runner/SlugParser.hpp
+    include/tcframe/scorer.hpp
+    include/tcframe/scorer/DiffScorer.hpp
+    include/tcframe/scorer/Scorer.hpp
+    include/tcframe/scorer/ScoringResult.hpp
     include/tcframe/spec.hpp
     include/tcframe/spec/constraint.hpp
     include/tcframe/spec/constraint/Constraint.hpp
@@ -122,12 +126,16 @@ set(SOURCES
     include/tcframe/util/NotImplementedException.hpp
     include/tcframe/util/StringUtils.hpp
     include/tcframe/util/optional.hpp
+    include/tcframe/verdict.hpp
+    include/tcframe/verdict/Verdict.hpp
     include/tcframe/verifier.hpp
     include/tcframe/verifier/ConstraintsVerificationResult.hpp
     include/tcframe/verifier/MultipleTestCasesConstraintsVerificationResult.hpp
     include/tcframe/verifier/Verifier.hpp
     test/tcframe/helper.hpp
     test/tcframe/mock.hpp
+    test/tcframe/evaluator/BatchEvaluatorTests.cpp
+    test/tcframe/evaluator/MockEvaluator.hpp
     test/tcframe/generator/GeneratorLoggerTests.cpp
     test/tcframe/generator/GeneratorTests.cpp
     test/tcframe/generator/MockGenerator.hpp
@@ -149,6 +157,8 @@ set(SOURCES
     test/tcframe/runner/RunnerTests.cpp
     test/tcframe/runner/RunnerLoggerTests.cpp
     test/tcframe/runner/SlugParserTests.cpp
+    test/tcframe/scorer/DiffScorerTests.cpp
+    test/tcframe/scorer/MockScorer.hpp
     test/tcframe/spec/constraint/ConstraintSuiteBuilderTests.cpp
     test/tcframe/spec/core/BaseTestSpecTests.cpp
     test/tcframe/spec/core/BaseProblemSpecTests.cpp
@@ -168,12 +178,8 @@ set(SOURCES
     test/tcframe/spec/variable/VariableTests.cpp
     test/tcframe/spec/variable/VectorTests.cpp
     test/tcframe/spec/variable/WhitespaceManipulatorTests.cpp
-    test/tcframe/grader/BatchEvaluatorTests.cpp
-    test/tcframe/grader/DiffScorerTests.cpp
     test/tcframe/grader/GraderTests.cpp
     test/tcframe/grader/GraderLoggerTests.cpp
-    test/tcframe/grader/MockEvaluator.hpp
-    test/tcframe/grader/MockScorer.hpp
     test/tcframe/grader/MockGrader.hpp
     test/tcframe/grader/MockGraderLogger.hpp
     test/tcframe/grader/MockTestCaseGrader.hpp

@@ -9,6 +9,7 @@
 #include "GenerationException.hpp"
 #include "GeneratorConfig.hpp"
 #include "GeneratorLogger.hpp"
+#include "tcframe/evaluator.hpp"
 #include "tcframe/io_manipulator.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/spec.hpp"
@@ -27,6 +28,7 @@ private:
     Verifier* verifier_;
     IOManipulator* ioManipulator_;
     OperatingSystem* os_;
+    Evaluator* evaluator_;
     GeneratorLogger* logger_;
 
 public:
@@ -36,10 +38,12 @@ public:
             Verifier* verifier,
             IOManipulator* ioManipulator,
             OperatingSystem* os,
+            Evaluator* evaluator,
             GeneratorLogger* logger)
             : verifier_(verifier)
             , ioManipulator_(ioManipulator)
             , os_(os)
+            , evaluator_(evaluator)
             , logger_(logger) {}
 
     virtual bool generate(const TestCase& testCase, const GeneratorConfig& config) {
@@ -52,7 +56,7 @@ public:
             applyInput(testCase);
             verifyInput(testCase);
             generateInput(testCase, inputFilename, config);
-            generateAndApplyOutput(testCase, inputFilename, outputFilename, config);
+            evaluateAndApplyOutput(testCase, inputFilename, outputFilename, config);
         } catch (GenerationException& e) {
             logger_->logTestCaseFailedResult(testCase.description());
             e.callback()();
@@ -99,7 +103,7 @@ private:
         os_->closeOpenedWritingStream(input);
     }
 
-    void generateAndApplyOutput(
+    void evaluateAndApplyOutput(
             const TestCase& testCase,
             const string& inputFilename,
             const string& outputFilename,
@@ -121,16 +125,17 @@ private:
             *outputFile << outputString;
             os_->closeOpenedWritingStream(outputFile);
         } else {
-            ExecutionResult result = os_->execute(ExecutionRequestBuilder()
-                    .setCommand(config.solutionCommand())
-                    .setInputFilename(inputFilename)
-                    .setOutputFilename(outputFilename)
-                    .setErrorFilename("_error.out")
-                    .build());
-            if (!result.info().isSuccessful()) {
-                throw GenerationException([=] { logger_->logSolutionExecutionFailure(result); });
+            EvaluatorConfig evaluatorConfig = EvaluatorConfigBuilder()
+                    .setSolutionCommand(config.solutionCommand())
+                    .build();
+
+            EvaluationResult evaluationResult = evaluator_->evaluate(inputFilename, outputFilename, evaluatorConfig);
+            ExecutionResult executionResult = evaluationResult.executionResult();
+
+            if (!executionResult.info().isSuccessful()) {
+                throw GenerationException([=] { logger_->logSolutionExecutionFailure(executionResult); });
             }
-            output = result.outputStream();
+            output = executionResult.outputStream();
 
             modifyOutputForMultipleTestCases(output, config);
         }

@@ -9,9 +9,9 @@
 #include "GraderConfig.hpp"
 #include "GraderLogger.hpp"
 #include "TestCaseGrader.hpp"
-#include "Verdict.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/util.hpp"
+#include "tcframe/verdict.hpp"
 
 using std::map;
 using std::max;

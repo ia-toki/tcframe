@@ -93,22 +93,18 @@ public:
             info.setExitCode(exitStatus);
         }
 
-        istream* outputStream;
-        istream* errorStream;
+        ExecutionResultBuilder result;
+        result.setInfo(info.build());
 
         if (request.outputFilename()) {
-            outputStream = openForReading(request.outputFilename().value());
-        } else {
-            outputStream = new istringstream();
+            result.setOutputStream(openForReading(request.outputFilename().value()));
         }
 
         if (request.errorFilename()) {
-            errorStream = openForReadingAsStringStream(request.errorFilename().value());
-        } else {
-            errorStream = new istringstream();
+            result.setErrorStream(openForReadingAsStringStream(request.errorFilename().value()));
         }
 
-        return ExecutionResult(info.build(), outputStream, errorStream);
+        return result.build();
     }
 
     void combineMultipleTestCases(

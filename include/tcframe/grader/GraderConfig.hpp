@@ -8,10 +8,11 @@
 
 using std::move;
 using std::string;
+using std::tie;
 
 namespace tcframe {
 
-class GraderConfig {
+struct GraderConfig {
     friend class GraderConfigBuilder;
 
 private:

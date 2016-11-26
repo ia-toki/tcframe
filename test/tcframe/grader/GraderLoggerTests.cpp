@@ -28,13 +28,9 @@ TEST_F(GraderLoggerTests, TestCaseVerdict) {
     logger.logTestCaseVerdict(Verdict::ac());
 }
 
-TEST_F(GraderLoggerTests, DiffFailure) {
-    {
-        InSequence sequence;
-        EXPECT_CALL(engine, logListItem1(2, "Diff:"));
-        EXPECT_CALL(engine, logParagraph(0, "lorem"));
-    }
-    logger.logDiffFailure("lorem");
+TEST_F(GraderLoggerTests, TestCaseScoringMessage) {
+    EXPECT_CALL(engine, logListItem1(2, "lorem"));
+    logger.logTestCaseScoringMessage("lorem");
 }
 
 TEST_F(GraderLoggerTests, Result) {

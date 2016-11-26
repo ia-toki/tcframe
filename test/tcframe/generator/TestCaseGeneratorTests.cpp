@@ -3,6 +3,7 @@
 
 #include <sstream>
 
+#include "../evaluator/MockEvaluator.hpp"
 #include "../io_manipulator/MockIOManipulator.hpp"
 #include "../os/MockOperatingSystem.hpp"
 #include "../verifier/MockVerifier.hpp"
@@ -33,6 +34,7 @@ protected:
     MOCK(Verifier) verifier;
     MOCK(IOManipulator) ioManipulator;
     MOCK(OperatingSystem) os;
+    MOCK(Evaluator) evaluator;
     MOCK(GeneratorLogger) logger;
 
     TestCase sampleTestCase = TestCaseBuilder()
@@ -71,9 +73,9 @@ protected:
     ostringstream* outForInput = new ostringstream();
     ostringstream* outForOutput = new ostringstream();
     ExecutionInfo executionInfo = ExecutionInfoBuilder().setExitCode(0).build();
-    ExecutionResult executionResult = ExecutionResult(executionInfo, new istringstream(), new istringstream());
+    ExecutionResult executionResult = ExecutionResultBuilder().setInfo(executionInfo).build();
 
-    TestCaseGenerator generator = TestCaseGenerator(&verifier, &ioManipulator, &os, &logger);
+    TestCaseGenerator generator = TestCaseGenerator(&verifier, &ioManipulator, &os, &evaluator, &logger);
 
     void SetUp() {
         ON_CALL(verifier, verifyConstraints(_))
@@ -84,6 +86,10 @@ protected:
                 .WillByDefault(Return(outForOutput));
         ON_CALL(os, execute(_))
                 .WillByDefault(Return(executionResult));
+        ON_CALL(evaluator, evaluate(_, _, _))
+                .WillByDefault(Return(EvaluationResultBuilder()
+                        .setExecutionResult(executionResult)
+                        .build()));
     }
 
     struct InputStreamContentIs {
@@ -110,10 +116,9 @@ TEST_F(TestCaseGeneratorTests, Generation_Successful_Sample) {
         EXPECT_CALL(verifier, verifyConstraints(set<int>{1, 2}));
         EXPECT_CALL(os, openForWriting("dir/foo_sample_1.in"));
         EXPECT_CALL(os, closeOpenedWritingStream(outForInput));
-        EXPECT_CALL(os, execute(AllOf(
-                Property(&ExecutionRequest::command, "python Sol.py"),
-                Property(&ExecutionRequest::inputFilename, optional<string>("dir/foo_sample_1.in")),
-                Property(&ExecutionRequest::outputFilename, optional<string>("dir/foo_sample_1.out")))));
+        EXPECT_CALL(evaluator, evaluate("dir/foo_sample_1.in", "dir/foo_sample_1.out", EvaluatorConfigBuilder()
+                .setSolutionCommand("python Sol.py")
+                .build()));
         EXPECT_CALL(ioManipulator, parseOutput(executionResult.outputStream()));
         EXPECT_CALL(logger, logTestCaseSuccessfulResult());
     }
@@ -134,6 +139,8 @@ TEST_F(TestCaseGeneratorTests, Generation_Successful_Sample_WithOutput) {
         EXPECT_CALL(ioManipulator, parseOutput(Truly(InputStreamContentIs("yes\n"))));
         EXPECT_CALL(logger, logTestCaseSuccessfulResult());
     }
+    EXPECT_CALL(evaluator, evaluate(_, _, _)).Times(0);
+
     EXPECT_TRUE(generator.generate(sampleTestCaseWithOutput, config));
     EXPECT_THAT(outForInput->str(), Eq("42\n"));
     EXPECT_THAT(outForOutput->str(), Eq("yes\n"));
@@ -147,10 +154,9 @@ TEST_F(TestCaseGeneratorTests, Generation_Successful_Official) {
         EXPECT_CALL(os, openForWriting("dir/foo_1.in"));
         EXPECT_CALL(ioManipulator, printInput(outForInput));
         EXPECT_CALL(os, closeOpenedWritingStream(outForInput));
-        EXPECT_CALL(os, execute(AllOf(
-                Property(&ExecutionRequest::command, "python Sol.py"),
-                Property(&ExecutionRequest::inputFilename, optional<string>("dir/foo_1.in")),
-                Property(&ExecutionRequest::outputFilename, optional<string>("dir/foo_1.out")))));
+        EXPECT_CALL(evaluator, evaluate("dir/foo_1.in", "dir/foo_1.out", EvaluatorConfigBuilder()
+                .setSolutionCommand("python Sol.py")
+                .build()));
         EXPECT_CALL(ioManipulator, parseOutput(executionResult.outputStream()));
         EXPECT_CALL(logger, logTestCaseSuccessfulResult());
     }
@@ -163,19 +169,27 @@ TEST_F(TestCaseGeneratorTests, Generation_MultipleTestCases_Successful) {
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_MultipleTestCases_WithOutputPrefix_Successful) {
-    ExecutionResult executionResult =
-            ExecutionResult(executionInfo, new istringstream("Case #1: 123"), new istringstream());
-    ON_CALL(os, execute(_))
-            .WillByDefault(Return(executionResult));
+    ExecutionResult executionResult = ExecutionResultBuilder()
+            .setInfo(executionInfo)
+            .setOutputStream(new istringstream("Case #1: 123"))
+            .build();
+    ON_CALL(evaluator, evaluate(_, _, _))
+            .WillByDefault(Return(EvaluationResultBuilder()
+                    .setExecutionResult(executionResult)
+                    .build()));
 
     EXPECT_TRUE(generator.generate(officialTestCase, multipleTestCasesConfigWithOutputPrefix));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_MultipleTestCases_WithOutputPrefix_Failed) {
-    ExecutionResult executionResult =
-            ExecutionResult(executionInfo, new istringstream("123"), new istringstream());
-    ON_CALL(os, execute(_))
-            .WillByDefault(Return(executionResult));
+    ExecutionResult executionResult = ExecutionResultBuilder()
+            .setInfo(executionInfo)
+            .setOutputStream(new istringstream("123"))
+            .build();
+    ON_CALL(evaluator, evaluate(_, _, _))
+            .WillByDefault(Return(EvaluationResultBuilder()
+                    .setExecutionResult(executionResult)
+                    .build()));
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>("N = 42")));
@@ -229,14 +243,18 @@ TEST_F(TestCaseGeneratorTests, Generation_Failed_InputGeneration) {
     EXPECT_FALSE(generator.generate(officialTestCase, config));
 }
 
-TEST_F(TestCaseGeneratorTests, Generation_Failed_OutputGeneration) {
-    string message = "output error";
-    ON_CALL(ioManipulator, parseOutput(executionResult.outputStream()))
-            .WillByDefault(Throw(runtime_error(message)));
+TEST_F(TestCaseGeneratorTests, Generation_Failed_OutputEvaluation) {
+    ExecutionResult executionResult = ExecutionResultBuilder()
+            .setInfo(ExecutionInfoBuilder().setExitCode(1).build())
+            .build();
+    ON_CALL(evaluator, evaluate(_, _, _))
+            .WillByDefault(Return(EvaluationResultBuilder()
+                    .setExecutionResult(executionResult)
+                    .build()));
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>("N = 42")));
-        EXPECT_CALL(logger, logSimpleFailure(message));
+        EXPECT_CALL(logger, logSolutionExecutionFailure(executionResult));
     }
     EXPECT_FALSE(generator.generate(officialTestCase, config));
 }
