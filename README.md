@@ -1,5 +1,6 @@
 # tcframe 0.7.0
 
+[![GitHub Release](https://img.shields.io/github/release/tcframe/tcframe.svg)](https://github.com/tcframe/tcframe)
 [![Build Status](https://img.shields.io/travis/tcframe/tcframe/master.svg)](https://travis-ci.org/tcframe/tcframe)
 [![Coverage Status](https://img.shields.io/codecov/c/github/tcframe/tcframe/master.svg)](http://codecov.io/github/tcframe/tcframe?branch=master)
 [![Documentation Status](https://readthedocs.org/projects/tcframe/badge/?version=latest)](http://docs.tcframe.org/)
