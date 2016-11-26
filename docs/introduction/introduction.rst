@@ -157,4 +157,4 @@ License
 
 **tcframe** is released under MIT license.
 
-Source code can be found on `GitHub <https://github.com/fushar/tcframe>`_. Issues and pull requests are welcome.
+Source code can be found on `GitHub <https://github.com/tcframe/tcframe>`_. Issues and pull requests are welcome.

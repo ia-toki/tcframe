@@ -60,6 +60,7 @@ Bugfixes
 Project development
 -------------------
 
+- Repository moved to https://github.com/tcframe/tcframe.
 - (Almost) every class now lives on its own file.
 - Rewrite almost everything with better testability in mind. Now, we have decent unit tests.
 - Use Google Test and Google Mock for unit tests.
