@@ -32,4 +32,5 @@ Finally, this is an API documentation of all **tcframe** features that you will 
    Getting Started <getting-started/getting-started>
    Topic Guides <topic-guides/topic-guides>
    API Reference <api-ref/api-ref>
+   Release Notes <release-notes/release-notes>
 

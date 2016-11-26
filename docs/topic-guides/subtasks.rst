@@ -20,7 +20,7 @@ For example:
 | - 1 ≤ K ≤ 100
 |
 
-In this type type of problem, you won't be writing a :code:`Constraints()` method. Instead, you will be writing :code:`SubtaskX()` methods, where :code:`X` is the subtask number.
+In this type type of problem, you won't be writing a ``Constraints()`` method. Instead, you will be writing ``SubtaskX()`` methods, where ``X`` is the subtask number.
 
 .. note::
 
@@ -31,7 +31,7 @@ In this type type of problem, you won't be writing a :code:`Constraints()` metho
 Subtask definitions
 -------------------
 
-A subtask is basically just a set of constraints. It can be specified by the method :code:`SubtaskX()`, where :code:`X` is the subtask number. Inside the method, the constraint specifications are given, similar to what you usually do in the :code:`Constraints()` method.
+A subtask is basically just a set of constraints. It can be specified by the method ``SubtaskX()``, where ``X`` is the subtask number. Inside the method, the constraint specifications are given, similar to what you usually do in the ``Constraints()`` method.
 
 Thus, the above example can be implemented as:
 
@@ -57,7 +57,7 @@ Thus, the above example can be implemented as:
 Test groups
 -----------
 
-If your problem has subtasks, you will be writing test groups, not test cases. Refer to this :ref:`chapter <test-groups>` on how to do that.
+If your problem has subtasks, you will be writing :ref:`test groups <test-groups>`, not test cases.
 
 ----
 

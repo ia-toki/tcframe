@@ -3,68 +3,77 @@
 API Reference
 =============
 
-- :ref:`Problem configuration <api-ref_problem-config>`
-- :ref:`Input/output variables <api-ref_io-variables>`
-- :ref:`Input/output segments <api-ref_io-segments>`
-- :ref:`Constraints <api-ref_constraints>`
-- :ref:`Generator configuration <api-ref_generator-config>`
-- :ref:`Test cases <api-ref_test-cases>`
-- :ref:`Random number generator <api-ref_rnd>`
-- :ref:`Command line options <api-ref_cli-options>`
+.. contents::
+   :local:
 
 ----
 
-.. _api-ref_problem-config:
+.. _api-ref_problem-spec:
 
-Problem configuration
----------------------
+Problem spec
+------------
 
-The following methods are available inside the overridden method :code:`BaseProblem::Config()`.
+``ProblemSpec`` must inherit ``tcframe::BaseProblemSpec``:
 
-.. cpp:function:: void setSlug(string slug)
+.. sourcecode:: cpp
 
-    Sets the *slug* of the problem. A slug is a nickname or code for the problem. The produced test case filenames will have the slug as prefix. For example, if the slug is "helloworld" then one valid test case filename is "helloworld_1.in".
+    class ProblemSpec : public BaseProblemSpec {};
 
-    If not specified, the default slug is :code:`"problem"`.
-
-.. cpp:function:: void setTimeLimit(int timeLimitInSeconds)
-
-    Sets the time limit of the problem, in seconds. This time limit is used in :ref:`submission simulation <submission>`.
-
-.. cpp:function:: void setMemoryLimit(int memoryLimitInMegabytes)
-
-    Sets the memory limit of the problem, in MB. This memory limit is used in submission simulation.
-
-.. cpp:function:: void setMultipleTestCasesCount(int& countVariable)
-
-    Sets **countVariable** to hold the total number of test cases in a single file, in :ref:`multiple test cases per file <multi-case>` problems.
+Except for private helper functions, every member of ``ProblemSpec`` listed below must be ``protected``.
 
 ----
 
 .. _api-ref_io-variables:
 
 Input/output variables
-----------------------
+**********************
+
+Defined as instance member variables of ``ProblemSpec``, which will be referenced in other methods of ``ProblemSpec`` and ``TestSpec``.
 
 There are three supported types of variables:
 
 Scalar
-    Variables of built-in integral types (:code:`int`, :code:`long long`, :code:`char`, etc.), built-in floating-point types (:code:`float`, :code:`double`), and :code:`std::string`.
+    Variables of built-in integral types (``int``, ``long long``, ``char``, etc.), built-in floating-point types (``float``, ``double``), and ``std::string``.
 
 Vector
-    :code:`std::vector<T>`, where :code:`T` is a scalar type as defined above. Arrays (:code:`T[]`) are not supported.
+    ``std::vector<T>``, where ``T`` is a scalar type as defined above. Arrays (``T[]``) are not supported.
 
 Matrix
-    :code:`std::vector<std::vector<T>>`, where :code:`T` is a scalar type as defined above. 2D arrays (:code:`T[][]`) are not supported.
+    ``std::vector<std::vector<T>>``, where ``T`` is a scalar type as defined above. 2D arrays (``T[][]``) are not supported.
+
+Example:
+
+.. sourcecode:: cpp
+
+    class ProblemSpec : public BaseProblemSpec {
+    protected:
+        int A, B;
+        vector<int> parent;
+        vector<vector<int>> values;
+    };
 
 ----
 
-.. _api-ref_io-segments:
+.. _api-ref_io-formats:
 
-Input/output segments
----------------------
+Input/output formats
+********************
 
-The following macros are available inside the overridden method :code:`BaseProblem::InputFormat()` and :code:`BaseProblem::OutputFormat()`.
+.. sourcecode:: cpp
+
+    virtual void InputFormat() = 0;
+
+Defines the input format. It is mandatory.
+
+.. sourcecode:: cpp
+
+    virtual void OutputFormat() {}
+
+Defines the output format. It is optional; if not implemented, then the output will not be validated.
+
+**Defining format**
+
+The following macros are exposed to define input/output formats:
 
 .. py:function:: EMPTY_LINE()
 
@@ -80,7 +89,7 @@ The following macros are available inside the overridden method :code:`BaseProbl
     - *<vector variable name>* **% SIZE(**\ *<number of elements>*\ **)**. The number of elements can be a constant or a scalar variable.
     - *<vector variable name>*. Here, the number of elements is unspecified. This kind of element must occur last in a line segment, if any. Elements will be considered until new line is found.
 
-    For example:
+    Example:
 
     .. sourcecode:: cpp
 
@@ -90,7 +99,7 @@ The following macros are available inside the overridden method :code:`BaseProbl
             LINE(M, C % SIZE(M));
         }
 
-    With **N** = 2, **A** = {1, 2, 3}, **B** = {100, 200, 300, 400}, **M** = 2, **C** = {7, 8}, the above segments will produce:
+    With **N** = 2, **A** = {1, 2, 3}, **B** = {100, 200, 300, 400}, **M** = 2, **C** = {7, 8}, the above format will produce:
 
     ::
 
@@ -102,7 +111,7 @@ The following macros are available inside the overridden method :code:`BaseProbl
 
     Defines multiple lines, each consisting space-separated elements of given vector/matrix variables.
 
-    For example:
+    Example:
 
     .. sourcecode:: cpp
 
@@ -111,7 +120,7 @@ The following macros are available inside the overridden method :code:`BaseProbl
             LINES(X, Y) % SIZE(N);
         }
 
-    With **V** = {1, 2}, **X** = {100, 110, 120}, **Y** = {200, 210, 220}, **N** = 3, the above segments will produce:
+    With **V** = {1, 2}, **X** = {100, 110, 120}, **Y** = {200, 210, 220}, **N** = 3, the above format will produce:
 
     ::
 
@@ -123,7 +132,7 @@ The following macros are available inside the overridden method :code:`BaseProbl
 
     If a matrix variable is given, it must occur as the last argument, and the number of rows must match with the number of elements of the other vector variables (if any). It is not required that each row of the matrix consists of the same number of columns.
 
-    For example:
+    Example:
 
     .. sourcecode:: cpp
 
@@ -131,7 +140,7 @@ The following macros are available inside the overridden method :code:`BaseProbl
             LINES(op, data) % SIZE(2);
         }
 
-    With **op** = {"UPDATE, "QUERY"}, **data** = {{3, 5}, {7}}, the above segments will produce:
+    With **op** = {"UPDATE", "QUERY"}, **data** = {{3, 5}, {7}}, the above format will produce:
 
     ::
 
@@ -140,9 +149,9 @@ The following macros are available inside the overridden method :code:`BaseProbl
 
 .. py:function:: GRID(matrix variable name) % SIZE(number of rows, number of columns)
 
-    Defines a grid consisting elements of a given matrix variable. If the given matrix variable is of type char, the elements in each row is not space-separated, otherwise they are space-separated.
+    Defines a grid consisting elements of a given matrix variable. If the given matrix variable is of type ``char``, the elements in each row is not space-separated, otherwise they are space-separated.
 
-    For example:
+    Example:
 
     .. sourcecode:: cpp
 
@@ -151,7 +160,7 @@ The following macros are available inside the overridden method :code:`BaseProbl
             GRID(H) % SIZE(R, C);
         }
 
-    With **G** = {{'a', 'b'}, {'c', 'd'}}, **H** = {{1, 2, 3}, {4, 5, 6}}, **R** = 2, **C** = 3, the above segments will produce:
+    With **G** = {{'a', 'b'}, {'c', 'd'}}, **H** = {{1, 2, 3}, {4, 5, 6}}, **R** = 2, **C** = 3, the above format will produce:
 
     ::
 
@@ -164,16 +173,39 @@ The following macros are available inside the overridden method :code:`BaseProbl
 
 .. _api-ref_constraints:
 
-Constraints
------------
+Constraints and subtasks
+************************
 
-The following macros are available inside the overridden method :code:`BaseProblem::Constraints()`, :code:`BaseProblem::MultipleTestCasesConstraints()`, and :code:`BaseProblem::SubtaskX()`.
+.. sourcecode:: cpp
+
+    virtual void MultipleTestCasesConstraints() {}
+
+Defines the constraints to be imposed to the multiple test cases counter.
+
+.. sourcecode:: cpp
+
+    virtual void Constraints() {}
+
+Defines the constraints to be imposed to the :ref:`input/output variables <api-ref_io-variables>`.
+
+.. sourcecode:: cpp
+
+    virtual void Subtask1() {}
+    virtual void Subtask2() {}
+    // ...
+    virtual void Subtask25() {}
+
+Defines the constraints to be imposed to the :ref:`input/output variables <api-ref_io-variables>` for each subtask (up to 25).
+
+**Defining constraints**
+
+The following macro is exposed to define constraints:
 
 .. py:function:: CONS(predicate)
 
     Defines a constraint. **predicate** is a boolean expression, whose value must be completely determined by the values of the input variables (only).
 
-    For example:
+    Example:
 
     .. sourcecode:: cpp
 
@@ -184,54 +216,158 @@ The following macros are available inside the overridden method :code:`BaseProbl
 
 ----
 
-.. _api-ref_generator-config:
+.. _api-ref_multi-case-config:
 
-Generator configuration
------------------------
+Multiple test cases config
+**************************
 
-The following methods are available inside the overridden method :code:`BaseGenerator::Config()`.
+.. sourcecode:: cpp
 
-.. cpp:function:: void setTestCasesDir(string testCasesDir)
+    virtual void MultipleTestCasesConfig() {}
 
-  Sets the directory for the generated test case files, relative to the location of the generator program.
+Defines the config for :ref:`multiple test cases per file problems <multi-case>`. The following methods are exposed:
 
-  If not specified, the default directory is :code:`"tc"`.
+.. cpp:function:: Counter(int& var)
 
-.. cpp:function:: void setSolutionCommand(string solutionCommand)
+    Sets the input variable that will hold the number of test cases in a file.
 
-  Sets the command for executing the official solution. This will be used for generating test case output files. For
-  each input files, this will be executed:
+.. cpp:function:: OutputPrefix(std::string prefix)
 
-  .. sourcecode:: bash
+    Sets the prefix to be prepended to the output of each test case. It can include ``%d``, which will be replaced by the actual test case number (1-based).
 
-      solutionCommand < [input filename] > [output filename]
+Example:
 
-  If not specified, the default solution command is :code:`"./solution"`.
+.. sourcecode:: cpp
+
+    void MultipleTestCasesConfig() {
+        Counter(T);
+        OutputPrefix("Case #%d: ");
+    }
+
+----
+
+.. _api-ref_grading-config:
+
+Grading config
+**************
+
+.. sourcecode:: cpp
+
+    virtual void GradingConfig() {}
+
+Defines the config for :ref:`local grading <grading>`. The following methods are exposed:
+
+.. cpp:function:: TimeLimit(int timeLimitInSeconds)
+
+    Sets the time limit in seconds. If not specified, the default value is 2 seconds.
+
+.. cpp:function:: MemoryLimit(int memoryLimitInMegabytes)
+
+    Sets the memory limit in MB. If not specified, the default value is 64 MB.
+
+Example:
+
+.. sourcecode:: cpp
+
+    void GradingConfig() {
+        TimeLimit(3);
+        MemoryLimit(256);
+    }
+
+----
+
+.. _api-ref_test-spec:
+
+Test spec
+---------
+
+``TestSpec`` must inherit ``tcframe::BaseTestSpec<ProblemSpec>``:
+
+.. sourcecode:: cpp
+
+    class TestSpec : public BaseTestSpec<ProblemSpec> {};
+
+Except for private helper functions, every member of ``TestSpec`` listed below must be ``protected``.
+
+----
+
+.. _api-ref_sample-test-cases:
+
+Sample test cases
+*****************
+
+.. sourcecode:: cpp
+
+    virtual void SampleTestCase1() {}
+    virtual void SampleTestCase2() {}
+    // ...
+    virtual void SampleTestCase25() {}
+
+Defines the sample test cases (up to 25). The following methods are exposed:
+
+.. cpp:function:: Subtasks(std::set<int> subtaskNumbers)
+
+    Assigns the current sample test case to a set of subtasks, if the problem has :ref:`subtasks <subtasks>`. If used, this should be the first call in a sample test case.
+
+.. cpp:function:: Input(std::vector<std::string> lines)
+
+    Defines the input as exact literal string, given as list of lines.
+
+.. cpp:function:: Output(std::vector<std::string> lines)
+
+    Defines the input as exact literal string, given as list of lines. It is optional; if not specified, the solution will be run against the sample input to produce the corresponding sample output.
+
+Example:
+
+.. sourcecode:: cpp
+
+    void SampleTestCase1() {
+        Input({
+            "4 6",
+            "a b c"
+        });
+        Output({
+            "10"
+        });
+    }
 
 ----
 
 .. _api-ref_test-cases:
 
-Test cases
-----------
+Test cases and test groups
+**************************
 
-The following macros are available inside the overridden method :code:`BaseGenerator::TestCases()`.
+.. sourcecode:: cpp
 
-.. cpp:function:: void assignToSubtasks(set<int> subtaskNumbers)
+    virtual void TestCases() {}
 
-    Assigns the current test test group to a set of subtasks.
+Defines the test cases.
 
-    For example:
+.. sourcecode:: cpp
 
-    .. sourcecode:: cpp
+    virtual void TestGroup1() {}
+    virtual void TestGroup2() {}
+    // ...
+    virtual void TestGroup25() {}
 
-        void TestGroup1() {
-            assignToSubtasks({1, 3});
+Defines the test cases on each test group (up to 25). The following method is exposed:
 
-            // test case definitions follow
-        }
+.. cpp:function:: Subtasks(std::set<int> subtaskNumbers)
 
-The following macros are available inside the overridden method :code:`BaseGenerator::TestCases()` and :code:`BaseGenerator::TestGroupX()`.
+   Assigns the current test group to a set of :ref:`subtasks <subtasks>`. This should be the first call in a test group.
+
+   .. sourcecode:: cpp
+
+       void TestGroup1() {
+           Subtasks({1, 3});
+
+           // test case definitions follow
+       }
+
+**Defining test cases**
+
+The following macro is exposed to define test cases:
 
 .. py:function:: CASE(comma-separated statements)
 
@@ -242,53 +378,36 @@ The following macros are available inside the overridden method :code:`BaseGener
     - assignment to an input variables
     - private method call that assigns values to one or more input variables
 
-    For example:
+    Example:
 
     .. sourcecode:: cpp
 
         void TestCases() {
             CASE(N = 42, M = 100, randomArray());
             CASE(N = 1000, M = 1000, randomArray());
+            CASE(randomEqualNandM(), randomArray());
         }
 
-The following macros are available inside the overridden method :code:`BaseGenerator::SampleTestCases()`.
+----
 
-.. py:function:: SAMPLE_CASE(list of lines, [list of subtask numbers])
+.. _api-ref_test-case-lifecycle:
 
-    Defines a sample test case. A sample test case is defined as an exact literal string, given as list of lines. **list of subtask numbers** are only valid in problems with subtasks.
+Test case lifecycle
+*******************
 
-    For example, to define this sample test case:
+.. sourcecode:: cpp
 
-    ::
+    virtual void BeforeTestCase() {}
+    virtual void AfterTestCase() {}
 
-        1 2
-        3 4 5
+Hook up additional logic to run during in a :ref:`test case lifecycle <test-cases_lifecycle>`.
 
-    You can do this way:
+For each test case, the following things will happen in order:
 
-    .. sourcecode:: cpp
-
-        void SampleTestCases() {
-            SAMPLE_CASE({
-                "1 2",
-                "3 4 5"
-            });
-        }
-
-    for problems without subtasks. For problems with subtasks:
-
-    .. sourcecode:: cpp
-
-        void SampleTestCases() {
-            SAMPLE_CASE({
-                "1 2",
-                "3 4 5"
-            }, {1, 3});
-        }
-
-    assuming that the sample test case is assigned to subtasks 1 and 3.
-
-    Multiple sample test cases can be defined inside the same method.
+#. ``BeforeTestCase()`` is executed.
+#. The assignments/method calls inside ``CASE()`` are executed.
+#. ``AfterTestCase()`` is executed.
+#. Input variable values are printed according to the input format.
 
 ----
 
@@ -297,7 +416,7 @@ The following macros are available inside the overridden method :code:`BaseGener
 Random number generator
 -----------------------
 
-The following methods are available on the random number generator :code:`rnd` object inside a generator.
+``BaseTestSpec`` exposes a random number generator object ``rnd`` that can be utilized to define test cases. The following methods are available on it:
 
 .. cpp:function:: int nextInt(int minNum, int maxNum)
 
@@ -325,45 +444,64 @@ The following methods are available on the random number generator :code:`rnd` o
 
 .. cpp:function:: void shuffle(std::RandomAccessIterator first, std::RandomAccessIterator last)
 
-    Randomly shuffles the elements in [\ **first**, **last**). Use this rather than :code:`std::random_shuffle()`.
+    Randomly shuffles the elements in [\ **first**, **last**). Use this instead of :code:`std::random_shuffle()`.
 
 ----
 
-.. _api-ref_cli-options:
+.. _api-ref_runner:
 
-Command-line options
---------------------
+Runner program
+--------------
 
-The following options can be specified when running the runner program. They mostly override the specified problem and generator configuration.
+A runner is the compiled version of a spec file, and is capable of two things:
 
-.. py:function:: --slug=slug
+Test cases generation
+*********************
 
-    Overrides the slug specified by :code:`setSlug()` in problem configuration.
+::
 
-.. py:function:: --tc-dir=dir
+    ./runner [options]
 
-    Overrides the test cases directory specified by :code:`setTestCasesDir()` in generator configuration.
+.. py:function:: --output=<dir>
 
-.. py:function:: --solution-command=command
+    The output directory to which the test cases will be generated. Default: ``tc``.
 
-    Overrides the solution command specified by :code:`setSolutionCommand()` in generator configuration.
+.. py:function:: --solution=<command>
 
-.. py:function:: --seed=seed
+    The solution command to use for generating output files. Default: ``./solution``.
 
-    Sets the seed for the random number generator :code:`rnd` inside the generator.
+.. py:function:: --seed=<seed>
 
-.. py:function:: --time-limit=timeLimitInSeconds
+    The seed for random number generator ``rnd`` in the test spec. Default: ``0``.
 
-    Overrides the time limit specified by :code:`setTimeLimit()` in problem configuration.
+Local grading
+*************
 
-.. py:function:: --memory-limit=memoryLimitInMegabytes
+::
 
-    Overrides the memory limit specified by :code:`setMemoryLimit()` in problem configuration.
+    ./runner grade [options]
+
+.. py:function:: --output=<dir>
+
+    The output directory from which the generated test cases will be read. Default: ``tc``.
+
+.. py:function:: --solution=<command>
+
+    The solution command to grade. Default: ``./solution``.
+
+
+.. py:function:: --time-limit=<time-limit-in-seconds>
+
+    Overrides the time limit specified by ``TimeLimit()`` in grading config.
+
+.. py:function:: --memory-limit=<memory-limit-in-megabytes>
+
+    Overrides the memory limit specified by ``MemoryLimit()`` in grading config.
 
 .. py:function:: --no-time-limit
 
-    Unsets the time limit specified by :code:`setTimeLimit()` in problem configuration.
+    Unsets the time limit specified by ``TimeLimit()`` in grading config.
 
 .. py:function:: --no-memory-limit
 
-    Unsets the memory limit specified by :code:`setMemoryLimit()` in problem configuration.
+    Unsets the memory limit specified by ``MemoryLimit()`` in grading config.

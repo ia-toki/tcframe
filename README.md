@@ -28,6 +28,15 @@ At a very high level, with some details omitted, it works as follows:
     }
     ```
 
+1. You specify the grading configuration.
+
+    ```cpp
+    void GradingConfig() {
+        TimeLimit(1);
+        MemoryLimit(64);
+    }
+    ```
+
 1. You specify the constraints.
 
     ```cpp
@@ -40,12 +49,20 @@ At a very high level, with some details omitted, it works as follows:
 1. You specify the sample test cases.
 
     ```cpp
-    void SampleTestCases() {
-        SAMPLE_CASE({
+    void SampleTestCase1() {
+        Input({
             "2 8"
         });
-        SAMPLE_CASE({
+        Output({
+            "10"
+        });
+    }
+    void SampleTestCase2() {
+        Input({
             "42 100"
+        });
+        Output({
+            "142"
         });
     }
     ```
@@ -60,7 +77,7 @@ At a very high level, with some details omitted, it works as follows:
     }
     ```
 
-1. You write the official solution to this problem, using any programming language you wish. Oh, haven't we told you what the actual problem we have been talking about is? Yes, it is the infamous A+B problem!
+1. You write the official solution to this problem, using any programming language you wish. Of course, it is the infamous A+B problem.
 
     ```cpp
     #include <iostream>
@@ -73,12 +90,12 @@ At a very high level, with some details omitted, it works as follows:
     }
     ```
 
-1. You run the generator. Actual test cases (.in and .out files) will be generated. Profit!
+1. You run the generator. Actual test cases (`.in` and `.out` files) will be generated. Profit!
 
 1. If you ever specified an invalid test case, such as `CASE(A = 0, B = 1)`, you will get a nice error message:
 
 	```
-      aplusb_4: FAILED
+      sum_4: FAILED
         Description: A = 0, B = 1
         Reasons:
         * Does not satisfy constraints, on:
@@ -87,7 +104,7 @@ At a very high level, with some details omitted, it works as follows:
 
 ## Features
 
-As of the current version, **tcframe** supports:
+**tcframe** supports:
 
 - Standard batch problems; i.e., problems which requires the solution to read from stdin and print to stdout.
 - Constraints specified in IOI-style subtasks.
@@ -101,9 +118,9 @@ As of the current version, **tcframe** supports:
 **tcframe** requires:
 
 - Linux/OS X. Windows is currently not supported yet
-- GCC ≥ 4.7. **tcframe** relies heavily on C++11 features
+- GCC ≥ 4.8. **tcframe** relies heavily on C++11 features
 
-## Frequently Asked Questions
+## Motivations
 
 **Why do we even need to write a generator for test cases, in the first place?**
 
@@ -114,12 +131,12 @@ As of the current version, **tcframe** supports:
 **OK. But why do we need a framework for that?**
 
 - The main problem is that not all people know how to write a good test cases generator.
-- To avoid writing repetitive and boring tasks. For example: creating test case files with correct suffixes (foo_1.in, foo_1.out), running official solution against the test case input files, etc.
+- To avoid writing repetitive and boring tasks. For example: creating test case files with correct suffixes (`foo_1.in`, `foo_1.out`), running official solution against the test case input files, etc.
 - To make all problems in a contest have test cases generator with consistent format.
 
 ## Credits
 
-**tcframe** is being heavily developed by **Ashar Fuadi**. It is based on a paper submitted to IOI conference in 2015: [Introducing tcframe: A Simple and Robust Test Cases Generation Framework](http://ioinformatics.org/oi/files/volume9.pdf#page=59), written by the same author.
+**tcframe** is based on a paper submitted to IOI conference in 2015: [Introducing tcframe: A Simple and Robust Test Cases Generation Framework](http://ioinformatics.org/oi/files/volume9.pdf#page=59), written by **Ashar Fuadi**.
 
 **tcframe** was mainly inspired from [testlib](https://github.com/MikeMirzayanov/testlib), written by Mike Mirzayanov et al.
 

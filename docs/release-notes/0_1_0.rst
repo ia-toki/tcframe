@@ -1,0 +1,17 @@
+0.1.0
+=====
+
+February 8, 2015
+
+Initial prototype version. This version contains only the core functionalities of the framework.
+
+Initial features
+----------------
+
+- Can declare input variables. Only integers are supported at the moment.
+- Can specify input format. Only single-line variables are supported at the moment.
+- Can specify constraints, with or without subtasks.
+- Can specify test cases, with or without test groups. Sample test cases are not supported yet.
+- Can check each test case whether it satisfies the constraints/subtasks it is assigned to.
+- Can generate input files.
+- Can run solution on the generated input files for producing output files.

@@ -1,0 +1,16 @@
+0.7.0
+=====
+
+March 9, 2016
+
+New features
+------------
+
+- Allow omitting ``OutputFormat()`` and disable output format checking.
+- Support jagged vector as the last input variable in a ``LINES()`` segment.
+
+Project development
+-------------------
+
+- Use shields.io for service badges.
+- Restructure documentation based on https://jacobian.org/writing/great-documentation/.
