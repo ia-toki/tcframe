@@ -9,7 +9,6 @@
 
 #include "ExecutionResult.hpp"
 #include "OperatingSystem.hpp"
-#include "tcframe/spec/testcase/TestCaseIdCreator.hpp"
 
 using std::ifstream;
 using std::istream;
@@ -107,49 +106,6 @@ public:
         return result.build();
     }
 
-    void combineMultipleTestCases(
-            const string& slug,
-            int testGroupId,
-            int testCasesCount,
-            const string& outputDir,
-            const optional<string>& outputPrefix) {
-
-        string baseId = TestCaseIdCreator::createBaseId(slug, testGroupId);
-        string baseIn = outputDir + "/" + baseId + ".in";
-        string baseOut = outputDir + "/" + baseId + ".out";
-
-        ostringstream sout;
-
-        sout << "echo " << testCasesCount << " > " << baseId << ".in && ";
-        sout << "touch " << baseId << ".out";
-        system(sout.str().c_str());
-
-        for (int i = 1; i <= testCasesCount; i++) {
-            string id = TestCaseIdCreator::create(slug, testGroupId, i);
-            string in = outputDir + "/" + id + ".in";
-            string out = outputDir + "/" + id + ".out";
-
-            ostringstream sout2;
-            sout2 << "tail -n +2 " << in << " >> " << baseIn << " && ";
-
-            if (i > 1 && outputPrefix) {
-                // Replace the prefix for the first tc, with the correct prefix for this tc
-                string firstPrefix = StringUtils::interpolate(outputPrefix.value(), 1);
-                string correctPrefix = StringUtils::interpolate(outputPrefix.value(), i);
-                sout2 << "printf \"%b\" \"" << escapeForBash(correctPrefix) << "\" >> " << baseOut << " && ";
-                sout2 << "tail -c +" << (firstPrefix.size() + 1) << " " << out << " >> " << baseOut;
-            } else {
-                sout2 << "cat " << out << " >> " << baseOut;
-            }
-
-            system(sout2.str().c_str());
-
-            ostringstream sout3;
-            sout3 << "rm " << in << " " << out;
-            system(sout3.str().c_str());
-        }
-    }
-
 private:
     istringstream* openForReadingAsStringStream(const string& filename) {
         ifstream file(filename);
@@ -160,16 +116,6 @@ private:
         removeFile(filename);
 
         return new istringstream(buffer.str());
-    }
-
-    string escapeForBash(const string& s) {
-        string res = s;
-        res = StringUtils::replace(res, '\\', "\\\\");
-        res = StringUtils::replace(res, '$', "\\$");
-        res = StringUtils::replace(res, '"', "\\\"");
-        res = StringUtils::replace(res, '\n', "\\n");
-        res = StringUtils::replace(res, '\t', "\\t");
-        return res;
     }
 
     void runCommand(const string& command) {

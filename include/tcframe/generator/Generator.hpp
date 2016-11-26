@@ -107,12 +107,54 @@ private:
     }
 
     void combine(const TestGroup& testGroup, const GeneratorConfig& config) {
-        os_->combineMultipleTestCases(
-                config.slug(),
-                testGroup.id(),
-                (int) testGroup.testCases().size(),
-                config.outputDir(),
-                config.multipleTestCasesOutputPrefix());
+        int testCaseCount = (int) testGroup.testCases().size();
+
+        string baseId = TestCaseIdCreator::createBaseId(config.slug(), testGroup.id());
+        string baseIn = config.outputDir() + "/" + baseId + ".in";
+        string baseOut = config.outputDir() + "/" + baseId + ".out";
+
+        ostringstream sout;
+
+        sout << "echo " << testCaseCount << " > " << baseId << ".in && ";
+        sout << "touch " << baseId << ".out";
+
+        os_->execute(ExecutionRequestBuilder().setCommand(sout.str()).build());
+
+        for (int i = 1; i <= testCaseCount; i++) {
+            string id = TestCaseIdCreator::create(config.slug(), testGroup.id(), i);
+            string in = config.outputDir() + "/" + id + ".in";
+            string out = config.outputDir() + "/" + id + ".out";
+
+            ostringstream sout2;
+            sout2 << "tail -n +2 " << in << " >> " << baseIn << " && ";
+
+            if (i > 1 && config.multipleTestCasesOutputPrefix()) {
+                string outputPrefix = config.multipleTestCasesOutputPrefix().value();
+                // Replace the prefix for the first tc, with the correct prefix for this tc
+                string firstPrefix = StringUtils::interpolate(outputPrefix, 1);
+                string correctPrefix = StringUtils::interpolate(outputPrefix, i);
+                sout2 << "printf \"%b\" \"" << escapeForBash(correctPrefix) << "\" >> " << baseOut << " && ";
+                sout2 << "tail -c +" << (firstPrefix.size() + 1) << " " << out << " >> " << baseOut;
+            } else {
+                sout2 << "cat " << out << " >> " << baseOut;
+            }
+
+            os_->execute(ExecutionRequestBuilder().setCommand(sout2.str()).build());
+
+            ostringstream sout3;
+            sout3 << "rm " << in << " " << out;
+            os_->execute(ExecutionRequestBuilder().setCommand(sout3.str()).build());
+        }
+    }
+
+    static string escapeForBash(const string& s) {
+        string res = s;
+        res = StringUtils::replace(res, '\\', "\\\\");
+        res = StringUtils::replace(res, '$', "\\$");
+        res = StringUtils::replace(res, '"', "\\\"");
+        res = StringUtils::replace(res, '\n', "\\n");
+        res = StringUtils::replace(res, '\t', "\\t");
+        return res;
     }
 };
 
