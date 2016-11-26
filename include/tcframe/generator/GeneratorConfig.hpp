@@ -57,8 +57,10 @@ public:
     }
 
     bool operator==(const GeneratorConfig& o) const {
-        return tie(multipleTestCasesCounter_, seed_, slug_, solutionCommand_, outputDir_) ==
-                tie(o.multipleTestCasesCounter_, o.seed_, o.slug_, o.solutionCommand_, o.outputDir_);
+        return tie(slug_, multipleTestCasesCounter_, multipleTestCasesOutputPrefix_,
+                   seed_, solutionCommand_, outputDir_) ==
+                tie(o.slug_, o.multipleTestCasesCounter_, o.multipleTestCasesOutputPrefix_,
+                    o.seed_, o.solutionCommand_, o.outputDir_);
     }
 };
 

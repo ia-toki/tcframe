@@ -118,7 +118,7 @@ private:
         auto evaluator = new BatchEvaluator(os_);
         auto scorer = new DiffScorer(os_);
         auto logger = new GeneratorLogger(loggerEngine_);
-        auto testCaseGenerator = new TestCaseGenerator(verifier, ioManipulator, os_, evaluator, logger);
+        auto testCaseGenerator = new TestCaseGenerator(verifier, ioManipulator, os_, evaluator, scorer, logger);
         auto generator = generatorFactory_->create(spec.seedSetter(), testCaseGenerator, verifier, os_, logger);
 
         return generator->generate(spec.testSuite(), generatorConfig) ? 0 : 1;

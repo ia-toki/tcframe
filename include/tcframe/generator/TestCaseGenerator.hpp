@@ -12,7 +12,9 @@
 #include "tcframe/evaluator.hpp"
 #include "tcframe/io_manipulator.hpp"
 #include "tcframe/os.hpp"
+#include "tcframe/scorer.hpp"
 #include "tcframe/spec.hpp"
+#include "tcframe/verdict.hpp"
 #include "tcframe/verifier.hpp"
 
 using std::char_traits;
@@ -29,6 +31,7 @@ private:
     IOManipulator* ioManipulator_;
     OperatingSystem* os_;
     Evaluator* evaluator_;
+    Scorer* scorer_;
     GeneratorLogger* logger_;
 
 public:
@@ -39,11 +42,13 @@ public:
             IOManipulator* ioManipulator,
             OperatingSystem* os,
             Evaluator* evaluator,
+            Scorer* scorer,
             GeneratorLogger* logger)
             : verifier_(verifier)
             , ioManipulator_(ioManipulator)
             , os_(os)
             , evaluator_(evaluator)
+            , scorer_(scorer)
             , logger_(logger) {}
 
     virtual bool generate(const TestCase& testCase, const GeneratorConfig& config) {
@@ -109,37 +114,20 @@ private:
             const string& outputFilename,
             const GeneratorConfig& config) {
 
-        istream* output;
+        EvaluatorConfig evaluatorConfig = EvaluatorConfigBuilder()
+                .setSolutionCommand(config.solutionCommand())
+                .build();
 
-        optional<string> maybeOutputString;
-        if (testCase.data()->type() == TestCaseDataType::SAMPLE) {
-            maybeOutputString = ((SampleTestCaseData*) testCase.data())->output();
+        EvaluationResult evaluationResult = evaluator_->evaluate(inputFilename, outputFilename, evaluatorConfig);
+        ExecutionResult executionResult = evaluationResult.executionResult();
+        if (!executionResult.info().isSuccessful()) {
+            throw GenerationException([=] { logger_->logSolutionExecutionFailure(executionResult); });
         }
 
-        if (maybeOutputString) {
-            string outputString = maybeOutputString.value();
-            output = new istringstream(outputString);
-            modifySampleOutputStringForMultipleTestCases(outputString, config);
+        checkSampleOutput(testCase, inputFilename, outputFilename, config);
 
-            ostream* outputFile = os_->openForWriting(outputFilename);
-            *outputFile << outputString;
-            os_->closeOpenedWritingStream(outputFile);
-        } else {
-            EvaluatorConfig evaluatorConfig = EvaluatorConfigBuilder()
-                    .setSolutionCommand(config.solutionCommand())
-                    .build();
-
-            EvaluationResult evaluationResult = evaluator_->evaluate(inputFilename, outputFilename, evaluatorConfig);
-            ExecutionResult executionResult = evaluationResult.executionResult();
-
-            if (!executionResult.info().isSuccessful()) {
-                throw GenerationException([=] { logger_->logSolutionExecutionFailure(executionResult); });
-            }
-            output = executionResult.outputStream();
-
-            modifyOutputForMultipleTestCases(output, config);
-        }
-
+        istream* output = executionResult.outputStream();
+        modifyOutputForMultipleTestCases(output, config);
         ioManipulator_->parseOutput(output);
     }
 
@@ -167,6 +155,33 @@ private:
                 }
                 output->get();
             }
+        }
+    }
+
+    void checkSampleOutput(
+            const TestCase& testCase,
+            const string& inputFilename,
+            const string& outputFilename,
+            const GeneratorConfig& config) {
+
+        if (testCase.data()->type() != TestCaseDataType::SAMPLE) {
+            return;
+        }
+        optional<string> maybeSampleOutput = ((SampleTestCaseData*) testCase.data())->output();
+        if (!maybeSampleOutput) {
+            return;
+        }
+
+        string sampleOutputString = maybeSampleOutput.value();
+        modifySampleOutputStringForMultipleTestCases(sampleOutputString, config);
+
+        ostream* sampleOutput = os_->openForWriting("_evaluation.out");
+        *sampleOutput << sampleOutputString;
+        os_->closeOpenedWritingStream(sampleOutput);
+
+        ScoringResult scoringResult = scorer_->score(inputFilename, outputFilename, "_evaluation.out");
+        if (!(scoringResult.verdict() == Verdict::ac())) {
+            throw GenerationException([=] { logger_->logSampleTestCaseCheckFailure(scoringResult.message()); });
         }
     }
 };

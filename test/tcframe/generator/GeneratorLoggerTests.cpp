@@ -76,6 +76,16 @@ TEST_F(GeneratorLoggerTests, ConstraintsVerificationFailure) {
     logger.logConstraintsVerificationFailure(result);
 }
 
+TEST_F(GeneratorLoggerTests, SampleTestCaseCheckFailure) {
+    {
+        InSequence sequence;
+        EXPECT_CALL(engine,
+                logListItem1(2, "Sample test case output differs from actual output produced by the solution:"));
+        EXPECT_CALL(engine, logListItem2(3, "diff"));
+    }
+    logger.logSampleTestCaseCheckFailure("diff");
+}
+
 TEST_F(GeneratorLoggerTests, ConstraintsVerificationFailure_WithSubtasks) {
     {
         InSequence sequence;

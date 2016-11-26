@@ -11,7 +11,7 @@ namespace tcframe {
 class GenerationEteTests : public BaseEteTests {};
 
 TEST_F(GenerationEteTests, Normal) {
-    ASSERT_THAT(execStatus("cd ete/normal && ../scripts/generate.sh "), Eq(0));
+    ASSERT_THAT(execStatus("cd ete/normal && ../scripts/generate.sh"), Eq(0));
 
     EXPECT_THAT(ls("ete/normal/tc"), UnorderedElementsAre(
            "normal_sample_1.in",
