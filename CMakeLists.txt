@@ -42,7 +42,6 @@ include_directories("${source_dir}/googlemock/include")
 include_directories(include)
 
 set(SOURCES
-    include/tcframe/experimental/runner.hpp
     include/tcframe/evaluator.hpp
     include/tcframe/evaluator/BatchEvaluator.hpp
     include/tcframe/evaluator/EvaluationResult.hpp
@@ -189,85 +188,6 @@ set(SOURCES
     test/tcframe/util/TestUtils.hpp
     test/tcframe/verifier/MockVerifier.hpp
     test/tcframe/verifier/VerifierTests.cpp
-
-    include/tcframe/deprecated/core/Failure.hpp
-    include/tcframe/deprecated/core/NotImplementedException.hpp
-    include/tcframe/deprecated/core/Util.hpp
-    include/tcframe/deprecated/core/Verdict.hpp
-    include/tcframe/deprecated/generator/BaseGenerator.hpp
-    include/tcframe/deprecated/generator/OfficialTestCase.hpp
-    include/tcframe/deprecated/generator/SampleTestCase.hpp
-    include/tcframe/deprecated/generator/TestCase.hpp
-    include/tcframe/deprecated/generator/TestCaseException.hpp
-    include/tcframe/deprecated/generator/TestCasesCollector.hpp
-    include/tcframe/deprecated/generator/TestGroup.hpp
-    include/tcframe/deprecated/ioformat/GridIOSegment.hpp
-    include/tcframe/deprecated/ioformat/IOFormatException.hpp
-    include/tcframe/deprecated/ioformat/IOFormatProvider.hpp
-    include/tcframe/deprecated/ioformat/IOSegment.hpp
-    include/tcframe/deprecated/ioformat/LineIOSegment.hpp
-    include/tcframe/deprecated/ioformat/LinesIOSegment.hpp
-    include/tcframe/deprecated/ioformat/MatrixSizes.hpp
-    include/tcframe/deprecated/ioformat/VectorSize.hpp
-    include/tcframe/deprecated/ioformat/VectorWithSize.hpp
-    include/tcframe/deprecated/iovariable/HorizontalVariable.hpp
-    include/tcframe/deprecated/iovariable/HorizontalVector.hpp
-    include/tcframe/deprecated/iovariable/Matrix.hpp
-    include/tcframe/deprecated/iovariable/MatrixVariable.hpp
-    include/tcframe/deprecated/iovariable/ParsingException.hpp
-    include/tcframe/deprecated/iovariable/PrintingException.hpp
-    include/tcframe/deprecated/iovariable/Scalar.hpp
-    include/tcframe/deprecated/iovariable/ScalarHorizontalVariable.hpp
-    include/tcframe/deprecated/iovariable/Variable.hpp
-    include/tcframe/deprecated/iovariable/VectorHorizontalVariable.hpp
-    include/tcframe/deprecated/iovariable/VerticalVariable.hpp
-    include/tcframe/deprecated/iovariable/VerticalVector.hpp
-    include/tcframe/deprecated/logger/DefaultGeneratorLogger.hpp
-    include/tcframe/deprecated/logger/DefaultLoggerUtils.hpp
-    include/tcframe/deprecated/logger/DefaultSubmitterLogger.hpp
-    include/tcframe/deprecated/logger/GeneratorLogger.hpp
-    include/tcframe/deprecated/logger/Logger.hpp
-    include/tcframe/deprecated/logger/SubmitterLogger.hpp
-    include/tcframe/deprecated/os/ExecutionException.hpp
-    include/tcframe/deprecated/os/ExecutionResult.hpp
-    include/tcframe/deprecated/os/OperatingSystem.hpp
-    include/tcframe/deprecated/os/UnixOperatingSystem.hpp
-    include/tcframe/deprecated/problem/BaseProblem.hpp
-    include/tcframe/deprecated/problem/Constraint.hpp
-    include/tcframe/deprecated/problem/ConstraintsCollector.hpp
-    include/tcframe/deprecated/problem/MultipleTestCasesConstraintsSatisfiabilityException.hpp
-    include/tcframe/deprecated/problem/Subtask.hpp
-    include/tcframe/deprecated/problem/SubtaskSatisfiabilityException.hpp
-    include/tcframe/deprecated/random/Random.hpp
-    include/tcframe/deprecated/runner/Macro.hpp
-    include/tcframe/deprecated/runner/Runner.hpp
-    include/tcframe/deprecated/submitter/Submitter.hpp
-    include/tcframe/runner.hpp
-    test/tcframe/deprecated/commons/Commons.hpp
-    test/tcframe/deprecated/core/FailureTests.cpp
-    test/tcframe/deprecated/core/UtilTests.cpp
-    test/tcframe/deprecated/generator/BaseGeneratorTests.cpp
-    test/tcframe/deprecated/generator/OfficialTestCaseTests.cpp
-    test/tcframe/deprecated/generator/SampleTestCaseTests.cpp
-    test/tcframe/deprecated/generator/TestCasesCollectorTests.cpp
-    test/tcframe/deprecated/ioformat/GridIOSegmentTests.cpp
-    test/tcframe/deprecated/ioformat/IOFormatExceptionTests.cpp
-    test/tcframe/deprecated/ioformat/IOFormatProviderTests.cpp
-    test/tcframe/deprecated/ioformat/LineIOSegmentTests.cpp
-    test/tcframe/deprecated/ioformat/LinesIOSegmentTests.cpp
-    test/tcframe/deprecated/ioformat/ParsingExceptionTests.cpp
-    test/tcframe/deprecated/ioformat/PrintingExceptionTests.cpp
-    test/tcframe/deprecated/iovariable/HorizontalVectorTests.cpp
-    test/tcframe/deprecated/iovariable/MatrixTests.cpp
-    test/tcframe/deprecated/iovariable/ScalarTests.cpp
-    test/tcframe/deprecated/iovariable/VerticalVectorTests.cpp
-    test/tcframe/deprecated/os/ExecutionExceptionTests.cpp
-    test/tcframe/deprecated/problem/BaseProblemTests.cpp
-    test/tcframe/deprecated/problem/ConstraintsCollectorTests.cpp
-    test/tcframe/deprecated/problem/ConstraintTests.cpp
-    test/tcframe/deprecated/random/RandomTests.cpp
-    test/tcframe/deprecated/runner/MacroTests.cpp
-    test/tcframe/deprecated/submitter/SubmitterTests.cpp
 )
 
 add_executable(tests ${SOURCES})

@@ -1,7 +1,7 @@
 #include "tcframe/generator.hpp"
 #include "tcframe/grader.hpp"
 #include "tcframe/os.hpp"
-#include "tcframe/experimental/runner.hpp"
+#include "tcframe/runner.hpp"
 #include "tcframe/spec.hpp"
 
 #include __TCFRAME_SPEC_FILE__

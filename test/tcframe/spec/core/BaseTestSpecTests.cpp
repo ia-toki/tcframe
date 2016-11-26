@@ -1,6 +1,6 @@
 #include "gmock/gmock.h"
 
-#include "tcframe/experimental/runner.hpp"
+#include "tcframe/runner.hpp"
 
 using ::testing::A;
 using ::testing::AllOf;

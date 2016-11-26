@@ -6,7 +6,7 @@
 #include "../os/MockOperatingSystem.hpp"
 #include "MockRunnerLogger.hpp"
 #include "MockRunnerLoggerFactory.hpp"
-#include "tcframe/experimental/runner.hpp"
+#include "tcframe/runner/Runner.hpp"
 
 using ::testing::_;
 using ::testing::Eq;
