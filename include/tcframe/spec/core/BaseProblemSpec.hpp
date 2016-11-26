@@ -83,12 +83,12 @@ public:
     }
 
 protected:
-    virtual void MultipleTestCasesConfig() {}
-    virtual void GradingConfig() {}
     virtual void InputFormat() = 0;
     virtual void OutputFormat() {}
-    virtual void Constraints() {}
+    virtual void GradingConfig() {}
+    virtual void MultipleTestCasesConfig() {}
     virtual void MultipleTestCasesConstraints() {}
+    virtual void Constraints() {}
     virtual void Subtask1() {throw NotImplementedException();}
     virtual void Subtask2() {throw NotImplementedException();}
     virtual void Subtask3() {throw NotImplementedException();}

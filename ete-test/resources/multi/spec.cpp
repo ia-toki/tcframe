@@ -8,17 +8,17 @@ protected:
     int A, B;
     int res;
 
-    void GradingConfig() {
-        TimeLimit(2);
-        MemoryLimit(64);
-    }
-
     void InputFormat() {
         LINE(A, B);
     }
 
     void OutputFormat() {
         LINE(res);
+    }
+
+    void GradingConfig() {
+        TimeLimit(2);
+        MemoryLimit(64);
     }
 
     void MultipleTestCasesConfig() {
