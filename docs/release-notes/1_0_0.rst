@@ -140,5 +140,5 @@ You should now be able to run ``tcframe build`` to compile your new spec file in
 The following are new in 1.0.0 that are recommended to do:
 
 - Put all input variable initializations in ``BeforeTestCase()`` instead of repeating them in private helper methods. See :ref:`test-cases_lifecycle` for more details.
-- Put all global problem constraints in ``Constraints()`` instead of repeating them in all ``SubtaskX()``s, if your problem has subtasks.
+- Put all global problem constraints in ``Constraints()`` instead of repeating them in all ``SubtaskX()``\ s, if your problem has subtasks.
 - Include ``Output()`` in sample test case definitions, so that you are sure you are typing the output correctly in the problem statement by only looking at the spec file (no need to check with the actual produced output file).
