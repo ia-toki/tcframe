@@ -9,3 +9,4 @@ Bugfixes
 --------
 
 - Fixed a regression when I/O format segments do not pick up correct sizes taken from I/O variables.
+- Fixed a regression when ``std::string`` cannot be used as variable type.

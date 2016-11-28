@@ -11,7 +11,7 @@ protected:
     vector<int> X, Y;
     vector<vector<int>> M;
 
-    int res;
+    string res;
 
     void InputFormat() {
         LINE(N);
@@ -46,7 +46,7 @@ protected:
             "8 8 8"
         });
         Output({
-            "1"
+            "yes"
         });
     }
 

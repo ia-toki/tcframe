@@ -1,7 +1,6 @@
 #pragma once
 
 #include <exception>
-#include <functional>
 #include <iostream>
 #include <type_traits>
 #include <vector>
@@ -14,7 +13,6 @@ using std::endl;
 using std::iostream;
 using std::is_same;
 using std::ostream;
-using std::reference_wrapper;
 using std::ref;
 using std::vector;
 
@@ -42,40 +40,40 @@ public:
 template<typename T, typename = ScalarCompatible<T>>
 class MatrixImpl : public Matrix {
 private:
-    reference_wrapper<vector<vector<T>>> var_;
+    vector<vector<T>>* var_;
     bool hasSpaces_;
 
 public:
     MatrixImpl(vector<vector<T>>& var, const string& name)
             : Matrix(name)
-            , var_(var)
+            , var_(&var)
             , hasSpaces_(!is_same<T, char>::value) {}
 
     int rows() const {
-        return (int) var_.get().size();
+        return (int) var_->size();
     }
 
     int columns(int rowIndex) const {
-        return (int) var_.get()[rowIndex].size();
+        return (int) (*var_)[rowIndex].size();
     }
 
     void clear() {
-        var_.get().clear();
+        var_->clear();
     }
 
     void printTo(ostream* out) {
-        for (int row = 0; row < var_.get().size(); row++) {
+        for (int row = 0; row < var_->size(); row++) {
             printRowTo(row, out);
             *out << endl;
         }
     }
 
     void printRowTo(int rowIndex, ostream* out) {
-        for (int c = 0; c < var_.get()[rowIndex].size(); c++) {
+        for (int c = 0; c < (*var_)[rowIndex].size(); c++) {
             if (c > 0 && hasSpaces_) {
                 *out << ' ';
             }
-            *out << var_.get()[rowIndex][c];
+            *out << (*var_)[rowIndex][c];
         }
     }
 
@@ -90,7 +88,7 @@ public:
                 Variable::parseValue(in, element, TokenFormatter::formatMatrixElement(name(), r, c));
                 row.push_back(element);
             }
-            var_.get().push_back(row);
+            var_->push_back(row);
             WhitespaceManipulator::parseNewline(in, TokenFormatter::formatMatrixElement(name(), r, columns - 1));
         }
     }
@@ -111,7 +109,7 @@ public:
             Variable::parseValue(in, element, TokenFormatter::formatMatrixElement(name(), rowIndex, c));
             row.push_back(element);
         }
-        var_.get().push_back(row);
+        var_->push_back(row);
     }
 };
 
