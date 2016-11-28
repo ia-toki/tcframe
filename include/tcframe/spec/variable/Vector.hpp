@@ -1,7 +1,6 @@
 #pragma once
 
 #include <exception>
-#include <functional>
 #include <iostream>
 #include <vector>
 
@@ -11,7 +10,6 @@
 
 using std::iostream;
 using std::ostream;
-using std::reference_wrapper;
 using std::ref;
 using std::vector;
 
@@ -39,24 +37,24 @@ public:
 template<typename T, typename = ScalarCompatible<T>>
 class VectorImpl : public Vector {
 private:
-    reference_wrapper<vector<T>> var_;
+    vector<T>* var_;
 
 public:
     VectorImpl(vector<T>& var, const string& name)
             : Vector(name)
-            , var_(ref(var)) {}
+            , var_(&var) {}
 
     int size() const {
-        return (int) var_.get().size();
+        return (int) var_->size();
     }
 
     void clear() {
-        var_.get().clear();
+        var_->clear();
     }
 
     void printTo(ostream* out) {
         bool first = true;
-        for (T& element : var_.get()) {
+        for (T& element : *var_) {
             if (!first) {
                 *out << ' ';
             }
@@ -66,7 +64,7 @@ public:
     }
 
     void printElementTo(int index, ostream* out) {
-        *out << var_.get()[index];
+        *out << (*var_)[index];
     }
 
     void parseFrom(istream* in) {
@@ -96,7 +94,7 @@ public:
         int index = size();
         T element;
         Variable::parseValue(in, element, TokenFormatter::formatVectorElement(name(), index));
-        var_.get().push_back(element);
+        var_->push_back(element);
     }
 };
 
