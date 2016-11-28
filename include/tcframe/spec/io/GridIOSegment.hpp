@@ -16,14 +16,14 @@ struct GridIOSegment : public IOSegment {
 
 private:
     Matrix* variable_;
-    int rows_;
-    int columns_;
+    int* rows_;
+    int* columns_;
 
 public:
     GridIOSegment()
             : variable_(nullptr)
-            , rows_(-1)
-            , columns_(-1) {}
+            , rows_(new int(-1))
+            , columns_(new int(-1)) {}
 
     IOSegmentType type() const {
         return IOSegmentType::GRID;
@@ -33,11 +33,11 @@ public:
         return variable_;
     }
 
-    int rows() const {
+    int* rows() const {
         return rows_;
     }
 
-    int columns() const {
+    int* columns() const {
         return columns_;
     }
 
@@ -50,7 +50,7 @@ public:
         if ((variable_ == nullptr) != (o.variable_ == nullptr)) {
             return false;
         }
-        return tie(rows_, columns_) == tie(o.rows_, o.columns_);
+        return tie(*rows_, *columns_) == tie(*o.rows_, *o.columns_);
     }
 
     bool equals(IOSegment* o) const {
@@ -72,7 +72,7 @@ public:
         return *this;
     }
 
-    GridIOSegmentBuilder& setSize(int rows, int columns) {
+    GridIOSegmentBuilder& setSize(int* rows, int* columns) {
         subject_->rows_ = rows;
         subject_->columns_ = columns;
         return *this;
@@ -94,7 +94,7 @@ private:
         if (subject_->variable_ == nullptr) {
             throw runtime_error("Grid segment must have exactly one variable");
         }
-        if (subject_->rows_ == -1 || subject_->columns_ == -1) {
+        if (*subject_->rows_ == -1 || *subject_->columns_ == -1) {
             throw runtime_error("Grid segment must define matrix sizes");
         }
     }

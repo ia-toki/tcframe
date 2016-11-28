@@ -18,15 +18,17 @@ protected:
     int A, B;
     vector<int> C, D;
 
+    int* size = new int(2);
+
     LineIOSegment* segment = LineIOSegmentBuilder()
             .addScalarVariable(Scalar::create(A, "A"))
             .addScalarVariable(Scalar::create(B, "B"))
-            .addVectorVariable(Vector::create(C, "C"), 2)
+            .addVectorVariable(Vector::create(C, "C"), size)
             .build();
     LineIOSegment* segmentWithVectorWithoutSize = LineIOSegmentBuilder()
             .addScalarVariable(Scalar::create(A, "A"))
             .addScalarVariable(Scalar::create(B, "B"))
-            .addVectorVariable(Vector::create(C, "C"), 2)
+            .addVectorVariable(Vector::create(C, "C"), size)
             .addVectorVariable(Vector::create(D, "D"))
             .build();
 };

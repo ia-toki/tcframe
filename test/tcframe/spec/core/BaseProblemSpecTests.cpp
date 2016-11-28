@@ -27,20 +27,20 @@ protected:
                     .addScalarVariable(Scalar::create(B, "B"));
             newLinesIOSegment()
                     .addVectorVariable(Vector::create(X, "X"))
-                    .setSize(3);
+                    .setSize(new int(3));
             newGridIOSegment()
                     .addMatrixVariable(Matrix::create(M, "M"))
-                    .setSize(2, 3)
+                    .setSize(new int(2), new int(3))
                     .build();
         }
 
         void OutputFormat() {
             newLinesIOSegment()
                     .addVectorVariable(Vector::create(X, "X"))
-                    .setSize(3);
+                    .setSize(new int(3));
             newGridIOSegment()
                     .addMatrixVariable(Matrix::create(M, "M"))
-                    .setSize(2, 3)
+                    .setSize(new int(2), new int(3))
                     .build();
             newLineIOSegment()
                     .addScalarVariable(Scalar::create(A, "A"))

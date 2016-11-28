@@ -35,6 +35,7 @@ protected:
 
     class LINE_Tester : public IOFormatBuilder {
     protected:
+        int N = 3;
         int A, B;
         vector<int> C, D;
 
@@ -45,6 +46,7 @@ protected:
             LINE(A);
             EMPTY_LINE();
             LINE(A, B);
+            LINE(C % SIZE(N));
             LINE(A, B, C % SIZE(3), D);
         }
 
@@ -55,6 +57,7 @@ protected:
 
     class LINES_Tester : public IOFormatBuilder {
     protected:
+        int N = 4;
         vector<int> X, Y;
         vector<vector<int>> Z;
 
@@ -64,7 +67,7 @@ protected:
         void testValid() {
             LINES(X) % SIZE(2);
             LINES(X, Y) % SIZE(3);
-            LINES(X, Y, Z) % SIZE(4);
+            LINES(X, Y, Z) % SIZE(N);
         }
 
         void testInvalid() {
@@ -74,13 +77,18 @@ protected:
 
     class GRID_Tester : public IOFormatBuilder {
     protected:
-        vector<vector<int>> M;
+        int R = 2;
+        int C = 3;
+        vector<vector<int>> M1, M2, M3, M4;
 
         int bogus;
 
     public:
         void testValid() {
-            GRID(M) % SIZE(2, 3);
+            GRID(M1) % SIZE(2, 3);
+            GRID(M2) % SIZE(R, 3);
+            GRID(M3) % SIZE(2, C);
+            GRID(M4) % SIZE(R, C);
         }
 
         void testInvalid() {
@@ -136,9 +144,11 @@ TEST_F(MagicTests, LINE_Valid) {
             .addScalarVariable(Scalar::create(dummy, "A"))
             .addScalarVariable(Scalar::create(dummy, "B"));
     builder.newLineIOSegment()
+            .addVectorVariable(Vector::create(dummy2, "C"), new int(3));
+    builder.newLineIOSegment()
             .addScalarVariable(Scalar::create(dummy, "A"))
             .addScalarVariable(Scalar::create(dummy, "B"))
-            .addVectorVariable(Vector::create(dummy2, "C"), 3)
+            .addVectorVariable(Vector::create(dummy2, "C"), new int(3))
             .addVectorVariable(Vector::create(dummy2, "D"));
 
     EXPECT_THAT(ioFormat, Eq(builder.build()));
@@ -169,16 +179,16 @@ TEST_F(MagicTests, LINES_Valid) {
     builder.prepareForInputFormat();
     builder.newLinesIOSegment()
             .addVectorVariable(Vector::create(dummy, "X"))
-            .setSize(2);
+            .setSize(new int(2));
     builder.newLinesIOSegment()
             .addVectorVariable(Vector::create(dummy, "X"))
             .addVectorVariable(Vector::create(dummy, "Y"))
-            .setSize(3);
+            .setSize(new int(3));
     builder.newLinesIOSegment()
             .addVectorVariable(Vector::create(dummy, "X"))
             .addVectorVariable(Vector::create(dummy, "Y"))
             .addJaggedVectorVariable(Matrix::create(dummy2, "Z"))
-            .setSize(4);
+            .setSize(new int(4));
 
     EXPECT_THAT(ioFormat, Eq(builder.build()));
 }
@@ -206,8 +216,17 @@ TEST_F(MagicTests, GRID_Valid) {
     IOFormatBuilder builder;
     builder.prepareForInputFormat();
     builder.newGridIOSegment()
-            .addMatrixVariable(Matrix::create(dummy, "M"))
-            .setSize(2, 3);
+            .addMatrixVariable(Matrix::create(dummy, "M1"))
+            .setSize(new int(2), new int(3));
+    builder.newGridIOSegment()
+            .addMatrixVariable(Matrix::create(dummy, "M2"))
+            .setSize(new int(2), new int(3));
+    builder.newGridIOSegment()
+            .addMatrixVariable(Matrix::create(dummy, "M3"))
+            .setSize(new int(2), new int(3));
+    builder.newGridIOSegment()
+            .addMatrixVariable(Matrix::create(dummy, "M4"))
+            .setSize(new int(2), new int(3));
 
     EXPECT_THAT(ioFormat, Eq(builder.build()));
 }

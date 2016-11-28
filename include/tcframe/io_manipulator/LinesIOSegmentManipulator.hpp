@@ -26,7 +26,7 @@ public:
             }
         }
 
-        for (int j = 0; j < segment->size(); j++) {
+        for (int j = 0; j < *segment->size(); j++) {
             string lastVariableName;
             for (Variable* variable : segment->variables()) {
                 if (variable->type() == VariableType::VECTOR) {
@@ -49,7 +49,7 @@ public:
     static void print(LinesIOSegment* segment, ostream* out) {
         checkVectorSizes(segment);
 
-        for (int j = 0; j < segment->size(); j++) {
+        for (int j = 0; j < *segment->size(); j++) {
             for (int i = 0; i < segment->variables().size(); i++) {
                 Variable *variable = segment->variables()[i];
                 if (variable->type() == VariableType::VECTOR) {
@@ -80,10 +80,10 @@ private:
                 size = ((Matrix*) variable)->rows();
                 type = "jagged vector";
             }
-            if (size != segment->size()) {
+            if (size != *segment->size()) {
                 throw runtime_error(
                         "Number of elements of " + type + " " + TokenFormatter::formatVariable(variable->name())
-                      + " unsatisfied. Expected: " + StringUtils::toString(segment->size())
+                      + " unsatisfied. Expected: " + StringUtils::toString(*segment->size())
                       + ", actual: " + StringUtils::toString(size));
             }
         }

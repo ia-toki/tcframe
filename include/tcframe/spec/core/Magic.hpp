@@ -21,8 +21,8 @@ using std::vector;
 #define LINES(...) (MagicLinesIOSegmentBuilder(newLinesIOSegment(), #__VA_ARGS__), __VA_ARGS__)
 #define GRID(...) (MagicGridIOSegmentBuilder(newGridIOSegment(), #__VA_ARGS__), __VA_ARGS__)
 
-#define SIZE_IMPL1(size) VectorSize{size}
-#define SIZE_IMPL2(rows, columns) MatrixSize{rows, columns}
+#define SIZE_IMPL1(size) VectorSize(size)
+#define SIZE_IMPL2(rows, columns) MatrixSize(rows, columns)
 #define SIZE_WITH_COUNT(_1, _2, N, ...) SIZE_IMPL ## N
 #define SIZE(...) SIZE_WITH_COUNT(__VA_ARGS__, 2, 1)(__VA_ARGS__)
 
@@ -30,7 +30,13 @@ using std::vector;
 namespace tcframe {
 
 struct VectorSize {
-    int size;
+    int* size;
+
+    VectorSize(int&& size)
+            : size(new int(size)) {}
+
+    VectorSize(int& size)
+            : size(&size) {}
 };
 
 template<typename T>
@@ -45,8 +51,24 @@ VectorWithSize<T> operator%(vector<T>& vektor, VectorSize size) {
 }
 
 struct MatrixSize {
-    int rows;
-    int columns;
+    int* rows;
+    int* columns;
+
+    MatrixSize(int&& rows, int&& columns)
+            : rows(new int(rows))
+            , columns(new int(columns)) {}
+
+    MatrixSize(int&& rows, int& columns)
+            : rows(new int(rows))
+            , columns(&columns) {}
+
+    MatrixSize(int& rows, int&& columns)
+            : rows(&rows)
+            , columns(new int(columns)) {}
+
+    MatrixSize(int& rows, int& columns)
+            : rows(&rows)
+            , columns(&columns) {}
 };
 
 class VariableNamesExtractor {

@@ -23,13 +23,13 @@ TEST_F(LinesIOSegmentBuilderTests, Building_Successful) {
     LinesIOSegment* segment = builder
             .addVectorVariable(Vector::create(X, "X"))
             .addVectorVariable(Vector::create(Y, "Y"))
-            .setSize(3)
+            .setSize(new int(3))
             .build();
 
     ASSERT_THAT(segment->variables(), SizeIs(2));
     EXPECT_TRUE(segment->variables()[0]->equals(Vector::create(X, "X")));
     EXPECT_TRUE(segment->variables()[1]->equals(Vector::create(Y, "Y")));
-    EXPECT_THAT(segment->size(), Eq(3));
+    EXPECT_THAT(*segment->size(), Eq(3));
 }
 
 TEST_F(LinesIOSegmentBuilderTests, Building_WithJaggedVector_Successful) {
@@ -37,20 +37,20 @@ TEST_F(LinesIOSegmentBuilderTests, Building_WithJaggedVector_Successful) {
             .addVectorVariable(Vector::create(X, "X"))
             .addVectorVariable(Vector::create(Y, "Y"))
             .addJaggedVectorVariable(Matrix::create(Z, "Z"))
-            .setSize(4)
+            .setSize(new int(4))
             .build();
 
     ASSERT_THAT(segment->variables(), SizeIs(3));
     EXPECT_TRUE(segment->variables()[0]->equals(Vector::create(X, "X")));
     EXPECT_TRUE(segment->variables()[1]->equals(Vector::create(Y, "Y")));
     EXPECT_TRUE(segment->variables()[2]->equals(Matrix::create(Z, "Z")));
-    EXPECT_THAT(segment->size(), Eq(4));
+    EXPECT_THAT(*segment->size(), Eq(4));
 }
 
 TEST_F(LinesIOSegmentBuilderTests, Building_Failed_NoVariables) {
     try {
         builder
-                .setSize(4)
+                .setSize(new int(4))
                 .build();
         FAIL();
     } catch (runtime_error& e) {
@@ -64,7 +64,7 @@ TEST_F(LinesIOSegmentBuilderTests, Building_Failed_JaggedVectorNotLast) {
                 .addVectorVariable(Vector::create(Y, "Y"))
                 .addJaggedVectorVariable(Matrix::create(Z, "Z"))
                 .addVectorVariable(Vector::create(X, "X"))
-                .setSize(5)
+                .setSize(new int(5))
                 .build();
         FAIL();
     } catch (runtime_error& e) {

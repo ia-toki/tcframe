@@ -20,13 +20,13 @@ protected:
 TEST_F(LineIOSegmentBuilderTests, Building_Successful) {
     LineIOSegment* segment = builder
             .addScalarVariable(Scalar::create(A, "A"))
-            .addVectorVariable(Vector::create(B, "B"), 7)
+            .addVectorVariable(Vector::create(B, "B"), new int(7))
             .addVectorVariable(Vector::create(C, "C"))
             .build();
 
     EXPECT_THAT(segment->variables(), ElementsAre(
             LineIOSegmentVariable(Scalar::create(A, "A")),
-            LineIOSegmentVariable(Vector::create(B, "B"), 7),
+            LineIOSegmentVariable(Vector::create(B, "B"), new int(7)),
             LineIOSegmentVariable(Vector::create(C, "C"))));
 }
 
@@ -35,7 +35,7 @@ TEST_F(LineIOSegmentBuilderTests, Building_Failed_VectorWithoutSizeNotLast) {
         builder
                 .addScalarVariable(Scalar::create(A, "A"))
                 .addVectorVariable(Vector::create(B, "B"))
-                .addVectorVariable(Vector::create(C, "C"), 7)
+                .addVectorVariable(Vector::create(C, "C"), new int(7))
                 .build();
         FAIL();
     } catch (runtime_error& e) {
