@@ -1,7 +1,9 @@
 Tutorial 1: Best Pair
 =====================
 
-In this tutorial, you will learn how to write a generator for a simple yet tricky problem, called **Best Pair**. Here is the complete problem statement:
+In this tutorial, you will learn how to write a generator for a simple yet tricky problem, called **Best Pair**. We will focus on the general idea of how to come up with a strong set of test cases.
+
+Here is the complete problem statement:
 
 ----
 
@@ -445,4 +447,4 @@ Here is the complete spec file for our Best Pair problem.
         }
     };
 
-That's it. The complete source files for this tutorial can also be found `here <https://github.com/tcframe/tcframe-examples/tree/master/tutorials/1_best-pair>`_.
+That's it! The complete source files for this tutorial can also be found `here <https://github.com/tcframe/tcframe-examples/tree/master/tutorials/1_best-pair>`_.

@@ -25,7 +25,7 @@ Now that you got your hand wet with your first generator, master each of **tcfra
 :ref:`Tutorials <tutorials>`
 ----------------------------
 
-Tutorials, best practices, and case studies in writing generators for real competitive programming problems.
+Tutorials, case studies, and best practices in writing generators for real competitive programming problems.
 
 :ref:`API Reference <api-ref>`
 ------------------------------
