@@ -238,7 +238,7 @@ There are also several cases for which the answer has some interesting propertie
 
     ``CASE(N = 2, A = {-1000000, 1000000});``
 
-    Note that (2) and (6) will reject solutions which initialize the answer to 0 (instead of a very small negative integer).
+    Note that (3) and (6) will reject solutions which initialize the answer to 0 (instead of a very small negative integer).
 
 So far, we have considered various cases for which the answer has some properties. Let's now consider cases for which the **input** itself has some interesting properties.
 
@@ -255,7 +255,7 @@ So far, we have considered various cases for which the answer has some propertie
     This is already covered by (4).
 
 9. N = 2
-    This is the smallest possible value for N. Already covered by (2) and (6).
+    This is the smallest possible value for N. Already covered by (3) and (6).
 
 10. Random values for elements of A
      It's always good idea to include randomized input to the test data when the input space is very large (which should be true for most problems).
@@ -313,7 +313,7 @@ So far, we have considered various cases for which the answer has some propertie
 
 
 11. N = 100000
-     The maximum value of N!
+     The maximum value of N. This will reject solutions that use array with size less than 100000.
 
      ``CASE(N = 100000, randomElements(50000, 50000));``
 
