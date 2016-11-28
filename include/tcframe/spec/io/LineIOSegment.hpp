@@ -16,27 +16,28 @@ namespace tcframe {
 struct LineIOSegmentVariable {
 private:
     Variable* variable_;
-    int size_;
+    int* size_;
 
 public:
-    LineIOSegmentVariable(Variable* variable, int size)
+    LineIOSegmentVariable(Variable* variable, int* size)
             : variable_(variable)
             , size_(size) {}
 
     LineIOSegmentVariable(Variable* variable)
             : variable_(variable)
-            , size_(-1) {}
+            , size_(new int(-1)) {
+    }
 
     Variable* variable() const {
         return variable_;
     }
 
-    int size() const {
+    int* size() const {
         return size_;
     }
 
     bool operator==(const LineIOSegmentVariable& o) const {
-        return variable_->equals(o.variable_) && size_ == o.size_;
+        return variable_->equals(o.variable_) && *size_ == *o.size_;
     }
 };
 
@@ -87,7 +88,7 @@ public:
         return *this;
     }
 
-    LineIOSegmentBuilder& addVectorVariable(Vector* variable, int size) {
+    LineIOSegmentBuilder& addVectorVariable(Vector* variable, int* size) {
         checkVectorWithoutSize();
         subject_->variables_.push_back(LineIOSegmentVariable(variable, size));
         return *this;

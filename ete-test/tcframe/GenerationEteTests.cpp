@@ -25,6 +25,17 @@ TEST_F(GenerationEteTests, Normal) {
     ));
 }
 
+TEST_F(GenerationEteTests, Normal_ComplexFormats) {
+    ASSERT_THAT(execStatus("cd ete/normal-complex-formats && ../scripts/generate.sh"), Eq(0));
+
+    EXPECT_THAT(ls("ete/normal-complex-formats/tc"), UnorderedElementsAre(
+            "normal-complex-formats_sample_1.in",
+            "normal-complex-formats_sample_1.out",
+            "normal-complex-formats_1.in",
+            "normal-complex-formats_1.out"
+    ));
+}
+
 TEST_F(GenerationEteTests, Subtasks) {
     ASSERT_THAT(execStatus("cd ete/subtasks && ../scripts/generate.sh"), Eq(0));
 

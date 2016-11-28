@@ -15,10 +15,13 @@ namespace tcframe {
 
 class GridIOSegmentManipulatorTests : public Test {
 protected:
+    int* rows = new int(2);
+    int* columns = new int(3);
+
     vector<vector<int>> M;
     GridIOSegment* segment = GridIOSegmentBuilder()
             .addMatrixVariable(Matrix::create(M, "M"))
-            .setSize(2, 3)
+            .setSize(rows, columns)
             .build();
 };
 

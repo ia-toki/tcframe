@@ -25,23 +25,23 @@ TEST_F(IOFormatBuilderTests, Building) {
     builder
             .newLinesIOSegment()
             .addVectorVariable(Vector::create(Y, "Y"))
-            .setSize(3);
+            .setSize(new int(3));
     builder
             .newGridIOSegment()
             .addMatrixVariable(Matrix::create(Z, "Z"))
-            .setSize(2, 3)
+            .setSize(new int(2), new int(3))
             .build();
 
     builder.prepareForOutputFormat();
     builder
             .newGridIOSegment()
             .addMatrixVariable(Matrix::create(Z, "Z"))
-            .setSize(2, 3)
+            .setSize(new int(2), new int(3))
             .build();
     builder
             .newLinesIOSegment()
             .addVectorVariable(Vector::create(Y, "Y"))
-            .setSize(3);
+            .setSize(new int(3));
     builder
             .newLineIOSegment()
             .addScalarVariable(Scalar::create(X, "X"));

@@ -25,7 +25,7 @@ public:
             }
 
             Variable* variable = segmentVariable.variable();
-            int size = segmentVariable.size();
+            int size = *segmentVariable.size();
 
             if (variable->type() == VariableType::SCALAR) {
                 parseScalar((Scalar*) variable, in);
@@ -47,7 +47,7 @@ public:
             first = false;
 
             Variable* variable = segmentVariable.variable();
-            int size = segmentVariable.size();
+            int size = *segmentVariable.size();
 
             if (variable->type() == VariableType::SCALAR) {
                 printScalar((Scalar*) variable, out);

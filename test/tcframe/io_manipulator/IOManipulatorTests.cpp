@@ -28,10 +28,10 @@ protected:
                 .addScalarVariable(Scalar::create(A, "A"));
         ioFormatBuilder.newLinesIOSegment()
                 .addVectorVariable(Vector::create(V, "V"))
-                .setSize(2);
+                .setSize(new int(2));
         ioFormatBuilder.newGridIOSegment()
                 .addMatrixVariable(Matrix::create(M, "M"))
-                .setSize(2, 2);
+                .setSize(new int(2), new int(2));
         IOFormat ioFormat = ioFormatBuilder.build();
 
         manipulator = new IOManipulator(ioFormat);

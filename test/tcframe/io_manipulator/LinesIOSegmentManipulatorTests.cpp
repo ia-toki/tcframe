@@ -17,16 +17,18 @@ class LinesIOSegmentManipulatorTests : public Test {
 protected:
     vector<int> X, Y;
     vector<vector<int>> Z;
+    int* size = new int(3);
+
     LinesIOSegment* segment = LinesIOSegmentBuilder()
             .addVectorVariable(Vector::create(X, "X"))
             .addVectorVariable(Vector::create(Y, "Y"))
-            .setSize(3)
+            .setSize(size)
             .build();
     LinesIOSegment* segmentWithJaggedVector = LinesIOSegmentBuilder()
             .addVectorVariable(Vector::create(X, "X"))
             .addVectorVariable(Vector::create(Y, "Y"))
             .addJaggedVectorVariable(Matrix::create(Z, "Z"))
-            .setSize(3)
+            .setSize(size)
             .build();
 };
 

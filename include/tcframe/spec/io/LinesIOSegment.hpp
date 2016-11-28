@@ -18,7 +18,7 @@ struct LinesIOSegment : public IOSegment {
 
 private:
     vector<Variable*> variables_;
-    int size_;
+    int* size_;
 
 public:
     IOSegmentType type() const {
@@ -29,12 +29,12 @@ public:
         return variables_;
     }
 
-    int size() const {
+    int* size() const {
         return size_;
     }
 
     bool operator==(const LinesIOSegment& o) const {
-        if (size_ != o.size_) {
+        if (*size_ != *o.size_) {
             return false;
         }
         if (variables_.size() != o.variables_.size()) {
@@ -60,7 +60,7 @@ private:
 public:
     LinesIOSegmentBuilder()
             : subject_(new LinesIOSegment()) {
-        subject_->size_ = -1;
+        subject_->size_ = new int(-1);
     }
 
     LinesIOSegmentBuilder& addVectorVariable(Vector* variable) {
@@ -75,7 +75,7 @@ public:
         return *this;
     }
 
-    LinesIOSegmentBuilder& setSize(int size) {
+    LinesIOSegmentBuilder& setSize(int* size) {
         subject_->size_ = size;
         return *this;
     }
@@ -91,7 +91,7 @@ private:
             throw runtime_error("Lines segment must have at least one variable");
         }
 
-        if (subject_->size_ == -1) {
+        if (*subject_->size_ == -1) {
             throw runtime_error("Lines segment must define vector sizes");
         }
     }
