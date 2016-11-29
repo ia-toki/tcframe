@@ -22,8 +22,13 @@ After getting the high-level concept of the framework, why not actually start wr
 
 Now that you got your hand wet with your first generator, master each of **tcframe**'s key concepts in more details here.
 
+:ref:`Tutorials <tutorials>`
+----------------------------
+
+Tutorials, case studies, and best practices in writing generators for real competitive programming problems.
+
 :ref:`API Reference <api-ref>`
-------------------------------------
+------------------------------
 
 Finally, this is an API documentation of all **tcframe** features that you will be looking up often when writing your generator.
 
@@ -35,6 +40,7 @@ Finally, this is an API documentation of all **tcframe** features that you will 
    Introduction <introduction/introduction>
    Getting Started <getting-started/getting-started>
    Topic Guides <topic-guides/topic-guides>
+   Tutorials <tutorials/tutorials>
    API Reference <api-ref/api-ref>
    Release Notes <release-notes/release-notes>
 
