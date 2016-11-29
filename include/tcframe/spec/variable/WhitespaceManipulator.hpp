@@ -46,6 +46,12 @@ public:
         }
     }
 
+    static void ensureEof(istream* in, const string& context) {
+        if (in->peek() != char_traits<char>::eof()) {
+            throw runtime_error("Expected: <EOF> after " + context);
+        }
+    }
+
     static void ensureNoEof(istream* in, const string& context) {
         if (in->peek() == char_traits<char>::eof()) {
             throw runtime_error("Cannot parse for " + context + ". Found: <EOF>");

@@ -52,7 +52,7 @@ TEST_F(IOManipulatorTests, Parsing_Failed_MissingEof) {
         manipulator->parseInput(&in);
         FAIL();
     } catch(runtime_error& e) {
-        EXPECT_THAT(e.what(), StrEq("Expected: <EOF>"));
+        EXPECT_THAT(e.what(), StrEq("Expected: <EOF> after 'M[1][1]'"));
     }
 }
 

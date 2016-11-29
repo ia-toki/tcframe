@@ -17,7 +17,7 @@ namespace tcframe {
 
 class LineIOSegmentManipulator {
 public:
-    static void parse(LineIOSegment* segment, istream* in) {
+    static string parse(LineIOSegment* segment, istream* in) {
         string lastVariableName;
         for (const LineIOSegmentVariable& segmentVariable : segment->variables()) {
             if (!lastVariableName.empty()) {
@@ -36,6 +36,8 @@ public:
             }
         }
         WhitespaceManipulator::parseNewline(in, lastVariableName);
+
+        return lastVariableName;
     }
 
     static void print(LineIOSegment* segment, ostream* out) {

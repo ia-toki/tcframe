@@ -17,7 +17,7 @@ namespace tcframe {
 
 class LinesIOSegmentManipulator {
 public:
-    static void parse(LinesIOSegment* segment, istream* in) {
+    static string parse(LinesIOSegment* segment, istream* in) {
         for (Variable* variable : segment->variables()) {
             if (variable->type() == VariableType::VECTOR) {
                 ((Vector*) variable)->clear();
@@ -26,24 +26,29 @@ public:
             }
         }
 
+        string lastVariableName;
+
         for (int j = 0; j < *segment->size(); j++) {
-            string lastVariableName;
+            string lastVariableNameInSegment;
             for (Variable* variable : segment->variables()) {
                 if (variable->type() == VariableType::VECTOR) {
-                    if (!lastVariableName.empty()) {
-                        WhitespaceManipulator::parseSpace(in, lastVariableName);
+                    if (!lastVariableNameInSegment.empty()) {
+                        WhitespaceManipulator::parseSpace(in, lastVariableNameInSegment);
                     }
                     ((Vector*) variable)->parseAndAddElementFrom(in);
                 } else {
-                    if (!lastVariableName.empty() && !WhitespaceManipulator::canParseNewline(in)) {
-                        WhitespaceManipulator::parseSpace(in, lastVariableName);
+                    if (!lastVariableNameInSegment.empty() && !WhitespaceManipulator::canParseNewline(in)) {
+                        WhitespaceManipulator::parseSpace(in, lastVariableNameInSegment);
                     }
                     ((Matrix*) variable)->parseAndAddRowFrom(in, j);
                 }
-                lastVariableName = TokenFormatter::formatVectorElement(variable->name(), j);
+                lastVariableNameInSegment = TokenFormatter::formatVectorElement(variable->name(), j);
             }
-            WhitespaceManipulator::parseNewline(in, lastVariableName);
+            WhitespaceManipulator::parseNewline(in, lastVariableNameInSegment);
+            lastVariableName = lastVariableNameInSegment;
         }
+
+        return lastVariableName;
     }
 
     static void print(LinesIOSegment* segment, ostream* out) {
