@@ -29,11 +29,11 @@ public:
 
             if (variable->type() == VariableType::SCALAR) {
                 parseScalar((Scalar*) variable, in);
+                lastVariableName = TokenFormatter::formatVariable(variable->name());
             } else {
                 parseVector((Vector*) variable, size, in);
+                lastVariableName = TokenFormatter::formatVectorElement(variable->name(), size - 1);
             }
-
-            lastVariableName = TokenFormatter::formatVariable(variable->name());
         }
         WhitespaceManipulator::parseNewline(in, lastVariableName);
     }

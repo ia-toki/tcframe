@@ -77,7 +77,18 @@ TEST_F(LineIOSegmentManipulatorTests, Parsing_Failed_MissingNewline) {
         LineIOSegmentManipulator::parse(segment, &in);
         FAIL();
     } catch (runtime_error& e) {
-        EXPECT_THAT(e.what(), StrEq("Expected: <newline> after 'C'"));
+        EXPECT_THAT(e.what(), StrEq("Expected: <newline> after 'C[1]'"));
+    }
+}
+
+TEST_F(LineIOSegmentManipulatorTests, Parsing_Failed_TooManyElements) {
+    istringstream in("42 123 1 2 3 4 5\n");
+
+    try {
+        LineIOSegmentManipulator::parse(segment, &in);
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Expected: <newline> after 'C[1]'"));
     }
 }
 
