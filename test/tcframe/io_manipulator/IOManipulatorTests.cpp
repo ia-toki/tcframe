@@ -19,37 +19,82 @@ protected:
     vector<int> V;
     vector<vector<int>> M;
 
-    IOManipulator* manipulator;
+    IOManipulator* manipulatorEndsWithScalar;
+    IOManipulator* manipulatorEndsWithVector;
+    IOManipulator* manipulatorEndsWithGrid;
 
     void SetUp() {
-        IOFormatBuilder ioFormatBuilder;
-        ioFormatBuilder.prepareForInputFormat();
-        ioFormatBuilder.newLineIOSegment()
-                .addScalarVariable(Scalar::create(A, "A"));
-        ioFormatBuilder.newLinesIOSegment()
-                .addVectorVariable(Vector::create(V, "V"))
-                .setSize(new int(2));
-        ioFormatBuilder.newGridIOSegment()
-                .addMatrixVariable(Matrix::create(M, "M"))
-                .setSize(new int(2), new int(2));
-        IOFormat ioFormat = ioFormatBuilder.build();
+        {
+            IOFormatBuilder ioFormatBuilder;
+            ioFormatBuilder.prepareForInputFormat();
+            ioFormatBuilder.newLineIOSegment()
+                    .addScalarVariable(Scalar::create(A, "A"));
+            IOFormat ioFormat = ioFormatBuilder.build();
 
-        manipulator = new IOManipulator(ioFormat);
+            manipulatorEndsWithScalar = new IOManipulator(ioFormat);
+        }
+        {
+            IOFormatBuilder ioFormatBuilder;
+            ioFormatBuilder.prepareForInputFormat();
+            ioFormatBuilder.newLineIOSegment()
+                    .addScalarVariable(Scalar::create(A, "A"));
+            ioFormatBuilder.newLinesIOSegment()
+                    .addVectorVariable(Vector::create(V, "V"))
+                    .setSize(new int(2));
+            IOFormat ioFormat = ioFormatBuilder.build();
+
+            manipulatorEndsWithVector = new IOManipulator(ioFormat);
+        }
+        {
+            IOFormatBuilder ioFormatBuilder;
+            ioFormatBuilder.prepareForInputFormat();
+            ioFormatBuilder.newLineIOSegment()
+                    .addScalarVariable(Scalar::create(A, "A"));
+            ioFormatBuilder.newLinesIOSegment()
+                    .addVectorVariable(Vector::create(V, "V"))
+                    .setSize(new int(2));
+            ioFormatBuilder.newGridIOSegment()
+                    .addMatrixVariable(Matrix::create(M, "M"))
+                    .setSize(new int(2), new int(2));
+            IOFormat ioFormat = ioFormatBuilder.build();
+
+            manipulatorEndsWithGrid = new IOManipulator(ioFormat);
+        }
     }
 };
 
 TEST_F(IOManipulatorTests, Parsing_Successful) {
     istringstream in("123\n42\n7\n5 6\n7 8\n");
-    manipulator->parseInput(&in);
+    manipulatorEndsWithGrid->parseInput(&in);
     EXPECT_THAT(A, Eq(123));
     EXPECT_THAT(V, Eq((vector<int>{42, 7})));
     EXPECT_THAT(M, Eq((vector<vector<int>>{{5, 6}, {7, 8}})));
 }
 
-TEST_F(IOManipulatorTests, Parsing_Failed_MissingEof) {
+TEST_F(IOManipulatorTests, Parsing_EndsWithScalar_Failed_MissingEof) {
     istringstream in("123\n42\n7\n5 6\n7 8\nbogus");
     try {
-        manipulator->parseInput(&in);
+        manipulatorEndsWithScalar->parseInput(&in);
+        FAIL();
+    } catch(runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Expected: <EOF> after 'A'"));
+    }
+}
+
+TEST_F(IOManipulatorTests, Parsing_EndsWithVector_Failed_MissingEof) {
+    istringstream in("123\n42\n7\n5 6\n7 8\nbogus");
+    try {
+        manipulatorEndsWithVector->parseInput(&in);
+        FAIL();
+    } catch(runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Expected: <EOF> after 'V[1]'"));
+    }
+}
+
+TEST_F(IOManipulatorTests, Parsing_EndsWithGrid_Failed_MissingEof) {
+    istringstream in("123\n42\n7\n5 6\n7 8\nbogus");
+    try {
+        manipulatorEndsWithGrid->parseInput(&in);
         FAIL();
     } catch(runtime_error& e) {
         EXPECT_THAT(e.what(), StrEq("Expected: <EOF> after 'M[1][1]'"));
@@ -61,7 +106,7 @@ TEST_F(IOManipulatorTests, Printing_Successful) {
     V = {42, 7};
     M = {{5, 6}, {7, 8}};
     ostringstream out;
-    manipulator->printInput(&out);
+    manipulatorEndsWithGrid->printInput(&out);
     EXPECT_THAT(out.str(), Eq("123\n42\n7\n5 6\n7 8\n"));
 }
 
