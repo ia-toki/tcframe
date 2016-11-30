@@ -41,10 +41,11 @@ public:
                     if (!isFirstColumn && !WhitespaceManipulator::canParseNewline(in)) {
                         WhitespaceManipulator::parseSpace(in, lastVariableName);
                     }
-                    ((Matrix*) variable)->parseAndAddRowFrom(in, j);
+                    Matrix* matrixVariable = (Matrix*) variable;
+                    matrixVariable->parseAndAddRowFrom(in, j);
                     lastVariableName = TokenFormatter::formatMatrixElement(variable->name(),
                                                                            j,
-                                                                           ((Matrix*) variable)->columns(j) - 1);
+                                                                           matrixVariable->columns(j) - 1);
                 }
                 isFirstColumn = false;
             }

@@ -31,9 +31,9 @@ public:
                 parseScalar((Scalar*) variable, in);
                 lastVariableName = TokenFormatter::formatVariable(variable->name());
             } else {
-                parseVector((Vector*) variable, size, in);
-                lastVariableName = TokenFormatter::formatVectorElement(variable->name(),
-                                                                       ((Vector*) variable)->size() - 1);
+                Vector* vectorVariable = (Vector*) variable;
+                parseVector(vectorVariable, size, in);
+                lastVariableName = TokenFormatter::formatVectorElement(variable->name(), vectorVariable->size() - 1);
             }
         }
         WhitespaceManipulator::parseNewline(in, lastVariableName);
