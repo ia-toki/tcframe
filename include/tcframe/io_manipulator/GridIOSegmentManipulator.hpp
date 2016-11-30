@@ -17,10 +17,14 @@ namespace tcframe {
 
 class GridIOSegmentManipulator {
 public:
-    static void parse(GridIOSegment* segment, istream* in) {
+    static string parse(GridIOSegment* segment, istream* in) {
         Matrix* variable = segment->variable();
         variable->clear();
         variable->parseFrom(in, *segment->rows(), *segment->columns());
+
+        return TokenFormatter::formatMatrixElement(variable->name(),
+                                                   variable->rows() - 1,
+                                                   variable->columns(variable->rows() - 1) - 1);
     }
 
     static void print(GridIOSegment* segment, ostream* out) {

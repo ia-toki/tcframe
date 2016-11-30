@@ -54,16 +54,21 @@ private:
     }
 
     void parse(const vector<IOSegment*>& segments, istream* in) {
+        string lastVariableName;
         for (IOSegment* segment : segments) {
             if (segment->type() == IOSegmentType::GRID) {
-                GridIOSegmentManipulator::parse((GridIOSegment*) segment, in);
+                lastVariableName = GridIOSegmentManipulator::parse((GridIOSegment*) segment, in);
             } else if (segment->type() == IOSegmentType::LINE) {
-                LineIOSegmentManipulator::parse((LineIOSegment*) segment, in);
+                lastVariableName = LineIOSegmentManipulator::parse((LineIOSegment*) segment, in);
             } else if (segment->type() == IOSegmentType::LINES) {
-                LinesIOSegmentManipulator::parse((LinesIOSegment*) segment, in);
+                lastVariableName = LinesIOSegmentManipulator::parse((LinesIOSegment*) segment, in);
             }
         }
-        WhitespaceManipulator::ensureEof(in);
+        if (!lastVariableName.empty()) {
+            WhitespaceManipulator::ensureEof(in, lastVariableName);
+        } else {
+            WhitespaceManipulator::ensureEof(in);
+        }
     }
 };
 

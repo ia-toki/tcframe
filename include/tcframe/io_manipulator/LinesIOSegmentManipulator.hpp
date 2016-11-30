@@ -17,7 +17,7 @@ namespace tcframe {
 
 class LinesIOSegmentManipulator {
 public:
-    static void parse(LinesIOSegment* segment, istream* in) {
+    static string parse(LinesIOSegment* segment, istream* in) {
         for (Variable* variable : segment->variables()) {
             if (variable->type() == VariableType::VECTOR) {
                 ((Vector*) variable)->clear();
@@ -26,24 +26,33 @@ public:
             }
         }
 
+        string lastVariableName;
+
         for (int j = 0; j < *segment->size(); j++) {
-            string lastVariableName;
+            bool isFirstColumn = true;
             for (Variable* variable : segment->variables()) {
                 if (variable->type() == VariableType::VECTOR) {
-                    if (!lastVariableName.empty()) {
+                    if (!isFirstColumn) {
                         WhitespaceManipulator::parseSpace(in, lastVariableName);
                     }
                     ((Vector*) variable)->parseAndAddElementFrom(in);
+                    lastVariableName = TokenFormatter::formatVectorElement(variable->name(), j);
                 } else {
-                    if (!lastVariableName.empty() && !WhitespaceManipulator::canParseNewline(in)) {
+                    if (!isFirstColumn && !WhitespaceManipulator::canParseNewline(in)) {
                         WhitespaceManipulator::parseSpace(in, lastVariableName);
                     }
-                    ((Matrix*) variable)->parseAndAddRowFrom(in, j);
+                    Matrix* matrixVariable = (Matrix*) variable;
+                    matrixVariable->parseAndAddRowFrom(in, j);
+                    lastVariableName = TokenFormatter::formatMatrixElement(variable->name(),
+                                                                           j,
+                                                                           matrixVariable->columns(j) - 1);
                 }
-                lastVariableName = TokenFormatter::formatVectorElement(variable->name(), j);
+                isFirstColumn = false;
             }
             WhitespaceManipulator::parseNewline(in, lastVariableName);
         }
+
+        return lastVariableName;
     }
 
     static void print(LinesIOSegment* segment, ostream* out) {
