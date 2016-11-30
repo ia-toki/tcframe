@@ -20,6 +20,10 @@ protected:
 
     int* size = new int(2);
 
+    LineIOSegment* segmentOnlyScalar = LineIOSegmentBuilder()
+            .addScalarVariable(Scalar::create(A, "A"))
+            .addScalarVariable(Scalar::create(B, "B"))
+            .build();
     LineIOSegment* segment = LineIOSegmentBuilder()
             .addScalarVariable(Scalar::create(A, "A"))
             .addScalarVariable(Scalar::create(B, "B"))
@@ -37,6 +41,20 @@ TEST_F(LineIOSegmentManipulatorTests, Parsing_EmptyLine) {
     istringstream in("\n");
 
     LineIOSegmentManipulator::parse(LineIOSegmentBuilder().build(), &in);
+}
+
+TEST_F(LineIOSegmentManipulatorTests, Parsing_OnlyScalar_Successful) {
+    istringstream in("42 123\n");
+
+    LineIOSegmentManipulator::parse(segmentOnlyScalar, &in);
+    EXPECT_THAT(A, Eq(42));
+    EXPECT_THAT(B, Eq(123));
+}
+
+TEST_F(LineIOSegmentManipulatorTests, Parsing_OnlyScalar_Successful_CheckLastVariable) {
+    istringstream in("42 123\n");
+
+    EXPECT_THAT(LineIOSegmentManipulator::parse(segmentOnlyScalar, &in), Eq("'B'"));
 }
 
 TEST_F(LineIOSegmentManipulatorTests, Parsing_Successful) {

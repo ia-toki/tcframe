@@ -124,7 +124,7 @@ TEST_F(IOManipulatorTests, Printing_Successful) {
     V = {42, 7};
     M = {{5, 6}, {7, 8}};
     ostringstream out;
-        manipulatorWithMatrixLast->printInput(&out);
+    manipulatorWithMatrixLast->printInput(&out);
     EXPECT_THAT(out.str(), Eq("123\n42\n7\n5 6\n7 8\n"));
 }
 
