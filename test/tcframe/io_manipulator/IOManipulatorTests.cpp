@@ -19,9 +19,9 @@ protected:
     vector<int> V;
     vector<vector<int>> M;
 
-    IOManipulator* manipulatorEndsWithScalar;
-    IOManipulator* manipulatorEndsWithVector;
-    IOManipulator* manipulatorEndsWithGrid;
+    IOManipulator* manipulatorWithScalarLast;
+    IOManipulator* manipulatorWithVectorLast;
+    IOManipulator* manipulatorWithMatrixLast;
     IOManipulator* manipulatorEmpty;
 
     void SetUp() {
@@ -39,7 +39,7 @@ protected:
                     .addScalarVariable(Scalar::create(A, "A"));
             IOFormat ioFormat = ioFormatBuilder.build();
 
-            manipulatorEndsWithScalar = new IOManipulator(ioFormat);
+            manipulatorWithScalarLast = new IOManipulator(ioFormat);
         }
         {
             IOFormatBuilder ioFormatBuilder;
@@ -51,7 +51,7 @@ protected:
                     .setSize(new int(2));
             IOFormat ioFormat = ioFormatBuilder.build();
 
-            manipulatorEndsWithVector = new IOManipulator(ioFormat);
+            manipulatorWithVectorLast = new IOManipulator(ioFormat);
         }
         {
             IOFormatBuilder ioFormatBuilder;
@@ -66,20 +66,20 @@ protected:
                     .setSize(new int(2), new int(2));
             IOFormat ioFormat = ioFormatBuilder.build();
 
-            manipulatorEndsWithGrid = new IOManipulator(ioFormat);
+            manipulatorWithMatrixLast = new IOManipulator(ioFormat);
         }
     }
 };
 
 TEST_F(IOManipulatorTests, Parsing_Successful) {
     istringstream in("123\n42\n7\n5 6\n7 8\n");
-    manipulatorEndsWithGrid->parseInput(&in);
+    manipulatorWithMatrixLast->parseInput(&in);
     EXPECT_THAT(A, Eq(123));
     EXPECT_THAT(V, Eq((vector<int>{42, 7})));
     EXPECT_THAT(M, Eq((vector<vector<int>>{{5, 6}, {7, 8}})));
 }
 
-TEST_F(IOManipulatorTests, Parsing_Empty_Failed_MissingEof) {
+TEST_F(IOManipulatorTests, Parsing_Failed_MissingEof_Empty) {
     istringstream in("123\n42\n7\n5 6\n7 8\nbogus");
     try {
         manipulatorEmpty->parseInput(&in);
@@ -89,30 +89,30 @@ TEST_F(IOManipulatorTests, Parsing_Empty_Failed_MissingEof) {
     }
 }
 
-TEST_F(IOManipulatorTests, Parsing_EndsWithScalar_Failed_MissingEof) {
+TEST_F(IOManipulatorTests, Parsing_Failed_MissingEof_WithScalarLast) {
     istringstream in("123\n42\n7\n5 6\n7 8\nbogus");
     try {
-        manipulatorEndsWithScalar->parseInput(&in);
+        manipulatorWithScalarLast->parseInput(&in);
         FAIL();
     } catch(runtime_error& e) {
         EXPECT_THAT(e.what(), StrEq("Expected: <EOF> after 'A'"));
     }
 }
 
-TEST_F(IOManipulatorTests, Parsing_EndsWithVector_Failed_MissingEof) {
+TEST_F(IOManipulatorTests, Parsing_Failed_MissingEof_WithVectorLast) {
     istringstream in("123\n42\n7\n5 6\n7 8\nbogus");
     try {
-        manipulatorEndsWithVector->parseInput(&in);
+        manipulatorWithVectorLast->parseInput(&in);
         FAIL();
     } catch(runtime_error& e) {
         EXPECT_THAT(e.what(), StrEq("Expected: <EOF> after 'V[1]'"));
     }
 }
 
-TEST_F(IOManipulatorTests, Parsing_EndsWithGrid_Failed_MissingEof) {
+TEST_F(IOManipulatorTests, Parsing_Failed_MissingEof_WithMatrixLast) {
     istringstream in("123\n42\n7\n5 6\n7 8\nbogus");
     try {
-        manipulatorEndsWithGrid->parseInput(&in);
+        manipulatorWithMatrixLast->parseInput(&in);
         FAIL();
     } catch(runtime_error& e) {
         EXPECT_THAT(e.what(), StrEq("Expected: <EOF> after 'M[1][1]'"));
@@ -124,7 +124,7 @@ TEST_F(IOManipulatorTests, Printing_Successful) {
     V = {42, 7};
     M = {{5, 6}, {7, 8}};
     ostringstream out;
-    manipulatorEndsWithGrid->printInput(&out);
+        manipulatorWithMatrixLast->printInput(&out);
     EXPECT_THAT(out.str(), Eq("123\n42\n7\n5 6\n7 8\n"));
 }
 
