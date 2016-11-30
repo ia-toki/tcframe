@@ -40,6 +40,12 @@ TEST_F(LinesIOSegmentManipulatorTests, Parsing_Successful) {
     EXPECT_THAT(Y, Eq(vector<int>{2, 4, 6}));
 }
 
+TEST_F(LinesIOSegmentManipulatorTests, Parsing_Successful_CheckLastVariable) {
+    istringstream in("1 2\n3 4\n5 6\n");
+
+    EXPECT_THAT(LinesIOSegmentManipulator::parse(segment, &in), Eq("'Y[2]'"));
+}
+
 TEST_F(LinesIOSegmentManipulatorTests, Parsing_Failed_MissingVariable) {
     istringstream in("1 2\n3  ");
 
@@ -80,6 +86,12 @@ TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithJaggedVector_Successful) {
     EXPECT_THAT(X, Eq(vector<int>{1, 3, 5}));
     EXPECT_THAT(Y, Eq(vector<int>{2, 4, 6}));
     EXPECT_THAT(Z, Eq(vector<vector<int>>{{10}, {}, {20, 30}}));
+}
+
+TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithJaggedVector_Successful_CheckLastVariable) {
+    istringstream in("1 2 10\n3 4\n5 6 20 30\n");
+
+    EXPECT_THAT(LinesIOSegmentManipulator::parse(segmentWithJaggedVector, &in), Eq("'Z[2][1]'"));
 }
 
 TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithJaggedVector_Failed_MissingSpaceOrNewline) {

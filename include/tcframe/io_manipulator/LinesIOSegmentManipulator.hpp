@@ -29,23 +29,26 @@ public:
         string lastVariableName;
 
         for (int j = 0; j < *segment->size(); j++) {
-            string lastVariableNameInSegment;
+            bool isFirstColumn = true;
             for (Variable* variable : segment->variables()) {
                 if (variable->type() == VariableType::VECTOR) {
-                    if (!lastVariableNameInSegment.empty()) {
-                        WhitespaceManipulator::parseSpace(in, lastVariableNameInSegment);
+                    if (!isFirstColumn) {
+                        WhitespaceManipulator::parseSpace(in, lastVariableName);
                     }
                     ((Vector*) variable)->parseAndAddElementFrom(in);
+                    lastVariableName = TokenFormatter::formatVectorElement(variable->name(), j);
                 } else {
-                    if (!lastVariableNameInSegment.empty() && !WhitespaceManipulator::canParseNewline(in)) {
-                        WhitespaceManipulator::parseSpace(in, lastVariableNameInSegment);
+                    if (!isFirstColumn && !WhitespaceManipulator::canParseNewline(in)) {
+                        WhitespaceManipulator::parseSpace(in, lastVariableName);
                     }
                     ((Matrix*) variable)->parseAndAddRowFrom(in, j);
+                    lastVariableName = TokenFormatter::formatMatrixElement(variable->name(),
+                                                                           j,
+                                                                           ((Matrix*) variable)->columns(j) - 1);
                 }
-                lastVariableNameInSegment = TokenFormatter::formatVectorElement(variable->name(), j);
+                isFirstColumn = false;
             }
-            WhitespaceManipulator::parseNewline(in, lastVariableNameInSegment);
-            lastVariableName = lastVariableNameInSegment;
+            WhitespaceManipulator::parseNewline(in, lastVariableName);
         }
 
         return lastVariableName;

@@ -32,6 +32,12 @@ TEST_F(GridIOSegmentManipulatorTests, Parsing_Successful) {
     EXPECT_THAT(M, Eq(vector<vector<int>>{{1, 2, 3}, {4, 5, 6}}));
 }
 
+TEST_F(GridIOSegmentManipulatorTests, Parsing_Successful_CheckLastVariable) {
+    istringstream in("1 2 3\n4 5 6\n");
+
+    EXPECT_THAT(GridIOSegmentManipulator::parse(segment, &in), Eq("'M[1][2]'"));
+}
+
 TEST_F(GridIOSegmentManipulatorTests, Printing_Successful) {
     ostringstream out;
 

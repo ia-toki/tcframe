@@ -48,6 +48,12 @@ TEST_F(LineIOSegmentManipulatorTests, Parsing_Successful) {
     EXPECT_THAT(C, Eq(vector<int>{1, 2}));
 }
 
+TEST_F(LineIOSegmentManipulatorTests, Parsing_Successful_CheckLastVariable) {
+    istringstream in("42 123 1 2\n");
+
+    EXPECT_THAT(LineIOSegmentManipulator::parse(segment, &in), Eq("'C[1]'"));
+}
+
 TEST_F(LineIOSegmentManipulatorTests, Parsing_Failed_MissingVariable) {
     istringstream in("42  ");
 
@@ -100,6 +106,12 @@ TEST_F(LineIOSegmentManipulatorTests, Parsing_WithVectorWithoutSize_Successful) 
     EXPECT_THAT(B, Eq(123));
     EXPECT_THAT(C, Eq(vector<int>{1, 2}));
     EXPECT_THAT(D, Eq(vector<int>{3, 4, 5}));
+}
+
+TEST_F(LineIOSegmentManipulatorTests, Parsing_WithVectorWithoutSize_Successful_CheckLastVariable) {
+    istringstream in("42 123 1 2 3 4 5\n");
+
+    EXPECT_THAT(LineIOSegmentManipulator::parse(segmentWithVectorWithoutSize, &in), Eq("'D[2]'"));
 }
 
 TEST_F(LineIOSegmentManipulatorTests, Parsing_WithVectorWithoutSize_Failed_MissingSpaceOrNewline) {
