@@ -22,8 +22,16 @@ protected:
     IOManipulator* manipulatorEndsWithScalar;
     IOManipulator* manipulatorEndsWithVector;
     IOManipulator* manipulatorEndsWithGrid;
+    IOManipulator* manipulatorEmpty;
 
     void SetUp() {
+        {
+            IOFormatBuilder ioFormatBuilder;
+            ioFormatBuilder.prepareForInputFormat();
+            IOFormat ioFormat = ioFormatBuilder.build();
+
+            manipulatorEmpty = new IOManipulator(ioFormat);
+        }
         {
             IOFormatBuilder ioFormatBuilder;
             ioFormatBuilder.prepareForInputFormat();
@@ -69,6 +77,16 @@ TEST_F(IOManipulatorTests, Parsing_Successful) {
     EXPECT_THAT(A, Eq(123));
     EXPECT_THAT(V, Eq((vector<int>{42, 7})));
     EXPECT_THAT(M, Eq((vector<vector<int>>{{5, 6}, {7, 8}})));
+}
+
+TEST_F(IOManipulatorTests, Parsing_Empty_Failed_MissingEof) {
+    istringstream in("123\n42\n7\n5 6\n7 8\nbogus");
+    try {
+        manipulatorEmpty->parseInput(&in);
+        FAIL();
+    } catch(runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Expected: <EOF>"));
+    }
 }
 
 TEST_F(IOManipulatorTests, Parsing_EndsWithScalar_Failed_MissingEof) {

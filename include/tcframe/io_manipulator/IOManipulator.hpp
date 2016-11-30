@@ -64,7 +64,11 @@ private:
                 lastVariableName = LinesIOSegmentManipulator::parse((LinesIOSegment*) segment, in);
             }
         }
-        WhitespaceManipulator::ensureEof(in, lastVariableName);
+        if (!lastVariableName.empty()) {
+            WhitespaceManipulator::ensureEof(in, lastVariableName);
+        } else {
+            WhitespaceManipulator::ensureEof(in);
+        }
     }
 };
 
