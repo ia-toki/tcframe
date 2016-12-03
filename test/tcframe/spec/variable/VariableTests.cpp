@@ -16,7 +16,9 @@ namespace tcframe {
 class VariableTests : public Test {
 protected:
     int X;
+    string S;
     FakeVariable var = FakeVariable("X", VariableType::SCALAR);
+    FakeVariable rawVar = FakeVariable("S", VariableType::SCALAR);
 };
 
 TEST_F(VariableTests, Parsing_Successful) {
@@ -64,5 +66,24 @@ TEST_F(VariableTests, Parsing_Failed_TypeMismatch) {
         EXPECT_THAT(e.what(), StrEq("Cannot parse for 'X'. Found: 'abc123'"));
     }
 }
+
+TEST_F(VariableTests, Parsing_Raw_Successful) {
+    istringstream in("  123 45 \nabc");
+    rawVar.parseRawLine(&in, S);
+    EXPECT_THAT(S, Eq("  123 45 "));
+}
+
+TEST_F(VariableTests, Parsing_Raw_Successful_Empty) {
+    istringstream in("\nabc");
+    rawVar.parseRawLine(&in, S);
+    EXPECT_THAT(S, Eq(""));
+}
+
+TEST_F(VariableTests, Parsing_Raw_Successful_Eof) {
+    istringstream in("  123 45 ");
+    rawVar.parseRawLine(&in, S);
+    EXPECT_THAT(S, Eq("  123 45 "));
+}
+
 
 }

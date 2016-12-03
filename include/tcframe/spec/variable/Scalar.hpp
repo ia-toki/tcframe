@@ -27,6 +27,9 @@ public:
 
     template<typename T, typename = ScalarCompatible<T>>
     static Scalar* create(T& var, const string& name);
+
+    template<typename = void>
+    static Scalar* createRaw(string& var, const string& name);
 };
 
 template<typename T, typename = ScalarCompatible<T>>
@@ -48,9 +51,28 @@ public:
     }
 };
 
+class RawScalarImpl : public ScalarImpl<string> {
+private:
+    string* var_;
+
+public:
+    RawScalarImpl(string& var, const string& name)
+            : ScalarImpl(var, name)
+            , var_(&var) {}
+
+    void parseFrom(istream* in) {
+        Variable::parseRawLine(in, *var_);
+    }
+};
+
 template<typename T, typename>
 Scalar* Scalar::create(T& var, const string& name) {
     return new ScalarImpl<T>(var, name);
+}
+
+template<typename>
+Scalar* Scalar::createRaw(string& var, const string& name) {
+    return new RawScalarImpl(var, name);
 }
 
 }

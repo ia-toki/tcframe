@@ -63,6 +63,8 @@ set(SOURCES
         include/tcframe/io_manipulator/IOManipulator.hpp
         include/tcframe/io_manipulator/LineIOSegmentManipulator.hpp
         include/tcframe/io_manipulator/LinesIOSegmentManipulator.hpp
+        include/tcframe/io_manipulator/RawLineIOSegmentManipulator.hpp
+        include/tcframe/io_manipulator/RawLinesIOSegmentManipulator.hpp
         include/tcframe/logger.hpp
         include/tcframe/logger/BaseLogger.hpp
         include/tcframe/logger/LoggerEngine.hpp
@@ -104,6 +106,8 @@ set(SOURCES
         include/tcframe/spec/io/IOSegment.hpp
         include/tcframe/spec/io/LineIOSegment.hpp
         include/tcframe/spec/io/LinesIOSegment.hpp
+        include/tcframe/spec/io/RawLineIOSegment.hpp
+        include/tcframe/spec/io/RawLinesIOSegment.hpp
         include/tcframe/spec/random.hpp
         include/tcframe/spec/random/Random.hpp
         include/tcframe/spec/testcase.hpp
@@ -146,6 +150,8 @@ set(SOURCES
         test/tcframe/io_manipulator/LineIOSegmentManipulatorTests.cpp
         test/tcframe/io_manipulator/LinesIOSegmentManipulatorTests.cpp
         test/tcframe/io_manipulator/MockIOManipulator.hpp
+        test/tcframe/io_manipulator/RawLineIOSegmentManipulatorTests.cpp
+        test/tcframe/io_manipulator/RawLinesIOSegmentManipulatorTests.cpp
         test/tcframe/logger/BaseLogggerTests.cpp
         test/tcframe/logger/MockLoggerEngine.hpp
         test/tcframe/logger/SimpleLoggerEngineTests.cpp
@@ -167,6 +173,8 @@ set(SOURCES
         test/tcframe/spec/io/IOFormatBuilderTests.cpp
         test/tcframe/spec/io/LineIOSegmentBuilderTests.cpp
         test/tcframe/spec/io/LinesIOSegmentBuilderTests.cpp
+        test/tcframe/spec/io/RawLineIOSegmentBuilderTests.cpp
+        test/tcframe/spec/io/RawLinesIOSegmentBuilderTests.cpp
         test/tcframe/spec/random/RandomTests.cpp
         test/tcframe/spec/testcase/TestCaseIdCreatorTests.cpp
         test/tcframe/spec/testcase/TestSuiteBuilderTests.cpp

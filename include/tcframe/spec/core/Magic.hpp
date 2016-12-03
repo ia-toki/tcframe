@@ -19,6 +19,8 @@ using std::vector;
 #define EMPTY_LINE() MagicLineIOSegmentBuilder(newLineIOSegment(), "")
 #define LINE(...) MagicLineIOSegmentBuilder(newLineIOSegment(), #__VA_ARGS__), __VA_ARGS__
 #define LINES(...) (MagicLinesIOSegmentBuilder(newLinesIOSegment(), #__VA_ARGS__), __VA_ARGS__)
+#define RAW_LINE(...) MagicRawLineIOSegmentBuilder(newRawLineIOSegment(), #__VA_ARGS__), __VA_ARGS__
+#define RAW_LINES(...) (MagicRawLinesIOSegmentBuilder(newRawLinesIOSegment(), #__VA_ARGS__), __VA_ARGS__)
 #define GRID(...) (MagicGridIOSegmentBuilder(newGridIOSegment(), #__VA_ARGS__), __VA_ARGS__)
 
 #define SIZE_IMPL1(size) VectorSize(size)
@@ -165,6 +167,57 @@ public:
     }
 
     MagicLinesIOSegmentBuilder& operator%(VectorSize size) {
+        builder_->setSize(size.size);
+        return *this;
+    }
+};
+
+class MagicRawLineIOSegmentBuilder {
+private:
+    RawLineIOSegmentBuilder* builder_;
+    VariableNamesExtractor extractor_;
+
+public:
+    MagicRawLineIOSegmentBuilder(RawLineIOSegmentBuilder& builder, const string& names)
+            : builder_(&builder)
+            , extractor_(VariableNamesExtractor(names)) {}
+
+    MagicRawLineIOSegmentBuilder& operator,(string& var) {
+        builder_->addScalarVariable(Scalar::createRaw(var, extractor_.nextName()));
+        return *this;
+    }
+
+    template<typename T>
+    MagicRawLineIOSegmentBuilder& operator,(T var) {
+        throw runtime_error(
+                "The type of variable " + TokenFormatter::formatVariable(extractor_.nextName())
+                + " is not supported for a raw line segment");
+    }
+};
+
+class MagicRawLinesIOSegmentBuilder {
+private:
+    RawLinesIOSegmentBuilder* builder_;
+    VariableNamesExtractor extractor_;
+
+public:
+    MagicRawLinesIOSegmentBuilder(RawLinesIOSegmentBuilder& builder, const string& names)
+            : builder_(&builder)
+            , extractor_(VariableNamesExtractor(names)) {}
+
+    MagicRawLinesIOSegmentBuilder& operator,(vector<string>& var) {
+        builder_->addVectorVariable(Vector::createRaw(var, extractor_.nextName()));
+        return *this;
+    }
+
+    template<typename T>
+    MagicRawLinesIOSegmentBuilder& operator,(T var) {
+        throw runtime_error(
+                "The type of variable " + TokenFormatter::formatVariable(extractor_.nextName())
+                + " is not supported for a raw lines segment");
+    }
+
+    MagicRawLinesIOSegmentBuilder& operator%(VectorSize size) {
         builder_->setSize(size.size);
         return *this;
     }
