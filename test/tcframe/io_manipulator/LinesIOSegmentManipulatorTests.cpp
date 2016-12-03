@@ -30,6 +30,15 @@ protected:
             .addJaggedVectorVariable(Matrix::create(Z, "Z"))
             .setSize(size)
             .build();
+    LinesIOSegment* segmentWithoutSize = LinesIOSegmentBuilder()
+            .addVectorVariable(Vector::create(X, "X"))
+            .addVectorVariable(Vector::create(Y, "Y"))
+            .build();
+    LinesIOSegment* segmentWithJaggedVectorWithoutSize = LinesIOSegmentBuilder()
+            .addVectorVariable(Vector::create(X, "X"))
+            .addVectorVariable(Vector::create(Y, "Y"))
+            .addJaggedVectorVariable(Matrix::create(Z, "Z"))
+            .build();
 };
 
 TEST_F(LinesIOSegmentManipulatorTests, Parsing_Successful) {
@@ -105,6 +114,79 @@ TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithJaggedVector_Failed_MissingSp
     }
 }
 
+TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithoutSize_Successful) {
+    istringstream in("1 2\n3 4\n5 6\n");
+
+    LinesIOSegmentManipulator::parse(segmentWithoutSize, &in);
+    EXPECT_THAT(X, Eq(vector<int>{1, 3, 5}));
+    EXPECT_THAT(Y, Eq(vector<int>{2, 4, 6}));
+}
+
+TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithoutSize_Successful_CheckLastVariable) {
+    istringstream in("1 2\n3 4\n5 6\n");
+
+    EXPECT_THAT(LinesIOSegmentManipulator::parse(segmentWithoutSize, &in), Eq("'Y[2]'"));
+}
+
+TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithoutSize_Failed_MissingVariable) {
+    istringstream in("1 2\n3  ");
+
+    try {
+        LinesIOSegmentManipulator::parse(segmentWithoutSize, &in);
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Cannot parse for 'Y[1]'. Found: <whitespace>"));
+    }
+}
+
+TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithoutSize__Failed_MissingWhitespace) {
+    istringstream in("1 2\n3");
+
+    try {
+        LinesIOSegmentManipulator::parse(segmentWithoutSize, &in);
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Expected: <space> after 'X[1]'"));
+    }
+}
+
+TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithoutSize_Failed_MissingNewline) {
+    istringstream in("1 2\n3 4 ");
+
+    try {
+        LinesIOSegmentManipulator::parse(segmentWithoutSize, &in);
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Expected: <newline> after 'Y[1]'"));
+    }
+}
+
+TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithJaggedVector_WithoutSize_Successful) {
+    istringstream in("1 2 10\n3 4\n5 6 20 30\n");
+
+    LinesIOSegmentManipulator::parse(segmentWithJaggedVectorWithoutSize, &in);
+    EXPECT_THAT(X, Eq(vector<int>{1, 3, 5}));
+    EXPECT_THAT(Y, Eq(vector<int>{2, 4, 6}));
+    EXPECT_THAT(Z, Eq(vector<vector<int>>{{10}, {}, {20, 30}}));
+}
+
+TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithJaggedVector_WithoutSize_Successful_CheckLastVariable) {
+    istringstream in("1 2 10\n3 4\n5 6 20 30\n");
+
+    EXPECT_THAT(LinesIOSegmentManipulator::parse(segmentWithJaggedVectorWithoutSize, &in), Eq("'Z[2][1]'"));
+}
+
+TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithJaggedVector_WithoutSize_Failed_MissingSpaceOrNewline) {
+    istringstream in("1 2 10\n3 4\n5 6 20 30");
+
+    try {
+        LinesIOSegmentManipulator::parse(segmentWithJaggedVectorWithoutSize, &in);
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Expected: <space> or <newline> after 'Z[2][1]'"));
+    }
+}
+
 TEST_F(LinesIOSegmentManipulatorTests, Printing_Successful) {
     ostringstream out;
 
@@ -152,6 +234,62 @@ TEST_F(LinesIOSegmentManipulatorTests, Printing_WithJaggedVector_Failed_SizeMism
         FAIL();
     } catch (runtime_error& e) {
         EXPECT_THAT(e.what(), StrEq("Number of elements of jagged vector 'Z' unsatisfied. Expected: 3, actual: 2"));
+    }
+}
+
+TEST_F(LinesIOSegmentManipulatorTests, Printing_WithoutSize_Successful) {
+    ostringstream out;
+
+    X = {1, 3, 5};
+    Y = {2, 4, 6};
+
+    LinesIOSegmentManipulator::print(segmentWithoutSize, &out);
+    EXPECT_THAT(out.str(), Eq("1 2\n3 4\n5 6\n"));
+}
+
+TEST_F(LinesIOSegmentManipulatorTests, Printing_WithoutSize_Failed_DifferentSizes) {
+    ostringstream out;
+
+    X = {1, 3, 5};
+    Y = {2, 4};
+
+    try {
+        LinesIOSegmentManipulator::print(segmentWithoutSize, &out);
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq(
+                "Number of elements of vector 'Y' unsatisfied. "
+                "Expected: 3 (number of elements of 'X'), "
+                "actual: 2"));
+    }
+}
+
+TEST_F(LinesIOSegmentManipulatorTests, Printing_WithJaggedVector_WithoutSize_Successful) {
+    ostringstream out;
+
+    X = {1, 3, 5};
+    Y = {2, 4, 6};
+    Z = {{10}, {}, {20, 30}};
+
+    LinesIOSegmentManipulator::print(segmentWithJaggedVectorWithoutSize, &out);
+    EXPECT_THAT(out.str(), Eq("1 2 10\n3 4\n5 6 20 30\n"));
+}
+
+TEST_F(LinesIOSegmentManipulatorTests, Printing_WithJaggedVector_WithoutSize_Failed_DifferentSizes) {
+    ostringstream out;
+
+    X = {1, 3, 5};
+    Y = {2, 4, 6};
+    Z = {{10}, {}};
+
+    try {
+        LinesIOSegmentManipulator::print(segmentWithJaggedVectorWithoutSize, &out);
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(),StrEq(
+                "Number of elements of jagged vector 'Z' unsatisfied. "
+                "Expected: 3 (number of elements of 'X'), "
+                "actual: 2"));
     }
 }
 

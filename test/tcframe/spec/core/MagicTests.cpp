@@ -60,6 +60,7 @@ protected:
         int N = 4;
         vector<int> X, Y;
         vector<vector<int>> Z;
+        vector<int> A, B;
 
         int bogus;
 
@@ -68,6 +69,7 @@ protected:
             LINES(X) % SIZE(2);
             LINES(X, Y) % SIZE(3);
             LINES(X, Y, Z) % SIZE(N);
+            LINES(A, B);
         }
 
         void testInvalid() {
@@ -189,6 +191,10 @@ TEST_F(MagicTests, LINES_Valid) {
             .addVectorVariable(Vector::create(dummy, "Y"))
             .addJaggedVectorVariable(Matrix::create(dummy2, "Z"))
             .setSize(new int(4));
+    builder.newLinesIOSegment()
+            .addVectorVariable(Vector::create(dummy, "A"))
+            .addVectorVariable(Vector::create(dummy, "B"))
+            .build();
 
     EXPECT_THAT(ioFormat, Eq(builder.build()));
 }
