@@ -79,6 +79,51 @@ The following macros are exposed to define input/output formats:
 
     Defines an empty line.
 
+.. py:function:: RAW_LINE(string variable name)
+
+    Defines a line of raw string. The variable must be of ``std::string`` type.
+
+    Example:
+
+    .. sourcecode:: cpp
+
+        void InputFormat() {
+            RAW_LINE(S);
+        }
+
+    With **S** = "Hello, world!", the above format will produce:
+
+    ::
+
+        Hello, world!
+
+.. py:function::
+    RAW_LINES(vector of string variable name)
+    RAW_LINES(vector of string variable name) % SIZE(number of elements)
+
+    Defines multiple lines, each consisting of raw string. The variable must be of ``std::vector<std::string>`` type.
+
+    If the size is not given, then this must be the last segment in the I/O format.
+
+    Example:
+
+    .. sourcecode:: cpp
+
+        void InputFormat() {
+            RAW_LINES(X) % SIZE(2);
+            RAW_LINES(Y);
+        }
+
+    With **X** = {"Hello, world!", "Happy new year."}, **Y** = {"lorem", "ipsum", "dolor sit amet"}, the above format will produce:
+
+    ::
+
+        Hello, world!
+        Happy new year.
+        lorem
+        ipsum
+        dolor sit amet
+
 .. py:function:: LINE(comma-separated elements)
 
     Defines a single line containing space-separated scalar or vector variables. In case of vector variables, the elements are separated by spaces as well.
@@ -107,9 +152,13 @@ The following macros are exposed to define input/output formats:
         1 2 3 100 200 300 400
         2 7 8
 
-.. py:function:: LINES(comma-separated vector/matrix variable names) % SIZE(number of elements)
+.. py:function::
+    LINES(comma-separated vector/matrix variable names)
+    LINES(comma-separated vector/matrix variable names) % SIZE(number of elements)
 
-    Defines multiple lines, each consisting space-separated elements of given vector/matrix variables.
+    Defines multiple lines, each consisting of space-separated elements of given vector/matrix variables.
+
+    If the size is not given, this must be the last segment in the I/O format.
 
     Example:
 
@@ -118,9 +167,10 @@ The following macros are exposed to define input/output formats:
         void InputFormat() {
             LINES(V) % SIZE(2);
             LINES(X, Y) % SIZE(N);
+            LINES(Z);
         }
 
-    With **V** = {1, 2}, **X** = {100, 110, 120}, **Y** = {200, 210, 220}, **N** = 3, the above format will produce:
+    With **V** = {1, 2}, **X** = {100, 110, 120}, **Y** = {200, 210, 220} **N** = 3, Z = {1, 2, 3, 4} the above format will produce:
 
     ::
 
@@ -129,6 +179,10 @@ The following macros are exposed to define input/output formats:
         100 200
         110 210
         120 220
+        1
+        2
+        3
+        4
 
     If a matrix variable is given, it must occur as the last argument, and the number of rows must match with the number of elements of the other vector variables (if any). It is not required that each row of the matrix consists of the same number of columns.
 
