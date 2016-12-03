@@ -28,7 +28,11 @@ public:
 
         string lastVariableName;
 
-        for (int j = 0; j < *segment->size(); j++) {
+        for (int j = 0; j != *segment->size(); j++) {
+            if (*segment->size() == -1 && WhitespaceManipulator::isEof(in)) {
+                break;
+            }
+
             bool isFirstColumn = true;
             for (Variable* variable : segment->variables()) {
                 if (variable->type() == VariableType::VECTOR) {
@@ -58,7 +62,8 @@ public:
     static void print(LinesIOSegment* segment, ostream* out) {
         checkVectorSizes(segment);
 
-        for (int j = 0; j < *segment->size(); j++) {
+        int size = getSize(segment);
+        for (int j = 0; j < size; j++) {
             for (int i = 0; i < segment->variables().size(); i++) {
                 Variable *variable = segment->variables()[i];
                 if (variable->type() == VariableType::VECTOR) {
@@ -78,7 +83,22 @@ public:
     }
 
 private:
+    static int getSize(LinesIOSegment* segment) {
+        if (*segment->size() != -1) {
+            return *segment->size();
+        }
+
+        Variable* firstVariable = segment->variables()[0];
+        if (firstVariable->type() == VariableType::VECTOR) {
+            return ((Vector*) firstVariable)->size();
+        } else {
+            return ((Matrix*) firstVariable)->rows();
+        }
+    }
+
     static void checkVectorSizes(LinesIOSegment* segment) {
+        int expectedSize = getSize(segment);
+
         for (Variable* variable : segment->variables()) {
             int size;
             string type;
@@ -89,10 +109,15 @@ private:
                 size = ((Matrix*) variable)->rows();
                 type = "jagged vector";
             }
-            if (size != *segment->size()) {
+            if (size != expectedSize) {
+                string withoutSizeMessage;
+                if (*segment->size() == -1) {
+                    string firstVariableName = TokenFormatter::formatVariable(segment->variables()[0]->name());
+                    withoutSizeMessage = " (number of elements of " + firstVariableName + ")";
+                }
                 throw runtime_error(
                         "Number of elements of " + type + " " + TokenFormatter::formatVariable(variable->name())
-                      + " unsatisfied. Expected: " + StringUtils::toString(*segment->size())
+                      + " unsatisfied. Expected: " + StringUtils::toString(expectedSize) + withoutSizeMessage
                       + ", actual: " + StringUtils::toString(size));
             }
         }

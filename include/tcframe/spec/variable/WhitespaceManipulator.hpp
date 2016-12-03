@@ -40,6 +40,10 @@ public:
         }
     }
 
+    static bool isEof(istream* in) {
+        return in->peek() == char_traits<char>::eof();
+    }
+
     static void ensureEof(istream* in) {
         if (in->peek() != char_traits<char>::eof()) {
             throw runtime_error("Expected: <EOF>");

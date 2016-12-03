@@ -90,10 +90,6 @@ private:
         if (subject_->variables_.empty()) {
             throw runtime_error("Lines segment must have at least one variable");
         }
-
-        if (*subject_->size_ == -1) {
-            throw runtime_error("Lines segment must define vector sizes");
-        }
     }
 
     void checkJaggedVector() {

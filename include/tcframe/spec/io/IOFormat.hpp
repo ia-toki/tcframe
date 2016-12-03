@@ -1,7 +1,8 @@
 #pragma once
 
-#include <vector>
+#include <stdexcept>
 #include <utility>
+#include <vector>
 
 #include "GridIOSegment.hpp"
 #include "IOSegment.hpp"
@@ -9,6 +10,7 @@
 #include "LinesIOSegment.hpp"
 
 using std::move;
+using std::runtime_error;
 using std::vector;
 
 namespace tcframe {
@@ -99,10 +101,24 @@ private:
     void addLastSegment() {
         if (lastBuilder_ != nullptr) {
             if (currentFormat_ != nullptr) {
+                if (hasLinesSegmentWithoutSizeAsLastSegment()) {
+                    throw runtime_error("Lines segment without size can only be the last segment");
+                }
                 currentFormat_->push_back(lastBuilder_->build());
             }
             lastBuilder_ = nullptr;
         }
+    }
+
+    bool hasLinesSegmentWithoutSizeAsLastSegment() {
+        if (currentFormat_->empty()) {
+            return false;
+        }
+        IOSegment* lastSegment = currentFormat_->back();
+        if (lastSegment->type() != IOSegmentType::LINES) {
+            return false;
+        }
+        return *((LinesIOSegment*) lastSegment)->size() == -1;
     }
 };
 

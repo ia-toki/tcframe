@@ -32,6 +32,17 @@ TEST_F(LinesIOSegmentBuilderTests, Building_Successful) {
     EXPECT_THAT(*segment->size(), Eq(3));
 }
 
+TEST_F(LinesIOSegmentBuilderTests, Building_WithoutSize_Successful) {
+    LinesIOSegment* segment = builder
+            .addVectorVariable(Vector::create(X, "X"))
+            .addVectorVariable(Vector::create(Y, "Y"))
+            .build();
+
+    ASSERT_THAT(segment->variables(), SizeIs(2));
+    EXPECT_TRUE(segment->variables()[0]->equals(Vector::create(X, "X")));
+    EXPECT_TRUE(segment->variables()[1]->equals(Vector::create(Y, "Y")));
+}
+
 TEST_F(LinesIOSegmentBuilderTests, Building_WithJaggedVector_Successful) {
     LinesIOSegment* segment = builder
             .addVectorVariable(Vector::create(X, "X"))
@@ -69,19 +80,6 @@ TEST_F(LinesIOSegmentBuilderTests, Building_Failed_JaggedVectorNotLast) {
         FAIL();
     } catch (runtime_error& e) {
         EXPECT_THAT(e.what(), StrEq("Jagged vector can only be the last variable in a lines segment"));
-    }
-}
-
-TEST_F(LinesIOSegmentBuilderTests, Building_Failed_SizeNotSet) {
-    try {
-        builder
-                .addVectorVariable(Vector::create(X, "X"))
-                .addVectorVariable(Vector::create(Y, "Y"))
-                .addJaggedVectorVariable(Matrix::create(Z, "Z"))
-                .build();
-        FAIL();
-    } catch (runtime_error& e) {
-        EXPECT_THAT(e.what(), StrEq("Lines segment must define vector sizes"));
     }
 }
 

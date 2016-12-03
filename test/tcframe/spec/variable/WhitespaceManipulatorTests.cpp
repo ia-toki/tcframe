@@ -76,6 +76,16 @@ TEST_F(WhitespaceManipulatorTests, Parsing_Newline_Failed) {
     }
 }
 
+TEST_F(WhitespaceManipulatorTests, IsEof_True) {
+    istream* in = new istringstream("");
+    EXPECT_TRUE(WhitespaceManipulator::isEof(in));
+}
+
+TEST_F(WhitespaceManipulatorTests, IsEof_False) {
+    istream* in = new istringstream("123");
+    EXPECT_FALSE(WhitespaceManipulator::isEof(in));
+}
+
 TEST_F(WhitespaceManipulatorTests, EnsuringEof_Successful) {
     istream* in = new istringstream("");
     EXPECT_NO_THROW({
@@ -90,6 +100,12 @@ TEST_F(WhitespaceManipulatorTests, EnsuringEof_Failed) {
         FAIL();
     } catch (runtime_error& e) {
         EXPECT_THAT(e.what(), StrEq("Expected: <EOF>"));
+    }
+    try {
+        WhitespaceManipulator::ensureEof(in, "'N'");
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Expected: <EOF> after 'N'"));
     }
 }
 
