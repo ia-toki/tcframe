@@ -170,7 +170,7 @@ The following macros are exposed to define input/output formats:
             LINES(Z);
         }
 
-    With **V** = {1, 2}, **X** = {100, 110, 120}, **Y** = {200, 210, 220} **N** = 3, Z = {1, 2, 3, 4} the above format will produce:
+    With **V** = {1, 2}, **X** = {100, 110, 120}, **Y** = {200, 210, 220} **N** = 3, **Z** = {1, 2, 3, 4} the above format will produce:
 
     ::
 

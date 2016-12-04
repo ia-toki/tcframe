@@ -74,7 +74,7 @@ These segments do some formatting to the value of the variables. For example, th
 
     In tokenized segments, string variables cannot have whitespaces. For example, ``hello, world!`` is considered to have two string variables: ``hello,`` and ``world!``. Use raw segments if you want to work with strings containing whitespaces.
 
-Singe line
+Single line
     Specified by the macro ``LINE(...)``. Represents space-separated values in a single line.
 
     The macro accepts one or more I/O variables as arguments. The value of the variables will be space-separated. For example: "... the first line consists of two space-separated integers **N** and **M**" can be specified by ``LINE(N, M)``.
