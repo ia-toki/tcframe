@@ -178,7 +178,6 @@ set(SOURCES
         test/tcframe/spec/random/RandomTests.cpp
         test/tcframe/spec/testcase/TestCaseIdCreatorTests.cpp
         test/tcframe/spec/testcase/TestSuiteBuilderTests.cpp
-        test/tcframe/spec/variable/FakeVariable.hpp
         test/tcframe/spec/variable/MatrixTests.cpp
         test/tcframe/spec/variable/ScalarTests.cpp
         test/tcframe/spec/variable/TokenFormatterTests.cpp

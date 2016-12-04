@@ -1,6 +1,5 @@
 #include "gmock/gmock.h"
 
-#include "../variable/FakeVariable.hpp"
 #include "tcframe/runner.hpp"
 
 using ::testing::Eq;

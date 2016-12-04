@@ -41,11 +41,11 @@ private:
 public:
     virtual ~Variable() {}
 
-    virtual const string& name() const {
+    const string& name() const {
         return name_;
     }
 
-    virtual VariableType type() const {
+    VariableType type() const {
         return type_;
     }
 
@@ -53,18 +53,14 @@ public:
         return tie(name_, type_) == tie(o->name_, o->type_);
     }
 
-protected:
-    Variable(const string& name, VariableType type)
-            : name_(name)
-            , type_(type) {}
-
+    /* Visible for testing */
     template<typename T>
-    static void parseValue(istream* in, T& val, const string& context) {
+    static void parseValue(istream* in, T& var, const string& context) {
         WhitespaceManipulator::ensureNoEof(in, context);
         WhitespaceManipulator::ensureNoWhitespace(in, context);
 
         long long currentPos = in->tellg();
-        *in >> val;
+        *in >> var;
 
         if (in->fail()) {
             in->clear();
@@ -77,12 +73,18 @@ protected:
         }
     }
 
-    static void parseRawLine(istream* in, string& val) {
-        getline(*in, val);
+    /* Visible for testing */
+    static void parseRawLine(istream* in, string& var) {
+        getline(*in, var);
         if (!in->eof()) {
             in->unget();
         }
     }
+
+protected:
+    Variable(const string& name, VariableType type)
+            : name_(name)
+            , type_(type) {}
 };
 
 }
