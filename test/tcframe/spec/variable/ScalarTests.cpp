@@ -5,12 +5,12 @@
 #include <vector>
 #include <sstream>
 
+using ::testing::Eq;
+using ::testing::Test;
+
 using std::istringstream;
 using std::ostringstream;
 using std::vector;
-
-using ::testing::Eq;
-using ::testing::Test;
 
 namespace tcframe {
 

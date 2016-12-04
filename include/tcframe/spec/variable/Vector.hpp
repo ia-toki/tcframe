@@ -10,7 +10,6 @@
 
 using std::iostream;
 using std::ostream;
-using std::ref;
 using std::vector;
 
 namespace tcframe {

@@ -12,8 +12,6 @@
 #include "MockGeneratorLogger.hpp"
 #include "tcframe/generator/TestCaseGenerator.hpp"
 
-using std::ostringstream;
-
 using ::testing::_;
 using ::testing::AllOf;
 using ::testing::DoAll;
@@ -29,6 +27,8 @@ using ::testing::Test;
 using ::testing::Throw;
 using ::testing::Truly;
 using ::testing::WithArg;
+
+using std::ostringstream;
 
 namespace tcframe {
 

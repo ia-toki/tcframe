@@ -13,7 +13,6 @@ using std::endl;
 using std::iostream;
 using std::is_same;
 using std::ostream;
-using std::ref;
 using std::vector;
 
 namespace tcframe {

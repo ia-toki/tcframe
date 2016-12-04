@@ -1,6 +1,5 @@
 #pragma once
 
-#include <algorithm>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -9,7 +8,6 @@
 
 using std::istringstream;
 using std::ostringstream;
-using std::replace;
 using std::string;
 using std::vector;
 

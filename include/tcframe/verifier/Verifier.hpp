@@ -1,9 +1,9 @@
 #pragma once
 
 #include <map>
-#include <vector>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "ConstraintsVerificationResult.hpp"
 #include "MultipleTestCasesConstraintsVerificationResult.hpp"

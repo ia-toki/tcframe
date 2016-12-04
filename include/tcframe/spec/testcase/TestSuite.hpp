@@ -16,6 +16,7 @@ using std::function;
 using std::set;
 using std::string;
 using std::tie;
+using std::vector;
 
 namespace tcframe {
 

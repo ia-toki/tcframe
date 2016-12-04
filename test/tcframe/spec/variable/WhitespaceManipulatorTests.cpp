@@ -10,7 +10,6 @@ using ::testing::Test;
 
 using std::istringstream;
 using std::ostringstream;
-using std::runtime_error;
 
 namespace tcframe {
 

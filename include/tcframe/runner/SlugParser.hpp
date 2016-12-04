@@ -2,11 +2,13 @@
 
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 #include "tcframe/util.hpp"
 
 using std::runtime_error;
 using std::string;
+using std::vector;
 
 namespace tcframe {
 

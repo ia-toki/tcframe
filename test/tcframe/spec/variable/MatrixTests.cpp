@@ -4,12 +4,12 @@
 
 #include <sstream>
 
-using std::istringstream;
-using std::ostringstream;
-
 using ::testing::Eq;
 using ::testing::StrEq;
 using ::testing::Test;
+
+using std::istringstream;
+using std::ostringstream;
 
 namespace tcframe {
 

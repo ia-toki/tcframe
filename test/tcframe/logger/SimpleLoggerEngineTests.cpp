@@ -1,14 +1,15 @@
 #include "gmock/gmock.h"
 
 #include <sstream>
+#include <streambuf>
 
 #include "tcframe/logger/SimpleLoggerEngine.hpp"
 
-using std::ostringstream;
-using std::streambuf;
-
 using ::testing::Eq;
 using ::testing::Test;
+
+using std::ostringstream;
+using std::streambuf;
 
 namespace tcframe {
 

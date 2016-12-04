@@ -5,12 +5,13 @@
 
 #include "CommonConfig.hpp"
 #include "GradingConfig.hpp"
+#include "MultipleTestCasesConfig.hpp"
 #include "SeedSetter.hpp"
 #include "tcframe/spec.hpp"
 #include "tcframe/util.hpp"
 
-using std::vector;
 using std::set;
+using std::vector;
 
 namespace tcframe {
 
