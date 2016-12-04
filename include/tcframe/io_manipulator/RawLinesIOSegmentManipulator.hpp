@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <stdexcept>
 
 #include "tcframe/spec/io.hpp"
 #include "tcframe/spec/variable.hpp"
@@ -9,6 +10,7 @@
 using std::endl;
 using std::istream;
 using std::ostream;
+using std::runtime_error;
 
 namespace tcframe {
 
@@ -33,10 +35,22 @@ public:
     }
 
     static void print(RawLinesIOSegment* segment, ostream* out) {
+        checkVectorSize(segment);
         Vector* variable = segment->variable();
         for (int j = 0; j < variable->size(); j++) {
             variable->printElementTo(j, out);
             *out << endl;
+        }
+    }
+
+private:
+    static void checkVectorSize(RawLinesIOSegment* segment) {
+        Vector* variable = segment->variable();
+        if (*segment->size() != -1 && *segment->size() != variable->size()) {
+            throw runtime_error(
+                    "Number of elements of " + TokenFormatter::formatVariable(variable->name())
+                    + " unsatisfied. Expected: " + StringUtils::toString(*segment->size())
+                    + ", actual: " + StringUtils::toString(variable->size()));
         }
     }
 };

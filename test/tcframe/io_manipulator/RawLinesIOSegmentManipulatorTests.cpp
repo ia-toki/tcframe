@@ -84,6 +84,19 @@ TEST_F(RawLinesIOSegmentManipulatorTests, Printing_Successful) {
     EXPECT_THAT(out.str(), Eq("hello, world!\n  lorem  ipsum \n"));
 }
 
+TEST_F(RawLinesIOSegmentManipulatorTests, Printing_Failed_SizeMismatch) {
+    ostringstream out;
+
+    V = {"hello, world!"};
+
+    try {
+        RawLinesIOSegmentManipulator::print(segment, &out);
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Number of elements of 'V' unsatisfied. Expected: 2, actual: 1"));
+    }
+}
+
 TEST_F(RawLinesIOSegmentManipulatorTests, Printing_WithoutSize_Successful) {
     ostringstream out;
 

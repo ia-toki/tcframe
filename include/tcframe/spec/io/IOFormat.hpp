@@ -117,39 +117,38 @@ private:
     void addLastSegment() {
         if (lastBuilder_ != nullptr) {
             if (currentFormat_ != nullptr) {
-                checkSegments();
+                checkLastSegment();
                 currentFormat_->push_back(lastBuilder_->build());
             }
             lastBuilder_ = nullptr;
         }
     }
 
-    void checkSegments() {
+    void checkLastSegment() {
         if (currentFormat_->empty()) {
             return;
         }
-        if (hasLinesSegmentWithoutSizeAsLastSegment()) {
+        IOSegment* lastSegment = currentFormat_->back();
+        if (isLinesSegmentWithoutSize(lastSegment)) {
             throw runtime_error("Lines segment without size can only be the last segment");
         }
-        if (hasRawLinesSegmentWithoutSizeAsLastSegment()) {
+        if (isRawLinesSegmentWithoutSize(lastSegment)) {
             throw runtime_error("Raw lines segment without size can only be the last segment");
         }
     }
 
-    bool hasLinesSegmentWithoutSizeAsLastSegment() {
-        IOSegment* lastSegment = currentFormat_->back();
-        if (lastSegment->type() != IOSegmentType::LINES) {
+    bool isLinesSegmentWithoutSize(IOSegment* segment) {
+        if (segment->type() != IOSegmentType::LINES) {
             return false;
         }
-        return *((LinesIOSegment*) lastSegment)->size() == -1;
+        return *((LinesIOSegment*) segment)->size() == -1;
     }
 
-    bool hasRawLinesSegmentWithoutSizeAsLastSegment() {
-        IOSegment* lastSegment = currentFormat_->back();
-        if (lastSegment->type() != IOSegmentType::RAW_LINES) {
+    bool isRawLinesSegmentWithoutSize(IOSegment* segment) {
+        if (segment->type() != IOSegmentType::RAW_LINES) {
             return false;
         }
-        return *((RawLinesIOSegment*) lastSegment)->size() == -1;
+        return *((RawLinesIOSegment*) segment)->size() == -1;
     }
 };
 

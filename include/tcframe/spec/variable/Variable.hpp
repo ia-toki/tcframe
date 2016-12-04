@@ -79,7 +79,9 @@ protected:
 
     static void parseRawLine(istream* in, string& val) {
         getline(*in, val);
-        in->unget();
+        if (!in->eof()) {
+            in->unget();
+        }
     }
 };
 
