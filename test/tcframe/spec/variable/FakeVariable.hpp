@@ -13,6 +13,10 @@ public:
     void parseValue(istream* in, T& val, const string& context) {
         Variable::parseValue(in, val, context);
     }
+
+    void parseRawLine(istream* in, string& val) {
+        Variable::parseRawLine(in, val);
+    }
 };
 
 }

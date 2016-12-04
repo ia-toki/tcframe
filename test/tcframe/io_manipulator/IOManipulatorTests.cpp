@@ -16,7 +16,9 @@ namespace tcframe {
 class IOManipulatorTests : public Test {
 protected:
     int A;
+    string S;
     vector<int> V;
+    vector<string> W;
     vector<vector<int>> M;
 
     IOManipulator* manipulatorWithScalarLast;
@@ -58,8 +60,13 @@ protected:
             ioFormatBuilder.prepareForInputFormat();
             ioFormatBuilder.newLineIOSegment()
                     .addScalarVariable(Scalar::create(A, "A"));
+            ioFormatBuilder.newRawLineIOSegment()
+                    .addScalarVariable(Scalar::createRaw(S, "S"));
             ioFormatBuilder.newLinesIOSegment()
                     .addVectorVariable(Vector::create(V, "V"))
+                    .setSize(new int(2));
+            ioFormatBuilder.newRawLinesIOSegment()
+                    .addVectorVariable(Vector::createRaw(W, "W"))
                     .setSize(new int(2));
             ioFormatBuilder.newGridIOSegment()
                     .addMatrixVariable(Matrix::create(M, "M"))
@@ -72,10 +79,12 @@ protected:
 };
 
 TEST_F(IOManipulatorTests, Parsing_Successful) {
-    istringstream in("123\n42\n7\n5 6\n7 8\n");
+    istringstream in("123\nhello, world!\n42\n7\n lorem ipsum \n dolor  \n5 6\n7 8\n");
     manipulatorWithMatrixLast->parseInput(&in);
     EXPECT_THAT(A, Eq(123));
+    EXPECT_THAT(S, Eq("hello, world!"));
     EXPECT_THAT(V, Eq((vector<int>{42, 7})));
+    EXPECT_THAT(W, Eq((vector<string>{" lorem ipsum ", " dolor  "})));
     EXPECT_THAT(M, Eq((vector<vector<int>>{{5, 6}, {7, 8}})));
 }
 
@@ -110,7 +119,7 @@ TEST_F(IOManipulatorTests, Parsing_Failed_MissingEof_WithVectorLast) {
 }
 
 TEST_F(IOManipulatorTests, Parsing_Failed_MissingEof_WithMatrixLast) {
-    istringstream in("123\n42\n7\n5 6\n7 8\nbogus");
+    istringstream in("123\nhello, world!\n42\n7\n lorem ipsum \n dolor  \n5 6\n7 8\nbogus");
     try {
         manipulatorWithMatrixLast->parseInput(&in);
         FAIL();
@@ -121,11 +130,13 @@ TEST_F(IOManipulatorTests, Parsing_Failed_MissingEof_WithMatrixLast) {
 
 TEST_F(IOManipulatorTests, Printing_Successful) {
     A = 123;
+    S = "hello, world!";
     V = {42, 7};
+    W = {" lorem ipsum ", " dolor  "};
     M = {{5, 6}, {7, 8}};
     ostringstream out;
     manipulatorWithMatrixLast->printInput(&out);
-    EXPECT_THAT(out.str(), Eq("123\n42\n7\n5 6\n7 8\n"));
+    EXPECT_THAT(out.str(), Eq("123\nhello, world!\n42\n7\n lorem ipsum \n dolor  \n5 6\n7 8\n"));
 }
 
 }

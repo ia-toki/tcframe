@@ -5,3 +5,5 @@
 #include "tcframe/spec/io/IOSegment.hpp"
 #include "tcframe/spec/io/LineIOSegment.hpp"
 #include "tcframe/spec/io/LinesIOSegment.hpp"
+#include "tcframe/spec/io/RawLineIOSegment.hpp"
+#include "tcframe/spec/io/RawLinesIOSegment.hpp"

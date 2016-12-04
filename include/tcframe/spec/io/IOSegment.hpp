@@ -5,7 +5,9 @@ namespace tcframe {
 enum class IOSegmentType {
     GRID,
     LINE,
-    LINES
+    LINES,
+    RAW_LINE,
+    RAW_LINES
 };
 
 struct IOSegment {

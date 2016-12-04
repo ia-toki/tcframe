@@ -32,6 +32,9 @@ public:
 
     template<typename T, typename = ScalarCompatible<T>>
     static Vector* create(vector<T>& var, const string& name);
+
+    template<typename = void>
+    static Vector* createRaw(vector<string>& var, const string& name);
 };
 
 template<typename T, typename = ScalarCompatible<T>>
@@ -98,9 +101,31 @@ public:
     }
 };
 
+class RawVectorImpl : public VectorImpl<string> {
+private:
+    vector<string>* var_;
+
+public:
+    RawVectorImpl(vector<string>& var, const string& name)
+            : VectorImpl(var, name)
+            , var_(&var) {}
+
+    void parseAndAddElementFrom(istream* in) {
+        int index = size();
+        string element;
+        Variable::parseRawLine(in, element);
+        var_->push_back(element);
+    }
+};
+
 template<typename T, typename>
 Vector* Vector::create(vector<T>& var, const string& name) {
     return new VectorImpl<T>(var, name);
+}
+
+template<typename>
+Vector* Vector::createRaw(vector<string>& var, const string& name) {
+    return new RawVectorImpl(var, name);
 }
 
 }

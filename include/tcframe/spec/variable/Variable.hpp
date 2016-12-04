@@ -76,6 +76,13 @@ protected:
             throw runtime_error("Cannot parse for " + context + ". Found: '" + found + "'");
         }
     }
+
+    static void parseRawLine(istream* in, string& val) {
+        getline(*in, val);
+        if (!in->eof()) {
+            in->unget();
+        }
+    }
 };
 
 }

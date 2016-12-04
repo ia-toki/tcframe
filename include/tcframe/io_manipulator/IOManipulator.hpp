@@ -4,10 +4,12 @@
 #include <vector>
 
 #include "GridIOSegmentManipulator.hpp"
-#include "tcframe/spec/io.hpp"
-#include "tcframe/spec/variable.hpp"
 #include "LineIOSegmentManipulator.hpp"
 #include "LinesIOSegmentManipulator.hpp"
+#include "RawLineIOSegmentManipulator.hpp"
+#include "RawLinesIOSegmentManipulator.hpp"
+#include "tcframe/spec/io.hpp"
+#include "tcframe/spec/variable.hpp"
 
 using std::endl;
 using std::istream;
@@ -49,6 +51,10 @@ private:
                 LineIOSegmentManipulator::print((LineIOSegment*) segment, out);
             } else if (segment->type() == IOSegmentType::LINES) {
                 LinesIOSegmentManipulator::print((LinesIOSegment*) segment, out);
+            } else if (segment->type() == IOSegmentType::RAW_LINE) {
+                RawLineIOSegmentManipulator::print((RawLineIOSegment*) segment, out);
+            } else if (segment->type() == IOSegmentType::RAW_LINES) {
+                RawLinesIOSegmentManipulator::print((RawLinesIOSegment*) segment, out);
             }
         }
     }
@@ -62,6 +68,10 @@ private:
                 lastVariableName = LineIOSegmentManipulator::parse((LineIOSegment*) segment, in);
             } else if (segment->type() == IOSegmentType::LINES) {
                 lastVariableName = LinesIOSegmentManipulator::parse((LinesIOSegment*) segment, in);
+            } else if (segment->type() == IOSegmentType::RAW_LINE) {
+                lastVariableName = RawLineIOSegmentManipulator::parse((RawLineIOSegment*) segment, in);
+            } else if (segment->type() == IOSegmentType::RAW_LINES) {
+                lastVariableName = RawLinesIOSegmentManipulator::parse((RawLinesIOSegment*) segment, in);
             }
         }
         if (!lastVariableName.empty()) {

@@ -77,6 +77,41 @@ protected:
         }
     };
 
+    class RAW_LINE_Tester : public IOFormatBuilder {
+    protected:
+        string S;
+
+        int bogus;
+
+    public:
+        void testValid() {
+            RAW_LINE(S);
+        }
+
+        void testInvalid() {
+            RAW_LINE(bogus);
+        }
+    };
+
+    class RAW_LINES_Tester : public IOFormatBuilder {
+    protected:
+        int N = 3;
+        vector<string> X, Y, Z;
+
+        vector<int> bogus;
+
+    public:
+        void testValid() {
+            RAW_LINES(X) % SIZE(2);
+            RAW_LINES(Y) % SIZE(N);
+            RAW_LINES(Z);
+        }
+
+        void testInvalid() {
+            RAW_LINES(bogus);
+        }
+    };
+
     class GRID_Tester : public IOFormatBuilder {
     protected:
         int R = 2;
@@ -209,6 +244,68 @@ TEST_F(MagicTests, LINES_Invalid) {
         FAIL();
     } catch (runtime_error& e) {
         EXPECT_THAT(e.what(), StrEq("The type of variable 'bogus' is not supported for a lines segment"));
+    }
+}
+
+TEST_F(MagicTests, RAW_LINE_Valid) {
+    RAW_LINE_Tester tester;
+    tester.prepareForInputFormat();
+    tester.testValid();
+    IOFormat ioFormat = tester.build();
+
+    string dummy;
+    IOFormatBuilder builder;
+    builder.prepareForInputFormat();
+    builder.newRawLineIOSegment()
+            .addScalarVariable(Scalar::createRaw(dummy, "S"));
+
+    EXPECT_THAT(ioFormat, Eq(builder.build()));
+}
+
+TEST_F(MagicTests, RAW_LINE_Invalid) {
+    RAW_LINE_Tester tester;
+    tester.prepareForInputFormat();
+
+    try {
+        tester.testInvalid();
+        tester.build();
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("The type of variable 'bogus' is not supported for a raw line segment"));
+    }
+}
+
+TEST_F(MagicTests, RAW_LINES_Valid) {
+    RAW_LINES_Tester tester;
+    tester.prepareForInputFormat();
+    tester.testValid();
+    IOFormat ioFormat = tester.build();
+
+    vector<string> dummy;
+    IOFormatBuilder builder;
+    builder.prepareForInputFormat();
+    builder.newRawLinesIOSegment()
+            .addVectorVariable(Vector::createRaw(dummy, "X"))
+            .setSize(new int(2));
+    builder.newRawLinesIOSegment()
+            .addVectorVariable(Vector::createRaw(dummy, "Y"))
+            .setSize(new int(3));
+    builder.newRawLinesIOSegment()
+            .addVectorVariable(Vector::createRaw(dummy, "Z"));
+
+    EXPECT_THAT(ioFormat, Eq(builder.build()));
+}
+
+TEST_F(MagicTests, RAW_LINES_Invalid) {
+    RAW_LINES_Tester tester;
+    tester.prepareForInputFormat();
+
+    try {
+        tester.testInvalid();
+        tester.build();
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("The type of variable 'bogus' is not supported for a raw lines segment"));
     }
 }
 
