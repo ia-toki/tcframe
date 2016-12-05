@@ -25,6 +25,17 @@ TEST_F(GenerationEteTests, Normal) {
     ));
 }
 
+TEST_F(GenerationEteTests, NotGeneratingOutput) {
+    ASSERT_THAT(execStatus("cd ete/no-output && ../scripts/generate_without_solution.sh"), Eq(0));
+
+    EXPECT_THAT(ls("ete/no-output/tc"), UnorderedElementsAre(
+            "no-output_sample_1.in",
+            "no-output_1.in",
+            "no-output_2.in",
+            "no-output_3.in"
+    ));
+}
+
 TEST_F(GenerationEteTests, Normal_ComplexFormats) {
     ASSERT_THAT(execStatus("cd ete/normal-complex-formats && ../scripts/generate.sh"), Eq(0));
 
