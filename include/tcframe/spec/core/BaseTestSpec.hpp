@@ -7,6 +7,7 @@
 #include "GradingConfig.hpp"
 #include "MultipleTestCasesConfig.hpp"
 #include "SeedSetter.hpp"
+#include "StyleConfig.hpp"
 #include "tcframe/spec.hpp"
 #include "tcframe/util.hpp"
 
@@ -112,10 +113,17 @@ public:
         SeedSetter* seedSetter = new SeedSetter([=] (unsigned seed) {rnd.setSeed(seed);});
         MultipleTestCasesConfig multipleTestCasesConfig = TProblemSpec::buildMultipleTestCasesConfig();
         GradingConfig gradingConfig = TProblemSpec::buildGradingConfig();
+        StyleConfig styleConfig = TProblemSpec::buildStyleConfig();
         IOFormat ioFormat = TProblemSpec::buildIOFormat();
         ConstraintSuite constraintSuite = TProblemSpec::buildConstraintSuite();
         TestSuite testSuite = buildTestSuite(slug);
-        return Spec(seedSetter, multipleTestCasesConfig, gradingConfig, ioFormat, constraintSuite, testSuite);
+        return Spec(seedSetter,
+                    multipleTestCasesConfig,
+                    gradingConfig,
+                    styleConfig,
+                    ioFormat,
+                    constraintSuite,
+                    testSuite);
     }
 
 protected:

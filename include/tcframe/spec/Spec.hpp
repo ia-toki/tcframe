@@ -12,6 +12,7 @@ private:
     SeedSetter* seedSetter_;
     MultipleTestCasesConfig multipleTestCasesConfig_;
     GradingConfig gradingConfig_;
+    StyleConfig styleConfig_;
     IOFormat ioFormat_;
     ConstraintSuite constraintSuite_;
     TestSuite testSuite_;
@@ -21,12 +22,14 @@ public:
             SeedSetter* seedSetter,
             const MultipleTestCasesConfig& multipleTestCasesConfig,
             const GradingConfig& gradingConfig,
+            const StyleConfig& styleConfig,
             const IOFormat& ioFormat,
             const ConstraintSuite& constraintSuite,
             const TestSuite& testSuite)
             : seedSetter_(seedSetter)
             , multipleTestCasesConfig_(multipleTestCasesConfig)
             , gradingConfig_(gradingConfig)
+            , styleConfig_(styleConfig)
             , ioFormat_(ioFormat)
             , constraintSuite_(constraintSuite)
             , testSuite_(testSuite) {}
@@ -41,6 +44,10 @@ public:
 
     const GradingConfig& gradingConfig() const {
         return gradingConfig_;
+    }
+
+    const StyleConfig& styleConfig() const {
+        return styleConfig_;
     }
 
     const IOFormat& ioFormat() const {

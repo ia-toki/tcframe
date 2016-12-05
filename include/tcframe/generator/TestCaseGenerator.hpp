@@ -61,7 +61,9 @@ public:
             applyInput(testCase);
             verifyInput(testCase);
             generateInput(testCase, inputFilename, config);
-            evaluateAndApplyOutput(testCase, inputFilename, outputFilename, config);
+            if (config.generateOutput()) {
+                evaluateAndApplyOutput(testCase, inputFilename, outputFilename, config);
+            }
         } catch (GenerationException& e) {
             logger_->logTestCaseFailedResult(testCase.description());
             e.callback()();

@@ -4,6 +4,7 @@
 
 #include "GradingConfig.hpp"
 #include "MultipleTestCasesConfig.hpp"
+#include "StyleConfig.hpp"
 #include "tcframe/spec/constraint.hpp"
 #include "tcframe/spec/io.hpp"
 #include "tcframe/util.hpp"
@@ -15,6 +16,7 @@ namespace tcframe {
 class BaseProblemSpec
         : protected MultipleTestCasesConfigBuilder,
           protected GradingConfigBuilder,
+          protected StyleConfigBuilder,
           protected IOFormatBuilder,
           protected ConstraintSuiteBuilder {
 private:
@@ -58,6 +60,11 @@ public:
         return GradingConfigBuilder::build();
     }
 
+    tcframe::StyleConfig buildStyleConfig() {
+        StyleConfig();
+        return StyleConfigBuilder::build();
+    }
+
     IOFormat buildIOFormat() {
         IOFormatBuilder::prepareForInputFormat();
         InputFormat();
@@ -87,6 +94,7 @@ protected:
     virtual void OutputFormat() {}
     virtual void GradingConfig() {}
     virtual void MultipleTestCasesConfig() {}
+    virtual void StyleConfig() {}
     virtual void MultipleTestCasesConstraints() {}
     virtual void Constraints() {}
     virtual void Subtask1() {throw NotImplementedException();}
