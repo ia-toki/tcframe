@@ -26,6 +26,7 @@ private:
     unsigned seed_;
     string solutionCommand_;
     string outputDir_;
+    bool needsOutput_;
 
 public:
     const string& slug() const {
@@ -56,11 +57,15 @@ public:
         return outputDir_;
     }
 
+    const bool needsOutput() const {
+        return needsOutput_;
+    }
+
     bool operator==(const GeneratorConfig& o) const {
         return tie(slug_, multipleTestCasesCounter_, multipleTestCasesOutputPrefix_,
-                   seed_, solutionCommand_, outputDir_) ==
+                   seed_, solutionCommand_, outputDir_, needsOutput_) ==
                 tie(o.slug_, o.multipleTestCasesCounter_, o.multipleTestCasesOutputPrefix_,
-                    o.seed_, o.solutionCommand_, o.outputDir_);
+                    o.seed_, o.solutionCommand_, o.outputDir_, o.needsOutput_);
     }
 };
 
@@ -78,6 +83,7 @@ public:
         subject_.seed_ = CommonConfig::seed();
         subject_.solutionCommand_ = CommonConfig::solutionCommand();
         subject_.outputDir_ = CommonConfig::outputDir();
+        subject_.needsOutput_ = CommonConfig::needsOutput();
     }
 
     GeneratorConfigBuilder& setMultipleTestCasesCounter(optional<int*> counter) {
@@ -138,6 +144,11 @@ public:
 
     GeneratorConfigBuilder& setOutputDir(string outputDir) {
         subject_.outputDir_ = outputDir;
+        return *this;
+    }
+
+    GeneratorConfigBuilder& setNeedsOutput(bool needsOutput) {
+        subject_.needsOutput_ = needsOutput;
         return *this;
     }
 

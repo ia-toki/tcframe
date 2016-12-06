@@ -19,6 +19,10 @@ public:
     static string outputDir() {
         return "tc";
     }
+
+    static bool needsOutput() {
+        return true;
+    }
 };
 
 }

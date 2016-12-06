@@ -111,6 +111,7 @@ private:
                 .setSeed(args.seed())
                 .setSolutionCommand(args.solution())
                 .setOutputDir(args.output())
+                .setNeedsOutput(spec.styleConfig().needsOutput())
                 .build();
 
         auto ioManipulator = new IOManipulator(spec.ioFormat());

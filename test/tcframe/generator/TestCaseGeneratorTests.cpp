@@ -71,12 +71,18 @@ protected:
             .setSolutionCommand("python Sol.py")
             .setOutputDir("dir")
             .build();
+    GeneratorConfig noOutputConfig = GeneratorConfigBuilder(config)
+            .setNeedsOutput(false)
+            .build();
     GeneratorConfig multipleTestCasesConfig = GeneratorConfigBuilder(config)
             .setMultipleTestCasesCounter(&T)
             .build();
     GeneratorConfig multipleTestCasesConfigWithOutputPrefix = GeneratorConfigBuilder(multipleTestCasesConfig)
             .setMultipleTestCasesCounter(&T)
             .setMultipleTestCasesOutputPrefix("Case #%d: ")
+            .build();
+    GeneratorConfig multipleTestCasesNoOutputConfig = GeneratorConfigBuilder(multipleTestCasesConfig)
+            .setNeedsOutput(false)
             .build();
     EvaluatorConfig evaluatorConfig = EvaluatorConfigBuilder()
             .setSolutionCommand("python Sol.py")
@@ -152,6 +158,22 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_Successful) {
         EXPECT_CALL(logger, logTestCaseSuccessfulResult());
     }
     EXPECT_TRUE(generator.generate(sampleTestCase, config));
+    EXPECT_THAT(outForInput->str(), Eq("42\n"));
+}
+
+TEST_F(TestCaseGeneratorTests, Generation_Sample_NoOutput_Successful) {
+    {
+        InSequence sequence;
+        EXPECT_CALL(logger, logTestCaseIntroduction("foo_sample_1"));
+        EXPECT_CALL(ioManipulator, parseInput(Truly(InputStreamContentIs("42\n"))));
+        EXPECT_CALL(verifier, verifyConstraints(set<int>{1, 2}));
+        EXPECT_CALL(os, openForWriting("dir/foo_sample_1.in"));
+        EXPECT_CALL(os, closeOpenedWritingStream(outForInput));
+        EXPECT_CALL(logger, logTestCaseSuccessfulResult());
+    }
+    EXPECT_CALL(evaluator, evaluate(_, _, _)).Times(0);
+    EXPECT_CALL(ioManipulator, parseOutput(_)).Times(0);
+    EXPECT_TRUE(generator.generate(sampleTestCase, noOutputConfig));
     EXPECT_THAT(outForInput->str(), Eq("42\n"));
 }
 
@@ -234,6 +256,10 @@ TEST_F(TestCaseGeneratorTests, Generation_Successful) {
 
 TEST_F(TestCaseGeneratorTests, Generation_MultipleTestCases_Successful) {
     EXPECT_TRUE(generator.generate(officialTestCase, multipleTestCasesConfig));
+}
+
+TEST_F(TestCaseGeneratorTests, Generation_MultipleTestCases_NoOutput_Successful) {
+    EXPECT_TRUE(generator.generate(officialTestCase, multipleTestCasesNoOutputConfig));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_MultipleTestCases_WithOutputPrefix_Sample_WithOutput_Successful) {

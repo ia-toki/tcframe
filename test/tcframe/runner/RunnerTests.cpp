@@ -28,6 +28,10 @@ protected:
 
     class ProblemSpecWithConfig : public ProblemSpec {
     protected:
+        void StyleConfig() {
+            NoOutput();
+        }
+
         void MultipleTestCasesConfig() {
             Counter(T);
         }
@@ -127,6 +131,7 @@ TEST_F(RunnerTests, Run_Generation_UseDefaultOptions) {
             .setSeed(0)
             .setSolutionCommand("./solution")
             .setOutputDir("tc")
+            .setNeedsOutput(true)
             .build()));
 
     runner.run(argc, argv);
@@ -137,6 +142,7 @@ TEST_F(RunnerTests, Run_Generation_UseConfigOptions) {
             .setMultipleTestCasesCounter(&T)
             .setSolutionCommand("./solution")
             .setOutputDir("tc")
+            .setNeedsOutput(false)
             .build()));
 
     runnerWithConfig.run(argc, argv);
@@ -148,6 +154,7 @@ TEST_F(RunnerTests, Run_Generation_UseArgsOptions) {
             .setMultipleTestCasesCounter(&T)
             .setSolutionCommand("\"java Solution\"")
             .setOutputDir("testdata")
+            .setNeedsOutput(false)
             .build()));
 
     runnerWithConfig.run(4, new char*[5]{
