@@ -118,9 +118,9 @@ public:
         ConstraintSuite constraintSuite = TProblemSpec::buildConstraintSuite();
         TestSuite testSuite = buildTestSuite(slug);
         return Spec(seedSetter,
+                    styleConfig,
                     multipleTestCasesConfig,
                     gradingConfig,
-                    styleConfig,
                     ioFormat,
                     constraintSuite,
                     testSuite);

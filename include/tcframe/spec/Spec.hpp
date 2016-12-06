@@ -27,9 +27,9 @@ public:
             const ConstraintSuite& constraintSuite,
             const TestSuite& testSuite)
             : seedSetter_(seedSetter)
+            , styleConfig_(styleConfig)
             , multipleTestCasesConfig_(multipleTestCasesConfig)
             , gradingConfig_(gradingConfig)
-            , styleConfig_(styleConfig)
             , ioFormat_(ioFormat)
             , constraintSuite_(constraintSuite)
             , testSuite_(testSuite) {}
@@ -38,16 +38,16 @@ public:
         return seedSetter_;
     }
 
+    const StyleConfig& styleConfig() const {
+        return styleConfig_;
+    }
+
     const MultipleTestCasesConfig& multipleTestCasesConfig() const {
         return multipleTestCasesConfig_;
     }
 
     const GradingConfig& gradingConfig() const {
         return gradingConfig_;
-    }
-
-    const StyleConfig& styleConfig() const {
-        return styleConfig_;
     }
 
     const IOFormat& ioFormat() const {
