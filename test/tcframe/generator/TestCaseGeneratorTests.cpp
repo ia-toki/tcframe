@@ -258,7 +258,7 @@ TEST_F(TestCaseGeneratorTests, Generation_MultipleTestCases_Successful) {
     EXPECT_TRUE(generator.generate(officialTestCase, multipleTestCasesConfig));
 }
 
-TEST_F(TestCaseGeneratorTests, Generation_MultipleTestCases_Without_Output_Successful) {
+TEST_F(TestCaseGeneratorTests, Generation_MultipleTestCases_NoOutput_Successful) {
     EXPECT_TRUE(generator.generate(officialTestCase, multipleTestCasesNoOutputConfig));
 }
 

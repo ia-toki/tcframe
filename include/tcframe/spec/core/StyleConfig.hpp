@@ -14,15 +14,15 @@ struct StyleConfig {
     friend class StyleConfigBuilder;
 
 private:
-    bool needsOutputFiles_;
+    bool needsOutput_;
 
 public:
     bool needsOutputFiles() const {
-        return needsOutputFiles_;
+        return needsOutput_;
     }
 
     bool operator==(const StyleConfig& o) const {
-        return tie(needsOutputFiles_) == tie(o.needsOutputFiles_);
+        return tie(needsOutput_) == tie(o.needsOutput_);
     }
 };
 
@@ -34,11 +34,11 @@ public:
     virtual ~StyleConfigBuilder() {}
 
     StyleConfigBuilder() {
-        subject_.needsOutputFiles_ = CommonConfig::generateOutput();
+        subject_.needsOutput_ = CommonConfig::generateOutput();
     }
 
     StyleConfigBuilder& NoOutput() {
-        subject_.needsOutputFiles_ = false;
+        subject_.needsOutput_ = false;
         return *this;
     }
 
