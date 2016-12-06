@@ -61,7 +61,7 @@ public:
             applyInput(testCase);
             verifyInput(testCase);
             generateInput(testCase, inputFilename, config);
-            if (config.generateOutput()) {
+            if (config.needsOutput()) {
                 evaluateAndApplyOutput(testCase, inputFilename, outputFilename, config);
             }
         } catch (GenerationException& e) {

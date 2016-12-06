@@ -26,7 +26,7 @@ TEST_F(GenerationEteTests, Normal) {
 }
 
 TEST_F(GenerationEteTests, Normal_NoOutput) {
-    ASSERT_THAT(execStatus("cd ete/normal-no-output && ../scripts/generate_without_solution.sh"), Eq(0));
+    ASSERT_THAT(execStatus("cd ete/normal-no-output && ../scripts/generate-without-solution.sh"), Eq(0));
 
     EXPECT_THAT(ls("ete/normal-no-output/tc"), UnorderedElementsAre(
             "normal-no-output_sample_1.in",
@@ -91,7 +91,7 @@ TEST_F(GenerationEteTests, Multi) {
 }
 
 TEST_F(GenerationEteTests, Multi_NoOutput) {
-    ASSERT_THAT(execStatus("cd ete/multi-no-output && ../scripts/generate_without_solution.sh"), Eq(0));
+    ASSERT_THAT(execStatus("cd ete/multi-no-output && ../scripts/generate-without-solution.sh"), Eq(0));
 
     EXPECT_THAT(ls("ete/multi-no-output/tc"), UnorderedElementsAre(
             "multi-no-output_sample.in",

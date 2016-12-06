@@ -161,18 +161,18 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_Successful) {
     EXPECT_THAT(outForInput->str(), Eq("42\n"));
 }
 
-TEST_F(TestCaseGeneratorTests, Generation_Sample_Without_Output_Successful) {
+TEST_F(TestCaseGeneratorTests, Generation_Sample_NoOutput_Successful) {
     {
         InSequence sequence;
-        EXPECT_CALL(logger, logTestCaseIntroduction("foo_sample_1"));
-        EXPECT_CALL(ioManipulator, parseInput(Truly(InputStreamContentIs("42\n"))));
-        EXPECT_CALL(verifier, verifyConstraints(set<int>{1, 2}));
-        EXPECT_CALL(os, openForWriting("dir/foo_sample_1.in"));
-        EXPECT_CALL(os, closeOpenedWritingStream(outForInput));
-        EXPECT_CALL(evaluator, evaluate("dir/foo_sample_1.in", "dir/foo_sample_1.out", evaluatorConfig)).Times(0);
-        EXPECT_CALL(ioManipulator, parseOutput(executionResult.outputStream())).Times(0);
+        EXPECT_CALL(logger, logTestCaseIntroduction(_));
+        EXPECT_CALL(ioManipulator, parseInput(_));
+        EXPECT_CALL(verifier, verifyConstraints(_));
+        EXPECT_CALL(os, openForWriting(_));
+        EXPECT_CALL(os, closeOpenedWritingStream(_));
         EXPECT_CALL(logger, logTestCaseSuccessfulResult());
     }
+    EXPECT_CALL(evaluator, evaluate(_, _, _)).Times(0);
+    EXPECT_CALL(ioManipulator, parseOutput(_)).Times(0);
     EXPECT_TRUE(generator.generate(sampleTestCase, noOutputConfig));
     EXPECT_THAT(outForInput->str(), Eq("42\n"));
 }

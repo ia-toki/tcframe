@@ -29,7 +29,7 @@ protected:
     class ProblemSpecWithConfig : public ProblemSpec {
     protected:
         void StyleConfig() {
-            NoOutputFiles();
+            NoOutput();
         }
 
         void MultipleTestCasesConfig() {

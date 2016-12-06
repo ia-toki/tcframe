@@ -112,13 +112,13 @@ private:
         string baseId = TestCaseIdCreator::createBaseId(config.slug(), testGroup.id());
         string baseIn = config.outputDir() + "/" + baseId + ".in";
         string baseOut = config.outputDir() + "/" + baseId + ".out";
-        bool generateOutput = config.generateOutput();
+        bool needsOutput = config.needsOutput();
 
         ostringstream sout;
 
         sout << "echo " << testCaseCount << " > " << baseIn;
 
-        if (generateOutput) {
+        if (needsOutput) {
             sout << " && touch " << baseOut;
         }
 
@@ -132,7 +132,7 @@ private:
             ostringstream sout2;
             sout2 << "tail -n +2 " << in << " >> " << baseIn;
 
-            if (generateOutput) {
+            if (needsOutput) {
                 sout2 << " && ";
                 if (i > 1 && config.multipleTestCasesOutputPrefix()) {
                     string outputPrefix = config.multipleTestCasesOutputPrefix().value();
