@@ -72,7 +72,7 @@ protected:
             .setOutputDir("dir")
             .build();
     GeneratorConfig noOutputConfig = GeneratorConfigBuilder(config)
-            .setGenerateOutput(false)
+            .setNeedsOutput(false)
             .build();
     GeneratorConfig multipleTestCasesConfig = GeneratorConfigBuilder(config)
             .setMultipleTestCasesCounter(&T)
@@ -82,7 +82,7 @@ protected:
             .setMultipleTestCasesOutputPrefix("Case #%d: ")
             .build();
     GeneratorConfig multipleTestCasesNoOutputConfig = GeneratorConfigBuilder(multipleTestCasesConfig)
-            .setGenerateOutput(false)
+            .setNeedsOutput(false)
             .build();
     EvaluatorConfig evaluatorConfig = EvaluatorConfigBuilder()
             .setSolutionCommand("python Sol.py")
@@ -164,11 +164,11 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_Successful) {
 TEST_F(TestCaseGeneratorTests, Generation_Sample_NoOutput_Successful) {
     {
         InSequence sequence;
-        EXPECT_CALL(logger, logTestCaseIntroduction(_));
-        EXPECT_CALL(ioManipulator, parseInput(_));
-        EXPECT_CALL(verifier, verifyConstraints(_));
-        EXPECT_CALL(os, openForWriting(_));
-        EXPECT_CALL(os, closeOpenedWritingStream(_));
+        EXPECT_CALL(logger, logTestCaseIntroduction("foo_sample_1"));
+        EXPECT_CALL(ioManipulator, parseInput(Truly(InputStreamContentIs("42\n"))));
+        EXPECT_CALL(verifier, verifyConstraints(set<int>{1, 2}));
+        EXPECT_CALL(os, openForWriting("dir/foo_sample_1.in"));
+        EXPECT_CALL(os, closeOpenedWritingStream(outForInput));
         EXPECT_CALL(logger, logTestCaseSuccessfulResult());
     }
     EXPECT_CALL(evaluator, evaluate(_, _, _)).Times(0);

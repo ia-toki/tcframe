@@ -17,7 +17,7 @@ private:
     bool needsOutput_;
 
 public:
-    bool needsOutputFiles() const {
+    bool needsOutput() const {
         return needsOutput_;
     }
 
@@ -34,7 +34,7 @@ public:
     virtual ~StyleConfigBuilder() {}
 
     StyleConfigBuilder() {
-        subject_.needsOutput_ = CommonConfig::generateOutput();
+        subject_.needsOutput_ = CommonConfig::needsOutput();
     }
 
     StyleConfigBuilder& NoOutput() {

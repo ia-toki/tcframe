@@ -131,7 +131,7 @@ TEST_F(RunnerTests, Run_Generation_UseDefaultOptions) {
             .setSeed(0)
             .setSolutionCommand("./solution")
             .setOutputDir("tc")
-            .setGenerateOutput(true)
+            .setNeedsOutput(true)
             .build()));
 
     runner.run(argc, argv);
@@ -142,7 +142,7 @@ TEST_F(RunnerTests, Run_Generation_UseConfigOptions) {
             .setMultipleTestCasesCounter(&T)
             .setSolutionCommand("./solution")
             .setOutputDir("tc")
-            .setGenerateOutput(false)
+            .setNeedsOutput(false)
             .build()));
 
     runnerWithConfig.run(argc, argv);
@@ -154,7 +154,7 @@ TEST_F(RunnerTests, Run_Generation_UseArgsOptions) {
             .setMultipleTestCasesCounter(&T)
             .setSolutionCommand("\"java Solution\"")
             .setOutputDir("testdata")
-            .setGenerateOutput(false)
+            .setNeedsOutput(false)
             .build()));
 
     runnerWithConfig.run(4, new char*[5]{

@@ -83,7 +83,7 @@ public:
         subject_.seed_ = CommonConfig::seed();
         subject_.solutionCommand_ = CommonConfig::solutionCommand();
         subject_.outputDir_ = CommonConfig::outputDir();
-        subject_.needsOutput_ = CommonConfig::generateOutput();
+        subject_.needsOutput_ = CommonConfig::needsOutput();
     }
 
     GeneratorConfigBuilder& setMultipleTestCasesCounter(optional<int*> counter) {
@@ -147,8 +147,8 @@ public:
         return *this;
     }
 
-    GeneratorConfigBuilder& setGenerateOutput(bool generateOutput) {
-        subject_.needsOutput_ = generateOutput;
+    GeneratorConfigBuilder& setNeedsOutput(bool needsOutput) {
+        subject_.needsOutput_ = needsOutput;
         return *this;
     }
 

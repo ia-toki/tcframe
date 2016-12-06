@@ -20,7 +20,7 @@ public:
         return "tc";
     }
 
-    static bool generateOutput() {
+    static bool needsOutput() {
         return true;
     }
 };
