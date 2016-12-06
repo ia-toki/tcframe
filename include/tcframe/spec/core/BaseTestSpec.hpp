@@ -111,17 +111,17 @@ public:
 
     virtual Spec buildSpec(const string& slug) {
         SeedSetter* seedSetter = new SeedSetter([=] (unsigned seed) {rnd.setSeed(seed);});
-        StyleConfig styleConfig = TProblemSpec::buildStyleConfig();
-        MultipleTestCasesConfig multipleTestCasesConfig = TProblemSpec::buildMultipleTestCasesConfig();
-        GradingConfig gradingConfig = TProblemSpec::buildGradingConfig();
         IOFormat ioFormat = TProblemSpec::buildIOFormat();
+        StyleConfig styleConfig = TProblemSpec::buildStyleConfig();
+        GradingConfig gradingConfig = TProblemSpec::buildGradingConfig();
+        MultipleTestCasesConfig multipleTestCasesConfig = TProblemSpec::buildMultipleTestCasesConfig();
         ConstraintSuite constraintSuite = TProblemSpec::buildConstraintSuite();
         TestSuite testSuite = buildTestSuite(slug);
         return Spec(seedSetter,
-                    styleConfig,
-                    multipleTestCasesConfig,
-                    gradingConfig,
                     ioFormat,
+                    styleConfig,
+                    gradingConfig,
+                    multipleTestCasesConfig,
                     constraintSuite,
                     testSuite);
     }

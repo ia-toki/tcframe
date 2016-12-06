@@ -10,27 +10,27 @@ namespace tcframe {
 struct Spec {
 private:
     SeedSetter* seedSetter_;
-    StyleConfig styleConfig_;
-    MultipleTestCasesConfig multipleTestCasesConfig_;
-    GradingConfig gradingConfig_;
     IOFormat ioFormat_;
+    StyleConfig styleConfig_;
+    GradingConfig gradingConfig_;
+    MultipleTestCasesConfig multipleTestCasesConfig_;
     ConstraintSuite constraintSuite_;
     TestSuite testSuite_;
 
 public:
     Spec(
             SeedSetter* seedSetter,
-            const StyleConfig& styleConfig,
-            const MultipleTestCasesConfig& multipleTestCasesConfig,
-            const GradingConfig& gradingConfig,
             const IOFormat& ioFormat,
+            const StyleConfig& styleConfig,
+            const GradingConfig& gradingConfig,
+            const MultipleTestCasesConfig& multipleTestCasesConfig,
             const ConstraintSuite& constraintSuite,
             const TestSuite& testSuite)
             : seedSetter_(seedSetter)
-            , styleConfig_(styleConfig)
-            , multipleTestCasesConfig_(multipleTestCasesConfig)
-            , gradingConfig_(gradingConfig)
             , ioFormat_(ioFormat)
+            , styleConfig_(styleConfig)
+            , gradingConfig_(gradingConfig)
+            , multipleTestCasesConfig_(multipleTestCasesConfig)
             , constraintSuite_(constraintSuite)
             , testSuite_(testSuite) {}
 
@@ -38,20 +38,20 @@ public:
         return seedSetter_;
     }
 
-    const StyleConfig& styleConfig() const {
-        return styleConfig_;
+    const IOFormat& ioFormat() const {
+        return ioFormat_;
     }
 
-    const MultipleTestCasesConfig& multipleTestCasesConfig() const {
-        return multipleTestCasesConfig_;
+    const StyleConfig& styleConfig() const {
+        return styleConfig_;
     }
 
     const GradingConfig& gradingConfig() const {
         return gradingConfig_;
     }
 
-    const IOFormat& ioFormat() const {
-        return ioFormat_;
+    const MultipleTestCasesConfig& multipleTestCasesConfig() const {
+        return multipleTestCasesConfig_;
     }
 
     const ConstraintSuite& constraintSuite() const {

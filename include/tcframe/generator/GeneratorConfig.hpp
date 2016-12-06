@@ -57,7 +57,7 @@ public:
         return outputDir_;
     }
 
-    const bool needsOutput() const {
+    bool needsOutput() const {
         return needsOutput_;
     }
 

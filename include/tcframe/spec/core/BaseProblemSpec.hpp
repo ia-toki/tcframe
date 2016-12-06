@@ -14,10 +14,10 @@ using std::vector;
 namespace tcframe {
 
 class BaseProblemSpec
-        : protected MultipleTestCasesConfigBuilder,
-          protected GradingConfigBuilder,
+        : protected IOFormatBuilder,
           protected StyleConfigBuilder,
-          protected IOFormatBuilder,
+          protected GradingConfigBuilder,
+          protected MultipleTestCasesConfigBuilder,
           protected ConstraintSuiteBuilder {
 private:
     vector<void(BaseProblemSpec::*)()> subtasks_ = {
@@ -50,14 +50,17 @@ private:
 public:
     virtual ~BaseProblemSpec() {}
 
+    IOFormat buildIOFormat() {
+        IOFormatBuilder::prepareForInputFormat();
+        InputFormat();
+        IOFormatBuilder::prepareForOutputFormat();
+        OutputFormat();
+        return IOFormatBuilder::build();
+    }
+
     tcframe::StyleConfig buildStyleConfig() {
         StyleConfig();
         return StyleConfigBuilder::build();
-    }
-
-    tcframe::MultipleTestCasesConfig buildMultipleTestCasesConfig() {
-        MultipleTestCasesConfig();
-        return MultipleTestCasesConfigBuilder::build();
     }
 
     tcframe::GradingConfig buildGradingConfig() {
@@ -65,12 +68,9 @@ public:
         return GradingConfigBuilder::build();
     }
 
-    IOFormat buildIOFormat() {
-        IOFormatBuilder::prepareForInputFormat();
-        InputFormat();
-        IOFormatBuilder::prepareForOutputFormat();
-        OutputFormat();
-        return IOFormatBuilder::build();
+    tcframe::MultipleTestCasesConfig buildMultipleTestCasesConfig() {
+        MultipleTestCasesConfig();
+        return MultipleTestCasesConfigBuilder::build();
     }
 
     ConstraintSuite buildConstraintSuite() {
