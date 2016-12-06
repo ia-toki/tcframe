@@ -10,9 +10,9 @@ namespace tcframe {
 struct Spec {
 private:
     SeedSetter* seedSetter_;
+    StyleConfig styleConfig_;
     MultipleTestCasesConfig multipleTestCasesConfig_;
     GradingConfig gradingConfig_;
-    StyleConfig styleConfig_;
     IOFormat ioFormat_;
     ConstraintSuite constraintSuite_;
     TestSuite testSuite_;
@@ -20,9 +20,9 @@ private:
 public:
     Spec(
             SeedSetter* seedSetter,
+            const StyleConfig& styleConfig,
             const MultipleTestCasesConfig& multipleTestCasesConfig,
             const GradingConfig& gradingConfig,
-            const StyleConfig& styleConfig,
             const IOFormat& ioFormat,
             const ConstraintSuite& constraintSuite,
             const TestSuite& testSuite)
