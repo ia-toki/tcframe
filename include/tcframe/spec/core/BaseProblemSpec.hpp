@@ -50,6 +50,11 @@ private:
 public:
     virtual ~BaseProblemSpec() {}
 
+    tcframe::StyleConfig buildStyleConfig() {
+        StyleConfig();
+        return StyleConfigBuilder::build();
+    }
+
     tcframe::MultipleTestCasesConfig buildMultipleTestCasesConfig() {
         MultipleTestCasesConfig();
         return MultipleTestCasesConfigBuilder::build();
@@ -58,11 +63,6 @@ public:
     tcframe::GradingConfig buildGradingConfig() {
         GradingConfig();
         return GradingConfigBuilder::build();
-    }
-
-    tcframe::StyleConfig buildStyleConfig() {
-        StyleConfig();
-        return StyleConfigBuilder::build();
     }
 
     IOFormat buildIOFormat() {
@@ -92,9 +92,9 @@ public:
 protected:
     virtual void InputFormat() = 0;
     virtual void OutputFormat() {}
+    virtual void StyleConfig() {}
     virtual void GradingConfig() {}
     virtual void MultipleTestCasesConfig() {}
-    virtual void StyleConfig() {}
     virtual void MultipleTestCasesConstraints() {}
     virtual void Constraints() {}
     virtual void Subtask1() {throw NotImplementedException();}

@@ -2,6 +2,7 @@
 
 #include <tuple>
 #include <utility>
+#include "CommonConfig.hpp"
 
 using std::move;
 using std::tie;
@@ -15,12 +16,12 @@ private:
     bool generateOutputFiles_;
 
 public:
-    bool generateOutputFiles() const {
+    bool needsOutputFiles() const {
         return generateOutputFiles_;
     }
 
     bool operator==(const StyleConfig& o) const {
-        return generateOutputFiles_ == o.generateOutputFiles_;
+        return tie(generateOutputFiles_) == tie(o.generateOutputFiles_);
     }
 };
 
@@ -32,7 +33,7 @@ public:
     virtual ~StyleConfigBuilder() {}
 
     StyleConfigBuilder() {
-        subject_.generateOutputFiles_ = true;
+        subject_.generateOutputFiles_ = CommonConfig::generateOutput();
     }
 
     StyleConfigBuilder& NoOutputFiles() {
