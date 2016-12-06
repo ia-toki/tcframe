@@ -13,7 +13,7 @@ protected:
     }
 
     void StyleConfig() {
-        NoOutputFiles();
+        NoOutput();
     }
 
     void GradingConfig() {
