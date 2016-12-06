@@ -112,11 +112,15 @@ private:
         string baseId = TestCaseIdCreator::createBaseId(config.slug(), testGroup.id());
         string baseIn = config.outputDir() + "/" + baseId + ".in";
         string baseOut = config.outputDir() + "/" + baseId + ".out";
+        bool generateOutput = config.generateOutput();
 
         ostringstream sout;
 
-        sout << "echo " << testCaseCount << " > " << baseId << ".in && ";
-        sout << "touch " << baseId << ".out";
+        sout << "echo " << testCaseCount << " > " << baseIn;
+
+        if (generateOutput) {
+            sout << " && touch " << baseOut;
+        }
 
         os_->execute(ExecutionRequestBuilder().setCommand(sout.str()).build());
 
@@ -126,17 +130,20 @@ private:
             string out = config.outputDir() + "/" + id + ".out";
 
             ostringstream sout2;
-            sout2 << "tail -n +2 " << in << " >> " << baseIn << " && ";
+            sout2 << "tail -n +2 " << in << " >> " << baseIn;
 
-            if (i > 1 && config.multipleTestCasesOutputPrefix()) {
-                string outputPrefix = config.multipleTestCasesOutputPrefix().value();
-                // Replace the prefix for the first tc, with the correct prefix for this tc
-                string firstPrefix = StringUtils::interpolate(outputPrefix, 1);
-                string correctPrefix = StringUtils::interpolate(outputPrefix, i);
-                sout2 << "printf \"%b\" \"" << escapeForBash(correctPrefix) << "\" >> " << baseOut << " && ";
-                sout2 << "tail -c +" << (firstPrefix.size() + 1) << " " << out << " >> " << baseOut;
-            } else {
-                sout2 << "cat " << out << " >> " << baseOut;
+            if (generateOutput) {
+                sout2 << " && ";
+                if (i > 1 && config.multipleTestCasesOutputPrefix()) {
+                    string outputPrefix = config.multipleTestCasesOutputPrefix().value();
+                    // Replace the prefix for the first tc, with the correct prefix for this tc
+                    string firstPrefix = StringUtils::interpolate(outputPrefix, 1);
+                    string correctPrefix = StringUtils::interpolate(outputPrefix, i);
+                    sout2 << "printf \"%b\" \"" << escapeForBash(correctPrefix) << "\" >> " << baseOut << " && ";
+                    sout2 << "tail -c +" << (firstPrefix.size() + 1) << " " << out << " >> " << baseOut;
+                } else {
+                    sout2 << "cat " << out << " >> " << baseOut;
+                }
             }
 
             os_->execute(ExecutionRequestBuilder().setCommand(sout2.str()).build());
