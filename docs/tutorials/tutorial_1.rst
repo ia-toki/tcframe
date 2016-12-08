@@ -361,7 +361,7 @@ Here is the complete spec file for our Best Pair problem.
         }
 
         void Constraints() {
-            CONS(1 <= N && N <= 100000);
+            CONS(2 <= N && N <= 100000);
             CONS(eachElementBetween(A, -1000000, 1000000));
         }
 
