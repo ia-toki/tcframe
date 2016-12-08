@@ -86,6 +86,12 @@ TEST_F(GeneratorLoggerTests, SampleTestCaseCheckFailure) {
     logger.logSampleTestCaseCheckFailure("diff");
 }
 
+TEST_F(GeneratorLoggerTests, SampleTestCaseNoOutputNeededFailure) {
+    EXPECT_CALL(engine,
+                logListItem1(2, "Problem does not need test case outputs, but this sample test case has output"));
+    logger.logSampleTestCaseNoOutputNeededFailure();
+}
+
 TEST_F(GeneratorLoggerTests, ConstraintsVerificationFailure_WithSubtasks) {
     {
         InSequence sequence;

@@ -27,6 +27,7 @@ public:
     MOCK_METHOD1(logMultipleTestCasesConstraintsVerificationFailure, void(
             const MultipleTestCasesConstraintsVerificationResult&));
     MOCK_METHOD1(logSampleTestCaseCheckFailure, void(const string&));
+    MOCK_METHOD0(logSampleTestCaseNoOutputNeededFailure, void());
     MOCK_METHOD1(logSimpleFailure, void(const string&));
 };
 
