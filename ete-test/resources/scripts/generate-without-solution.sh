@@ -5,5 +5,4 @@ set -ex
 export TCFRAME_HOME=../../tcframe
 
 $TCFRAME_HOME/scripts/tcframe build
-ls
 ./runner
