@@ -6,6 +6,7 @@
 #include "GraderLogger.hpp"
 #include "tcframe/evaluator.hpp"
 #include "tcframe/scorer.hpp"
+#include "tcframe/util.hpp"
 
 using std::string;
 
@@ -66,7 +67,7 @@ private:
 
         logger_->logTestCaseVerdict(result.verdict());
         if (result.verdict() == Verdict::wa()) {
-            logger_->logTestCaseScoringMessage(result.message());
+            logger_->logTestCaseScoringMessage(StringUtils::streamToString(result.executionResult().errorStream()));
         }
         return result.verdict();
     }

@@ -1,12 +1,8 @@
 #pragma once
 
-#include <streambuf>
-
 #include "LoggerEngine.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/util.hpp"
-
-using std::istreambuf_iterator;
 
 namespace tcframe {
 
@@ -39,7 +35,7 @@ public:
         if (result.info().exitCode()) {
             engine_->logListItem2(3, "Exit code: " + StringUtils::toString(result.info().exitCode().value()));
             engine_->logListItem2(3, "Standard error: " + string(
-                    istreambuf_iterator<char>(*result.errorStream()), istreambuf_iterator<char>()));
+                    StringUtils::streamToString(result.errorStream())));
         } else {
             engine_->logListItem2(3, "Exit signal: " + result.info().exitSignal().value());
         }

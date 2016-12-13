@@ -1,11 +1,15 @@
 #pragma once
 
+#include <istream>
 #include <sstream>
+#include <streambuf>
 #include <string>
 #include <vector>
 
 #include "optional.hpp"
 
+using std::istream;
+using std::istreambuf_iterator;
 using std::istringstream;
 using std::ostringstream;
 using std::string;
@@ -22,6 +26,10 @@ public:
         ostringstream out;
         out << obj;
         return out.str();
+    }
+
+    static string streamToString(istream* in) {
+        return string(istreambuf_iterator<char>(*in), istreambuf_iterator<char>());
     }
 
     template<typename T>

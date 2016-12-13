@@ -14,6 +14,7 @@
 #include "tcframe/os.hpp"
 #include "tcframe/scorer.hpp"
 #include "tcframe/spec.hpp"
+#include "tcframe/util.hpp"
 #include "tcframe/verdict.hpp"
 #include "tcframe/verifier.hpp"
 
@@ -190,7 +191,8 @@ private:
 
         ScoringResult scoringResult = scorer_->score(inputFilename, outputFilename, "_evaluation.out");
         if (!(scoringResult.verdict() == Verdict::ac())) {
-            throw GenerationException([=] { logger_->logSampleTestCaseCheckFailure(scoringResult.message()); });
+            throw GenerationException([=] { logger_->logSampleTestCaseCheckFailure(
+                    StringUtils::streamToString(scoringResult.executionResult().errorStream())); });
         }
     }
 };

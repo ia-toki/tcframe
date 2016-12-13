@@ -163,7 +163,6 @@ set(SOURCES
         test/tcframe/runner/RunnerTests.cpp
         test/tcframe/runner/RunnerLoggerTests.cpp
         test/tcframe/runner/SlugParserTests.cpp
-        test/tcframe/scorer/DiffScorerTests.cpp
         test/tcframe/scorer/MockScorer.hpp
         test/tcframe/spec/constraint/ConstraintSuiteBuilderTests.cpp
         test/tcframe/spec/core/BaseTestSpecTests.cpp
@@ -205,6 +204,25 @@ target_link_libraries(tests
         gmock
         ${CMAKE_THREAD_LIBS_INIT}
         gcov
+)
+
+set(INTEGRATION_SOURCES
+        integration-test/tcframe/scorer/DiffScorerIntegrationTests.cpp
+)
+
+add_executable(integration_tests ${INTEGRATION_SOURCES})
+
+target_link_libraries(integration_tests
+        gtest
+        gmock
+        ${CMAKE_THREAD_LIBS_INIT}
+        gcov
+)
+
+add_custom_command(
+        TARGET integration_tests
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/integration-test/resources $<TARGET_FILE_DIR:integration_tests>/integration
 )
 
 set(ETE_SOURCES

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <streambuf>
 #include <string>
 
 #include "Scorer.hpp"
@@ -8,7 +7,6 @@
 #include "tcframe/os.hpp"
 #include "tcframe/verdict.hpp"
 
-using std::istreambuf_iterator;
 using std::string;
 
 namespace tcframe {
@@ -23,37 +21,32 @@ public:
     DiffScorer(OperatingSystem* os)
             : os_(os) {}
 
-    ScoringResult score(
-            const string&,
-            const string& outputFilename,
-            const string& evaluationFilename) {
+    ScoringResult score(const string&, const string& outputFilename, const string& evaluationFilename) {
+        string scoringCommand = string()
+                + "diff --brief " + outputFilename + " " + evaluationFilename + " > /dev/null"
+                + " || "
+                + "( "
+                + "echo 'Diff:' 1>&2; "
+                + "diff "
+                + "--unchanged-line-format=' %.2dn    %L' "
+                + "--old-line-format='(expected) [line %.2dn]    %L' "
+                + "--new-line-format='(received) [line %.2dn]    %L' "
+                + outputFilename + " " + evaluationFilename
+                + " | head -n 10 1>&2; "
+                + "exit 1;"
+                + " )";
 
-        string briefDiffCommand = "diff --brief " + outputFilename + " " + evaluationFilename;
-        ExecutionResult briefResult = os_->execute(ExecutionRequestBuilder().setCommand(briefDiffCommand).build());
-
-        if (briefResult.info().isSuccessful()) {
-            return ScoringResultBuilder()
-                    .setVerdict(Verdict::ac())
-                    .build();
-        }
-
-        string diffCommand = string() +
-                 "diff " +
-                 "--unchanged-line-format=' %.2dn    %L' " +
-                 "--old-line-format='(expected) [line %.2dn]    %L' " +
-                 "--new-line-format='(received) [line %.2dn]    %L' " +
-                 outputFilename + " " + evaluationFilename;
-        string scoringCommand = diffCommand + " | head -n 10";
         ExecutionResult result = os_->execute(ExecutionRequestBuilder()
                 .setCommand(scoringCommand)
-                .setOutputFilename("_diff.out")
+                .setErrorFilename("_diff.out")
                 .build());
-
-        string diff = string(istreambuf_iterator<char>(*result.outputStream()), istreambuf_iterator<char>());
+        Verdict verdict = result.info().isSuccessful()
+                          ? Verdict::ac()
+                          : Verdict::wa();
 
         return ScoringResultBuilder()
-                .setVerdict(Verdict::wa())
-                .setMessage("Diff:\n" + diff)
+                .setExecutionResult(result)
+                .setVerdict(verdict)
                 .build();
     }
 };

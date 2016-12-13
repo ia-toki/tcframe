@@ -1,10 +1,14 @@
 #include "gmock/gmock.h"
 
+#include <sstream>
+
 #include "tcframe/util/StringUtils.hpp"
 
 using ::testing::ElementsAre;
 using ::testing::Eq;
 using ::testing::Test;
+
+using std::istringstream;
 
 namespace tcframe {
 
@@ -12,6 +16,10 @@ class StringUtilsTests : public Test {};
 
 TEST_F(StringUtilsTests, ToString) {
     EXPECT_THAT(StringUtils::toString(42), Eq("42"));
+}
+
+TEST_F(StringUtilsTests, StreamToString) {
+    EXPECT_THAT(StringUtils::streamToString(new istringstream(" hello, world! ")), Eq(" hello, world! "));
 }
 
 TEST_F(StringUtilsTests, ToNumber) {

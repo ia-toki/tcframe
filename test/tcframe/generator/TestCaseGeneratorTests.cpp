@@ -28,6 +28,7 @@ using ::testing::Throw;
 using ::testing::Truly;
 using ::testing::WithArg;
 
+using std::istringstream;
 using std::ostringstream;
 
 namespace tcframe {
@@ -126,7 +127,12 @@ protected:
         ON_CALL(scorer, score(_, _, _))
                 .WillByDefault(DoAll(
                         WithArg<2>(Invoke(&evaluationCaptor2, &Captor<string>::capture)),
-                        InvokeWithoutArgs([] {return ScoringResultBuilder().setVerdict(Verdict::ac()).build();})));
+                        InvokeWithoutArgs([] {return ScoringResultBuilder()
+                                .setExecutionResult(ExecutionResultBuilder()
+                                        .setInfo(ExecutionInfoBuilder().setExitCode(0).build())
+                                        .build())
+                                .setVerdict(Verdict::ac())
+                                .build();})));
     }
 
     struct InputStreamContentIs {
@@ -226,8 +232,11 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Successful) {
 TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Failed_Check) {
     ON_CALL(scorer, score(_, _, _))
             .WillByDefault(Return(ScoringResultBuilder()
+                    .setExecutionResult(ExecutionResultBuilder()
+                            .setInfo(ExecutionInfoBuilder().setExitCode(0).build())
+                            .setErrorStream(new istringstream("diff"))
+                            .build())
                     .setVerdict(Verdict::wa())
-                    .setMessage("diff")
                     .build()));
     {
         InSequence sequence;

@@ -4,6 +4,7 @@
 #include <tuple>
 #include <utility>
 
+#include "tcframe/os.hpp"
 #include "tcframe/verdict.hpp"
 
 using std::move;
@@ -16,20 +17,20 @@ struct ScoringResult {
     friend class ScoringResultBuilder;
 
 private:
+    ExecutionResult executionResult_;
     Verdict verdict_;
-    string message_;
 
 public:
+    const ExecutionResult& executionResult() const {
+        return executionResult_;
+    }
+
     const Verdict& verdict() const {
         return verdict_;
     }
 
-    const string& message() const {
-        return message_;
-    }
-
     bool operator==(const ScoringResult& o) const {
-        return tie(verdict_, message_) == tie(o.verdict_, o.message_);
+        return tie(executionResult_, verdict_) == tie(o.executionResult_, o.verdict_);
     }
 };
 
@@ -38,13 +39,13 @@ private:
     ScoringResult subject_;
 
 public:
-    ScoringResultBuilder& setVerdict(Verdict verdict) {
-        subject_.verdict_ = verdict;
+    ScoringResultBuilder& setExecutionResult(ExecutionResult executionResult) {
+        subject_.executionResult_ = executionResult;
         return *this;
     }
 
-    ScoringResultBuilder& setMessage(string message) {
-        subject_.message_ = message;
+    ScoringResultBuilder& setVerdict(Verdict verdict) {
+        subject_.verdict_ = verdict;
         return *this;
     }
 
