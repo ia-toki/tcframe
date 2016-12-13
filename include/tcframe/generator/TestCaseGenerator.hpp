@@ -61,9 +61,7 @@ public:
             applyInput(testCase);
             verifyInput(testCase);
             generateInput(testCase, inputFilename, config);
-            if (config.needsOutput()) {
-                evaluateAndApplyOutput(testCase, inputFilename, outputFilename, config);
-            }
+            evaluateAndApplyOutput(testCase, inputFilename, outputFilename, config);
         } catch (GenerationException& e) {
             logger_->logTestCaseFailedResult(testCase.description());
             e.callback()();
@@ -116,6 +114,14 @@ private:
             const string& outputFilename,
             const GeneratorConfig& config) {
 
+        optional<string> maybeSampleOutputString = getSampleOutputString(testCase);
+        if (!config.needsOutput()) {
+            if (maybeSampleOutputString) {
+                throw GenerationException([=] { logger_->logSampleTestCaseNoOutputNeededFailure(); });
+            }
+            return;
+        }
+
         EvaluatorConfig evaluatorConfig = EvaluatorConfigBuilder()
                 .setSolutionCommand(config.solutionCommand())
                 .build();
@@ -126,11 +132,20 @@ private:
             throw GenerationException([=] { logger_->logSolutionExecutionFailure(executionResult); });
         }
 
-        checkSampleOutput(testCase, inputFilename, outputFilename, config);
+        if (maybeSampleOutputString) {
+            checkSampleOutput(maybeSampleOutputString.value(), inputFilename, outputFilename, config);
+        }
 
         istream* output = executionResult.outputStream();
         modifyOutputForMultipleTestCases(output, config);
         ioManipulator_->parseOutput(output);
+    }
+
+    optional<string> getSampleOutputString(const TestCase& testCase) {
+        if (testCase.data()->type() != TestCaseDataType::SAMPLE) {
+            return optional<string>();
+        }
+        return ((SampleTestCaseData*) testCase.data())->output();
     }
 
     void modifyInputForMultipleTestCases(ostream* input, const GeneratorConfig& config) {
@@ -161,24 +176,16 @@ private:
     }
 
     void checkSampleOutput(
-            const TestCase& testCase,
+            const string& sampleOutputString,
             const string& inputFilename,
             const string& outputFilename,
             const GeneratorConfig& config) {
 
-        if (testCase.data()->type() != TestCaseDataType::SAMPLE) {
-            return;
-        }
-        optional<string> maybeSampleOutput = ((SampleTestCaseData*) testCase.data())->output();
-        if (!maybeSampleOutput) {
-            return;
-        }
-
-        string sampleOutputString = maybeSampleOutput.value();
-        modifySampleOutputStringForMultipleTestCases(sampleOutputString, config);
+        string modifiedSampleOutputString = sampleOutputString;
+        modifySampleOutputStringForMultipleTestCases(modifiedSampleOutputString, config);
 
         ostream* sampleOutput = os_->openForWriting("_evaluation.out");
-        *sampleOutput << sampleOutputString;
+        *sampleOutput << modifiedSampleOutputString;
         os_->closeOpenedWritingStream(sampleOutput);
 
         ScoringResult scoringResult = scorer_->score(inputFilename, outputFilename, "_evaluation.out");

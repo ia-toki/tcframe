@@ -95,6 +95,10 @@ public:
         engine_->logListItem2(3, scoringMessage);
     }
 
+    virtual void logSampleTestCaseNoOutputNeededFailure() {
+        engine_->logListItem1(2, "Problem does not need test case outputs, but this sample test case has output");
+    }
+
     virtual void logSimpleFailure(const string& message) {
         engine_->logListItem1(2, message);
     }

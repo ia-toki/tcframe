@@ -238,6 +238,16 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Failed_Check) {
     EXPECT_FALSE(generator.generate(sampleTestCaseWithOutput, config));
 }
 
+TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Failed_NoOutputNeeded) {
+    {
+        InSequence sequence;
+        EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>()));
+        EXPECT_CALL(logger, logSampleTestCaseNoOutputNeededFailure());
+    }
+
+    EXPECT_FALSE(generator.generate(sampleTestCaseWithOutput, noOutputConfig));
+}
+
 TEST_F(TestCaseGeneratorTests, Generation_Successful) {
     {
         InSequence sequence;
