@@ -1,8 +1,5 @@
 #include "gmock/gmock.h"
 
-#include <sstream>
-
-#include "tcframe/os.hpp"
 #include "tcframe/scorer/DiffScorer.hpp"
 #include "tcframe/util.hpp"
 
@@ -10,8 +7,6 @@ using ::testing::Eq;
 using ::testing::HasSubstr;
 using ::testing::StartsWith;
 using ::testing::Test;
-
-using std::istringstream;
 
 namespace tcframe {
 
