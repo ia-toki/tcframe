@@ -23,6 +23,7 @@ private:
     optional<int> memoryLimit_;
     bool noMemoryLimit_;
     bool noTimeLimit_;
+    optional<string> scorer_;
     optional<unsigned> seed_;
     optional<string> solution_;
     optional<string> output_;
@@ -47,6 +48,10 @@ public:
 
     bool noTimeLimit() const {
         return noTimeLimit_;
+    }
+
+    const optional<string>& scorer() const {
+        return scorer_;
     }
 
     const optional<unsigned>& seed() const {

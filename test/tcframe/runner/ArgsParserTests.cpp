@@ -14,6 +14,7 @@ TEST_F(ArgsParserTests, Parsing_AllOptions) {
     char* argv[] = {
             (char*) "./runner",
             (char*) "--memory-limit=128",
+            (char*) "--scorer=python Scorer.py",
             (char*) "--seed=42",
             (char*) "--solution=python Sol.py",
             (char*) "--output=my/testdata",
@@ -25,6 +26,7 @@ TEST_F(ArgsParserTests, Parsing_AllOptions) {
     EXPECT_FALSE(args.noMemoryLimit());
     EXPECT_FALSE(args.noTimeLimit());
     EXPECT_THAT(args.memoryLimit(), Eq(optional<int>(128)));
+    EXPECT_THAT(args.scorer(), Eq(optional<string>("python Scorer.py")));
     EXPECT_THAT(args.seed(), Eq(optional<unsigned>(42)));
     EXPECT_THAT(args.solution(), Eq(optional<string>("python Sol.py")));
     EXPECT_THAT(args.output(), Eq(optional<string>("my/testdata")));

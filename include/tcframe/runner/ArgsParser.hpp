@@ -21,10 +21,11 @@ public:
                 { "memory-limit",    required_argument, nullptr, 'a'},
                 { "no-memory-limit", no_argument      , nullptr, 'b'},
                 { "no-time-limit",   no_argument      , nullptr, 'c'},
-                { "seed",            required_argument, nullptr, 'd'},
-                { "solution",        required_argument, nullptr, 'e'},
-                { "output",          required_argument, nullptr, 'f'},
-                { "time-limit",      required_argument, nullptr, 'g'},
+                { "scorer",          required_argument, nullptr, 'd'},
+                { "seed",            required_argument, nullptr, 'e'},
+                { "solution",        required_argument, nullptr, 'f'},
+                { "output",          required_argument, nullptr, 'g'},
+                { "time-limit",      required_argument, nullptr, 'h'},
                 { 0, 0, 0, 0 }};
 
         Args args;
@@ -51,15 +52,18 @@ public:
                     args.noTimeLimit_ = true;
                     break;
                 case 'd':
-                    args.seed_ = StringUtils::toNumber<unsigned>(optarg);
+                    args.scorer_ = optional<string>(optarg);
                     break;
                 case 'e':
-                    args.solution_ = optional<string>(optarg);
+                    args.seed_ = StringUtils::toNumber<unsigned>(optarg);
                     break;
                 case 'f':
-                    args.output_ = optional<string>(optarg);
+                    args.solution_ = optional<string>(optarg);
                     break;
                 case 'g':
+                    args.output_ = optional<string>(optarg);
+                    break;
+                case 'h':
                     args.timeLimit_ = StringUtils::toNumber<int>(optarg);
                     break;
                 case ':':

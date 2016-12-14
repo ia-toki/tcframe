@@ -16,6 +16,10 @@ public:
         return "./solution";
     }
 
+    static string scorerCommand() {
+        return "./scorer";
+    }
+
     static string outputDir() {
         return "tc";
     }
