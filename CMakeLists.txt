@@ -132,6 +132,7 @@ set(SOURCES
         include/tcframe/util/optional.hpp
         include/tcframe/verdict.hpp
         include/tcframe/verdict/Verdict.hpp
+        include/tcframe/verdict/VerdictParser.hpp
         include/tcframe/verifier.hpp
         include/tcframe/verifier/ConstraintsVerificationResult.hpp
         include/tcframe/verifier/MultipleTestCasesConstraintsVerificationResult.hpp
@@ -193,6 +194,7 @@ set(SOURCES
         test/tcframe/util/OptionalTests.cpp
         test/tcframe/util/StringUtilsTests.cpp
         test/tcframe/util/TestUtils.hpp
+        test/tcframe/verdict/VerdictParserTests.cpp
         test/tcframe/verifier/MockVerifier.hpp
         test/tcframe/verifier/VerifierTests.cpp
 )
