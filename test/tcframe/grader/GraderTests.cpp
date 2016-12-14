@@ -35,7 +35,10 @@ protected:
     TestCase tc4 = TestUtils::createFakeTestCase("foo_4_1", {4});
     TestCase tc5 = TestUtils::createFakeTestCase("foo_4_2", {4});
 
-    TestSuite testSuite = TestSuite({
+    TestSuite testSuiteAC = TestSuite({
+            TestGroup(0, {stcA}),
+            TestGroup(-1, {tcA})});
+    TestSuite testSuiteNonAC = TestSuite({
             TestGroup(0, {stcA}),
             TestGroup(-1, {tcA, tcB})});
     ConstraintSuite constraintSuite = ConstraintSuite(
@@ -80,7 +83,7 @@ protected:
 
 int GraderTests::T;
 
-TEST_F(GraderTests, Grading) {
+TEST_F(GraderTests, Grading_AC) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction());
@@ -88,12 +91,17 @@ TEST_F(GraderTests, Grading) {
         EXPECT_CALL(testCaseGrader, grade(stcA, config));
         EXPECT_CALL(logger, logTestGroupIntroduction(-1));
         EXPECT_CALL(testCaseGrader, grade(tcA, config));
-        EXPECT_CALL(testCaseGrader, grade(tcB, config));
 
         EXPECT_CALL(logger, logResult(map<int, Verdict>{
                 {-1, Verdict::ac()}}));
     }
-    grader.grade(testSuite, constraintSuite, config);
+    grader.grade(testSuiteAC, constraintSuite, config);
+}
+
+TEST_F(GraderTests, Grading_NonAC) {
+    EXPECT_CALL(logger, logResult(map<int, Verdict>{
+            {-1, Verdict::rte()}}));
+    grader.grade(testSuiteNonAC, constraintSuite, config);
 }
 
 TEST_F(GraderTests, Grading_WithSubtasks) {

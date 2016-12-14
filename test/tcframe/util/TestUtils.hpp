@@ -11,7 +11,7 @@ namespace tcframe {
 class TestUtils {
 public:
     static TestCase createFakeTestCase(string id) {
-        return TestCaseBuilder().setId(id).build();
+        return createFakeTestCase(id, {-1});
     }
 
     static TestCase createFakeTestCase(string id, set<int> subtaskIds) {
