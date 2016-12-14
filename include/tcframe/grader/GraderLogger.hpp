@@ -25,12 +25,6 @@ public:
         engine_->logParagraph(0, verdict.name());
     }
 
-    virtual void logTestCaseScoringMessage(const string& message) {
-        if (!message.empty()) {
-            engine_->logListItem1(2, message);
-        }
-    }
-
     virtual void logResult(const map<int, Verdict>& subtaskVerdicts) {
         engine_->logHeading("RESULT");
         for (auto entry : subtaskVerdicts) {

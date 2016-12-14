@@ -30,8 +30,14 @@ public:
         engine_->logHangingParagraph(1, testCaseId + ": ");
     }
 
-    virtual void logSolutionExecutionFailure(const ExecutionResult& result) {
-        engine_->logListItem1(2, "Execution of solution failed:");
+    virtual void logTestCaseScoringMessage(const string& message) {
+        if (!message.empty()) {
+            engine_->logListItem1(2, message);
+        }
+    }
+
+    virtual void logExecutionFailure(const string& context, const ExecutionResult& result) {
+        engine_->logListItem1(2, "Execution of " + context + " failed:");
         if (result.info().exitCode()) {
             engine_->logListItem2(3, "Exit code: " + StringUtils::toString(result.info().exitCode().value()));
             engine_->logListItem2(3, "Standard error: " + string(

@@ -129,7 +129,7 @@ private:
         EvaluationResult evaluationResult = evaluator_->evaluate(inputFilename, outputFilename, evaluatorConfig);
         ExecutionResult executionResult = evaluationResult.executionResult();
         if (!executionResult.info().isSuccessful()) {
-            throw GenerationException([=] { logger_->logSolutionExecutionFailure(executionResult); });
+            throw GenerationException([=] { logger_->logExecutionFailure("solution", executionResult); });
         }
 
         if (maybeSampleOutputString) {
@@ -190,7 +190,14 @@ private:
 
         ScoringResult scoringResult = scorer_->score(inputFilename, outputFilename, "_evaluation.out");
         if (!(scoringResult.verdict() == Verdict::ac())) {
-            throw GenerationException([=] { logger_->logSampleTestCaseCheckFailure(scoringResult.message()); });
+            throw GenerationException([=] {
+                logger_->logSampleTestCaseCheckFailure(scoringResult.message());
+                if (scoringResult.executionResult().info().isSuccessful()) {
+                    logger_->logTestCaseScoringMessage(scoringResult.message());
+                } else {
+                    logger_->logExecutionFailure("scorer", scoringResult.executionResult());
+                }
+            });
         }
     }
 };

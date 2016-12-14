@@ -229,7 +229,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Successful) {
     EXPECT_THAT(outForEvaluation->str(), Eq("yes\n"));
 }
 
-TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Failed_Check) {
+TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Failed_Check_WA) {
     ON_CALL(scorer, score(_, _, _))
             .WillByDefault(Return(ScoringResultBuilder()
                     .setExecutionResult(ExecutionResultBuilder()
@@ -242,6 +242,26 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Failed_Check) {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>()));
         EXPECT_CALL(logger, logSampleTestCaseCheckFailure("diff"));
+    }
+
+    EXPECT_FALSE(generator.generate(sampleTestCaseWithOutput, config));
+}
+
+TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Failed_Check_ERR) {
+    ExecutionResult executionResult = ExecutionResultBuilder()
+            .setInfo(ExecutionInfoBuilder().setExitCode(1).build())
+            .setErrorStream(new istringstream("error"))
+            .build();
+    ON_CALL(scorer, score(_, _, _))
+            .WillByDefault(Return(ScoringResultBuilder()
+                    .setExecutionResult(executionResult)
+                    .setVerdict(Verdict::err())
+                    .build()));
+    {
+        InSequence sequence;
+        EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>()));
+        EXPECT_CALL(logger, logSampleTestCaseCheckFailure(""));
+        EXPECT_CALL(logger, logExecutionFailure("scorer", executionResult));
     }
 
     EXPECT_FALSE(generator.generate(sampleTestCaseWithOutput, config));
@@ -353,7 +373,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Failed_OutputEvaluation) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>("N = 42")));
-        EXPECT_CALL(logger, logSolutionExecutionFailure(executionResult));
+        EXPECT_CALL(logger, logExecutionFailure("solution", executionResult));
     }
     EXPECT_FALSE(generator.generate(officialTestCase, config));
 }
