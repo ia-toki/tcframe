@@ -1,8 +1,8 @@
 #include "gmock/gmock.h"
 
 #include "tcframe/scorer/DiffScorer.hpp"
-#include "tcframe/util.hpp"
 
+using ::testing::AllOf;
 using ::testing::Eq;
 using ::testing::HasSubstr;
 using ::testing::StartsWith;
@@ -30,10 +30,10 @@ TEST_F(DiffScorerIntegrationTests, Scoring_WA) {
             "integration/scorer/diff/contestant_wa.out");
     EXPECT_THAT(result.verdict(), Eq(Verdict::wa()));
 
-    string scorerMessage = StringUtils::streamToString(result.executionResult().errorStream());
-    EXPECT_THAT(scorerMessage, StartsWith("Diff:\n"));
-    EXPECT_THAT(scorerMessage, HasSubstr("(expected) [line 02]    1 2 3\n"));
-    EXPECT_THAT(scorerMessage, HasSubstr("(received) [line 02]    1 4 5\n"));
+    EXPECT_THAT(result.message(), AllOf(
+            StartsWith("Diff:\n"),
+            HasSubstr("(expected) [line 02]    1 2 3\n"),
+            HasSubstr("(received) [line 02]    1 4 5\n")));
 }
 
 }

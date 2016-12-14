@@ -234,9 +234,9 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Failed_Check) {
             .WillByDefault(Return(ScoringResultBuilder()
                     .setExecutionResult(ExecutionResultBuilder()
                             .setInfo(ExecutionInfoBuilder().setExitCode(0).build())
-                            .setErrorStream(new istringstream("diff"))
                             .build())
                     .setVerdict(Verdict::wa())
+                    .setMessage("diff")
                     .build()));
     {
         InSequence sequence;
