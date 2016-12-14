@@ -1,0 +1,19 @@
+.. _v1_2_0:
+
+1.2.0
+=====
+
+December 15, 2016
+
+Bugfixes
+--------
+
+- Fixed a regression when the final verdict of local grading of problems without subtasks is always AC.
+
+New features
+------------
+
+- It is now possible to write a custom program that checks whether the contestant's output is correct (instead of just comparing it with the official output). This is called custom scorer program.
+- It is now possible not to generate test case output (``.out``) files.
+
+See :ref:`styles` for details on how to enable the above options.
