@@ -58,12 +58,12 @@ TEST_F(TestSuiteBuilderTests, Building_OnlySample) {
             TestGroup(0, {
                     TestCaseBuilder()
                             .setId("foo_sample_1")
-                            .setSubtaskIds({})
+                            .setSubtaskIds({-1})
                             .setData(new SampleTestCaseData("10\n20\n", "yes\n"))
                             .build(),
                     TestCaseBuilder()
                             .setId("foo_sample_2")
-                            .setSubtaskIds({})
+                            .setSubtaskIds({-1})
                             .setData(new SampleTestCaseData("30\n"))
                             .build()})});
 
@@ -82,13 +82,13 @@ TEST_F(TestSuiteBuilderTests, Building_OnlyOfficial) {
             TestGroup(-1, {
                     TestCaseBuilder()
                             .setId("foo_1")
-                            .setSubtaskIds({})
+                            .setSubtaskIds({-1})
                             .setDescription("N = 1")
                             .setData(new OfficialTestCaseData([]{}))
                             .build(),
                     TestCaseBuilder()
                             .setId("foo_2")
-                            .setSubtaskIds({})
+                            .setSubtaskIds({-1})
                             .setDescription("N = 2")
                             .setData(new OfficialTestCaseData([]{}))
                             .build()})});
@@ -120,24 +120,24 @@ TEST_F(TestSuiteBuilderTests, Building_Both) {
             TestGroup(0, {
                     TestCaseBuilder()
                             .setId("foo_sample_1")
-                            .setSubtaskIds({})
+                            .setSubtaskIds({-1})
                             .setData(new SampleTestCaseData("10\n20\n", "yes\n"))
                             .build(),
                     TestCaseBuilder()
                             .setId("foo_sample_2")
-                            .setSubtaskIds({})
+                            .setSubtaskIds({-1})
                             .setData(new SampleTestCaseData("30\n"))
                             .build()}),
             TestGroup(-1, {
                     TestCaseBuilder()
                             .setId("foo_1")
-                            .setSubtaskIds({})
+                            .setSubtaskIds({-1})
                             .setDescription("N = 1")
                             .setData(new OfficialTestCaseData([]{}))
                             .build(),
                     TestCaseBuilder()
                             .setId("foo_2")
-                            .setSubtaskIds({})
+                            .setSubtaskIds({-1})
                             .setDescription("N = 2")
                             .setData(new OfficialTestCaseData([]{}))
                             .build()})});
