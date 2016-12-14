@@ -5,7 +5,7 @@ using namespace tcframe;
 class ProblemSpec : public BaseProblemSpec {
 protected:
     int A, B;
-    int res;
+    double res;
 
     void InputFormat() {
         LINE(A, B);
@@ -13,7 +13,6 @@ protected:
 
     void StyleConfig() {
         CustomScorer();
-        NoOutput();
     }
 
     void GradingConfig() {
@@ -32,6 +31,9 @@ protected:
     void SampleTestCase1() {
         Input({
             "1 5"
+        });
+        Output({
+            "6.09"
         });
     }
 

@@ -58,6 +58,8 @@ set(SOURCES
         include/tcframe/grader/GraderConfig.hpp
         include/tcframe/grader/GraderLogger.hpp
         include/tcframe/grader/TestCaseGrader.hpp
+        include/tcframe/grading_style.hpp
+        include/tcframe/grading_style/GradingStyle.hpp
         include/tcframe/io_manipulator.hpp
         include/tcframe/io_manipulator/GridIOSegmentManipulator.hpp
         include/tcframe/io_manipulator/IOManipulator.hpp
@@ -148,6 +150,7 @@ set(SOURCES
         test/tcframe/generator/MockGeneratorLogger.hpp
         test/tcframe/generator/MockTestCaseGenerator.hpp
         test/tcframe/generator/TestCaseGeneratorTests.cpp
+        test/tcframe/grading_style/MockGradingStyleFactory.hpp
         test/tcframe/io_manipulator/GridIOSegmentManipulatorTests.cpp
         test/tcframe/io_manipulator/IOManipulatorTests.cpp
         test/tcframe/io_manipulator/LineIOSegmentManipulatorTests.cpp

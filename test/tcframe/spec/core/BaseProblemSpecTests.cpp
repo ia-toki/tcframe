@@ -8,6 +8,7 @@ using ::testing::ElementsAre;
 using ::testing::Eq;
 using ::testing::Property;
 using ::testing::SizeIs;
+using ::testing::StrEq;
 using ::testing::Test;
 
 namespace tcframe {
@@ -45,6 +46,21 @@ protected:
             newLineIOSegment()
                     .addScalarVariable(Scalar::create(A, "A"))
                     .addScalarVariable(Scalar::create(B, "B"));
+        }
+    };
+
+    class ProblemSpecWithStyleConfig : public ProblemSpec {
+    protected:
+        void StyleConfig() {
+            CustomScorer();
+            NoOutput();
+        }
+    };
+
+    class ProblemSpecWithIllegalStyleConfig : public ProblemSpec {
+    protected:
+        void StyleConfig() {
+            NoOutput();
         }
     };
 
@@ -95,6 +111,21 @@ protected:
         }
     };
 };
+
+TEST_F(BaseProblemSpecTests, StyleConfig) {
+    StyleConfig config = ProblemSpecWithStyleConfig().buildStyleConfig();
+    EXPECT_TRUE(config.needsCustomScorer());
+    EXPECT_FALSE(config.needsOutput());
+}
+
+TEST_F(BaseProblemSpecTests, StyleConfig_Illegal) {
+    try {
+        ProblemSpecWithIllegalStyleConfig().buildStyleConfig();
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Problem that does not need output must need custom scorer"));
+    }
+}
 
 TEST_F(BaseProblemSpecTests, MultipleTestCasesConfig) {
     MultipleTestCasesConfig config = ProblemSpecWithMultipleTestCasesConfig().buildMultipleTestCasesConfig();

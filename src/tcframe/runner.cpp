@@ -1,5 +1,6 @@
 #include "tcframe/generator.hpp"
 #include "tcframe/grader.hpp"
+#include "tcframe/grading_style.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/runner.hpp"
 #include "tcframe/spec.hpp"
@@ -13,6 +14,7 @@ int main(int argc, char* argv[]) {
     auto loggerEngine = new SimpleLoggerEngine();
     auto os = new UnixOperatingSystem();
     auto runnerLoggerFactory = new RunnerLoggerFactory();
+    auto gradingStyleFactory = new GradingStyleFactory();
     auto generatorFactory = new GeneratorFactory();
     auto graderFactory = new GraderFactory();
 
@@ -22,6 +24,7 @@ int main(int argc, char* argv[]) {
             loggerEngine,
             os,
             runnerLoggerFactory,
+            gradingStyleFactory,
             generatorFactory,
             graderFactory);
 

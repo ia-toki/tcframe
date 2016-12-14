@@ -19,4 +19,13 @@ TEST_F(GradingEteTests, Normal) {
             HasSubstr("normal_3: Time Limit Exceeded")));
 }
 
+TEST_F(GradingEteTests, Normal_CustomScorer) {
+    string result = exec("cd ete/normal-custom-scorer && ../scripts/grade-with-custom-scorer.sh");
+    EXPECT_THAT(result, AllOf(
+            HasSubstr("normal-custom-scorer_sample_1: Accepted"),
+            HasSubstr("normal-custom-scorer_1: Wrong Answer"),
+            HasSubstr("normal-custom-scorer_2: Internal Error"),
+            HasSubstr("normal-custom-scorer_3: Accepted")));
+}
+
 }

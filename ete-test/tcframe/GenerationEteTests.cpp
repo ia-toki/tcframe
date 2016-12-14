@@ -47,6 +47,21 @@ TEST_F(GenerationEteTests, Normal_ComplexFormats) {
     ));
 }
 
+TEST_F(GenerationEteTests, Normal_CustomScorer) {
+    ASSERT_THAT(execStatus("cd ete/normal-custom-scorer && ../scripts/generate-with-custom-scorer.sh"), Eq(0));
+
+    EXPECT_THAT(ls("ete/normal-custom-scorer/tc"), UnorderedElementsAre(
+            "normal-custom-scorer_sample_1.in",
+            "normal-custom-scorer_sample_1.out",
+            "normal-custom-scorer_1.in",
+            "normal-custom-scorer_1.out",
+            "normal-custom-scorer_2.in",
+            "normal-custom-scorer_2.out",
+            "normal-custom-scorer_3.in",
+            "normal-custom-scorer_3.out"
+    ));
+}
+
 TEST_F(GenerationEteTests, Subtasks) {
     ASSERT_THAT(execStatus("cd ete/subtasks && ../scripts/generate.sh"), Eq(0));
 
