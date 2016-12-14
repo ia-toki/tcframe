@@ -4,6 +4,7 @@
 #include "../logger/MockLoggerEngine.hpp"
 #include "tcframe/generator/GeneratorLogger.hpp"
 
+using ::testing::_;
 using ::testing::InSequence;
 using ::testing::Test;
 
@@ -80,10 +81,17 @@ TEST_F(GeneratorLoggerTests, SampleTestCaseCheckFailure) {
     {
         InSequence sequence;
         EXPECT_CALL(engine,
-                logListItem1(2, "Sample test case output differs from actual output produced by the solution:"));
+                logListItem1(2, "Sample test case output does not match with actual output produced by the solution"));
         EXPECT_CALL(engine, logListItem2(3, "diff"));
     }
     logger.logSampleTestCaseCheckFailure("diff");
+}
+
+TEST_F(GeneratorLoggerTests, SampleTestCaseCheckFailure_Empty) {
+    EXPECT_CALL(engine,
+            logListItem1(2, "Sample test case output does not match with actual output produced by the solution"));
+    EXPECT_CALL(engine, logListItem2(_, _)).Times(0);
+    logger.logSampleTestCaseCheckFailure("");
 }
 
 TEST_F(GeneratorLoggerTests, SampleTestCaseNoOutputNeededFailure) {

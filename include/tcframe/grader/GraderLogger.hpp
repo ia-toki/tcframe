@@ -26,7 +26,9 @@ public:
     }
 
     virtual void logTestCaseScoringMessage(const string& message) {
-        engine_->logListItem1(2, message);
+        if (!message.empty()) {
+            engine_->logListItem1(2, message);
+        }
     }
 
     virtual void logResult(const map<int, Verdict>& subtaskVerdicts) {

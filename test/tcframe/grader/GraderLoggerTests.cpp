@@ -4,6 +4,7 @@
 #include "../logger/MockLoggerEngine.hpp"
 #include "tcframe/grader/GraderLogger.hpp"
 
+using ::testing::_;
 using ::testing::InSequence;
 using ::testing::Test;
 
@@ -31,6 +32,11 @@ TEST_F(GraderLoggerTests, TestCaseVerdict) {
 TEST_F(GraderLoggerTests, TestCaseScoringMessage) {
     EXPECT_CALL(engine, logListItem1(2, "lorem"));
     logger.logTestCaseScoringMessage("lorem");
+}
+
+TEST_F(GraderLoggerTests, TestCaseScoringMessage_Empty) {
+    EXPECT_CALL(engine, logListItem1(_, _)).Times(0);
+    logger.logTestCaseScoringMessage("");
 }
 
 TEST_F(GraderLoggerTests, Result) {

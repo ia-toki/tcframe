@@ -66,8 +66,8 @@ private:
         ScoringResult result = scorer_->score(inputFilename, outputFilename, evaluationFilename);
 
         logger_->logTestCaseVerdict(result.verdict());
-        if (result.verdict() == Verdict::wa()) {
-            logger_->logTestCaseScoringMessage(StringUtils::streamToString(result.executionResult().errorStream()));
+        if (!(result.verdict() == Verdict::ac())) {
+            logger_->logTestCaseScoringMessage(result.message());
         }
         return result.verdict();
     }

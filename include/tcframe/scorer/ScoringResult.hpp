@@ -19,6 +19,7 @@ struct ScoringResult {
 private:
     ExecutionResult executionResult_;
     Verdict verdict_;
+    string message_;
 
 public:
     const ExecutionResult& executionResult() const {
@@ -29,8 +30,12 @@ public:
         return verdict_;
     }
 
+    const string& message() const {
+        return message_;
+    }
+
     bool operator==(const ScoringResult& o) const {
-        return tie(executionResult_, verdict_) == tie(o.executionResult_, o.verdict_);
+        return tie(executionResult_, verdict_, message_) == tie(o.executionResult_, o.verdict_, o.message_);
     }
 };
 
@@ -46,6 +51,11 @@ public:
 
     ScoringResultBuilder& setVerdict(Verdict verdict) {
         subject_.verdict_ = verdict;
+        return *this;
+    }
+
+    ScoringResultBuilder& setMessage(string message) {
+        subject_.message_ = message;
         return *this;
     }
 
