@@ -13,7 +13,8 @@ public:
 
     MOCK_METHOD1(logTestGroupIntroduction, void(int));
     MOCK_METHOD1(logTestCaseIntroduction, void(string));
-    MOCK_METHOD1(logSolutionExecutionFailure, void(const ExecutionResult&));
+    MOCK_METHOD1(logTestCaseScoringMessage, void(const string&));
+    MOCK_METHOD2(logExecutionFailure, void(const string&, const ExecutionResult&));
 
     MOCK_METHOD0(logIntroduction, void());
     MOCK_METHOD0(logSuccessfulResult, void());

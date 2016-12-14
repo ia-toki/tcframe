@@ -38,6 +38,10 @@ public:
         return Verdict("TLE", "Time Limit Exceeded", 3);
     }
 
+    static Verdict err() {
+        return Verdict("ERR", "Internal Error", 4);
+    }
+
     const string& code() const {
         return code_;
     }

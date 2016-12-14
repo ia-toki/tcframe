@@ -83,6 +83,7 @@ set(SOURCES
         include/tcframe/runner/RunnerLoggerFactory.hpp
         include/tcframe/runner/SlugParser.hpp
         include/tcframe/scorer.hpp
+        include/tcframe/scorer/CustomScorer.hpp
         include/tcframe/scorer/DiffScorer.hpp
         include/tcframe/scorer/Scorer.hpp
         include/tcframe/scorer/ScoringResult.hpp
@@ -209,6 +210,7 @@ target_link_libraries(tests
 )
 
 set(INTEGRATION_SOURCES
+        integration-test/tcframe/scorer/CustomScorerIntegrationTests.cpp
         integration-test/tcframe/scorer/DiffScorerIntegrationTests.cpp
 )
 

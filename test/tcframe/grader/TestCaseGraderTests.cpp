@@ -107,11 +107,33 @@ TEST_F(TestCaseGraderTests, Grading_RTE) {
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
         EXPECT_CALL(evaluator, evaluate(_, _, _));
         EXPECT_CALL(logger, logTestCaseVerdict(Verdict::rte()));
-        EXPECT_CALL(logger, logSolutionExecutionFailure(_));
+        EXPECT_CALL(logger, logExecutionFailure("solution", _));
     }
     EXPECT_CALL(scorer, score(_, _, _)).Times(0);
 
     EXPECT_THAT(grader.grade(testCase, config), Eq(Verdict::rte()));
+}
+
+TEST_F(TestCaseGraderTests, Grading_ERR) {
+    ExecutionResult executionResult = ExecutionResultBuilder()
+            .setInfo(ExecutionInfoBuilder().setExitCode(1).build())
+            .setErrorStream(new istringstream("error"))
+            .build();
+    ON_CALL(scorer, score(_, _, _))
+            .WillByDefault(Return(ScoringResultBuilder()
+                    .setExecutionResult(executionResult)
+                    .setVerdict(Verdict::err())
+                    .build()));
+    {
+        InSequence sequence;
+        EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
+        EXPECT_CALL(evaluator, evaluate(_, _, _));
+        EXPECT_CALL(scorer, score(_, _, _));
+        EXPECT_CALL(logger, logTestCaseVerdict(Verdict::err()));
+        EXPECT_CALL(logger, logExecutionFailure("scorer", executionResult));
+    }
+
+    EXPECT_THAT(grader.grade(testCase, config), Eq(Verdict::err()));
 }
 
 }

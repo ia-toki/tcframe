@@ -51,7 +51,7 @@ private:
             Verdict verdict = result.verdict().value();
             logger_->logTestCaseVerdict(verdict);
             if (verdict == Verdict::rte()) {
-                logger_->logSolutionExecutionFailure(result.executionResult());
+                logger_->logExecutionFailure("solution", result.executionResult());
             }
         }
 
@@ -67,7 +67,11 @@ private:
 
         logger_->logTestCaseVerdict(result.verdict());
         if (!(result.verdict() == Verdict::ac())) {
-            logger_->logTestCaseScoringMessage(result.message());
+            if (result.executionResult().info().isSuccessful()) {
+                logger_->logTestCaseScoringMessage(result.message());
+            } else {
+                logger_->logExecutionFailure("scorer", result.executionResult());
+            }
         }
         return result.verdict();
     }

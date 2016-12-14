@@ -4,6 +4,7 @@
 #include "MockLoggerEngine.hpp"
 #include "tcframe/logger/BaseLogger.hpp"
 
+using ::testing::_;
 using ::testing::InSequence;
 using ::testing::Test;
 
@@ -36,7 +37,17 @@ TEST_F(BaseLoggerTests, TestCaseIntroduction) {
     logger.logTestCaseIntroduction("foo_1");
 }
 
-TEST_F(BaseLoggerTests, SolutionExecutionFailure_ExitCode) {
+TEST_F(BaseLoggerTests, TestCaseScoringMessage) {
+    EXPECT_CALL(engine, logListItem1(2, "lorem"));
+    logger.logTestCaseScoringMessage("lorem");
+}
+
+TEST_F(BaseLoggerTests, TestCaseScoringMessage_Empty) {
+    EXPECT_CALL(engine, logListItem1(_, _)).Times(0);
+    logger.logTestCaseScoringMessage("");
+}
+
+TEST_F(BaseLoggerTests, ExecutionFailure_ExitCode) {
     {
         InSequence sequence;
         EXPECT_CALL(engine, logListItem1(2, "Execution of solution failed:"));
@@ -49,10 +60,10 @@ TEST_F(BaseLoggerTests, SolutionExecutionFailure_ExitCode) {
             .setInfo(info)
             .setErrorStream(new istringstream("err"))
             .build();
-    logger.logSolutionExecutionFailure(result);
+    logger.logExecutionFailure("solution", result);
 }
 
-TEST_F(BaseLoggerTests, SolutionExecutionFailure_ExitSignal) {
+TEST_F(BaseLoggerTests, ExecutionFailure_ExitSignal) {
     {
         InSequence sequence;
         EXPECT_CALL(engine, logListItem1(2, "Execution of solution failed:"));
@@ -61,7 +72,7 @@ TEST_F(BaseLoggerTests, SolutionExecutionFailure_ExitSignal) {
 
     ExecutionInfo info = ExecutionInfoBuilder().setExitSignal("SIGSEGV").build();
     ExecutionResult result = ExecutionResultBuilder().setInfo(info).build();
-    logger.logSolutionExecutionFailure(result);
+    logger.logExecutionFailure("solution", result);
 }
 
 }
