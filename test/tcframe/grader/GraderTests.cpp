@@ -23,6 +23,10 @@ protected:
     MOCK(TestCaseGrader) testCaseGrader;
     MOCK(GraderLogger) logger;
 
+    TestCase stcA = TestUtils::createFakeTestCase("foo_sample_1");
+    TestCase tcA = TestUtils::createFakeTestCase("foo_1");
+    TestCase tcB = TestUtils::createFakeTestCase("foo_2");
+
     TestCase stc1 = TestUtils::createFakeTestCase("foo_sample_1", {1, 2});
     TestCase stc2 = TestUtils::createFakeTestCase("foo_sample_2", {2});
     TestCase tc1 = TestUtils::createFakeTestCase("foo_1_1", {1, 2});
@@ -31,14 +35,25 @@ protected:
     TestCase tc4 = TestUtils::createFakeTestCase("foo_4_1", {4});
     TestCase tc5 = TestUtils::createFakeTestCase("foo_4_2", {4});
 
-    set<int> subtaskIds = {1, 2, 3, 4};
-
     TestSuite testSuite = TestSuite({
+            TestGroup(0, {stcA}),
+            TestGroup(-1, {tcA, tcB})});
+    ConstraintSuite constraintSuite = ConstraintSuite(
+            {Subtask(-1, {})},
+            {});
+
+    TestSuite testSuiteWithSubtasks = TestSuite({
             TestGroup(0, {stc1, stc2}),
             TestGroup(1, {tc1}),
             TestGroup(2, {tc2}),
             TestGroup(3, {tc3}),
             TestGroup(4, {tc4, tc5})});
+    ConstraintSuite constraintSuiteWithSubtasks = ConstraintSuite(
+            {Subtask(1, {}), Subtask(2, {}), Subtask(3, {}), Subtask(4, {})},
+            {});
+    ConstraintSuite constraintSuiteWithSubtasksWithGlobalConstraints = ConstraintSuite(
+            {Subtask(-1, {}), Subtask(1, {}), Subtask(2, {}), Subtask(3, {}), Subtask(4, {})},
+            {});
 
     GraderConfig config = GraderConfigBuilder("foo")
             .setSolutionCommand("python Sol.py")
@@ -70,6 +85,22 @@ TEST_F(GraderTests, Grading) {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction());
         EXPECT_CALL(logger, logTestGroupIntroduction(0));
+        EXPECT_CALL(testCaseGrader, grade(stcA, config));
+        EXPECT_CALL(logger, logTestGroupIntroduction(-1));
+        EXPECT_CALL(testCaseGrader, grade(tcA, config));
+        EXPECT_CALL(testCaseGrader, grade(tcB, config));
+
+        EXPECT_CALL(logger, logResult(map<int, Verdict>{
+                {-1, Verdict::ac()}}));
+    }
+    grader.grade(testSuite, constraintSuite, config);
+}
+
+TEST_F(GraderTests, Grading_WithSubtasks) {
+    {
+        InSequence sequence;
+        EXPECT_CALL(logger, logIntroduction());
+        EXPECT_CALL(logger, logTestGroupIntroduction(0));
         EXPECT_CALL(testCaseGrader, grade(stc1, config));
         EXPECT_CALL(testCaseGrader, grade(stc2, config));
         EXPECT_CALL(logger, logTestGroupIntroduction(1));
@@ -88,10 +119,20 @@ TEST_F(GraderTests, Grading) {
                 {3, Verdict::wa()},
                 {4, Verdict::tle()}}));
     }
-    grader.grade(testSuite, subtaskIds, config);
+    grader.grade(testSuiteWithSubtasks, constraintSuiteWithSubtasks, config);
 }
 
-TEST_F(GraderTests, Grading_MultipleTestCases) {
+TEST_F(GraderTests, Grading_WithSubtasks_WithGlobalConstraints) {
+    EXPECT_CALL(logger, logResult(map<int, Verdict>{
+            {1, Verdict::ac()},
+            {2, Verdict::rte()},
+            {3, Verdict::wa()},
+            {4, Verdict::tle()}}));
+
+    grader.grade(testSuiteWithSubtasks, constraintSuiteWithSubtasksWithGlobalConstraints, config);
+}
+
+TEST_F(GraderTests, Grading_WithSubtasks_MultipleTestCases) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction());
@@ -117,7 +158,7 @@ TEST_F(GraderTests, Grading_MultipleTestCases) {
                 {3, Verdict::wa()},
                 {4, Verdict::tle()}}));
     }
-    grader.grade(testSuite, subtaskIds, multipleTestCasesConfig);
+    grader.grade(testSuiteWithSubtasks, constraintSuiteWithSubtasks, multipleTestCasesConfig);
 }
 
 }

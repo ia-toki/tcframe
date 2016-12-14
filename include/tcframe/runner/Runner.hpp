@@ -149,12 +149,7 @@ private:
         auto testCaseGrader = new TestCaseGrader(evaluator, scorer, logger);
         auto grader = graderFactory_->create(testCaseGrader, logger);
 
-        set<int> subtaskIds;
-        for (const Subtask& subtask : spec.constraintSuite().constraints()) {
-            subtaskIds.insert(subtask.id());
-        }
-
-        grader->grade(spec.testSuite(), subtaskIds, graderConfig);
+        grader->grade(spec.testSuite(), spec.constraintSuite(), graderConfig);
         return 0;
     }
 

@@ -10,6 +10,7 @@
 #include "GraderLogger.hpp"
 #include "TestCaseGrader.hpp"
 #include "tcframe/os.hpp"
+#include "tcframe/spec.hpp"
 #include "tcframe/util.hpp"
 #include "tcframe/verdict.hpp"
 
@@ -33,11 +34,11 @@ public:
             : testCaseGrader_(testCaseGrader)
             , logger_(logger) {}
 
-    virtual void grade(const TestSuite& testSuite, const set<int>& subtaskIds, const GraderConfig& config) {
+    virtual void grade(const TestSuite& testSuite, const ConstraintSuite& constraintSuite, const GraderConfig& config) {
         logger_->logIntroduction();
 
         map<int, Verdict> subtaskVerdicts;
-        for (int subtaskId : subtaskIds) {
+        for (int subtaskId : getSubtaskIdsToGrade(constraintSuite)) {
             subtaskVerdicts[subtaskId] = Verdict::ac();
         }
 
@@ -49,6 +50,20 @@ public:
     }
 
 private:
+    set<int> getSubtaskIdsToGrade(const ConstraintSuite& constraintSuite) {
+        set<int> subtaskIds;
+        for (const Subtask& subtask : constraintSuite.constraints()) {
+            subtaskIds.insert(subtask.id());
+        }
+
+        // remove global constraints for problem with subtasks
+        if (subtaskIds.size() > 1) {
+            subtaskIds.erase(-1);
+        }
+
+        return subtaskIds;
+    }
+
     void gradeOnTestGroup(
             const TestGroup& testGroup,
             const GraderConfig& config,
