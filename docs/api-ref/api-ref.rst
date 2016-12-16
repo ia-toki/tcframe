@@ -225,6 +225,38 @@ The following macros are exposed to define input/output formats:
 
 ----
 
+.. _api-ref_styles:
+
+Problem styles
+**************
+
+.. sourcecode:: cpp
+
+    virtual void StyleConfig() {}
+
+Defines the options to enable for problem styles. The following methods are exposed:
+
+.. cpp:function:: CustomScorer()
+
+    Declares that the problem needs a custom scorer.
+
+.. cpp:function:: NoOutput()
+
+    Declares that the problem does not need test case output files.
+
+See :ref:`styles` for more details.
+
+Example:
+
+.. sourcecode:: cpp
+
+    void StyleConfig() {
+        CustomScorer();
+        NoOutput();
+    }
+
+----
+
 .. _api-ref_constraints:
 
 Constraints and subtasks
@@ -524,6 +556,10 @@ Test cases generation
 
     The solution command to use for generating output files. Default: ``./solution``.
 
+.. py:function:: --scorer=<command>
+
+    The custom scorer command to use for checking sample output strings in problem spec class. Default: ``./scorer``.
+
 .. py:function:: --seed=<seed>
 
     The seed for random number generator ``rnd`` in the test spec. Default: ``0``.
@@ -543,6 +579,9 @@ Local grading
 
     The solution command to grade. Default: ``./solution``.
 
+.. py:function:: --scorer=<command>
+
+    The custom scorer command to use. Default: ``./scorer``.
 
 .. py:function:: --time-limit=<time-limit-in-seconds>
 

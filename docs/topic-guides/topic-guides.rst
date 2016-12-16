@@ -12,6 +12,7 @@ In this guide, we will learn each aspect of **tcframe** more thoroughly. Each se
    Spec and runner <spec>
    I/O variables <io-variables>
    I/O formats <io-formats>
+   Problem styles <styles>
    Constraints <constraints>
    Subtasks <subtasks>
    Test cases <test-cases>
