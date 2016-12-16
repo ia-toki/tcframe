@@ -1,13 +1,11 @@
 #pragma once
 
-#include <stdexcept>
 #include <tuple>
 #include <utility>
 
 #include "CommonConfig.hpp"
 
 using std::move;
-using std::runtime_error;
 using std::tie;
 
 namespace tcframe {
@@ -56,10 +54,6 @@ public:
     }
 
     StyleConfig build() {
-        if (!subject_.needsOutput_ && !subject_.needsCustomScorer_) {
-            throw runtime_error("Problem that does not need output must need custom scorer");
-        }
-
         return move(subject_);
     }
 };
