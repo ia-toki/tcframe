@@ -18,16 +18,16 @@ protected:
 TEST_F(DiffScorerIntegrationTests, Scoring_AC) {
     ScoringResult result = scorer.score(
             "",
-            "integration/scorer/judge.out",
-            "integration/scorer/diff/contestant_ac.out");
+            "test-integration/scorer/judge.out",
+            "test-integration/scorer/diff/contestant_ac.out");
     EXPECT_THAT(result.verdict(), Eq(Verdict::ac()));
 }
 
 TEST_F(DiffScorerIntegrationTests, Scoring_WA) {
     ScoringResult result = scorer.score(
             "",
-            "integration/scorer/judge.out",
-            "integration/scorer/diff/contestant_wa.out");
+            "test-integration/scorer/judge.out",
+            "test-integration/scorer/diff/contestant_wa.out");
     EXPECT_THAT(result.verdict(), Eq(Verdict::wa()));
 
     EXPECT_THAT(result.message(), AllOf(

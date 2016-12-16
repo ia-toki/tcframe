@@ -41,7 +41,7 @@ include_directories("${source_dir}/googlemock/include")
 
 include_directories(include)
 
-set(SOURCES
+set(INCLUDE
         include/tcframe/evaluator.hpp
         include/tcframe/evaluator/BatchEvaluator.hpp
         include/tcframe/evaluator/EvaluationResult.hpp
@@ -140,107 +140,89 @@ set(SOURCES
         include/tcframe/verifier/ConstraintsVerificationResult.hpp
         include/tcframe/verifier/MultipleTestCasesConstraintsVerificationResult.hpp
         include/tcframe/verifier/Verifier.hpp
-        test/tcframe/helper.hpp
-        test/tcframe/mock.hpp
-        test/tcframe/evaluator/BatchEvaluatorTests.cpp
-        test/tcframe/evaluator/MockEvaluator.hpp
-        test/tcframe/generator/GeneratorLoggerTests.cpp
-        test/tcframe/generator/GeneratorTests.cpp
-        test/tcframe/generator/MockGenerator.hpp
-        test/tcframe/generator/MockGeneratorLogger.hpp
-        test/tcframe/generator/MockTestCaseGenerator.hpp
-        test/tcframe/generator/TestCaseGeneratorTests.cpp
-        test/tcframe/grading_style/MockGradingStyleFactory.hpp
-        test/tcframe/io_manipulator/GridIOSegmentManipulatorTests.cpp
-        test/tcframe/io_manipulator/IOManipulatorTests.cpp
-        test/tcframe/io_manipulator/LineIOSegmentManipulatorTests.cpp
-        test/tcframe/io_manipulator/LinesIOSegmentManipulatorTests.cpp
-        test/tcframe/io_manipulator/MockIOManipulator.hpp
-        test/tcframe/io_manipulator/RawLineIOSegmentManipulatorTests.cpp
-        test/tcframe/io_manipulator/RawLinesIOSegmentManipulatorTests.cpp
-        test/tcframe/logger/BaseLogggerTests.cpp
-        test/tcframe/logger/MockLoggerEngine.hpp
-        test/tcframe/logger/SimpleLoggerEngineTests.cpp
-        test/tcframe/os/MockOperatingSystem.hpp
-        test/tcframe/runner/ArgsParserTests.cpp
-        test/tcframe/runner/MockRunnerLogger.hpp
-        test/tcframe/runner/MockRunnerLoggerFactory.hpp
-        test/tcframe/runner/RunnerTests.cpp
-        test/tcframe/runner/RunnerLoggerTests.cpp
-        test/tcframe/runner/SlugParserTests.cpp
-        test/tcframe/scorer/MockScorer.hpp
-        test/tcframe/spec/constraint/ConstraintSuiteBuilderTests.cpp
-        test/tcframe/spec/core/BaseTestSpecTests.cpp
-        test/tcframe/spec/core/BaseProblemSpecTests.cpp
-        test/tcframe/spec/core/MagicTests.cpp
-        test/tcframe/spec/core/MockSeedSetter.hpp
-        test/tcframe/spec/io/GridIOSegmentBuilderTests.cpp
-        test/tcframe/spec/io/IOFormatBuilderTests.cpp
-        test/tcframe/spec/io/LineIOSegmentBuilderTests.cpp
-        test/tcframe/spec/io/LinesIOSegmentBuilderTests.cpp
-        test/tcframe/spec/io/RawLineIOSegmentBuilderTests.cpp
-        test/tcframe/spec/io/RawLinesIOSegmentBuilderTests.cpp
-        test/tcframe/spec/random/RandomTests.cpp
-        test/tcframe/spec/testcase/TestCaseIdCreatorTests.cpp
-        test/tcframe/spec/testcase/TestSuiteBuilderTests.cpp
-        test/tcframe/spec/variable/MatrixTests.cpp
-        test/tcframe/spec/variable/ScalarTests.cpp
-        test/tcframe/spec/variable/TokenFormatterTests.cpp
-        test/tcframe/spec/variable/VariableTests.cpp
-        test/tcframe/spec/variable/VectorTests.cpp
-        test/tcframe/spec/variable/WhitespaceManipulatorTests.cpp
-        test/tcframe/grader/GraderTests.cpp
-        test/tcframe/grader/GraderLoggerTests.cpp
-        test/tcframe/grader/MockGrader.hpp
-        test/tcframe/grader/MockGraderLogger.hpp
-        test/tcframe/grader/MockTestCaseGrader.hpp
-        test/tcframe/grader/TestCaseGraderTests.cpp
-        test/tcframe/util/OptionalTests.cpp
-        test/tcframe/util/StringUtilsTests.cpp
-        test/tcframe/util/TestUtils.hpp
-        test/tcframe/verdict/VerdictParserTests.cpp
-        test/tcframe/verifier/MockVerifier.hpp
-        test/tcframe/verifier/VerifierTests.cpp
 )
 
-add_executable(tests ${SOURCES})
+set(TEST_UNIT
+        test/unit/tcframe/helper.hpp
+        test/unit/tcframe/mock.hpp
+        test/unit/tcframe/evaluator/BatchEvaluatorTests.cpp
+        test/unit/tcframe/evaluator/MockEvaluator.hpp
+        test/unit/tcframe/generator/GeneratorLoggerTests.cpp
+        test/unit/tcframe/generator/GeneratorTests.cpp
+        test/unit/tcframe/generator/MockGenerator.hpp
+        test/unit/tcframe/generator/MockGeneratorLogger.hpp
+        test/unit/tcframe/generator/MockTestCaseGenerator.hpp
+        test/unit/tcframe/generator/TestCaseGeneratorTests.cpp
+        test/unit/tcframe/grading_style/MockGradingStyleFactory.hpp
+        test/unit/tcframe/io_manipulator/GridIOSegmentManipulatorTests.cpp
+        test/unit/tcframe/io_manipulator/IOManipulatorTests.cpp
+        test/unit/tcframe/io_manipulator/LineIOSegmentManipulatorTests.cpp
+        test/unit/tcframe/io_manipulator/LinesIOSegmentManipulatorTests.cpp
+        test/unit/tcframe/io_manipulator/MockIOManipulator.hpp
+        test/unit/tcframe/io_manipulator/RawLineIOSegmentManipulatorTests.cpp
+        test/unit/tcframe/io_manipulator/RawLinesIOSegmentManipulatorTests.cpp
+        test/unit/tcframe/logger/BaseLogggerTests.cpp
+        test/unit/tcframe/logger/MockLoggerEngine.hpp
+        test/unit/tcframe/logger/SimpleLoggerEngineTests.cpp
+        test/unit/tcframe/os/MockOperatingSystem.hpp
+        test/unit/tcframe/runner/ArgsParserTests.cpp
+        test/unit/tcframe/runner/MockRunnerLogger.hpp
+        test/unit/tcframe/runner/MockRunnerLoggerFactory.hpp
+        test/unit/tcframe/runner/RunnerTests.cpp
+        test/unit/tcframe/runner/RunnerLoggerTests.cpp
+        test/unit/tcframe/runner/SlugParserTests.cpp
+        test/unit/tcframe/scorer/MockScorer.hpp
+        test/unit/tcframe/spec/constraint/ConstraintSuiteBuilderTests.cpp
+        test/unit/tcframe/spec/core/BaseTestSpecTests.cpp
+        test/unit/tcframe/spec/core/BaseProblemSpecTests.cpp
+        test/unit/tcframe/spec/core/MagicTests.cpp
+        test/unit/tcframe/spec/core/MockSeedSetter.hpp
+        test/unit/tcframe/spec/io/GridIOSegmentBuilderTests.cpp
+        test/unit/tcframe/spec/io/IOFormatBuilderTests.cpp
+        test/unit/tcframe/spec/io/LineIOSegmentBuilderTests.cpp
+        test/unit/tcframe/spec/io/LinesIOSegmentBuilderTests.cpp
+        test/unit/tcframe/spec/io/RawLineIOSegmentBuilderTests.cpp
+        test/unit/tcframe/spec/io/RawLinesIOSegmentBuilderTests.cpp
+        test/unit/tcframe/spec/random/RandomTests.cpp
+        test/unit/tcframe/spec/testcase/TestCaseIdCreatorTests.cpp
+        test/unit/tcframe/spec/testcase/TestSuiteBuilderTests.cpp
+        test/unit/tcframe/spec/variable/MatrixTests.cpp
+        test/unit/tcframe/spec/variable/ScalarTests.cpp
+        test/unit/tcframe/spec/variable/TokenFormatterTests.cpp
+        test/unit/tcframe/spec/variable/VariableTests.cpp
+        test/unit/tcframe/spec/variable/VectorTests.cpp
+        test/unit/tcframe/spec/variable/WhitespaceManipulatorTests.cpp
+        test/unit/tcframe/grader/GraderTests.cpp
+        test/unit/tcframe/grader/GraderLoggerTests.cpp
+        test/unit/tcframe/grader/MockGrader.hpp
+        test/unit/tcframe/grader/MockGraderLogger.hpp
+        test/unit/tcframe/grader/MockTestCaseGrader.hpp
+        test/unit/tcframe/grader/TestCaseGraderTests.cpp
+        test/unit/tcframe/util/OptionalTests.cpp
+        test/unit/tcframe/util/StringUtilsTests.cpp
+        test/unit/tcframe/util/TestUtils.hpp
+        test/unit/tcframe/verdict/VerdictParserTests.cpp
+        test/unit/tcframe/verifier/MockVerifier.hpp
+        test/unit/tcframe/verifier/VerifierTests.cpp
+)
 
-target_link_libraries(tests
+add_executable(test_unit ${INCLUDE} ${TEST_UNIT})
+
+target_link_libraries(test_unit
         gtest
         gmock
         ${CMAKE_THREAD_LIBS_INIT}
         gcov
 )
 
-set(INTEGRATION_SOURCES
-        integration-test/tcframe/scorer/CustomScorerIntegrationTests.cpp
-        integration-test/tcframe/scorer/DiffScorerIntegrationTests.cpp
+set(TEST_INTEGRATION
+        test/integration/tcframe/scorer/CustomScorerIntegrationTests.cpp
+        test/integration/tcframe/scorer/DiffScorerIntegrationTests.cpp
 )
 
-add_executable(integration_tests ${INTEGRATION_SOURCES})
+add_executable(test_integration ${INCLUDE} ${TEST_INTEGRATION})
 
-target_link_libraries(integration_tests
-        gtest
-        gmock
-        ${CMAKE_THREAD_LIBS_INIT}
-        gcov
-)
-
-add_custom_command(
-        TARGET integration_tests
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/integration-test/resources $<TARGET_FILE_DIR:integration_tests>/integration
-)
-
-set(ETE_SOURCES
-        ete-test/tcframe/BaseEteTests.cpp
-        ete-test/tcframe/GenerationEteTests.cpp
-        ete-test/tcframe/GradingEteTests.cpp
-)
-
-add_executable(ete_tests ${ETE_SOURCES})
-
-target_link_libraries(ete_tests
+target_link_libraries(test_integration
         gtest
         gmock
         ${CMAKE_THREAD_LIBS_INIT}
@@ -248,10 +230,31 @@ target_link_libraries(ete_tests
 )
 
 add_custom_command(
-        TARGET ete_tests
+        TARGET test_integration
         POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/include $<TARGET_FILE_DIR:ete_tests>/tcframe/include
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src $<TARGET_FILE_DIR:ete_tests>/tcframe/src
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/scripts $<TARGET_FILE_DIR:ete_tests>/tcframe/scripts
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/ete-test/resources $<TARGET_FILE_DIR:ete_tests>/ete
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/test/integration/resources $<TARGET_FILE_DIR:test_integration>/test-integration
+)
+
+set(TEST_ETE
+        test/ete/tcframe/BaseEteTests.cpp
+        test/ete/tcframe/GenerationEteTests.cpp
+        test/ete/tcframe/GradingEteTests.cpp
+)
+
+add_executable(test_ete ${TEST_ETE})
+
+target_link_libraries(test_ete
+        gtest
+        gmock
+        ${CMAKE_THREAD_LIBS_INIT}
+        gcov
+)
+
+add_custom_command(
+        TARGET test_ete
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/include $<TARGET_FILE_DIR:test_ete>/tcframe/include
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src $<TARGET_FILE_DIR:test_ete>/tcframe/src
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/scripts $<TARGET_FILE_DIR:test_ete>/tcframe/scripts
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/test/ete/resources $<TARGET_FILE_DIR:test_ete>/test-ete
 )
