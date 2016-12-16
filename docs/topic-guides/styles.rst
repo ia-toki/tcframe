@@ -81,6 +81,4 @@ No output
 
 Enabled by calling ``NoOutput()`` inside ``StyleConfig()``.
 
-Sometimes, a problem does not need test case output files (``.out``) because the scoring is done by a custom score alone. If this option is enabled, then ``.out`` files will not be generated.
-
-Note that if ``NoOutput()`` is enabled, then ``CustomScorer()`` must be enabled as well.
+Sometimes, a problem does not need test case output files (``.out``) because the scoring is done by a custom score alone. If this option is enabled, then ``.out`` files will not be generated, and it is not allowed to specify ``Output()`` in sample test cases.

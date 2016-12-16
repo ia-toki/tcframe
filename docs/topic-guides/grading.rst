@@ -39,6 +39,9 @@ Runtime Error (RTE)
 Time Limit Exceeded (TLE)
     The solution did not stop within the time limit, if specified.
 
+Internal Error (ERR)
+    Custom scorer (if any) crashed or did not give valid verdict.
+
 The verdict of each subtask will be also shown. The verdict of a subtask is the worst verdict of all verdicts of test cases that are assigned to it. Here, RTE is worse than WA, and WA is worse than AC.
 
 Here is a sample output of a local grading for problems with subtasks.

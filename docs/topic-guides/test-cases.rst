@@ -134,6 +134,8 @@ can be translated to:
 
     The ``Output()`` part of a sample test case definition is optional, and if not present, the solution will be run to produce the output. However, it is only for easier migration from **tcframe** 0.x. You should always specify both input and output, so that you are sure you are typing the output correctly in the problem statement by only looking at the spec file (no need to check with the actual produced output file).
 
+    Of course, if ``NoOutput()`` is enabled (see :ref:`styles`), then ``Output()`` is not allowed to be specified.
+
 :ref:`If your problem has subtasks <subtasks>`, you also need to assign each sample test case to a set of subtasks, by calling ``Subtasks()`` at the beginning of each ``SampleTestCaseX()`` with the set of subtask numbers, as follows.
 
 .. sourcecode:: cpp
