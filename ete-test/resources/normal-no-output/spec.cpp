@@ -12,7 +12,6 @@ protected:
     }
 
     void StyleConfig() {
-        CustomScorer();
         NoOutput();
     }
 

@@ -57,13 +57,6 @@ protected:
         }
     };
 
-    class ProblemSpecWithIllegalStyleConfig : public ProblemSpec {
-    protected:
-        void StyleConfig() {
-            NoOutput();
-        }
-    };
-
     class ProblemSpecWithMultipleTestCasesConfig : public ProblemSpec {
     protected:
         void MultipleTestCasesConfig() {
@@ -116,15 +109,6 @@ TEST_F(BaseProblemSpecTests, StyleConfig) {
     StyleConfig config = ProblemSpecWithStyleConfig().buildStyleConfig();
     EXPECT_TRUE(config.needsCustomScorer());
     EXPECT_FALSE(config.needsOutput());
-}
-
-TEST_F(BaseProblemSpecTests, StyleConfig_Illegal) {
-    try {
-        ProblemSpecWithIllegalStyleConfig().buildStyleConfig();
-        FAIL();
-    } catch (runtime_error& e) {
-        EXPECT_THAT(e.what(), StrEq("Problem that does not need output must need custom scorer"));
-    }
 }
 
 TEST_F(BaseProblemSpecTests, MultipleTestCasesConfig) {
