@@ -7,8 +7,6 @@ coverage:
         conditional: no
         method: no
   ignore:
-    - ete-test/.*
-    - include/tcframe/deprecated/.*
     - test/.*
     - usr/include/.*
 comment: false
