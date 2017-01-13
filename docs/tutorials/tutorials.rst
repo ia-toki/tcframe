@@ -9,3 +9,5 @@ Here, you can find case studies and best practices on how to write your spec fil
    :maxdepth: 1
 
    tutorial_1
+   tutorial_2
+   
