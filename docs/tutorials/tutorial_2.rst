@@ -206,39 +206,39 @@ Before creating the actual test cases, let us create the private helper methods 
 
 .. sourcecode:: cpp
 
-    void randomWeight(int M, vector<int>& W, int minW = 1, int maxW = 1000) {
-        for (int i = 0; i < M; i++) {
-            W.push_back(rnd.nextInt(minW, maxW));
+    void randomWeight(int m, vector<int>& w, int minW = 1, int maxW = 1000) {
+        for (int i = 0; i < m; i++) {
+            w.push_back(rnd.nextInt(minW, maxW));
         }
     }
 
-    void renumber(int N, vector<int>& U, vector<int>& V) {
+    void renumber(int n, vector<int>& u, vector<int>& v) {
         vector<int> permutation;
-        for (int i = 0; i < N; i++) {
+        for (int i = 0; i < n; i++) {
             permutation.push_back(i);
         }
         rnd.shuffle(permutation.begin(), permutation.end());
-        for (int i = 0; i < U.size(); i++) {
-            U[i] = permutation[U[i]];
-            V[i] = permutation[V[i]];
+        for (int i = 0; i < u.size(); i++) {
+            u[i] = permutation[u[i]];
+            v[i] = permutation[v[i]];
         }
     }
 
-    void randomTree(int N, vector<int>& U, vector<int>& V) {
-        for (int i = 1; i < N; i++) {
-            U.push_back(i);
-            V.push_back(rnd.nextInt(0, i - 1));
+    void randomTree(int n, vector<int>& u, vector<int>& v) {
+        for (int i = 1; i < n; i++) {
+            u.push_back(i);
+            v.push_back(rnd.nextInt(0, i - 1));
         }
-        renumber(N, U, V);
+        renumber(n, u, v);
     }
 
-    void randomGraph(int N, int M, vector<int>& U, vector<int>& V) {
-        randomTree(N, U, V);
-        while (U.size() < M) {
-            int u = rnd.nextInt(0, N - 2);
-            int v = rnd.nextInt(u + 1, N - 1);
-            U.push_back(u);
-            V.push_back(v);
+    void randomGraph(int n, int m, vector<int>& u, vector<int>& v) {
+        randomTree(n, u, v);
+        while (u.size() < m) {
+            int newU = rnd.nextInt(0, N - 2);
+            int newV = rnd.nextInt(newU + 1, N - 1);
+            u.push_back(newU);
+            v.push_back(newV);
         }
     }
 
@@ -508,39 +508,39 @@ Here is the complete spec file for our Minimum Spanning Tree problem.
         }
 
     private:
-        void randomWeight(int M, vector<int>& W, int minW = 1, int maxW = 1000) {
-            for (int i = 0; i < M; i++) {
-                W.push_back(rnd.nextInt(minW, maxW));
+        void randomWeight(int m, vector<int>& w, int minW = 1, int maxW = 1000) {
+            for (int i = 0; i < m; i++) {
+                w.push_back(rnd.nextInt(minW, maxW));
             }
         }
 
-        void renumber(int N, vector<int>& U, vector<int>& V) {
+        void renumber(int n, vector<int>& u, vector<int>& v) {
             vector<int> permutation;
-            for (int i = 0; i < N; i++) {
+            for (int i = 0; i < n; i++) {
                 permutation.push_back(i);
             }
             rnd.shuffle(permutation.begin(), permutation.end());
-            for (int i = 0; i < U.size(); i++) {
-                U[i] = permutation[U[i]];
-                V[i] = permutation[V[i]];
+            for (int i = 0; i < u.size(); i++) {
+                u[i] = permutation[u[i]];
+                v[i] = permutation[v[i]];
             }
         }
 
-        void randomTree(int N, vector<int>& U, vector<int>& V) {
-            for (int i = 1; i < N; i++) {
-                U.push_back(i);
-                V.push_back(rnd.nextInt(0, i - 1));
+        void randomTree(int n, vector<int>& u, vector<int>& v) {
+            for (int i = 1; i < n; i++) {
+                u.push_back(i);
+                v.push_back(rnd.nextInt(0, i - 1));
             }
-            renumber(N, U, V);
+            renumber(n, u, v);
         }
 
-        void randomGraph(int N, int M, vector<int>& U, vector<int>& V) {
-            randomTree(N, U, V);
-            while (U.size() < M) {
-                int u = rnd.nextInt(0, N - 2);
-                int v = rnd.nextInt(u + 1, N - 1);
-                U.push_back(u);
-                V.push_back(v);
+        void randomGraph(int n, int m, vector<int>& u, vector<int>& v) {
+            randomTree(n, u, v);
+            while (u.size() < m) {
+                int newU = rnd.nextInt(0, N - 2);
+                int newV = rnd.nextInt(newU + 1, N - 1);
+                u.push_back(newU);
+                v.push_back(newV);
             }
         }
     };
