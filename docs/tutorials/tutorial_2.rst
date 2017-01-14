@@ -59,7 +59,7 @@ Writing problem spec
 
 The following is a problem spec that is derived directly from the problem statement. We are using the same private method ``eachElementBetween()`` from the previous tutorial. We are adding another private method ``allAreEqual()``. We are also adding several private methods for checking graph properties, namely ``noSelfLoop()`` (self loop is an edge connecting a node to itself) and ``isConnected()``. These methods are very modular and we can always reuse them for another problem. However, note that the methods assume the nodes of the graph are 0-based, and several minor changes are needed if the nodes are 1-based.
 
-Let's focus on the syntax differences compared to the first tutorial. Note that we are using the method ``Constraints()`` to include the global constraints that applies to every subtasks, and we are using ``SubtaskX()`` to include the constraints that applies to only those subtasks. Since ``Subtask3()`` does not have any additional constraints that is not included in the global constraints, we can simply just leave the method empty.
+Let's focus on the syntax differences compared to the first tutorial. Note that we are using the method ``Constraints()`` to include the global constraints that applies to every subtask, and we are using ``SubtaskX()`` to include the constraints that apply to only those subtasks. Since ``Subtask3()`` does not have any additional constraints that are not included in the global constraints, we can simply just leave the method empty.
 
 ``minimum-spanning-tree/spec.cpp``:
 
@@ -139,7 +139,7 @@ Let's focus on the syntax differences compared to the first tutorial. Note that 
             return true;
         }
 
-        bool isConnected(const int& n, const vector<int>& u, const vector<int>& v) {
+        bool isConnected(int n, const vector<int>& u, const vector<int>& v) {
             vector<bool> isVisited(n);
             vector<vector<int>> adj(n);
             for (int i = 0; i < u.size(); i++) {
@@ -170,7 +170,7 @@ Let's focus on the syntax differences compared to the first tutorial. Note that 
 Writing test spec
 -----------------
 
-The first difference in the ``TestSpec`` class compared to the first tutorial is in the sample test cases declaration. We need to declare which subtasks will have this sample case as one of their test cases. For the sample input in the problem above, since M ≤ 20 and not all W are equal, then the sample input will be included in subtask 1 and subtask 3.
+The first difference in the ``TestSpec`` class compared to the first tutorial is in the sample test cases declaration. We need to declare which subtasks will have this sample test case as one of their test cases. For the sample test case in the problem above, since M ≤ 20 and not all W are equal, then the sample test case will be included in subtask 1 and subtask 3.
 
 ``minimum-spanning-tree/spec.cpp`` (continued):
 
@@ -248,13 +248,13 @@ The properties of the subtasks of the above problem are :
 
 1. All test cases in subtask 1 and subtask 2 are also in subtask 3, and subtask 3 contains some other test cases that are neither in subtask 1 nor subtask 2.
 
-2. Some test cases are in both subtask 1 and subtask 2, and there are also test cases that is in subtask 1 but not in subtask 2, and there are also test cases that are in subtask 2 but not in subtask 2.
+2. Some test cases are in both subtask 1 and subtask 2, and there are also test cases that are in subtask 1 but not in subtask 2, and there are also test cases that are in subtask 2 but not in subtask 2.
 
 Therefore, the Venn diagram looks like this
 
 .. image:: tutorial_2-venn_diagram.png
 
-We need to define a test group for each of the region in the Venn diagram. Therefore, we will have four test groups. Let us number it from 1 to 4 in the same order as the diagram above. Therefore, each test groups will have the following constraints in addition to the global constraints:
+We need to define a test group for each of the regions in the Venn diagram. Therefore, we will have four test groups. Let us number it from 1 to 4 in the same order as the diagram above. Therefore, the four test groups will have the following constraints in addition to the global constraints:
 
 1. M ≤ 20 and all W are equal
 2. M ≤ 20 and not all W are equal
@@ -280,7 +280,7 @@ For example, the test cases for the first test group can be something like this
         }
     }
 
-It is a good practice to include the smallest case (M = 1) and the largest case (M = 20) satisfying the test group constraints. Since this test group also include subtask 2, we also need to make sure that all W are equal.
+It is a good practice to include the smallest case (M = 1) and the largest case (M = 20) satisfying the test group constraints. Since this test group is also included in subtask 2, we also need to make sure that all W are equal.
 
 The second test group can be something like this
 
@@ -289,12 +289,12 @@ The second test group can be something like this
     void TestGroup2() {
         Subtasks({1, 3});
         
+        // We manually create a small test case where greedily choosing
+        // the first N - 1 edges with smallest weight will create a cycle.
         CASE(N = 4, M = 4,
              U = {0, 1, 2, 0},
              V = {1, 2, 0, 3},
              W = {1, 1, 1, 2});
-        // We manually create a small test case where greedily choosing
-        // the first N - 1 edges with smallest weight will create a cycle.
 
         CASE(N = 2, M = 2, U = {0, 1}, V = {1, 0}, W = {1, 2});
         CASE(N = 21, M = 20, randomTree(N, U, V), randomWeight(M, W));
@@ -307,9 +307,9 @@ The second test group can be something like this
         }
     }
 
-Since this test group does not include subtask 2, W must not be equal for all elements. Therefore, the smallest case for this test group is M = 2.
+Since this test group is not included in subtask 2, it must not be the case that W are equal for all elements. Therefore, the smallest case for this test group is M = 2.
 
-The third and fourth test group can be created similarly. You can see the complete code containing the test specifications for the next test groups in the following section.
+The third and fourth test groups can be created in a similar fashion. You can see the complete code containing the test specifications for the next test groups in the following section.
 
 ----
 
@@ -394,7 +394,7 @@ Here is the complete spec file for our Minimum Spanning Tree problem.
             return true;
         }
 
-        bool isConnected(const int& n, const vector<int>& u, const vector<int>& v) {
+        bool isConnected(int n, const vector<int>& u, const vector<int>& v) {
             vector<bool> isVisited(n);
             vector<vector<int>> adj(n);
             for (int i = 0; i < u.size(); i++) {
@@ -459,12 +459,12 @@ Here is the complete spec file for our Minimum Spanning Tree problem.
         void TestGroup2() {
             Subtasks({1, 3});
             
+            // We manually create a small test case where greedily choosing
+            // the first N - 1 edges with smallest weight will create a cycle.
             CASE(N = 4, M = 4,
                  U = {0, 1, 2, 0},
                  V = {1, 2, 0, 3},
                  W = {1, 1, 1, 2});
-            // We manually create a small test case where greedily choosing
-            // the first N - 1 edges with smallest weight will create a cycle.
 
             CASE(N = 2, M = 2, U = {0, 1}, V = {1, 0}, W = {1, 2});
             CASE(N = 21, M = 20, randomTree(N, U, V), randomWeight(M, W));
