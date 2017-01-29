@@ -1,0 +1,11 @@
+.. _v1_2_1:
+
+1.2.1
+=====
+
+January 29, 2017
+
+Bugfixes
+--------
+
+- Fixed a regression when I/O format segments do not pick up correct sizes if the sizes contain expressions that contain I/O variables.
