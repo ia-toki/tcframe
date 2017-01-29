@@ -19,7 +19,7 @@ protected:
         RAW_LINE(S);
         LINE(N);
         LINE(A % SIZE(2));
-        LINES(X, Y) % SIZE(N + 1);
+        LINES(X, Y) % SIZE(N - 1);
         GRID(M) % SIZE(2, 3);
     }
 
@@ -43,11 +43,10 @@ protected:
     void SampleTestCase1() {
         Input({
             "[BEGIN INPUT]",
-            "2",
+            "3",
             "3 5",
             "1 1",
             "2 2",
-            "3 3",
             "7 7 7",
             "8 8 8"
         });
@@ -59,6 +58,6 @@ protected:
     }
 
     void TestCases() {
-        CASE(S = "[BEGIN INPUT]", N = 2, A = {10, 20}, X = {0, 0, 0}, Y = {1, 1, 1}, M = { {1, 2, 3}, {4, 5, 6} });
+        CASE(S = "[BEGIN INPUT]", N = 3, A = {10, 20}, X = {0, 0}, Y = {1, 1}, M = { {1, 2, 3}, {4, 5, 6} });
     }
 };

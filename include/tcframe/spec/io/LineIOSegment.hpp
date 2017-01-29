@@ -27,7 +27,7 @@ public:
 
     LineIOSegmentVariable(Variable* variable)
             : variable_(variable)
-            , size_([] {return -1;}) {
+            , size_([] {return NO_SIZE;}) {
     }
 
     Variable* variable() const {

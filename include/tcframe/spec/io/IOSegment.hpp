@@ -1,6 +1,10 @@
 #pragma once
 
+#include <climits>
+
 namespace tcframe {
+
+const int NO_SIZE = INT_MIN;
 
 enum class IOSegmentType {
     GRID,
