@@ -180,11 +180,11 @@ TEST_F(MagicTests, LINE_Valid) {
             .addScalarVariable(Scalar::create(dummy, "A"))
             .addScalarVariable(Scalar::create(dummy, "B"));
     builder.newLineIOSegment()
-            .addVectorVariable(Vector::create(dummy2, "C"), new int(3));
+            .addVectorVariable(Vector::create(dummy2, "C"), [] {return 3;});
     builder.newLineIOSegment()
             .addScalarVariable(Scalar::create(dummy, "A"))
             .addScalarVariable(Scalar::create(dummy, "B"))
-            .addVectorVariable(Vector::create(dummy2, "C"), new int(3))
+            .addVectorVariable(Vector::create(dummy2, "C"), [] {return 3;})
             .addVectorVariable(Vector::create(dummy2, "D"));
 
     EXPECT_THAT(ioFormat, Eq(builder.build()));
@@ -215,16 +215,16 @@ TEST_F(MagicTests, LINES_Valid) {
     builder.prepareForInputFormat();
     builder.newLinesIOSegment()
             .addVectorVariable(Vector::create(dummy, "X"))
-            .setSize(new int(2));
+            .setSize([] {return 2;});
     builder.newLinesIOSegment()
             .addVectorVariable(Vector::create(dummy, "X"))
             .addVectorVariable(Vector::create(dummy, "Y"))
-            .setSize(new int(3));
+            .setSize([] {return 3;});
     builder.newLinesIOSegment()
             .addVectorVariable(Vector::create(dummy, "X"))
             .addVectorVariable(Vector::create(dummy, "Y"))
             .addJaggedVectorVariable(Matrix::create(dummy2, "Z"))
-            .setSize(new int(4));
+            .setSize([] {return 4;});
     builder.newLinesIOSegment()
             .addVectorVariable(Vector::create(dummy, "A"))
             .addVectorVariable(Vector::create(dummy, "B"))
@@ -285,10 +285,10 @@ TEST_F(MagicTests, RAW_LINES_Valid) {
     builder.prepareForInputFormat();
     builder.newRawLinesIOSegment()
             .addVectorVariable(Vector::createRaw(dummy, "X"))
-            .setSize(new int(2));
+            .setSize([] {return 2;});
     builder.newRawLinesIOSegment()
             .addVectorVariable(Vector::createRaw(dummy, "Y"))
-            .setSize(new int(3));
+            .setSize([] {return 3;});
     builder.newRawLinesIOSegment()
             .addVectorVariable(Vector::createRaw(dummy, "Z"));
 
@@ -319,16 +319,16 @@ TEST_F(MagicTests, GRID_Valid) {
     builder.prepareForInputFormat();
     builder.newGridIOSegment()
             .addMatrixVariable(Matrix::create(dummy, "M1"))
-            .setSize(new int(2), new int(3));
+            .setSize([] {return 2;}, [] {return 3;});
     builder.newGridIOSegment()
             .addMatrixVariable(Matrix::create(dummy, "M2"))
-            .setSize(new int(2), new int(3));
+            .setSize([] {return 2;}, [] {return 3;});
     builder.newGridIOSegment()
             .addMatrixVariable(Matrix::create(dummy, "M3"))
-            .setSize(new int(2), new int(3));
+            .setSize([] {return 2;}, [] {return 3;});
     builder.newGridIOSegment()
             .addMatrixVariable(Matrix::create(dummy, "M4"))
-            .setSize(new int(2), new int(3));
+            .setSize([] {return 2;}, [] {return 3;});
 
     EXPECT_THAT(ioFormat, Eq(builder.build()));
 }

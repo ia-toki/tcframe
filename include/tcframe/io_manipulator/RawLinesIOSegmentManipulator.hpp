@@ -20,8 +20,9 @@ public:
         string lastVariableName;
 
         Vector* variable = segment->variable();
-        for (int j = 0; j != *segment->size(); j++) {
-            if (*segment->size() == -1 && WhitespaceManipulator::isEof(in)) {
+        int size = segment->size()();
+        for (int j = 0; j != size; j++) {
+            if (size == -1 && WhitespaceManipulator::isEof(in)) {
                 break;
             }
 
@@ -46,10 +47,11 @@ public:
 private:
     static void checkVectorSize(RawLinesIOSegment* segment) {
         Vector* variable = segment->variable();
-        if (*segment->size() != -1 && *segment->size() != variable->size()) {
+        int expectedSize = segment->size()();
+        if (expectedSize != -1 && expectedSize != variable->size()) {
             throw runtime_error(
                     "Number of elements of " + TokenFormatter::formatVariable(variable->name())
-                    + " unsatisfied. Expected: " + StringUtils::toString(*segment->size())
+                    + " unsatisfied. Expected: " + StringUtils::toString(expectedSize)
                     + ", actual: " + StringUtils::toString(variable->size()));
         }
     }

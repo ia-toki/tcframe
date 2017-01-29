@@ -1,11 +1,14 @@
 #pragma once
 
+#include <functional>
 #include <stdexcept>
 #include <tuple>
 
 #include "IOSegment.hpp"
 #include "tcframe/spec/variable.hpp"
 
+using std::function;
+using std::make_tuple;
 using std::runtime_error;
 using std::tie;
 
@@ -16,14 +19,14 @@ struct GridIOSegment : public IOSegment {
 
 private:
     Matrix* variable_;
-    int* rows_;
-    int* columns_;
+    function<int()> rows_;
+    function<int()> columns_;
 
 public:
     GridIOSegment()
             : variable_(nullptr)
-            , rows_(new int(-1))
-            , columns_(new int(-1)) {}
+            , rows_([] {return -1;})
+            , columns_([] {return -1;}) {}
 
     IOSegmentType type() const {
         return IOSegmentType::GRID;
@@ -33,11 +36,11 @@ public:
         return variable_;
     }
 
-    int* rows() const {
+    const function<int()>& rows() const {
         return rows_;
     }
 
-    int* columns() const {
+    const function<int()>& columns() const {
         return columns_;
     }
 
@@ -50,7 +53,7 @@ public:
         if ((variable_ == nullptr) != (o.variable_ == nullptr)) {
             return false;
         }
-        return tie(*rows_, *columns_) == tie(*o.rows_, *o.columns_);
+        return make_tuple(rows_(), columns_()) == make_tuple(o.rows_(), o.columns_());
     }
 
     bool equals(IOSegment* o) const {
@@ -72,7 +75,7 @@ public:
         return *this;
     }
 
-    GridIOSegmentBuilder& setSize(int* rows, int* columns) {
+    GridIOSegmentBuilder& setSize(function<int()> rows, function<int()> columns) {
         subject_->rows_ = rows;
         subject_->columns_ = columns;
         return *this;
@@ -94,7 +97,7 @@ private:
         if (subject_->variable_ == nullptr) {
             throw runtime_error("Grid segment must have exactly one variable");
         }
-        if (*subject_->rows_ == -1 || *subject_->columns_ == -1) {
+        if (subject_->rows_() == -1 || subject_->columns_() == -1) {
             throw runtime_error("Grid segment must define matrix sizes");
         }
     }

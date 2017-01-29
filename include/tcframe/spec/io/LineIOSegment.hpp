@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <stdexcept>
 #include <tuple>
 #include <vector>
@@ -7,6 +8,7 @@
 #include "IOSegment.hpp"
 #include "tcframe/spec/variable.hpp"
 
+using std::function;
 using std::runtime_error;
 using std::tie;
 using std::vector;
@@ -16,28 +18,28 @@ namespace tcframe {
 struct LineIOSegmentVariable {
 private:
     Variable* variable_;
-    int* size_;
+    function<int()> size_;
 
 public:
-    LineIOSegmentVariable(Variable* variable, int* size)
+    LineIOSegmentVariable(Variable* variable, const function<int()>& size)
             : variable_(variable)
             , size_(size) {}
 
     LineIOSegmentVariable(Variable* variable)
             : variable_(variable)
-            , size_(new int(-1)) {
+            , size_([] {return -1;}) {
     }
 
     Variable* variable() const {
         return variable_;
     }
 
-    int* size() const {
+    const function<int()>& size() const {
         return size_;
     }
 
     bool operator==(const LineIOSegmentVariable& o) const {
-        return variable_->equals(o.variable_) && *size_ == *o.size_;
+        return variable_->equals(o.variable_) && size_() == o.size_();
     }
 };
 
@@ -88,7 +90,7 @@ public:
         return *this;
     }
 
-    LineIOSegmentBuilder& addVectorVariable(Vector* variable, int* size) {
+    LineIOSegmentBuilder& addVectorVariable(Vector* variable, function<int()> size) {
         checkVectorWithoutSize();
         subject_->variables_.push_back(LineIOSegmentVariable(variable, size));
         return *this;

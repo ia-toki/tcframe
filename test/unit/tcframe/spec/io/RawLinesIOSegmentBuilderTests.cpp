@@ -18,11 +18,11 @@ protected:
 TEST_F(RawLinesIOSegmentBuilderTests, Building_Successful) {
     RawLinesIOSegment* segment = builder
             .addVectorVariable(Vector::createRaw(V, "V"))
-            .setSize(new int(2))
+            .setSize([] {return 2;})
             .build();
 
     EXPECT_TRUE(segment->variable()->equals(Vector::createRaw(V, "V")));
-    EXPECT_THAT(*segment->size(), Eq(2));
+    EXPECT_THAT(segment->size()(), Eq(2));
 }
 
 TEST_F(RawLinesIOSegmentBuilderTests, Building_WithoutSize_Successful) {
@@ -36,7 +36,7 @@ TEST_F(RawLinesIOSegmentBuilderTests, Building_WithoutSize_Successful) {
 TEST_F(RawLinesIOSegmentBuilderTests, Building_Failed_NoVariables) {
     try {
         builder
-                .setSize(new int(2))
+                .setSize([] {return 2;})
                 .build();
         FAIL();
     } catch (runtime_error& e) {
@@ -49,7 +49,7 @@ TEST_F(RawLinesIOSegmentBuilderTests, Building_Failed_MultipleVariables) {
         builder
                 .addVectorVariable(Vector::createRaw(V, "V"))
                 .addVectorVariable(Vector::createRaw(V, "V"))
-                .setSize(new int(2))
+                .setSize([] {return 2;})
                 .build();
         FAIL();
     } catch (runtime_error& e) {

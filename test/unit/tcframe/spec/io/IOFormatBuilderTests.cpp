@@ -31,27 +31,27 @@ TEST_F(IOFormatBuilderTests, Building_Successful) {
     builder
             .newLinesIOSegment()
             .addVectorVariable(Vector::create(Y, "Y"))
-            .setSize(new int(3));
+            .setSize([] {return 3;});
     builder
             .newGridIOSegment()
             .addMatrixVariable(Matrix::create(Z, "Z"))
-            .setSize(new int(2), new int(3))
+            .setSize([] {return 2;}, [] {return 3;})
             .build();
 
     builder.prepareForOutputFormat();
     builder
             .newGridIOSegment()
             .addMatrixVariable(Matrix::create(Z, "Z"))
-            .setSize(new int(2), new int(3))
+            .setSize([] {return 2;}, [] {return 3;})
             .build();
     builder
             .newLinesIOSegment()
             .addVectorVariable(Vector::create(Y, "Y"))
-            .setSize(new int(3));
+            .setSize([] {return 3;});
     builder
             .newRawLinesIOSegment()
             .addVectorVariable(Vector::createRaw(V, "V"))
-            .setSize(new int(3));
+            .setSize([] {return 3;});
     builder
             .newLineIOSegment()
             .addScalarVariable(Scalar::create(X, "X"));
@@ -82,7 +82,7 @@ TEST_F(IOFormatBuilderTests, Building_Failed_LinesSegmentWithoutSizeNotLast) {
         builder
                 .newGridIOSegment()
                 .addMatrixVariable(Matrix::create(Z, "Z"))
-                .setSize(new int(2), new int(3));
+                .setSize([] {return 2;}, [] {return 3;});
         builder.build();
         FAIL();
     } catch (runtime_error& e) {
@@ -100,7 +100,7 @@ TEST_F(IOFormatBuilderTests, Building_Failed_LinesSegmentWithoutSizeNotLast) {
         builder
                 .newGridIOSegment()
                 .addMatrixVariable(Matrix::create(Z, "Z"))
-                .setSize(new int(2), new int(3));
+                .setSize([] {return 2;}, [] {return 3;});
         builder.build();
         FAIL();
     } catch (runtime_error& e) {
@@ -121,7 +121,7 @@ TEST_F(IOFormatBuilderTests, Building_Failed_RawLinesSegmentWithoutSizeNotLast) 
         builder
                 .newGridIOSegment()
                 .addMatrixVariable(Matrix::create(Z, "Z"))
-                .setSize(new int(2), new int(3));
+                .setSize([] {return 2;}, [] {return 3;});
         builder.build();
         FAIL();
     } catch (runtime_error& e) {
@@ -139,7 +139,7 @@ TEST_F(IOFormatBuilderTests, Building_Failed_RawLinesSegmentWithoutSizeNotLast) 
         builder
                 .newGridIOSegment()
                 .addMatrixVariable(Matrix::create(Z, "Z"))
-                .setSize(new int(2), new int(3));
+                .setSize([] {return 2;}, [] {return 3;});
         builder.build();
         FAIL();
     } catch (runtime_error& e) {

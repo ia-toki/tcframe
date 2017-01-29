@@ -141,14 +141,14 @@ private:
         if (segment->type() != IOSegmentType::LINES) {
             return false;
         }
-        return *((LinesIOSegment*) segment)->size() == -1;
+        return ((LinesIOSegment*) segment)->size()() == -1;
     }
 
     bool isRawLinesSegmentWithoutSize(IOSegment* segment) {
         if (segment->type() != IOSegmentType::RAW_LINES) {
             return false;
         }
-        return *((RawLinesIOSegment*) segment)->size() == -1;
+        return ((RawLinesIOSegment*) segment)->size()() == -1;
     }
 };
 

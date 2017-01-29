@@ -50,7 +50,7 @@ protected:
                     .addScalarVariable(Scalar::create(A, "A"));
             ioFormatBuilder.newLinesIOSegment()
                     .addVectorVariable(Vector::create(V, "V"))
-                    .setSize(new int(2));
+                    .setSize([] {return 2;});
             IOFormat ioFormat = ioFormatBuilder.build();
 
             manipulatorWithVectorLast = new IOManipulator(ioFormat);
@@ -64,13 +64,13 @@ protected:
                     .addScalarVariable(Scalar::createRaw(S, "S"));
             ioFormatBuilder.newLinesIOSegment()
                     .addVectorVariable(Vector::create(V, "V"))
-                    .setSize(new int(2));
+                    .setSize([] {return 2;});
             ioFormatBuilder.newRawLinesIOSegment()
                     .addVectorVariable(Vector::createRaw(W, "W"))
-                    .setSize(new int(2));
+                    .setSize([] {return 2;});
             ioFormatBuilder.newGridIOSegment()
                     .addMatrixVariable(Matrix::create(M, "M"))
-                    .setSize(new int(2), new int(2));
+                    .setSize([] {return 2;}, [] {return 2;});
             IOFormat ioFormat = ioFormatBuilder.build();
 
             manipulatorWithMatrixLast = new IOManipulator(ioFormat);

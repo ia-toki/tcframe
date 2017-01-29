@@ -18,7 +18,7 @@ protected:
     int A, B;
     vector<int> C, D;
 
-    int* size = new int(2);
+    function<int()> size = [] {return 2;};
 
     LineIOSegment* segmentWithScalarsOnly = LineIOSegmentBuilder()
             .addScalarVariable(Scalar::create(A, "A"))
