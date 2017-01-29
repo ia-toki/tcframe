@@ -18,18 +18,18 @@ protected:
 TEST_F(GridIOSegmentBuilderTests, Building_Successful) {
     GridIOSegment* segment = builder
             .addMatrixVariable(Matrix::create(M, "M"))
-            .setSize(new int(2), new int(3))
+            .setSize([] {return 2;}, [] {return 3;})
             .build();
 
     EXPECT_TRUE(segment->variable()->equals(Matrix::create(M, "M")));
-    EXPECT_THAT(*segment->rows(), Eq(2));
-    EXPECT_THAT(*segment->columns(), Eq(3));
+    EXPECT_THAT(segment->rows()(), Eq(2));
+    EXPECT_THAT(segment->columns()(), Eq(3));
 }
 
 TEST_F(GridIOSegmentBuilderTests, Building_Failed_NoVariables) {
     try {
         builder
-                .setSize(new int(2), new int(3))
+                .setSize([] {return 2;}, [] {return 3;})
                 .build();
         FAIL();
     } catch (runtime_error& e) {
@@ -42,7 +42,7 @@ TEST_F(GridIOSegmentBuilderTests, Building_Failed_MultipleVariables) {
         builder
                 .addMatrixVariable(Matrix::create(M, "M"))
                 .addMatrixVariable(Matrix::create(N, "N"))
-                .setSize(new int(2), new int(3))
+                .setSize([] {return 2;}, [] {return 3;})
                 .build();
         FAIL();
     } catch (runtime_error& e) {

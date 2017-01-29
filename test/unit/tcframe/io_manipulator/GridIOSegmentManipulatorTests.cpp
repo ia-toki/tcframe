@@ -15,8 +15,8 @@ namespace tcframe {
 
 class GridIOSegmentManipulatorTests : public Test {
 protected:
-    int* rows = new int(2);
-    int* columns = new int(3);
+    function<int()> rows = [] {return 2;};
+    function<int()> columns = [] {return 3;};
 
     vector<vector<int>> M;
     GridIOSegment* segment = GridIOSegmentBuilder()

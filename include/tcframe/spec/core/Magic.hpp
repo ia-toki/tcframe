@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <queue>
 #include <string>
 #include <vector>
@@ -9,6 +10,7 @@
 #include "tcframe/spec/variable.hpp"
 #include "tcframe/util.hpp"
 
+using std::function;
 using std::queue;
 using std::string;
 using std::vector;
@@ -22,8 +24,8 @@ using std::vector;
 #define RAW_LINES(...) (MagicRawLinesIOSegmentBuilder(newRawLinesIOSegment(), #__VA_ARGS__), __VA_ARGS__)
 #define GRID(...) (MagicGridIOSegmentBuilder(newGridIOSegment(), #__VA_ARGS__), __VA_ARGS__)
 
-#define SIZE_IMPL1(size) VectorSize(size)
-#define SIZE_IMPL2(rows, columns) MatrixSize(rows, columns)
+#define SIZE_IMPL1(size) VectorSize([=] {return size;})
+#define SIZE_IMPL2(rows, columns) MatrixSize([=] {return rows;}, [=] {return columns;})
 #define SIZE_WITH_COUNT(_1, _2, N, ...) SIZE_IMPL ## N
 #define SIZE(...) SIZE_WITH_COUNT(__VA_ARGS__, 2, 1)(__VA_ARGS__)
 
@@ -31,13 +33,10 @@ using std::vector;
 namespace tcframe {
 
 struct VectorSize {
-    int* size;
+    function<int()> size;
 
-    VectorSize(int&& size)
-            : size(new int(size)) {}
-
-    VectorSize(int& size)
-            : size(&size) {}
+    VectorSize(const function<int()>& size)
+            : size(size) {}
 };
 
 template<typename T>
@@ -52,24 +51,12 @@ VectorWithSize<T> operator%(vector<T>& vektor, VectorSize size) {
 }
 
 struct MatrixSize {
-    int* rows;
-    int* columns;
+    function<int()> rows;
+    function<int()> columns;
 
-    MatrixSize(int&& rows, int&& columns)
-            : rows(new int(rows))
-            , columns(new int(columns)) {}
-
-    MatrixSize(int&& rows, int& columns)
-            : rows(new int(rows))
-            , columns(&columns) {}
-
-    MatrixSize(int& rows, int&& columns)
-            : rows(&rows)
-            , columns(new int(columns)) {}
-
-    MatrixSize(int& rows, int& columns)
-            : rows(&rows)
-            , columns(&columns) {}
+    MatrixSize(const function<int()>& rows, const function<int()>& columns)
+            : rows(rows)
+            , columns(columns) {}
 };
 
 class VariableNamesExtractor {

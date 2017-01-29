@@ -16,7 +16,7 @@ namespace tcframe {
 class RawLinesIOSegmentManipulatorTests : public Test {
 protected:
     vector<string> V;
-    int* size = new int(2);
+    function<int()> size = [] {return 2;};
 
     RawLinesIOSegment* segment = RawLinesIOSegmentBuilder()
             .addVectorVariable(Vector::createRaw(V, "V"))

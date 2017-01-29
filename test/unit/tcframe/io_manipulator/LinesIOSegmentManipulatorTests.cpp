@@ -17,7 +17,7 @@ class LinesIOSegmentManipulatorTests : public Test {
 protected:
     vector<int> X, Y;
     vector<vector<int>> Z;
-    int* size = new int(3);
+    function<int()> size = [] {return 3;};
 
     LinesIOSegment* segment = LinesIOSegmentBuilder()
             .addVectorVariable(Vector::create(X, "X"))
