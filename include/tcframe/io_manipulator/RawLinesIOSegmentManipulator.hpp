@@ -22,7 +22,7 @@ public:
         Vector* variable = segment->variable();
         int size = segment->size()();
         for (int j = 0; j != size; j++) {
-            if (size == -1 && WhitespaceManipulator::isEof(in)) {
+            if (size == NO_SIZE && WhitespaceManipulator::isEof(in)) {
                 break;
             }
 
@@ -48,7 +48,7 @@ private:
     static void checkVectorSize(RawLinesIOSegment* segment) {
         Vector* variable = segment->variable();
         int expectedSize = segment->size()();
-        if (expectedSize != -1 && expectedSize != variable->size()) {
+        if (expectedSize != NO_SIZE && expectedSize != variable->size()) {
             throw runtime_error(
                     "Number of elements of " + TokenFormatter::formatVariable(variable->name())
                     + " unsatisfied. Expected: " + StringUtils::toString(expectedSize)

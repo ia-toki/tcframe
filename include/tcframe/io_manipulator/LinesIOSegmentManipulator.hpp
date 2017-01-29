@@ -29,7 +29,7 @@ public:
 
         int size = segment->size()();
         for (int j = 0; j != size; j++) {
-            if (size == -1 && WhitespaceManipulator::isEof(in)) {
+            if (size == NO_SIZE && WhitespaceManipulator::isEof(in)) {
                 break;
             }
 
@@ -85,7 +85,7 @@ public:
 private:
     static int getSize(LinesIOSegment* segment) {
         int size = segment->size()();
-        if (size != -1) {
+        if (size != NO_SIZE) {
             return size;
         }
 
@@ -112,7 +112,7 @@ private:
             }
             if (size != expectedSize) {
                 string withoutSizeMessage;
-                if (segment->size()() == -1) {
+                if (segment->size()() == NO_SIZE) {
                     string firstVariableName = TokenFormatter::formatVariable(segment->variables()[0]->name());
                     withoutSizeMessage = " (number of elements of " + firstVariableName + ")";
                 }

@@ -51,7 +51,7 @@ private:
 public:
     RawLinesIOSegmentBuilder()
             : subject_(new RawLinesIOSegment()) {
-        subject_->size_ = [] {return -1;};
+        subject_->size_ = [] {return NO_SIZE;};
     }
 
     RawLinesIOSegmentBuilder& addVectorVariable(Vector* variable) {

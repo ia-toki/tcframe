@@ -62,7 +62,7 @@ private:
 public:
     LinesIOSegmentBuilder()
             : subject_(new LinesIOSegment()) {
-        subject_->size_ = [] {return -1;};
+        subject_->size_ = [] {return NO_SIZE;};
     }
 
     LinesIOSegmentBuilder& addVectorVariable(Vector* variable) {

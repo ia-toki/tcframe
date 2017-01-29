@@ -25,8 +25,8 @@ private:
 public:
     GridIOSegment()
             : variable_(nullptr)
-            , rows_([] {return -1;})
-            , columns_([] {return -1;}) {}
+            , rows_([] {return NO_SIZE;})
+            , columns_([] {return NO_SIZE;}) {}
 
     IOSegmentType type() const {
         return IOSegmentType::GRID;
@@ -97,7 +97,7 @@ private:
         if (subject_->variable_ == nullptr) {
             throw runtime_error("Grid segment must have exactly one variable");
         }
-        if (subject_->rows_() == -1 || subject_->columns_() == -1) {
+        if (subject_->rows_() == NO_SIZE || subject_->columns_() == NO_SIZE) {
             throw runtime_error("Grid segment must define matrix sizes");
         }
     }

@@ -62,7 +62,7 @@ public:
 
 private:
     static void checkVectorSize(Vector* vektor, int size) {
-        if (size != -1 && vektor->size() != size) {
+        if (size != NO_SIZE && vektor->size() != size) {
             throw runtime_error("Number of elements of vector " + TokenFormatter::formatVariable(vektor->name())
                                 + " unsatisfied. Expected: " + StringUtils::toString(size) + ", actual: "
                                 + StringUtils::toString(vektor->size()));
@@ -75,7 +75,7 @@ private:
 
     static void parseVector(Vector* vektor, int size, istream* in) {
         vektor->clear();
-        if (size == -1) {
+        if (size == NO_SIZE) {
             vektor->parseFrom(in);
         } else {
             vektor->parseFrom(in, size);
