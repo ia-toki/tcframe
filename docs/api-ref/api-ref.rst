@@ -491,7 +491,7 @@ Hook up additional logic to run during in a :ref:`test case lifecycle <test-case
 For each test case, the following things will happen in order:
 
 #. ``BeforeTestCase()`` is executed.
-#. The assignments/method calls inside ``CASE()`` are executed.
+#. The assignments/method calls inside ``CASE()``, or parsing of sample input literal, are executed.
 #. ``AfterTestCase()`` is executed.
 #. Input variable values are printed according to the input format.
 

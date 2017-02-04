@@ -81,7 +81,10 @@ private:
         if (testCase.data()->type() == TestCaseDataType::SAMPLE) {
             SampleTestCaseData* data = (SampleTestCaseData*) testCase.data();
             istringstream input(data->input());
+
+            data->beforeClosure()();
             ioManipulator_->parseInput(&input);
+            data->afterClosure()();
         } else {
             OfficialTestCaseData* data = (OfficialTestCaseData*) testCase.data();
             data->closure()();

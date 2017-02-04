@@ -62,6 +62,17 @@ TEST_F(GenerationEteTests, Normal_CustomScorer) {
     ));
 }
 
+TEST_F(GenerationEteTests, Normal_Lifecycle) {
+    ASSERT_THAT(execStatus("cd test-ete/normal-lifecycle && ../scripts/generate.sh"), Eq(0));
+
+    EXPECT_THAT(ls("test-ete/normal-lifecycle/tc"), UnorderedElementsAre(
+            "normal-lifecycle_sample_1.in",
+            "normal-lifecycle_sample_1.out",
+            "normal-lifecycle_1.in",
+            "normal-lifecycle_1.out"
+    ));
+}
+
 TEST_F(GenerationEteTests, Subtasks) {
     ASSERT_THAT(execStatus("cd test-ete/subtasks && ../scripts/generate.sh"), Eq(0));
 

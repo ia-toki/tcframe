@@ -186,9 +186,9 @@ private:
             for (const string& line : curSampleOutputLines_.value()) {
                 output += line + "\n";
             }
-            data = new SampleTestCaseData(input, output);
+            data = new SampleTestCaseData(beforeClosure_, afterClosure_, input, output);
         } else {
-            data = new SampleTestCaseData(input);
+            data = new SampleTestCaseData(beforeClosure_, afterClosure_, input);
         }
 
         curSampleTestCases_.push_back(TestCaseBuilder()

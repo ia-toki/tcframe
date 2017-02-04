@@ -32,9 +32,14 @@ protected:
             V.push_back(0);
         }
 
+        void SampleTestCase1() {
+            Input({"10", "20"});
+            Output({"yes"});
+        }
+
         void TestCases() {
-            addOfficialTestCase([=] {V.push_back(1);}, "V.push_back(1)");
-            addOfficialTestCase([=] {V.push_back(2);}, "V.push_back(2)");
+            addOfficialTestCase([=] {V = {1};}, "V = {1}");
+            addOfficialTestCase([=] {V = {2};}, "V = {2}");
         }
     };
 
@@ -107,6 +112,17 @@ protected:
 
 TEST_F(BaseTestSpecTests, Lifecycle) {
     TestSuite testSuite = testSpecWithLifecycle.buildTestSuite("foo");
+
+    SampleTestCaseData* stc1 = (SampleTestCaseData*) testSuite.testGroups()[0].testCases()[0].data();
+
+    testSpecWithLifecycle.V = {-1};
+
+    stc1->beforeClosure()();
+    EXPECT_THAT(testSpecWithLifecycle.V, Eq(vector<int>()));
+
+    stc1->afterClosure()();
+    EXPECT_THAT(testSpecWithLifecycle.V, Eq(vector<int>{0}));
+
     OfficialTestCaseData* tc1 = (OfficialTestCaseData*) testSuite.testGroups()[1].testCases()[0].data();
     OfficialTestCaseData* tc2 = (OfficialTestCaseData*) testSuite.testGroups()[1].testCases()[1].data();
 
