@@ -22,6 +22,12 @@ TEST_F(StringUtilsTests, StreamToString) {
     EXPECT_THAT(StringUtils::streamToString(new istringstream(" hello, world! ")), Eq(" hello, world! "));
 }
 
+TEST_F(StringUtilsTests, SetToString) {
+    EXPECT_THAT(StringUtils::setToString(set<int>{}), Eq("{}"));
+    EXPECT_THAT(StringUtils::setToString(set<int>{1}), Eq("{1}"));
+    EXPECT_THAT(StringUtils::setToString(set<int>{1, 2, 3}), Eq("{1, 2, 3}"));
+}
+
 TEST_F(StringUtilsTests, ToNumber) {
     EXPECT_THAT(StringUtils::toNumber<int>("42"), Eq(optional<int>(42)));
     EXPECT_THAT(StringUtils::toNumber<int>("-42"), Eq(optional<int>(-42)));
