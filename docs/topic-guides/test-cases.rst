@@ -179,14 +179,10 @@ For more details, consult the :ref:`API reference for random number generator <a
 Test case lifecycle
 -------------------
 
-.. note::
-
-    This section only applies to official test cases. It is not applicable to sample test cases.
-
 **tcframe** declares two methods that you can implement in the test spec class: ``BeforeTestCase()`` and ``AfterTestCase()`` to hook up additional logic to run during a test case generation. For each test case, the following things will happen in order:
 
 #. ``BeforeTestCase()`` is executed.
-#. The assignments/method calls inside ``CASE()`` are executed.
+#. The assignments/method calls inside ``CASE()``, or parsing of sample input literal, are executed.
 #. ``AfterTestCase()`` is executed.
 #. Input variable values are printed according to the input format.
 
@@ -205,28 +201,55 @@ This method can be implemented to initialize input variables. For example, if yo
 AfterTestCase()
 ***************
 
-You may want to manipulate input variables with a different representation from what is defined in the input format section. For example, suppose that you want to have a tree as an input. In the input format (in problem spec class), you specify the tree as a list of edges (**U**\ [i], **V**\ [i]) as follows:
+We are aware of at least two useful use cases for this hook:
 
-.. sourcecode:: cpp
+Declaring input-dependent variables used in output format
+    For example, suppose that the input is a list of commands, each of which is either a query or an update. You want that the output has as many lines as the number of update commands present in the input. How would you declare the output format?
 
-    void InputFormat() {
-        LINE(N);
-        LINES(U, V) % SIZE(N - 1);
-    }
+    You can declare a helper variable, e.g. ``update_count``, and have ``LINES(answers) % SIZE(update_count)`` as the output format. ``update_count`` is computed in the ``AfterTestCase()`` hook. For example:
 
-and you want to manipulate the tree as a vector **P**\ [], where **P**\ [i] is the parent of node i. (I.e., you have private variable ``vector<int> P`` in the test spec class.)
+    **in problem spec:**
 
-This can be achieved by implementing ``AfterTestCase()``, transforming the vector **P**\ [] into a pair of vectors (**U**\ [], **V**\ []) there.
+    .. sourcecode:: cpp
 
-.. sourcecode:: cpp
+        int update_count;
+        vector<int> answers;
 
-    void AfterTestCase() {
-        U.clear();
-        P.clear();
-        for (int i = 0; i < N; i++) {
-            if (P[i] != -1) {
-                U.push_back(i);
-                V.push_back(P[i]);
+        void OutputFormat() {
+            LINES(answers) % SIZE(update_count);
+        }
+
+    **in test spec:**
+
+    .. sourcecode:: cpp
+
+        void AfterTestCase() {
+            // count the number of update queries and assign it to update_count
+        }
+
+Manipulating input variables with a different representation from input format
+    For example, suppose that you want to have a tree as an input. In the input format (in problem spec class), you specify the tree as a list of edges (**U**\ [i], **V**\ [i]) as follows:
+
+    .. sourcecode:: cpp
+
+        void InputFormat() {
+            LINE(N);
+            LINES(U, V) % SIZE(N - 1);
+        }
+
+    and you want to manipulate the tree as a vector **P**\ [], where **P**\ [i] is the parent of node i. (I.e., you have private variable ``vector<int> P`` in the test spec class.)
+
+    This can be achieved by implementing ``AfterTestCase()``, transforming the vector **P**\ [] into a pair of vectors (**U**\ [], **V**\ []) there.
+
+    .. sourcecode:: cpp
+
+        void AfterTestCase() {
+            U.clear();
+            P.clear();
+            for (int i = 0; i < N; i++) {
+                if (P[i] != -1) {
+                    U.push_back(i);
+                    V.push_back(P[i]);
+                }
             }
         }
-    }

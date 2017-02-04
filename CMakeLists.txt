@@ -198,6 +198,7 @@ set(TEST_UNIT
         test/unit/tcframe/grader/MockGraderLogger.hpp
         test/unit/tcframe/grader/MockTestCaseGrader.hpp
         test/unit/tcframe/grader/TestCaseGraderTests.cpp
+        test/unit/tcframe/util/ClosureUtils.hpp
         test/unit/tcframe/util/OptionalTests.cpp
         test/unit/tcframe/util/StringUtilsTests.cpp
         test/unit/tcframe/util/TestUtils.hpp

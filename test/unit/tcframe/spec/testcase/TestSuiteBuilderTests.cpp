@@ -59,12 +59,12 @@ TEST_F(TestSuiteBuilderTests, Building_OnlySample) {
                     TestCaseBuilder()
                             .setId("foo_sample_1")
                             .setSubtaskIds({-1})
-                            .setData(new SampleTestCaseData("10\n20\n", "yes\n"))
+                            .setData(new SampleTestCaseData([]{}, []{}, "10\n20\n", "yes\n"))
                             .build(),
                     TestCaseBuilder()
                             .setId("foo_sample_2")
                             .setSubtaskIds({-1})
-                            .setData(new SampleTestCaseData("30\n"))
+                            .setData(new SampleTestCaseData([]{}, []{}, "30\n"))
                             .build()})});
 
     EXPECT_THAT(testSuite1, Eq(expected));
@@ -121,12 +121,12 @@ TEST_F(TestSuiteBuilderTests, Building_Both) {
                     TestCaseBuilder()
                             .setId("foo_sample_1")
                             .setSubtaskIds({-1})
-                            .setData(new SampleTestCaseData("10\n20\n", "yes\n"))
+                            .setData(new SampleTestCaseData([]{}, []{}, "10\n20\n", "yes\n"))
                             .build(),
                     TestCaseBuilder()
                             .setId("foo_sample_2")
                             .setSubtaskIds({-1})
-                            .setData(new SampleTestCaseData("30\n"))
+                            .setData(new SampleTestCaseData([]{}, []{}, "30\n"))
                             .build()}),
             TestGroup(-1, {
                     TestCaseBuilder()
@@ -252,12 +252,12 @@ TEST_F(TestSuiteBuilderTests, Building_WithGroups_Both) {
                     TestCaseBuilder()
                             .setId("foo_sample_1")
                             .setSubtaskIds({1, 2, 3})
-                            .setData(new SampleTestCaseData("10\n20\n", "yes\n"))
+                            .setData(new SampleTestCaseData([]{}, []{}, "10\n20\n", "yes\n"))
                             .build(),
                     TestCaseBuilder()
                             .setId("foo_sample_2")
                             .setSubtaskIds({2, 3})
-                            .setData(new SampleTestCaseData("30\n"))
+                            .setData(new SampleTestCaseData([]{}, []{}, "30\n"))
                             .build()}),
             TestGroup(1, {
                     TestCaseBuilder()

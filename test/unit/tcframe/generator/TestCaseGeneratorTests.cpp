@@ -8,6 +8,7 @@
 #include "../io_manipulator/MockIOManipulator.hpp"
 #include "../os/MockOperatingSystem.hpp"
 #include "../scorer/MockScorer.hpp"
+#include "../util/ClosureUtils.hpp"
 #include "../verifier/MockVerifier.hpp"
 #include "MockGeneratorLogger.hpp"
 #include "tcframe/generator/TestCaseGenerator.hpp"
@@ -46,15 +47,18 @@ protected:
     MOCK(Scorer) scorer;
     MOCK(GeneratorLogger) logger;
 
+    MOCK(Closure) beforeClosure;
+    MOCK(Closure) afterClosure;
+
     TestCase sampleTestCase = TestCaseBuilder()
             .setId("foo_sample_1")
             .setSubtaskIds({1, 2})
-            .setData(new SampleTestCaseData("42\n"))
+            .setData(new SampleTestCaseData([&]{beforeClosure.call();}, [&]{afterClosure.call();}, "42\n"))
             .build();
     TestCase sampleTestCaseWithOutput = TestCaseBuilder()
             .setId("foo_sample_1")
             .setSubtaskIds({1, 2})
-            .setData(new SampleTestCaseData("42\n", "yes\n"))
+            .setData(new SampleTestCaseData([&]{beforeClosure.call();}, [&]{afterClosure.call();}, "42\n", "yes\n"))
             .build();
     TestCase officialTestCase = TestCaseBuilder()
             .setId("foo_1")
@@ -155,7 +159,9 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_Successful) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_sample_1"));
+        EXPECT_CALL(beforeClosure, call());
         EXPECT_CALL(ioManipulator, parseInput(Truly(InputStreamContentIs("42\n"))));
+        EXPECT_CALL(afterClosure, call());
         EXPECT_CALL(verifier, verifyConstraints(set<int>{1, 2}));
         EXPECT_CALL(os, openForWriting("dir/foo_sample_1.in"));
         EXPECT_CALL(os, closeOpenedWritingStream(outForInput));
@@ -171,7 +177,9 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_NoOutput_Successful) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_sample_1"));
+        EXPECT_CALL(beforeClosure, call());
         EXPECT_CALL(ioManipulator, parseInput(Truly(InputStreamContentIs("42\n"))));
+        EXPECT_CALL(afterClosure, call());
         EXPECT_CALL(verifier, verifyConstraints(set<int>{1, 2}));
         EXPECT_CALL(os, openForWriting("dir/foo_sample_1.in"));
         EXPECT_CALL(os, closeOpenedWritingStream(outForInput));
