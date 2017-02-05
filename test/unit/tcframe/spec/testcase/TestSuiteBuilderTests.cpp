@@ -12,9 +12,9 @@ public:
     static int N;
 
 protected:
-    TestSuiteBuilder builder = TestSuiteBuilder().setSlug("foo");
-    TestSuiteBuilder builder1 = TestSuiteBuilder().setSlug("foo");
-    TestSuiteBuilder builder2 = TestSuiteBuilder().setSlug("foo");
+    TestSuiteBuilder builder = TestSuiteBuilder().setSlug("foo").setDefinedSubtaskIds({1, 2, 3});
+    TestSuiteBuilder builder1 = TestSuiteBuilder().setSlug("foo").setDefinedSubtaskIds({1, 2, 3});
+    TestSuiteBuilder builder2 = TestSuiteBuilder().setSlug("foo").setDefinedSubtaskIds({1, 2, 3});
 };
 
 int TestSuiteBuilderTests::N;

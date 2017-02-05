@@ -1,6 +1,7 @@
 #pragma once
 
 #include <istream>
+#include <set>
 #include <sstream>
 #include <streambuf>
 #include <string>
@@ -12,6 +13,7 @@ using std::istream;
 using std::istreambuf_iterator;
 using std::istringstream;
 using std::ostringstream;
+using std::set;
 using std::string;
 using std::vector;
 
@@ -30,6 +32,22 @@ public:
 
     static string streamToString(istream* in) {
         return string(istreambuf_iterator<char>(*in), istreambuf_iterator<char>());
+    }
+
+    template<typename T>
+    static string setToString(const set<T>& set) {
+        ostringstream out;
+        out << "{";
+        bool any = false;
+        for (const T& val : set) {
+            if (any) {
+                out << ", ";
+            }
+            any = true;
+            out << val;
+        }
+        out << "}";
+        return out.str();
     }
 
     template<typename T>

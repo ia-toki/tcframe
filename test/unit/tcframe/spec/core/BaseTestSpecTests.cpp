@@ -8,6 +8,7 @@ using ::testing::ElementsAre;
 using ::testing::Eq;
 using ::testing::Property;
 using ::testing::SizeIs;
+using ::testing::StrEq;
 using ::testing::Test;
 
 namespace tcframe {
@@ -19,7 +20,14 @@ protected:
         int A, B;
         vector<int> V;
 
+    protected:
         void InputFormat() {}
+    };
+
+    class ProblemSpecWithSubtasks : public ProblemSpec {
+    protected:
+        void Subtask1() {}
+        void Subtask2() {}
     };
 
     class TestSpecWithLifecycle : public BaseTestSpec<ProblemSpec> {
@@ -55,7 +63,7 @@ protected:
         }
     };
 
-    class TestSpecWithTestGroups : public BaseTestSpec<ProblemSpec> {
+    class TestSpecWithTestGroups : public BaseTestSpec<ProblemSpecWithSubtasks> {
     protected:
         void SampleTestCase1() {
             Subtasks({1, 2});
@@ -92,6 +100,13 @@ protected:
         }
     };
 
+    class TestSpecWithInvalidTestGroups : public BaseTestSpec<ProblemSpecWithSubtasks> {
+    protected:
+        void TestGroup1() {
+            Subtasks({1, 3, 5});
+        }
+    };
+
     // Testing that rnd is available in TestSpec
     class TestSpecWithRandom : public BaseTestSpec<ProblemSpec> {
     protected:
@@ -103,10 +118,11 @@ protected:
     TestSpecWithLifecycle testSpecWithLifecycle;
     TestSpecWithTestCases testSpecWithTestCases;
     TestSpecWithTestGroups testSpecWithTestGroups;
+    TestSpecWithInvalidTestGroups testSpecWithInvalidTestGroups;
 };
 
 TEST_F(BaseTestSpecTests, Lifecycle) {
-    TestSuite testSuite = testSpecWithLifecycle.buildTestSuite("foo");
+    TestSuite testSuite = testSpecWithLifecycle.buildTestSuite("foo", {});
     OfficialTestCaseData* tc1 = (OfficialTestCaseData*) testSuite.testGroups()[1].testCases()[0].data();
     OfficialTestCaseData* tc2 = (OfficialTestCaseData*) testSuite.testGroups()[1].testCases()[1].data();
 
@@ -118,18 +134,26 @@ TEST_F(BaseTestSpecTests, Lifecycle) {
 }
 
 TEST_F(BaseTestSpecTests, TestSuite) {
-    TestSuite testSuite = testSpecWithTestCases.buildTestSuite("foo");
+    TestSuite testSuite = testSpecWithTestCases.buildTestSuite("foo", {});
     EXPECT_THAT(testSuite.testGroups(), ElementsAre(
             AllOf(Property(&TestGroup::id, 0), Property(&TestGroup::testCases, SizeIs(2))),
             AllOf(Property(&TestGroup::id, -1), Property(&TestGroup::testCases, SizeIs(2)))));
 }
 
 TEST_F(BaseTestSpecTests, TestSuite_WithGroups) {
-    TestSuite testSuite = testSpecWithTestGroups.buildTestSuite("foo");
+    TestSuite testSuite = testSpecWithTestGroups.buildTestSuite("foo", {1, 2});
     EXPECT_THAT(testSuite.testGroups(), ElementsAre(
             AllOf(Property(&TestGroup::id, 0), Property(&TestGroup::testCases, SizeIs(2))),
             AllOf(Property(&TestGroup::id, 1), Property(&TestGroup::testCases, SizeIs(3))),
             AllOf(Property(&TestGroup::id, 2), Property(&TestGroup::testCases, SizeIs(2)))));
+}
+
+TEST_F(BaseTestSpecTests, Spec_Invalid_UndefinedSubtaskIds) {
+    try {
+        testSpecWithInvalidTestGroups.buildSpec("foo");
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("The following subtasks are referenced but not defined: {3, 5}"));
+    }
 }
 
 }

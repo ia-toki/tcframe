@@ -1,7 +1,9 @@
 #pragma once
 
+#include <algorithm>
 #include <functional>
 #include <set>
+#include <stdexcept>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -11,9 +13,13 @@
 #include "TestCase.hpp"
 #include "TestCaseIdCreator.hpp"
 #include "TestGroup.hpp"
+#include "tcframe/util.hpp"
 
+using std::inserter;
 using std::function;
+using std::runtime_error;
 using std::set;
+using std::set_difference;
 using std::string;
 using std::tie;
 using std::vector;
@@ -44,6 +50,7 @@ public:
 class TestSuiteBuilder {
 private:
     string slug_;
+    set<int> definedSubtaskIds_;
     function<void()> beforeClosure_;
     function<void()> afterClosure_;
 
@@ -76,6 +83,11 @@ public:
 
     TestSuiteBuilder& setSlug(string slug) {
         slug_ = slug;
+        return *this;
+    }
+
+    TestSuiteBuilder& setDefinedSubtaskIds(set<int> definedSubtaskIds) {
+        definedSubtaskIds_ = definedSubtaskIds;
         return *this;
     }
 
@@ -120,6 +132,20 @@ public:
     }
 
     TestSuiteBuilder& Subtasks(set<int> subtaskIds) {
+        set<int> undefinedSubtaskIds;
+        set_difference(
+                subtaskIds.begin(),
+                subtaskIds.end(),
+                definedSubtaskIds_.begin(),
+                definedSubtaskIds_.end(),
+                inserter(undefinedSubtaskIds, undefinedSubtaskIds.begin()));
+
+        if (!undefinedSubtaskIds.empty()) {
+            throw runtime_error(
+                    "The following subtasks are referenced but not defined: " +
+                    StringUtils::setToString(undefinedSubtaskIds));
+        }
+
         *curSubtaskIds_ = subtaskIds;
         return *this;
     }
