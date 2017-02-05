@@ -38,6 +38,7 @@ public:
 
     virtual void parseOutput(istream* in) {
         if (!ioFormat_.outputFormat().empty()) {
+            ioFormat_.beforeOutputFormat()();
             parse(ioFormat_.outputFormat(), in);
         }
     }

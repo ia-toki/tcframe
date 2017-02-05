@@ -16,15 +16,17 @@ namespace tcframe {
 class IOManipulatorTests : public Test {
 protected:
     int A;
+    int N;
     string S;
     vector<int> V;
     vector<string> W;
     vector<vector<int>> M;
 
+    IOManipulator* manipulatorEmpty;
+    IOManipulator* manipulatorWithOutputFormat;
     IOManipulator* manipulatorWithScalarLast;
     IOManipulator* manipulatorWithVectorLast;
     IOManipulator* manipulatorWithMatrixLast;
-    IOManipulator* manipulatorEmpty;
 
     void SetUp() {
         {
@@ -33,6 +35,17 @@ protected:
             IOFormat ioFormat = ioFormatBuilder.build();
 
             manipulatorEmpty = new IOManipulator(ioFormat);
+        }
+        {
+            IOFormatBuilder ioFormatBuilder;
+            ioFormatBuilder.prepareForOutputFormat();
+            ioFormatBuilder.setBeforeOutputFormat([=] {N = 3;});
+            ioFormatBuilder.newLinesIOSegment()
+                    .addVectorVariable(Vector::create(V, "V"))
+                    .setSize([=] {return N;});
+            IOFormat ioFormat = ioFormatBuilder.build();
+
+            manipulatorWithOutputFormat = new IOManipulator(ioFormat);
         }
         {
             IOFormatBuilder ioFormatBuilder;
@@ -126,6 +139,13 @@ TEST_F(IOManipulatorTests, Parsing_Failed_MissingEof_WithMatrixLast) {
     } catch(runtime_error& e) {
         EXPECT_THAT(e.what(), StrEq("Expected: <EOF> after 'M[1][1]'"));
     }
+}
+
+TEST_F(IOManipulatorTests, Parsing_Output) {
+    istringstream in("1\n2\n3\n");
+    N = 0;
+    manipulatorWithOutputFormat->parseOutput(&in);
+    EXPECT_THAT(V, Eq((vector<int>{1, 2, 3})));
 }
 
 TEST_F(IOManipulatorTests, Printing_Successful) {

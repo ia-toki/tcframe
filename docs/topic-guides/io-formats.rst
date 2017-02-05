@@ -107,6 +107,28 @@ For more details, consult the :ref:`API reference for I/O formats <api-ref_io-fo
 
 ----
 
+.. _io-formats_before-output-format:
+
+BeforeOutputFormat()
+--------------------
+
+The special ``BeforeOutputFormat()`` method, if specified, will be executed right before the produced output is validated against the output format. It is useful when the output format segments depend on the input variables. For example, suppose that the input is a list of commands, each of which is either a query or an update. The output should contain as many lines as the number of update commands present in the input.
+
+You can declare a helper variable, e.g. ``update_count``, and have ``LINES(answers) % SIZE(update_count)`` as the output format. Then, compute the value of ``update_count`` in the ``BeforeOutputFormat()`` method. For example:
+
+.. sourcecode:: cpp
+
+    int update_count;
+    vector<int> answers;
+
+    void BeforeOutputFormat() {
+        // count the number of update queries and assign it to update_count
+    }
+
+    void OutputFormat() {
+        LINES(answers) % SIZE(update_count);
+    }
+
 Notes
 -----
 

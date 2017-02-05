@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <stdexcept>
 #include <utility>
 #include <vector>
@@ -11,6 +12,7 @@
 #include "RawLineIOSegment.hpp"
 #include "RawLinesIOSegment.hpp"
 
+using std::function;
 using std::move;
 using std::runtime_error;
 using std::vector;
@@ -22,11 +24,16 @@ struct IOFormat {
 
 private:
     vector<IOSegment*> inputFormat_;
+    function<void()> beforeOutputFormat_;
     vector<IOSegment*> outputFormat_;
 
 public:
     const vector<IOSegment*>& inputFormat() const {
         return inputFormat_;
+    }
+
+    const function<void()>& beforeOutputFormat() const {
+        return beforeOutputFormat_;
     }
 
     const vector<IOSegment*>& outputFormat() const {
@@ -66,6 +73,10 @@ public:
     void prepareForInputFormat() {
         addLastSegment();
         currentFormat_ = &subject_.inputFormat_;
+    }
+
+    void setBeforeOutputFormat(function<void()> beforeOutputFormat) {
+        subject_.beforeOutputFormat_ = beforeOutputFormat;
     }
 
     void prepareForOutputFormat() {
