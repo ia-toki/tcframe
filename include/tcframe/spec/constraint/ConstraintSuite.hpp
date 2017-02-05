@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include <tuple>
 #include <utility>
 #include <vector>
@@ -8,6 +9,7 @@
 #include "Subtask.hpp"
 
 using std::move;
+using std::set;
 using std::tie;
 using std::vector;
 
@@ -37,6 +39,16 @@ public:
 
     bool operator==(const ConstraintSuite& o) const {
         return tie(constraints_, multipleTestCasesConstraints_) == tie(o.constraints_, multipleTestCasesConstraints_);
+    }
+
+    set<int> getDefinedSubtaskIds() const {
+        set<int> definedSubtaskIds;
+        for (const Subtask& subtask : constraints_) {
+            if (subtask.id() != -1) {
+                definedSubtaskIds.insert(subtask.id());
+            }
+        }
+        return definedSubtaskIds;
     }
 };
 

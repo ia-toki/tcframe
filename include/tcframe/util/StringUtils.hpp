@@ -39,7 +39,7 @@ public:
         ostringstream out;
         out << "{";
         bool any = false;
-        for (T val : set) {
+        for (const T& val : set) {
             if (any) {
                 out << ", ";
             }

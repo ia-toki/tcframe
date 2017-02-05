@@ -1,6 +1,5 @@
 #pragma once
 
-#include <set>
 #include <vector>
 
 #include "CommonConfig.hpp"
@@ -11,7 +10,6 @@
 #include "tcframe/spec.hpp"
 #include "tcframe/util.hpp"
 
-using std::set;
 using std::vector;
 
 namespace tcframe {
@@ -117,7 +115,7 @@ public:
         GradingConfig gradingConfig = TProblemSpec::buildGradingConfig();
         MultipleTestCasesConfig multipleTestCasesConfig = TProblemSpec::buildMultipleTestCasesConfig();
         ConstraintSuite constraintSuite = TProblemSpec::buildConstraintSuite();
-        TestSuite testSuite = buildTestSuite(slug, getDefinedSubtaskIds(constraintSuite));
+        TestSuite testSuite = buildTestSuite(slug, constraintSuite.getDefinedSubtaskIds());
         return Spec(seedSetter,
                     ioFormat,
                     styleConfig,
@@ -183,17 +181,6 @@ protected:
     virtual void TestGroup23() {throw NotImplementedException();}
     virtual void TestGroup24() {throw NotImplementedException();}
     virtual void TestGroup25() {throw NotImplementedException();}
-
-private:
-    set<int> getDefinedSubtaskIds(const ConstraintSuite& constraintSuite) const {
-        set<int> definedSubtaskIds;
-        for (const Subtask& subtask : constraintSuite.constraints()) {
-            if (subtask.id() != -1) {
-                definedSubtaskIds.insert(subtask.id());
-            }
-        }
-        return definedSubtaskIds;
-    }
 };
 
 }
