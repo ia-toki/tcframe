@@ -62,6 +62,35 @@ TEST_F(GenerationEteTests, Normal_CustomScorer) {
     ));
 }
 
+TEST_F(GenerationEteTests, Normal_Lifecycle) {
+    ASSERT_THAT(execStatus("cd test-ete/normal-lifecycle && ../scripts/generate.sh"), Eq(0));
+
+    EXPECT_THAT(ls("test-ete/normal-lifecycle/tc"), UnorderedElementsAre(
+            "normal-lifecycle_sample_1.in",
+            "normal-lifecycle_sample_1.out",
+            "normal-lifecycle_1.in",
+            "normal-lifecycle_1.out"
+    ));
+
+    EXPECT_THAT(readFile("test-ete/normal-lifecycle/tc/normal-lifecycle_sample_1.in"), Eq(
+            "5\n"
+            "4 -1 3 2 -5\n"));
+
+    EXPECT_THAT(readFile("test-ete/normal-lifecycle/tc/normal-lifecycle_sample_1.out"), Eq(
+            "even\n"
+            "odd\n"
+            "even\n"));
+
+    EXPECT_THAT(readFile("test-ete/normal-lifecycle/tc/normal-lifecycle_1.in"), Eq(
+            "7\n"
+            "-1 2 3 -4 -5 6 -100\n"));
+
+    EXPECT_THAT(readFile("test-ete/normal-lifecycle/tc/normal-lifecycle_1.out"), Eq(
+            "even\n"
+            "odd\n"
+            "even\n"));
+}
+
 TEST_F(GenerationEteTests, Subtasks) {
     ASSERT_THAT(execStatus("cd test-ete/subtasks && ../scripts/generate.sh"), Eq(0));
 

@@ -67,6 +67,12 @@ Defines the input format. It is mandatory.
 
 .. sourcecode:: cpp
 
+    virtual void BeforeOutputFormat() {}
+
+Executed right before the produced output is validated against the output format. See :ref:`io-formats_before-output-format` for more details.
+
+.. sourcecode:: cpp
+
     virtual void OutputFormat() {}
 
 Defines the output format. It is optional; if not implemented, then the output will not be validated.

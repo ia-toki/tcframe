@@ -53,6 +53,9 @@ public:
     IOFormat buildIOFormat() {
         IOFormatBuilder::prepareForInputFormat();
         InputFormat();
+        IOFormatBuilder::setBeforeOutputFormat([this] {
+            BeforeOutputFormat();
+        });
         IOFormatBuilder::prepareForOutputFormat();
         OutputFormat();
         return IOFormatBuilder::build();
@@ -91,6 +94,7 @@ public:
 
 protected:
     virtual void InputFormat() = 0;
+    virtual void BeforeOutputFormat() {}
     virtual void OutputFormat() {}
     virtual void StyleConfig() {}
     virtual void GradingConfig() {}
