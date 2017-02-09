@@ -21,7 +21,7 @@ build() {
 }
 
 version() {
-    echo "tcframe 1.2.1"
+    echo "tcframe 1.3.0"
 }
 
 if [ -z "$TCFRAME_HOME" ]; then

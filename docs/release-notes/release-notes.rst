@@ -6,6 +6,7 @@ Release Notes
 .. toctree::
    :maxdepth: 1
 
+   1_3_0
    1_2_1
    1_2_0
    1_1_0
