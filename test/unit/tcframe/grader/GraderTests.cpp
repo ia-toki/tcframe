@@ -86,7 +86,7 @@ int GraderTests::T;
 TEST_F(GraderTests, Grading_AC) {
     {
         InSequence sequence;
-        EXPECT_CALL(logger, logIntroduction());
+        EXPECT_CALL(logger, logIntroduction("python Sol.py"));
         EXPECT_CALL(logger, logTestGroupIntroduction(0));
         EXPECT_CALL(testCaseGrader, grade(stcA, config));
         EXPECT_CALL(logger, logTestGroupIntroduction(-1));
@@ -107,7 +107,7 @@ TEST_F(GraderTests, Grading_NonAC) {
 TEST_F(GraderTests, Grading_WithSubtasks) {
     {
         InSequence sequence;
-        EXPECT_CALL(logger, logIntroduction());
+        EXPECT_CALL(logger, logIntroduction("python Sol.py"));
         EXPECT_CALL(logger, logTestGroupIntroduction(0));
         EXPECT_CALL(testCaseGrader, grade(stc1, config));
         EXPECT_CALL(testCaseGrader, grade(stc2, config));
@@ -143,7 +143,7 @@ TEST_F(GraderTests, Grading_WithSubtasks_WithGlobalConstraints) {
 TEST_F(GraderTests, Grading_WithSubtasks_MultipleTestCases) {
     {
         InSequence sequence;
-        EXPECT_CALL(logger, logIntroduction());
+        EXPECT_CALL(logger, logIntroduction("python Sol.py"));
         EXPECT_CALL(logger, logTestGroupIntroduction(0));
         EXPECT_CALL(testCaseGrader, grade(
                 TestUtils::createFakeTestCase("foo_sample", {1, 2}), multipleTestCasesConfig));

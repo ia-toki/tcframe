@@ -16,7 +16,7 @@ public:
     MOCK_METHOD1(logTestCaseScoringMessage, void(const string&));
     MOCK_METHOD2(logExecutionFailure, void(const string&, const ExecutionResult&));
 
-    MOCK_METHOD0(logIntroduction, void());
+    MOCK_METHOD1(logIntroduction, void(const string&));
     MOCK_METHOD1(logTestCaseVerdict, void(const Verdict&));
 
     MOCK_METHOD1(logResult, void(const map<int, Verdict>&));
