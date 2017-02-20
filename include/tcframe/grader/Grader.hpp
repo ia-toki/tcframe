@@ -35,7 +35,7 @@ public:
             , logger_(logger) {}
 
     virtual void grade(const TestSuite& testSuite, const ConstraintSuite& constraintSuite, const GraderConfig& config) {
-        logger_->logIntroduction();
+        logger_->logIntroduction(config.solutionCommand());
 
         map<int, Verdict> subtaskVerdicts;
         for (int subtaskId : getSubtaskIdsToGrade(constraintSuite)) {

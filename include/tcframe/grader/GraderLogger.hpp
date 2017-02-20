@@ -17,8 +17,8 @@ public:
     GraderLogger(LoggerEngine* engine)
             : BaseLogger(engine) {}
 
-    virtual void logIntroduction() {
-        engine_->logParagraph(0, "Grading...");
+    virtual void logIntroduction(const string& solutionCommand) {
+        engine_->logParagraph(0, "Local grading with solution command: '" + solutionCommand + "'...");
     }
 
     virtual void logTestCaseVerdict(const Verdict& verdict) {
