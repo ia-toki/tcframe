@@ -17,7 +17,7 @@ protected:
 };
 
 TEST_F(GraderLoggerTests, Introduction) {
-    EXPECT_CALL(engine, logParagraph(0, "Local grading using ./solution as solution command"));
+    EXPECT_CALL(engine, logParagraph(0, "Local grading with solution command: './solution'..."));
 
     logger.logIntroduction("./solution");
 }
