@@ -9,10 +9,11 @@
 
 #include "ExecutionResult.hpp"
 #include "OperatingSystem.hpp"
+#include "tcframe/util.hpp"
 
 using std::ifstream;
+using std::ios;
 using std::istream;
-using std::istringstream;
 using std::ofstream;
 using std::ostream;
 using std::ostringstream;
@@ -21,6 +22,9 @@ using std::string;
 namespace tcframe {
 
 class UnixOperatingSystem : public OperatingSystem {
+private:
+    static constexpr const char* ERROR_FILENAME = "_error.out";
+
 public:
     istream* openForReading(const string& filename) {
         ifstream* file = new ifstream();
@@ -34,8 +38,8 @@ public:
         return file;
     }
 
-    void closeOpenedWritingStream(ostream* out) {
-        delete out;
+    void closeOpenedStream(ios* stream) {
+        delete stream;
     }
 
     void forceMakeDir(const string& dirName) {
@@ -74,50 +78,35 @@ public:
         if (request.errorFilename()) {
             sout << " 2> " << request.errorFilename().value();
         } else {
-            sout << " 2> /dev/null";
+            sout << " 2> " << ERROR_FILENAME;
         }
 
-        ExecutionInfoBuilder info;
+        ExecutionResultBuilder result;
 
         int exitValue = system(sout.str().c_str());
         int exitStatus = WEXITSTATUS(exitValue);
 
         if (WIFSIGNALED(exitStatus)) {
             int signal = WTERMSIG(exitStatus);
-            info.setExitSignal(strsignal(signal));
+            result.setExitSignal(strsignal(signal));
             if (signal == SIGXCPU) {
-                info.setExceededCpuLimits(true);
+                result.setExceededCpuLimits(true);
             }
         } else {
-            info.setExitCode(exitStatus);
+            result.setExitCode(exitStatus);
         }
 
-        ExecutionResultBuilder result;
-        result.setInfo(info.build());
-
-        if (request.outputFilename()) {
-            result.setOutputStream(openForReading(request.outputFilename().value()));
-        }
-
-        if (request.errorFilename()) {
-            result.setErrorStream(openForReadingAsStringStream(request.errorFilename().value()));
+        if (!request.errorFilename()) {
+            istream* errorStream = openForReading(ERROR_FILENAME);
+            string errorString = StringUtils::streamToString(errorStream);
+            closeOpenedStream(errorStream);
+            result.setStandardError(errorString);
         }
 
         return result.build();
     }
 
 private:
-    istringstream* openForReadingAsStringStream(const string& filename) {
-        ifstream file(filename);
-
-        ostringstream buffer;
-        buffer << file.rdbuf();
-
-        removeFile(filename);
-
-        return new istringstream(buffer.str());
-    }
-
     void runCommand(const string& command) {
         system(command.c_str());
     }

@@ -55,10 +55,9 @@ TEST_F(BaseLoggerTests, ExecutionFailure_ExitCode) {
         EXPECT_CALL(engine, logListItem2(3, "Standard error: err"));
     }
 
-    ExecutionInfo info = ExecutionInfoBuilder().setExitCode(1).build();
     ExecutionResult result = ExecutionResultBuilder()
-            .setInfo(info)
-            .setErrorStream(new istringstream("err"))
+            .setExitCode(1)
+            .setStandardError("err")
             .build();
     logger.logExecutionFailure("solution", result);
 }
@@ -70,8 +69,7 @@ TEST_F(BaseLoggerTests, ExecutionFailure_ExitSignal) {
         EXPECT_CALL(engine, logListItem2(3, "Exit signal: SIGSEGV"));
     }
 
-    ExecutionInfo info = ExecutionInfoBuilder().setExitSignal("SIGSEGV").build();
-    ExecutionResult result = ExecutionResultBuilder().setInfo(info).build();
+    ExecutionResult result = ExecutionResultBuilder().setExitSignal("SIGSEGV").build();
     logger.logExecutionFailure("solution", result);
 }
 

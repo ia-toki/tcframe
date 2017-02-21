@@ -14,6 +14,8 @@ namespace tcframe {
 
 class DiffScorer : public Scorer {
 private:
+    static constexpr const char* DIFF_FILENAME = "_diff.out";
+
     OperatingSystem* os_;
 
 public:
@@ -38,9 +40,11 @@ public:
 
         ExecutionResult result = os_->execute(ExecutionRequestBuilder()
                 .setCommand(scoringCommand)
-                .setOutputFilename("_diff.out")
+                .setOutputFilename(DIFF_FILENAME)
                 .build());
-        string message = StringUtils::streamToString(result.outputStream());
+        istream* output = os_->openForReading(DIFF_FILENAME);
+        string message = StringUtils::streamToString(output);
+        os_->closeOpenedStream(output);
 
         Verdict verdict = message.empty()
                 ? Verdict::ac()

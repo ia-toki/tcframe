@@ -15,6 +15,8 @@ namespace tcframe {
 
 class CustomScorer : public Scorer {
 private:
+    static constexpr const char* SCORING_FILENAME = "_scoring.out";
+
     OperatingSystem* os_;
     string scorerCommand_;
 
@@ -31,19 +33,20 @@ public:
 
         ExecutionResult result = os_->execute(ExecutionRequestBuilder()
                 .setCommand(scoringCommand)
-                .setOutputFilename("_scoring.out")
-                .setErrorFilename("_scoring_err.out")
+                .setOutputFilename(SCORING_FILENAME)
                 .build());
         Verdict verdict;
         string message;
+        istream* output = os_->openForReading(SCORING_FILENAME);
         try {
-            verdict = result.info().isSuccessful()
-                    ? VerdictParser::parse(result.outputStream())
+            verdict = result.isSuccessful()
+                    ? VerdictParser::parse(output)
                     : Verdict::err();
         } catch (runtime_error& e) {
             verdict = Verdict::err();
             message = e.what();
         }
+        os_->closeOpenedStream(output);
 
         return ScoringResultBuilder()
                 .setExecutionResult(result)

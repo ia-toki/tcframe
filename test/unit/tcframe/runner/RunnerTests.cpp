@@ -80,9 +80,7 @@ protected:
         ON_CALL(gradingStyleFactory, createBatch(_, _)).WillByDefault(Return(GradingStyle(nullptr, nullptr)));
         ON_CALL(generatorFactory, create(_, _, _, _, _)).WillByDefault(Return(&generator));
         ON_CALL(graderFactory, create(_, _)).WillByDefault(Return(&grader));
-        ON_CALL(os, execute(_)).WillByDefault(Return(ExecutionResultBuilder()
-                .setInfo(ExecutionInfoBuilder().setExitCode(0).build())
-                .build()));
+        ON_CALL(os, execute(_)).WillByDefault(Return(ExecutionResultBuilder().setExitCode(0).build()));
     }
 
     Runner<ProblemSpec> createRunner(const string& specPath) {

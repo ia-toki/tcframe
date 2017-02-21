@@ -2,8 +2,6 @@
 #include "../helper.hpp"
 #include "../mock.hpp"
 
-#include <sstream>
-
 #include "../evaluator/MockEvaluator.hpp"
 #include "../scorer/MockScorer.hpp"
 #include "MockGraderLogger.hpp"
@@ -18,8 +16,6 @@ using ::testing::InvokeWithoutArgs;
 using ::testing::Return;
 using ::testing::Test;
 using ::testing::WithArg;
-
-using std::istringstream;
 
 namespace tcframe {
 
@@ -57,9 +53,7 @@ protected:
                 .WillByDefault(DoAll(
                         WithArg<2>(Invoke(&evaluationCaptor2, &Captor<string>::capture)),
                         InvokeWithoutArgs([] {return ScoringResultBuilder()
-                                .setExecutionResult(ExecutionResultBuilder()
-                                        .setInfo(ExecutionInfoBuilder().setExitCode(0).build())
-                                        .build())
+                                .setExecutionResult(ExecutionResultBuilder().setExitCode(0).build())
                                 .setVerdict(Verdict::ac())
                                 .build();})));
     }
@@ -81,9 +75,7 @@ TEST_F(TestCaseGraderTests, Grading_AC) {
 TEST_F(TestCaseGraderTests, Grading_WA) {
     ON_CALL(scorer, score(_, _, _))
             .WillByDefault(Return(ScoringResultBuilder()
-                    .setExecutionResult(ExecutionResultBuilder()
-                            .setInfo(ExecutionInfoBuilder().setExitCode(0).build())
-                            .build())
+                    .setExecutionResult(ExecutionResultBuilder().setExitCode(0).build())
                     .setVerdict(Verdict::wa())
                     .setMessage("diff")
                     .build()));
@@ -116,8 +108,8 @@ TEST_F(TestCaseGraderTests, Grading_RTE) {
 
 TEST_F(TestCaseGraderTests, Grading_ERR) {
     ExecutionResult executionResult = ExecutionResultBuilder()
-            .setInfo(ExecutionInfoBuilder().setExitCode(1).build())
-            .setErrorStream(new istringstream("error"))
+            .setExitCode(1)
+            .setStandardError("error")
             .build();
     ON_CALL(scorer, score(_, _, _))
             .WillByDefault(Return(ScoringResultBuilder()

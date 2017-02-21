@@ -43,9 +43,9 @@ TEST_F(CustomScorerIntegrationTests, Scoring_ERR_Crash) {
             "test-integration/scorer/custom/contestant_err_crash.out");
     EXPECT_THAT(result.verdict(), Eq(Verdict::err()));
 
-    ExecutionInfo info = result.executionResult().info();
-    EXPECT_FALSE(info.isSuccessful());
-    EXPECT_TRUE(info.exitSignal());
+    ExecutionResult executionResult = result.executionResult();
+    EXPECT_FALSE(executionResult.isSuccessful());
+    EXPECT_TRUE(executionResult.exitSignal());
 }
 
 TEST_F(CustomScorerIntegrationTests, Scoring_ERR_Bogus) {
