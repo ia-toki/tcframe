@@ -105,7 +105,7 @@ private:
         } else {
             ioManipulator_->printInput(input);
         }
-        os_->closeOpenedWritingStream(input);
+        os_->closeOpenedStream(input);
     }
 
     void evaluateAndApplyOutput(
@@ -128,7 +128,7 @@ private:
 
         EvaluationResult evaluationResult = evaluator_->evaluate(inputFilename, outputFilename, evaluatorConfig);
         ExecutionResult executionResult = evaluationResult.executionResult();
-        if (!executionResult.info().isSuccessful()) {
+        if (!executionResult.isSuccessful()) {
             throw GenerationException([=] { logger_->logExecutionFailure("solution", executionResult); });
         }
 
@@ -136,9 +136,10 @@ private:
             checkSampleOutput(maybeSampleOutputString.value(), inputFilename, outputFilename, config);
         }
 
-        istream* output = executionResult.outputStream();
+        istream* output = os_->openForReading(outputFilename);
         modifyOutputForMultipleTestCases(output, config);
         ioManipulator_->parseOutput(output);
+        os_->closeOpenedStream(output);
     }
 
     optional<string> getSampleOutputString(const TestCase& testCase) {
@@ -186,13 +187,13 @@ private:
 
         ostream* sampleOutput = os_->openForWriting("_evaluation.out");
         *sampleOutput << modifiedSampleOutputString;
-        os_->closeOpenedWritingStream(sampleOutput);
+        os_->closeOpenedStream(sampleOutput);
 
         ScoringResult scoringResult = scorer_->score(inputFilename, outputFilename, "_evaluation.out");
         if (!(scoringResult.verdict() == Verdict::ac())) {
             throw GenerationException([=] {
                 logger_->logSampleTestCaseCheckFailure(scoringResult.message());
-                if (scoringResult.executionResult().info().isSuccessful()) {
+                if (scoringResult.executionResult().isSuccessful()) {
                     logger_->logTestCaseScoringMessage(scoringResult.message());
                 } else {
                     logger_->logExecutionFailure("scorer", scoringResult.executionResult());

@@ -1,15 +1,13 @@
 #pragma once
 
-#include <istream>
-#include <sstream>
+#include <string>
 #include <tuple>
 #include <utility>
 
-#include "ExecutionInfo.hpp"
+#include "tcframe/util.hpp"
 
 using std::move;
-using std::istream;
-using std::istringstream;
+using std::string;
 using std::tie;
 
 namespace tcframe {
@@ -18,25 +16,35 @@ struct ExecutionResult {
     friend class ExecutionResultBuilder;
 
 private:
-    ExecutionInfo info_;
-    istream* outputStream_;
-    istream* errorStream_;
+    optional<int> exitCode_;
+    optional<string> exitSignal_;
+    bool exceededCpuLimits_;
+    string standardError_;
 
 public:
-    ExecutionInfo info() const {
-        return info_;
+    const optional<int>& exitCode() const {
+        return exitCode_;
     }
 
-    istream* outputStream() const {
-        return outputStream_;
+    const optional<string>& exitSignal() const {
+        return exitSignal_;
     }
 
-    istream* errorStream() const {
-        return errorStream_;
+    bool exceededCpuLimits() const {
+        return exceededCpuLimits_;
+    }
+
+    const string standardError() const {
+        return standardError_;
+    }
+
+    bool isSuccessful() const {
+        return exitCode_ && exitCode_.value() == 0;
     }
 
     bool operator==(const ExecutionResult& o) const {
-        return tie(info_) == tie(o.info_);
+        return tie(exitCode_, exitSignal_, exceededCpuLimits_, standardError_)
+               == tie(o.exitCode_, o.exitSignal_, o.exceededCpuLimits_, standardError_);
     }
 };
 
@@ -45,28 +53,31 @@ private:
     ExecutionResult subject_;
 
 public:
-    ExecutionResultBuilder& setInfo(ExecutionInfo info) {
-        subject_.info_ = info;
+    ExecutionResultBuilder() {
+        subject_.exceededCpuLimits_ = false;
+    }
+
+    ExecutionResultBuilder& setExitCode(int exitCode) {
+        subject_.exitCode_ = optional<int>(exitCode);
         return *this;
     }
 
-    ExecutionResultBuilder& setOutputStream(istream* outputStream) {
-        subject_.outputStream_ = outputStream;
+    ExecutionResultBuilder& setExitSignal(string exitSignal) {
+        subject_.exitSignal_ = optional<string>(exitSignal);
         return *this;
     }
 
-    ExecutionResultBuilder& setErrorStream(istream* errorStream) {
-        subject_.errorStream_ = errorStream;
+    ExecutionResultBuilder& setExceededCpuLimits(bool exceededCpuLimits) {
+        subject_.exceededCpuLimits_ = exceededCpuLimits;
+        return *this;
+    }
+
+    ExecutionResultBuilder& setStandardError(string standardError) {
+        subject_.standardError_ = standardError;
         return *this;
     }
 
     ExecutionResult build() {
-        if (subject_.errorStream_ == nullptr) {
-            subject_.errorStream_ = new istringstream();
-        }
-        if (subject_.outputStream_ == nullptr) {
-            subject_.outputStream_ = new istringstream();
-        }
         return move(subject_);
     }
 };

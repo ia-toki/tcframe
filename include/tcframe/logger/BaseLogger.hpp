@@ -38,12 +38,11 @@ public:
 
     virtual void logExecutionFailure(const string& context, const ExecutionResult& result) {
         engine_->logListItem1(2, "Execution of " + context + " failed:");
-        if (result.info().exitCode()) {
-            engine_->logListItem2(3, "Exit code: " + StringUtils::toString(result.info().exitCode().value()));
-            engine_->logListItem2(3, "Standard error: " + string(
-                    StringUtils::streamToString(result.errorStream())));
+        if (result.exitCode()) {
+            engine_->logListItem2(3, "Exit code: " + StringUtils::toString(result.exitCode().value()));
+            engine_->logListItem2(3, "Standard error: " + result.standardError());
         } else {
-            engine_->logListItem2(3, "Exit signal: " + result.info().exitSignal().value());
+            engine_->logListItem2(3, "Exit signal: " + result.exitSignal().value());
         }
     }
 };

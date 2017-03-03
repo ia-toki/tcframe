@@ -67,7 +67,7 @@ private:
 
         logger_->logTestCaseVerdict(result.verdict());
         if (!(result.verdict() == Verdict::ac())) {
-            if (result.executionResult().info().isSuccessful()) {
+            if (result.executionResult().isSuccessful()) {
                 logger_->logTestCaseScoringMessage(result.message());
             } else {
                 logger_->logExecutionFailure("scorer", result.executionResult());

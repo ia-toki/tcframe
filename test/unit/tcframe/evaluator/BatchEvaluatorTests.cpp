@@ -32,9 +32,7 @@ protected:
 };
 
 TEST_F(BatchEvaluatorTests, Evaluation_OK) {
-    ExecutionResult executionResult = ExecutionResultBuilder()
-            .setInfo(ExecutionInfoBuilder().setExitCode(0).build())
-            .build();
+    ExecutionResult executionResult = ExecutionResultBuilder().setExitCode(0).build();
 
     EXPECT_CALL(os, execute(AllOf(
             Property(&ExecutionRequest::command, "python Sol.py"),
@@ -50,9 +48,7 @@ TEST_F(BatchEvaluatorTests, Evaluation_OK) {
 }
 
 TEST_F(BatchEvaluatorTests, Evaluation_RTE_ExitCode) {
-    ExecutionResult executionResult = ExecutionResultBuilder()
-            .setInfo(ExecutionInfoBuilder().setExitCode(1).build())
-            .build();
+    ExecutionResult executionResult = ExecutionResultBuilder().setExitCode(1).build();
 
     EXPECT_CALL(os, execute(_))
             .WillOnce(Return(executionResult));
@@ -64,9 +60,7 @@ TEST_F(BatchEvaluatorTests, Evaluation_RTE_ExitCode) {
 }
 
 TEST_F(BatchEvaluatorTests, Evaluation_RTE_ExitSignal) {
-    ExecutionResult executionResult = ExecutionResultBuilder()
-            .setInfo(ExecutionInfoBuilder().setExitSignal("SIGSEGV").build())
-            .build();
+    ExecutionResult executionResult = ExecutionResultBuilder().setExitSignal("SIGSEGV").build();
 
     EXPECT_CALL(os, execute(_))
             .WillOnce(Return(executionResult));
@@ -79,7 +73,8 @@ TEST_F(BatchEvaluatorTests, Evaluation_RTE_ExitSignal) {
 
 TEST_F(BatchEvaluatorTests, Evaluation_TLE) {
     ExecutionResult executionResult = ExecutionResultBuilder()
-            .setInfo(ExecutionInfoBuilder().setExitSignal("SIGXCPU").setExceededCpuLimits(true).build())
+            .setExitSignal("SIGXCPU")
+            .setExceededCpuLimits(true)
             .build();
 
     EXPECT_CALL(os, execute(_))

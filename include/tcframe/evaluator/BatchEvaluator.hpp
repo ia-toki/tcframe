@@ -27,8 +27,7 @@ public:
         ExecutionRequestBuilder request = ExecutionRequestBuilder()
                 .setCommand(config.solutionCommand())
                 .setInputFilename(inputFilename)
-                .setOutputFilename(outputFilename)
-                .setErrorFilename("_error.out");
+                .setOutputFilename(outputFilename);
 
         if (config.timeLimit()) {
             request.setTimeLimit(config.timeLimit().value());
@@ -46,9 +45,9 @@ private:
         EvaluationResultBuilder result;
         result.setExecutionResult(executionResult);
 
-        if (executionResult.info().exceededCpuLimits()) {
+        if (executionResult.exceededCpuLimits()) {
             result.setVerdict(Verdict::tle());
-        } else if (!executionResult.info().isSuccessful()) {
+        } else if (!executionResult.isSuccessful()) {
             result.setVerdict(Verdict::rte());
         }
 

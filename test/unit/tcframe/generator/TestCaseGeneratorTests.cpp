@@ -89,18 +89,11 @@ protected:
             .setSolutionCommand("python Sol.py")
             .build();
 
+    istringstream* inForOutput = new istringstream();
     ostringstream* outForInput = new ostringstream();
     ostringstream* outForOutput = new ostringstream();
     ostringstream* outForEvaluation = new ostringstream();
-    ExecutionInfo executionInfo = ExecutionInfoBuilder().setExitCode(0).build();
-    ExecutionResult executionResult = ExecutionResultBuilder()
-            .setInfo(executionInfo)
-            .setOutputStream(new istringstream("yes\n"))
-            .build();
-    ExecutionResult executionResultWithOutputPrefix = ExecutionResultBuilder()
-            .setInfo(executionInfo)
-            .setOutputStream(new istringstream("Case #1: yes\n"))
-            .build();
+    ExecutionResult executionResult = ExecutionResultBuilder().setExitCode(0).build();
 
     TestCaseGenerator generator = TestCaseGenerator(&verifier, &ioManipulator, &os, &evaluator, &scorer, &logger);
 
@@ -110,6 +103,8 @@ protected:
     void SetUp() {
         ON_CALL(verifier, verifyConstraints(_))
                 .WillByDefault(Return(ConstraintsVerificationResult::validResult()));
+        ON_CALL(os, openForReading(EndsWith(".out")))
+                .WillByDefault(Return(inForOutput));
         ON_CALL(os, openForWriting(EndsWith(".in")))
                 .WillByDefault(Return(outForInput));
         ON_CALL(os, openForWriting(EndsWith(".out")))
@@ -127,10 +122,8 @@ protected:
         ON_CALL(scorer, score(_, _, _))
                 .WillByDefault(DoAll(
                         WithArg<2>(Invoke(&evaluationCaptor2, &Captor<string>::capture)),
-                        InvokeWithoutArgs([] {return ScoringResultBuilder()
-                                .setExecutionResult(ExecutionResultBuilder()
-                                        .setInfo(ExecutionInfoBuilder().setExitCode(0).build())
-                                        .build())
+                        InvokeWithoutArgs([&] {return ScoringResultBuilder()
+                                .setExecutionResult(executionResult)
                                 .setVerdict(Verdict::ac())
                                 .build();})));
     }
@@ -158,9 +151,11 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_Successful) {
         EXPECT_CALL(ioManipulator, parseInput(Truly(InputStreamContentIs("42\n"))));
         EXPECT_CALL(verifier, verifyConstraints(set<int>{1, 2}));
         EXPECT_CALL(os, openForWriting("dir/foo_sample_1.in"));
-        EXPECT_CALL(os, closeOpenedWritingStream(outForInput));
+        EXPECT_CALL(os, closeOpenedStream(outForInput));
         EXPECT_CALL(evaluator, evaluate("dir/foo_sample_1.in", "dir/foo_sample_1.out", evaluatorConfig));
-        EXPECT_CALL(ioManipulator, parseOutput(executionResult.outputStream()));
+        EXPECT_CALL(os, openForReading("dir/foo_sample_1.out"));
+        EXPECT_CALL(ioManipulator, parseOutput(inForOutput));
+        EXPECT_CALL(os, closeOpenedStream(inForOutput));
         EXPECT_CALL(logger, logTestCaseSuccessfulResult());
     }
     EXPECT_TRUE(generator.generate(sampleTestCase, config));
@@ -174,7 +169,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_NoOutput_Successful) {
         EXPECT_CALL(ioManipulator, parseInput(Truly(InputStreamContentIs("42\n"))));
         EXPECT_CALL(verifier, verifyConstraints(set<int>{1, 2}));
         EXPECT_CALL(os, openForWriting("dir/foo_sample_1.in"));
-        EXPECT_CALL(os, closeOpenedWritingStream(outForInput));
+        EXPECT_CALL(os, closeOpenedStream(outForInput));
         EXPECT_CALL(logger, logTestCaseSuccessfulResult());
     }
     EXPECT_CALL(evaluator, evaluate(_, _, _)).Times(0);
@@ -214,12 +209,14 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Successful) {
         EXPECT_CALL(ioManipulator, parseInput(Truly(InputStreamContentIs("42\n"))));
         EXPECT_CALL(verifier, verifyConstraints(set<int>{1, 2}));
         EXPECT_CALL(os, openForWriting("dir/foo_sample_1.in"));
-        EXPECT_CALL(os, closeOpenedWritingStream(outForInput));
+        EXPECT_CALL(os, closeOpenedStream(outForInput));
         EXPECT_CALL(evaluator, evaluate("dir/foo_sample_1.in", "dir/foo_sample_1.out", evaluatorConfig));
         EXPECT_CALL(os, openForWriting(_));
-        EXPECT_CALL(os, closeOpenedWritingStream(outForEvaluation));
+        EXPECT_CALL(os, closeOpenedStream(outForEvaluation));
         EXPECT_CALL(scorer, score("dir/foo_sample_1.in", "dir/foo_sample_1.out", _));
-        EXPECT_CALL(ioManipulator, parseOutput(Truly(InputStreamContentIs("yes\n"))));
+        EXPECT_CALL(os, openForReading("dir/foo_sample_1.out"));
+        EXPECT_CALL(ioManipulator, parseOutput(inForOutput));
+        EXPECT_CALL(os, closeOpenedStream(inForOutput));
         EXPECT_CALL(logger, logTestCaseSuccessfulResult());
     }
 
@@ -232,9 +229,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Successful) {
 TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Failed_Check_WA) {
     ON_CALL(scorer, score(_, _, _))
             .WillByDefault(Return(ScoringResultBuilder()
-                    .setExecutionResult(ExecutionResultBuilder()
-                            .setInfo(ExecutionInfoBuilder().setExitCode(0).build())
-                            .build())
+                    .setExecutionResult(executionResult)
                     .setVerdict(Verdict::wa())
                     .setMessage("diff")
                     .build()));
@@ -249,8 +244,8 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Failed_Check_WA) {
 
 TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Failed_Check_ERR) {
     ExecutionResult executionResult = ExecutionResultBuilder()
-            .setInfo(ExecutionInfoBuilder().setExitCode(1).build())
-            .setErrorStream(new istringstream("error"))
+            .setExitCode(1)
+            .setStandardError("error")
             .build();
     ON_CALL(scorer, score(_, _, _))
             .WillByDefault(Return(ScoringResultBuilder()
@@ -284,9 +279,11 @@ TEST_F(TestCaseGeneratorTests, Generation_Successful) {
         EXPECT_CALL(verifier, verifyConstraints(set<int>{1, 2}));
         EXPECT_CALL(os, openForWriting("dir/foo_1.in"));
         EXPECT_CALL(ioManipulator, printInput(outForInput));
-        EXPECT_CALL(os, closeOpenedWritingStream(outForInput));
+        EXPECT_CALL(os, closeOpenedStream(outForInput));
         EXPECT_CALL(evaluator, evaluate("dir/foo_1.in", "dir/foo_1.out", evaluatorConfig));
-        EXPECT_CALL(ioManipulator, parseOutput(executionResult.outputStream()));
+        EXPECT_CALL(os, openForReading("dir/foo_1.out"));
+        EXPECT_CALL(ioManipulator, parseOutput(inForOutput));
+        EXPECT_CALL(os, closeOpenedStream(inForOutput));
         EXPECT_CALL(logger, logTestCaseSuccessfulResult());
     }
     EXPECT_TRUE(generator.generate(officialTestCase, config));
@@ -302,20 +299,16 @@ TEST_F(TestCaseGeneratorTests, Generation_MultipleTestCases_NoOutput_Successful)
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_MultipleTestCases_WithOutputPrefix_Sample_WithOutput_Successful) {
-    ON_CALL(evaluator, evaluate(_, _, _))
-            .WillByDefault(Return(EvaluationResultBuilder()
-                    .setExecutionResult(executionResultWithOutputPrefix)
-                    .build()));
+    ON_CALL(os, openForReading(EndsWith(".out")))
+            .WillByDefault(Return(new istringstream("Case #1: yes\n")));
 
     EXPECT_TRUE(generator.generate(sampleTestCaseWithOutput, multipleTestCasesConfigWithOutputPrefix));
     EXPECT_THAT(outForEvaluation->str(), Eq("Case #1: yes\n"));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_MultipleTestCases_WithOutputPrefix_Successful) {
-    ON_CALL(evaluator, evaluate(_, _, _))
-            .WillByDefault(Return(EvaluationResultBuilder()
-                    .setExecutionResult(executionResultWithOutputPrefix)
-                    .build()));
+    ON_CALL(os, openForReading(EndsWith(".out")))
+            .WillByDefault(Return(new istringstream("Case #1: yes\n")));
 
     EXPECT_TRUE(generator.generate(officialTestCase, multipleTestCasesConfigWithOutputPrefix));
 }
@@ -363,9 +356,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Failed_InputGeneration) {
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Failed_OutputEvaluation) {
-    ExecutionResult executionResult = ExecutionResultBuilder()
-            .setInfo(ExecutionInfoBuilder().setExitCode(1).build())
-            .build();
+    ExecutionResult executionResult = ExecutionResultBuilder().setExitCode(1).build();
     ON_CALL(evaluator, evaluate(_, _, _))
             .WillByDefault(Return(EvaluationResultBuilder()
                     .setExecutionResult(executionResult)

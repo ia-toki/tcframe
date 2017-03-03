@@ -72,7 +72,6 @@ set(INCLUDE
         include/tcframe/logger/LoggerEngine.hpp
         include/tcframe/logger/SimpleLoggerEngine.hpp
         include/tcframe/os.hpp
-        include/tcframe/os/ExecutionInfo.hpp
         include/tcframe/os/ExecutionResult.hpp
         include/tcframe/os/ExecutionRequest.hpp
         include/tcframe/os/OperatingSystem.hpp
