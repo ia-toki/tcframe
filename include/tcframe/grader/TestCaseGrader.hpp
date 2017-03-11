@@ -42,7 +42,9 @@ public:
         TestCaseGrade grade = gradeCreator.create();
 
         logger_->logTestCaseGradeSummary(grade);
-        logger_->logTestCaseGradeDetails(grade);
+        if (!(grade.verdict() == Verdict::tle())) {
+            logger_->logTestCaseGradeDetails(grade);
+        }
 
         return grade;
     }

@@ -113,6 +113,28 @@ TEST_F(TestCaseGraderTests, Grading_RTE) {
     EXPECT_THAT(grader.grade(testCase, config), Eq(grade));
 }
 
+TEST_F(TestCaseGraderTests, Grading_TLE) {
+    EvaluationResult evaluationResult = EvaluationResultBuilder()
+            .setVerdict(Verdict::tle())
+            .build();
+    ON_CALL(evaluator, evaluate(_, _, _))
+            .WillByDefault(Return(evaluationResult));
+
+    TestCaseGrade grade = TestCaseGradeCreator()
+            .setEvaluationResult(evaluationResult)
+            .create();
+    {
+        InSequence sequence;
+        EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
+        EXPECT_CALL(evaluator, evaluate(_, _, _));
+        EXPECT_CALL(logger, logTestCaseGradeSummary(grade));
+    }
+    EXPECT_CALL(scorer, score(_, _, _)).Times(0);
+    EXPECT_CALL(logger, logTestCaseGradeDetails(grade)).Times(0);
+
+    EXPECT_THAT(grader.grade(testCase, config), Eq(grade));
+}
+
 TEST_F(TestCaseGraderTests, Grading_ERR) {
     ScoringResult scoringResult = ScoringResultBuilder()
             .setExecutionResult(ExecutionResultBuilder()
