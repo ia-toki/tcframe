@@ -90,11 +90,8 @@ public:
         }
     }
 
-    virtual void logSampleTestCaseCheckFailure(const string& scoringMessage) {
+    virtual void logSampleTestCaseCheckFailure() {
         engine_->logListItem1(2, "Sample test case output does not match with actual output produced by the solution");
-        if (!scoringMessage.empty()) {
-            engine_->logListItem2(3, scoringMessage);
-        }
     }
 
     virtual void logSampleTestCaseNoOutputNeededFailure() {

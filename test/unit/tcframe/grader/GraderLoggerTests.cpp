@@ -22,10 +22,14 @@ TEST_F(GraderLoggerTests, Introduction) {
     logger.logIntroduction("./solution");
 }
 
-TEST_F(GraderLoggerTests, TestCaseVerdict) {
+TEST_F(GraderLoggerTests, TestCaseGradeSummary) {
+    TestCaseGrade grade = TestCaseGradeBuilder()
+            .setVerdict(Verdict::ac())
+            .build();
+
     EXPECT_CALL(engine, logParagraph(0, Verdict::ac().name()));
 
-    logger.logTestCaseVerdict(Verdict::ac());
+    logger.logTestCaseGradeSummary(grade);
 }
 
 TEST_F(GraderLoggerTests, Result) {

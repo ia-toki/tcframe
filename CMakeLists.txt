@@ -44,7 +44,6 @@ include_directories(include)
 set(INCLUDE
         include/tcframe/evaluator.hpp
         include/tcframe/evaluator/BatchEvaluator.hpp
-        include/tcframe/evaluator/EvaluationResult.hpp
         include/tcframe/evaluator/Evaluator.hpp
         include/tcframe/evaluator/EvaluatorConfig.hpp
         include/tcframe/generator.hpp
@@ -53,6 +52,12 @@ set(INCLUDE
         include/tcframe/generator/GeneratorConfig.hpp
         include/tcframe/generator/GeneratorLogger.hpp
         include/tcframe/generator/TestCaseGenerator.hpp
+        include/tcframe/grade.hpp
+        include/tcframe/grade/EvaluationResult.hpp
+        include/tcframe/grade/ScoringResult.hpp
+        include/tcframe/grade/TestCaseGrade.hpp
+        include/tcframe/grade/TestCaseGradeCreator.hpp
+        include/tcframe/grade/Verdict.hpp
         include/tcframe/grader.hpp
         include/tcframe/grader/Grader.hpp
         include/tcframe/grader/GraderConfig.hpp
@@ -87,7 +92,7 @@ set(INCLUDE
         include/tcframe/scorer/CustomScorer.hpp
         include/tcframe/scorer/DiffScorer.hpp
         include/tcframe/scorer/Scorer.hpp
-        include/tcframe/scorer/ScoringResult.hpp
+        include/tcframe/scorer/ScoringResultParser.hpp
         include/tcframe/spec.hpp
         include/tcframe/spec/constraint.hpp
         include/tcframe/spec/constraint/Constraint.hpp
@@ -132,9 +137,6 @@ set(INCLUDE
         include/tcframe/util/NotImplementedException.hpp
         include/tcframe/util/StringUtils.hpp
         include/tcframe/util/optional.hpp
-        include/tcframe/verdict.hpp
-        include/tcframe/verdict/Verdict.hpp
-        include/tcframe/verdict/VerdictParser.hpp
         include/tcframe/verifier.hpp
         include/tcframe/verifier/ConstraintsVerificationResult.hpp
         include/tcframe/verifier/MultipleTestCasesConstraintsVerificationResult.hpp
@@ -171,6 +173,7 @@ set(TEST_UNIT
         test/unit/tcframe/runner/RunnerLoggerTests.cpp
         test/unit/tcframe/runner/SlugParserTests.cpp
         test/unit/tcframe/scorer/MockScorer.hpp
+        test/unit/tcframe/scorer/ScoringResultParserTests.cpp
         test/unit/tcframe/spec/constraint/ConstraintSuiteBuilderTests.cpp
         test/unit/tcframe/spec/core/BaseTestSpecTests.cpp
         test/unit/tcframe/spec/core/BaseProblemSpecTests.cpp
@@ -191,6 +194,7 @@ set(TEST_UNIT
         test/unit/tcframe/spec/variable/VariableTests.cpp
         test/unit/tcframe/spec/variable/VectorTests.cpp
         test/unit/tcframe/spec/variable/WhitespaceManipulatorTests.cpp
+        test/unit/tcframe/grade/TestCaseGradeCreatorTests.cpp
         test/unit/tcframe/grader/GraderTests.cpp
         test/unit/tcframe/grader/GraderLoggerTests.cpp
         test/unit/tcframe/grader/MockGrader.hpp
@@ -200,7 +204,6 @@ set(TEST_UNIT
         test/unit/tcframe/util/OptionalTests.cpp
         test/unit/tcframe/util/StringUtilsTests.cpp
         test/unit/tcframe/util/TestUtils.hpp
-        test/unit/tcframe/verdict/VerdictParserTests.cpp
         test/unit/tcframe/verifier/MockVerifier.hpp
         test/unit/tcframe/verifier/VerifierTests.cpp
 )

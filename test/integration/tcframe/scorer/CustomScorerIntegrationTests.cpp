@@ -43,7 +43,7 @@ TEST_F(CustomScorerIntegrationTests, Scoring_ERR_Crash) {
             "test-integration/scorer/custom/contestant_err_crash.out");
     EXPECT_THAT(result.verdict(), Eq(Verdict::err()));
 
-    ExecutionResult executionResult = result.executionResult();
+    ExecutionResult executionResult = result.executionResult().value();
     EXPECT_FALSE(executionResult.isSuccessful());
     EXPECT_TRUE(executionResult.exitSignal());
 }
@@ -54,7 +54,7 @@ TEST_F(CustomScorerIntegrationTests, Scoring_ERR_Bogus) {
             "test-integration/scorer/judge.out",
             "test-integration/scorer/custom/contestant_err_bogus.out");
     EXPECT_THAT(result.verdict(), Eq(Verdict::err()));
-    EXPECT_THAT(result.message(), HasSubstr("Unknown verdict: bogus"));
+    EXPECT_THAT(result.privateInfo().value(), HasSubstr("Unknown verdict: bogus"));
 }
 
 }

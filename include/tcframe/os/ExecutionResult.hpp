@@ -22,6 +22,10 @@ private:
     string standardError_;
 
 public:
+    ExecutionResult()
+            : exitCode_(optional<int>(0))
+            , exceededCpuLimits_(false) {}
+
     const optional<int>& exitCode() const {
         return exitCode_;
     }
@@ -53,16 +57,14 @@ private:
     ExecutionResult subject_;
 
 public:
-    ExecutionResultBuilder() {
-        subject_.exceededCpuLimits_ = false;
-    }
-
     ExecutionResultBuilder& setExitCode(int exitCode) {
         subject_.exitCode_ = optional<int>(exitCode);
+        subject_.exitSignal_ = optional<string>();
         return *this;
     }
 
     ExecutionResultBuilder& setExitSignal(string exitSignal) {
+        subject_.exitCode_ = optional<int>();
         subject_.exitSignal_ = optional<string>(exitSignal);
         return *this;
     }

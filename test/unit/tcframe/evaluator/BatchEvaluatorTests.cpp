@@ -32,19 +32,15 @@ protected:
 };
 
 TEST_F(BatchEvaluatorTests, Evaluation_OK) {
-    ExecutionResult executionResult = ExecutionResultBuilder().setExitCode(0).build();
-
     EXPECT_CALL(os, execute(AllOf(
             Property(&ExecutionRequest::command, "python Sol.py"),
             Property(&ExecutionRequest::inputFilename, optional<string>("dir/foo_1.in")),
             Property(&ExecutionRequest::outputFilename, optional<string>("dir/foo_1.out")),
             Property(&ExecutionRequest::timeLimit, optional<int>(3)),
             Property(&ExecutionRequest::memoryLimit, optional<int>(128)))))
-            .WillOnce(Return(executionResult));
+            .WillOnce(Return(ExecutionResult()));
 
-    EXPECT_THAT(evaluator.evaluate("dir/foo_1.in", "dir/foo_1.out", config), Eq(EvaluationResultBuilder()
-            .setExecutionResult(executionResult)
-            .build()));
+    EXPECT_THAT(evaluator.evaluate("dir/foo_1.in", "dir/foo_1.out", config), Eq(EvaluationResult()));
 }
 
 TEST_F(BatchEvaluatorTests, Evaluation_RTE_ExitCode) {

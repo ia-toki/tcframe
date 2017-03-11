@@ -4,9 +4,9 @@
 #include <tuple>
 #include <utility>
 
+#include "Verdict.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/util.hpp"
-#include "tcframe/verdict.hpp"
 
 using std::move;
 using std::string;

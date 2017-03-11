@@ -21,6 +21,7 @@ TEST_F(DiffScorerIntegrationTests, Scoring_AC) {
             "test-integration/scorer/judge.out",
             "test-integration/scorer/diff/contestant_ac.out");
     EXPECT_THAT(result.verdict(), Eq(Verdict::ac()));
+    EXPECT_FALSE(result.privateInfo());
 }
 
 TEST_F(DiffScorerIntegrationTests, Scoring_WA) {
@@ -30,7 +31,7 @@ TEST_F(DiffScorerIntegrationTests, Scoring_WA) {
             "test-integration/scorer/diff/contestant_wa.out");
     EXPECT_THAT(result.verdict(), Eq(Verdict::wa()));
 
-    EXPECT_THAT(result.message(), AllOf(
+    EXPECT_THAT(result.privateInfo().value(), AllOf(
             StartsWith("Diff:\n"),
             HasSubstr("(expected) [line 02]    1 2 3\n"),
             HasSubstr("(received) [line 02]    1 4 5\n")));

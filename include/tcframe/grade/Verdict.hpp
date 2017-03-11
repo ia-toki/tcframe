@@ -42,10 +42,6 @@ public:
         return Verdict("ERR", "Internal Error", 4);
     }
 
-    const string& code() const {
-        return code_;
-    }
-
     const string& name() const {
         return name_;
     }
