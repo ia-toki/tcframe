@@ -4,8 +4,9 @@
 #include <tuple>
 #include <utility>
 
+#include "Verdict.hpp"
 #include "tcframe/os.hpp"
-#include "tcframe/verdict.hpp"
+#include "tcframe/util.hpp"
 
 using std::move;
 using std::string;
@@ -17,12 +18,12 @@ struct ScoringResult {
     friend class ScoringResultBuilder;
 
 private:
-    ExecutionResult executionResult_;
+    optional<ExecutionResult> executionResult_;
     Verdict verdict_;
-    string message_;
+    optional<string> privateInfo_;
 
 public:
-    const ExecutionResult& executionResult() const {
+    const optional<ExecutionResult>& executionResult() const {
         return executionResult_;
     }
 
@@ -30,12 +31,13 @@ public:
         return verdict_;
     }
 
-    const string& message() const {
-        return message_;
+    const optional<string>& privateInfo() const {
+        return privateInfo_;
     }
 
     bool operator==(const ScoringResult& o) const {
-        return tie(executionResult_, verdict_, message_) == tie(o.executionResult_, o.verdict_, o.message_);
+        return tie(executionResult_, verdict_, privateInfo_)
+               == tie(o.executionResult_, o.verdict_, o.privateInfo_);
     }
 };
 
@@ -45,7 +47,7 @@ private:
 
 public:
     ScoringResultBuilder& setExecutionResult(ExecutionResult executionResult) {
-        subject_.executionResult_ = executionResult;
+        subject_.executionResult_ = optional<ExecutionResult>(executionResult);
         return *this;
     }
 
@@ -54,8 +56,8 @@ public:
         return *this;
     }
 
-    ScoringResultBuilder& setMessage(string message) {
-        subject_.message_ = message;
+    ScoringResultBuilder& setPrivateInfo(string privateInfo) {
+        subject_.privateInfo_ = privateInfo;
         return *this;
     }
 

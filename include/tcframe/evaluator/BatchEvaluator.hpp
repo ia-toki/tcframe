@@ -1,11 +1,10 @@
 #pragma once
 
 #include "Evaluator.hpp"
-#include "EvaluationResult.hpp"
 #include "EvaluatorConfig.hpp"
+#include "tcframe/grade.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/util.hpp"
-#include "tcframe/verdict.hpp"
 
 namespace tcframe {
 

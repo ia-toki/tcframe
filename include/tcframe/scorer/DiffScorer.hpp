@@ -3,10 +3,9 @@
 #include <string>
 
 #include "Scorer.hpp"
-#include "ScoringResult.hpp"
+#include "tcframe/grade.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/util.hpp"
-#include "tcframe/verdict.hpp"
 
 using std::string;
 
@@ -14,8 +13,6 @@ namespace tcframe {
 
 class DiffScorer : public Scorer {
 private:
-    static constexpr const char* DIFF_FILENAME = "_diff.out";
-
     OperatingSystem* os_;
 
 public:
@@ -38,23 +35,26 @@ public:
                 + " | head -n 10"
                 + " )";
 
-        ExecutionResult result = os_->execute(ExecutionRequestBuilder()
+        ExecutionResult executionResult = os_->execute(ExecutionRequestBuilder()
                 .setCommand(scoringCommand)
-                .setOutputFilename(DIFF_FILENAME)
+                .setOutputFilename(SCORING_FILENAME)
                 .build());
-        istream* output = os_->openForReading(DIFF_FILENAME);
-        string message = StringUtils::streamToString(output);
+        istream* output = os_->openForReading(SCORING_FILENAME);
+        string privateInfo = StringUtils::streamToString(output);
         os_->closeOpenedStream(output);
 
-        Verdict verdict = message.empty()
-                ? Verdict::ac()
-                : Verdict::wa();
+        ScoringResultBuilder scoringResult;
+        scoringResult.setExecutionResult(executionResult);
 
-        return ScoringResultBuilder()
-                .setExecutionResult(result)
-                .setVerdict(verdict)
-                .setMessage(message)
-                .build();
+        if (privateInfo.empty()) {
+            scoringResult.setVerdict(Verdict::ac());
+        } else {
+            scoringResult
+                    .setVerdict(Verdict::wa())
+                    .setPrivateInfo(privateInfo);
+        }
+
+        return scoringResult.build();
     }
 };
 

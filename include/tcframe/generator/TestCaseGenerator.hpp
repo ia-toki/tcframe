@@ -10,11 +10,11 @@
 #include "GeneratorConfig.hpp"
 #include "GeneratorLogger.hpp"
 #include "tcframe/evaluator.hpp"
+#include "tcframe/grade.hpp"
 #include "tcframe/io_manipulator.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/scorer.hpp"
 #include "tcframe/spec.hpp"
-#include "tcframe/verdict.hpp"
 #include "tcframe/verifier.hpp"
 
 using std::char_traits;
@@ -127,9 +127,11 @@ private:
                 .build();
 
         EvaluationResult evaluationResult = evaluator_->evaluate(inputFilename, outputFilename, evaluatorConfig);
-        ExecutionResult executionResult = evaluationResult.executionResult();
-        if (!executionResult.isSuccessful()) {
-            throw GenerationException([=] { logger_->logExecutionFailure("solution", executionResult); });
+        if (!evaluationResult.executionResult().isSuccessful()) {
+            TestCaseGrade grade = TestCaseGradeCreator()
+                    .setEvaluationResult(evaluationResult)
+                    .create();
+            throw GenerationException([=] { logger_->logTestCaseGradeDetails(grade); });
         }
 
         if (maybeSampleOutputString) {
@@ -185,19 +187,18 @@ private:
         string modifiedSampleOutputString = sampleOutputString;
         modifySampleOutputStringForMultipleTestCases(modifiedSampleOutputString, config);
 
-        ostream* sampleOutput = os_->openForWriting("_evaluation.out");
+        ostream* sampleOutput = os_->openForWriting(Evaluator::EVALUATION_FILENAME);
         *sampleOutput << modifiedSampleOutputString;
         os_->closeOpenedStream(sampleOutput);
 
-        ScoringResult scoringResult = scorer_->score(inputFilename, outputFilename, "_evaluation.out");
+        ScoringResult scoringResult = scorer_->score(inputFilename, outputFilename, Evaluator::EVALUATION_FILENAME);
+        TestCaseGrade grade = TestCaseGradeCreator()
+                .setScoringResult(scoringResult)
+                .create();
         if (!(scoringResult.verdict() == Verdict::ac())) {
             throw GenerationException([=] {
-                logger_->logSampleTestCaseCheckFailure(scoringResult.message());
-                if (scoringResult.executionResult().isSuccessful()) {
-                    logger_->logTestCaseScoringMessage(scoringResult.message());
-                } else {
-                    logger_->logExecutionFailure("scorer", scoringResult.executionResult());
-                }
+                logger_->logSampleTestCaseCheckFailure();
+                logger_->logTestCaseGradeDetails(grade);
             });
         }
     }

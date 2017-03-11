@@ -5,6 +5,7 @@
 #include "GraderConfig.hpp"
 #include "GraderLogger.hpp"
 #include "tcframe/evaluator.hpp"
+#include "tcframe/grade.hpp"
 #include "tcframe/scorer.hpp"
 #include "tcframe/util.hpp"
 
@@ -25,55 +26,44 @@ public:
             , scorer_(scorer)
             , logger_(logger) {}
 
-    virtual Verdict grade(const TestCase& testCase, const GraderConfig& config) {
+    virtual TestCaseGrade grade(const TestCase& testCase, const GraderConfig& config) {
         logger_->logTestCaseIntroduction(testCase.id());
 
-        optional<Verdict> verdict = evaluate(testCase, config);
-        if (verdict) {
-            return verdict.value();
+        TestCaseGradeCreator gradeCreator;
+
+        EvaluationResult evaluationResult = evaluate(testCase, config);
+        gradeCreator.setEvaluationResult(evaluationResult);
+
+        if (!evaluationResult.verdict()) {
+            ScoringResult scoringResult = score(testCase, config);
+            gradeCreator.setScoringResult(scoringResult);
         }
-        return score(testCase, config);
+
+        TestCaseGrade grade = gradeCreator.create();
+
+        logger_->logTestCaseGradeSummary(grade);
+        logger_->logTestCaseGradeDetails(grade);
+
+        return grade;
     }
 
 private:
-    optional<Verdict> evaluate(const TestCase& testCase, const GraderConfig& config) {
+    EvaluationResult evaluate(const TestCase& testCase, const GraderConfig& config) {
         string inputFilename = config.outputDir() + "/" + testCase.id() + ".in";
-        string evaluationFilename = "_evaluation.out";
         EvaluatorConfig evaluatorConfig = EvaluatorConfigBuilder()
                 .setSolutionCommand(config.solutionCommand())
                 .setTimeLimit(config.timeLimit())
                 .setMemoryLimit(config.memoryLimit())
                 .build();
 
-        EvaluationResult result = evaluator_->evaluate(inputFilename, evaluationFilename, evaluatorConfig);
-
-        if (result.verdict()) {
-            Verdict verdict = result.verdict().value();
-            logger_->logTestCaseVerdict(verdict);
-            if (verdict == Verdict::rte()) {
-                logger_->logExecutionFailure("solution", result.executionResult());
-            }
-        }
-
-        return result.verdict();
+        return evaluator_->evaluate(inputFilename, Evaluator::EVALUATION_FILENAME, evaluatorConfig);
     }
 
-    Verdict score(const TestCase& testCase, const GraderConfig& config) {
+    ScoringResult score(const TestCase& testCase, const GraderConfig& config) {
         string inputFilename = config.outputDir() + "/" + testCase.id() + ".in";
         string outputFilename = config.outputDir() + "/" + testCase.id() + ".out";
-        string evaluationFilename = "_evaluation.out";
 
-        ScoringResult result = scorer_->score(inputFilename, outputFilename, evaluationFilename);
-
-        logger_->logTestCaseVerdict(result.verdict());
-        if (!(result.verdict() == Verdict::ac())) {
-            if (result.executionResult().isSuccessful()) {
-                logger_->logTestCaseScoringMessage(result.message());
-            } else {
-                logger_->logExecutionFailure("scorer", result.executionResult());
-            }
-        }
-        return result.verdict();
+        return scorer_->score(inputFilename, outputFilename, Evaluator::EVALUATION_FILENAME);
     }
 };
 

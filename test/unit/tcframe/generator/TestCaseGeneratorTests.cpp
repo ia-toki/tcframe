@@ -1,5 +1,4 @@
 #include "gmock/gmock.h"
-#include "../helper.hpp"
 #include "../mock.hpp"
 
 #include <sstream>
@@ -14,19 +13,15 @@
 
 using ::testing::_;
 using ::testing::AllOf;
-using ::testing::DoAll;
 using ::testing::EndsWith;
 using ::testing::Eq;
 using ::testing::InSequence;
-using ::testing::Invoke;
-using ::testing::InvokeWithoutArgs;
 using ::testing::Property;
 using ::testing::Return;
 using ::testing::StartsWith;
 using ::testing::Test;
 using ::testing::Throw;
 using ::testing::Truly;
-using ::testing::WithArg;
 
 using std::istringstream;
 using std::ostringstream;
@@ -93,12 +88,8 @@ protected:
     ostringstream* outForInput = new ostringstream();
     ostringstream* outForOutput = new ostringstream();
     ostringstream* outForEvaluation = new ostringstream();
-    ExecutionResult executionResult = ExecutionResultBuilder().setExitCode(0).build();
 
     TestCaseGenerator generator = TestCaseGenerator(&verifier, &ioManipulator, &os, &evaluator, &scorer, &logger);
-
-    Captor<string> evaluationCaptor1;
-    Captor<string> evaluationCaptor2;
 
     void SetUp() {
         ON_CALL(verifier, verifyConstraints(_))
@@ -110,22 +101,16 @@ protected:
         ON_CALL(os, openForWriting(EndsWith(".out")))
                 .WillByDefault(Return(outForOutput));
         ON_CALL(os, openForWriting(StartsWith("_")))
-                .WillByDefault(DoAll(
-                        WithArg<0>(Invoke(&evaluationCaptor1, &Captor<string>::capture)),
-                        InvokeWithoutArgs([&] {return outForEvaluation;})));
+                .WillByDefault(Return(outForEvaluation));
         ON_CALL(os, execute(_))
-                .WillByDefault(Return(executionResult));
+                .WillByDefault(Return(ExecutionResult()));
         ON_CALL(evaluator, evaluate(_, _, _))
-                .WillByDefault(Return(EvaluationResultBuilder()
-                        .setExecutionResult(executionResult)
-                        .build()));
+                .WillByDefault(Return(EvaluationResult()));
         ON_CALL(scorer, score(_, _, _))
-                .WillByDefault(DoAll(
-                        WithArg<2>(Invoke(&evaluationCaptor2, &Captor<string>::capture)),
-                        InvokeWithoutArgs([&] {return ScoringResultBuilder()
-                                .setExecutionResult(executionResult)
-                                .setVerdict(Verdict::ac())
-                                .build();})));
+                .WillByDefault(Return(ScoringResultBuilder()
+                        .setExecutionResult(ExecutionResult())
+                        .setVerdict(Verdict::ac())
+                        .build()));
     }
 
     struct InputStreamContentIs {
@@ -211,9 +196,9 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Successful) {
         EXPECT_CALL(os, openForWriting("dir/foo_sample_1.in"));
         EXPECT_CALL(os, closeOpenedStream(outForInput));
         EXPECT_CALL(evaluator, evaluate("dir/foo_sample_1.in", "dir/foo_sample_1.out", evaluatorConfig));
-        EXPECT_CALL(os, openForWriting(_));
+        EXPECT_CALL(os, openForWriting(Evaluator::EVALUATION_FILENAME));
         EXPECT_CALL(os, closeOpenedStream(outForEvaluation));
-        EXPECT_CALL(scorer, score("dir/foo_sample_1.in", "dir/foo_sample_1.out", _));
+        EXPECT_CALL(scorer, score("dir/foo_sample_1.in", "dir/foo_sample_1.out", Evaluator::EVALUATION_FILENAME));
         EXPECT_CALL(os, openForReading("dir/foo_sample_1.out"));
         EXPECT_CALL(ioManipulator, parseOutput(inForOutput));
         EXPECT_CALL(os, closeOpenedStream(inForOutput));
@@ -221,42 +206,51 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Successful) {
     }
 
     EXPECT_TRUE(generator.generate(sampleTestCaseWithOutput, config));
-    EXPECT_THAT(evaluationCaptor1.arg(), Eq(evaluationCaptor2.arg()));
     EXPECT_THAT(outForInput->str(), Eq("42\n"));
     EXPECT_THAT(outForEvaluation->str(), Eq("yes\n"));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Failed_Check_WA) {
+    ScoringResult scoringResult = ScoringResultBuilder()
+            .setExecutionResult(ExecutionResult())
+            .setVerdict(Verdict::wa())
+            .setPrivateInfo("diff")
+            .build();
     ON_CALL(scorer, score(_, _, _))
-            .WillByDefault(Return(ScoringResultBuilder()
-                    .setExecutionResult(executionResult)
-                    .setVerdict(Verdict::wa())
-                    .setMessage("diff")
-                    .build()));
+            .WillByDefault(Return(scoringResult));
+
+    TestCaseGrade grade = TestCaseGradeCreator()
+            .setScoringResult(scoringResult)
+            .create();
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>()));
-        EXPECT_CALL(logger, logSampleTestCaseCheckFailure("diff"));
+        EXPECT_CALL(logger, logSampleTestCaseCheckFailure());
+        EXPECT_CALL(logger, logTestCaseGradeDetails(grade));
     }
 
     EXPECT_FALSE(generator.generate(sampleTestCaseWithOutput, config));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Failed_Check_ERR) {
-    ExecutionResult executionResult = ExecutionResultBuilder()
-            .setExitCode(1)
-            .setStandardError("error")
+    ScoringResult scoringResult = ScoringResultBuilder()
+            .setExecutionResult(ExecutionResultBuilder()
+                    .setExitCode(1)
+                    .setStandardError("error")
+                    .build())
+            .setVerdict(Verdict::err())
             .build();
     ON_CALL(scorer, score(_, _, _))
-            .WillByDefault(Return(ScoringResultBuilder()
-                    .setExecutionResult(executionResult)
-                    .setVerdict(Verdict::err())
-                    .build()));
+            .WillByDefault(Return(scoringResult));
+
+    TestCaseGrade grade = TestCaseGradeCreator()
+            .setScoringResult(scoringResult)
+            .create();
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>()));
-        EXPECT_CALL(logger, logSampleTestCaseCheckFailure(""));
-        EXPECT_CALL(logger, logExecutionFailure("scorer", executionResult));
+        EXPECT_CALL(logger, logSampleTestCaseCheckFailure());
+        EXPECT_CALL(logger, logTestCaseGradeDetails(grade));
     }
 
     EXPECT_FALSE(generator.generate(sampleTestCaseWithOutput, config));
@@ -356,15 +350,19 @@ TEST_F(TestCaseGeneratorTests, Generation_Failed_InputGeneration) {
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Failed_OutputEvaluation) {
-    ExecutionResult executionResult = ExecutionResultBuilder().setExitCode(1).build();
+    EvaluationResult evaluationResult = EvaluationResultBuilder()
+            .setExecutionResult(ExecutionResultBuilder().setExitCode(1).build())
+            .build();
     ON_CALL(evaluator, evaluate(_, _, _))
-            .WillByDefault(Return(EvaluationResultBuilder()
-                    .setExecutionResult(executionResult)
-                    .build()));
+            .WillByDefault(Return(evaluationResult));
+
+    TestCaseGrade grade = TestCaseGradeCreator()
+            .setEvaluationResult(evaluationResult)
+            .create();
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>("N = 42")));
-        EXPECT_CALL(logger, logExecutionFailure("solution", executionResult));
+        EXPECT_CALL(logger, logTestCaseGradeDetails(grade));
     }
     EXPECT_FALSE(generator.generate(officialTestCase, config));
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "LoggerEngine.hpp"
+#include "tcframe/grade.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/util.hpp"
 
@@ -30,13 +31,20 @@ public:
         engine_->logHangingParagraph(1, testCaseId + ": ");
     }
 
-    virtual void logTestCaseScoringMessage(const string& message) {
-        if (!message.empty()) {
-            engine_->logListItem1(2, message);
+    virtual void logTestCaseGradeDetails(const TestCaseGrade& grade) {
+        if (grade.evaluationExecutionResult() && !grade.evaluationExecutionResult().value().isSuccessful()) {
+            logExecutionFailure("solution", grade.evaluationExecutionResult().value());
+        }
+        if (grade.scoringExecutionResult() && !grade.scoringExecutionResult().value().isSuccessful()) {
+            logExecutionFailure("scorer", grade.scoringExecutionResult().value());
+        }
+        if (grade.privateScoringInfo()) {
+            engine_->logListItem1(2, grade.privateScoringInfo().value());
         }
     }
 
-    virtual void logExecutionFailure(const string& context, const ExecutionResult& result) {
+    /* Visible for testing */
+    void logExecutionFailure(const string& context, const ExecutionResult& result) {
         engine_->logListItem1(2, "Execution of " + context + " failed:");
         if (result.exitCode()) {
             engine_->logListItem2(3, "Exit code: " + StringUtils::toString(result.exitCode().value()));

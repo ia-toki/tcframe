@@ -1,21 +1,16 @@
 #include "gmock/gmock.h"
-#include "../helper.hpp"
 #include "../mock.hpp"
 
 #include "../evaluator/MockEvaluator.hpp"
 #include "../scorer/MockScorer.hpp"
 #include "MockGraderLogger.hpp"
-#include "tcframe/grader/Grader.hpp"
+#include "tcframe/grader/TestCaseGrader.hpp"
 
 using ::testing::_;
-using ::testing::DoAll;
 using ::testing::Eq;
 using ::testing::InSequence;
-using ::testing::Invoke;
-using ::testing::InvokeWithoutArgs;
 using ::testing::Return;
 using ::testing::Test;
-using ::testing::WithArg;
 
 namespace tcframe {
 
@@ -39,93 +34,110 @@ protected:
             .setMemoryLimit(128)
             .build();
 
-    TestCaseGrader grader = TestCaseGrader(&evaluator, &scorer, &logger);
+    EvaluationResult successfulEvaluationResult = EvaluationResult();
+    ScoringResult successfulScoringResult = ScoringResultBuilder()
+            .setExecutionResult(ExecutionResult())
+            .setVerdict(Verdict::ac())
+            .build();
 
-    Captor<string> evaluationCaptor1;
-    Captor<string> evaluationCaptor2;
+    TestCaseGrader grader = TestCaseGrader(&evaluator, &scorer, &logger);
 
     void SetUp() {
         ON_CALL(evaluator, evaluate(_, _, _))
-                .WillByDefault(DoAll(
-                        WithArg<1>(Invoke(&evaluationCaptor1, &Captor<string>::capture)),
-                        InvokeWithoutArgs([] {return EvaluationResultBuilder().build();})));
+                .WillByDefault(Return(successfulEvaluationResult));
         ON_CALL(scorer, score(_, _, _))
-                .WillByDefault(DoAll(
-                        WithArg<2>(Invoke(&evaluationCaptor2, &Captor<string>::capture)),
-                        InvokeWithoutArgs([] {return ScoringResultBuilder()
-                                .setExecutionResult(ExecutionResultBuilder().setExitCode(0).build())
-                                .setVerdict(Verdict::ac())
-                                .build();})));
+                .WillByDefault(Return(successfulScoringResult));
     }
 };
 
 TEST_F(TestCaseGraderTests, Grading_AC) {
+    TestCaseGrade grade = TestCaseGradeCreator()
+            .setEvaluationResult(successfulEvaluationResult)
+            .setScoringResult(successfulScoringResult)
+            .create();
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
-        EXPECT_CALL(evaluator, evaluate("dir/foo_1.in", _, evaluatorConfig));
-        EXPECT_CALL(scorer, score("dir/foo_1.in", "dir/foo_1.out", _));
-        EXPECT_CALL(logger, logTestCaseVerdict(Verdict::ac()));
+        EXPECT_CALL(evaluator, evaluate("dir/foo_1.in", Evaluator::EVALUATION_FILENAME, evaluatorConfig));
+        EXPECT_CALL(scorer, score("dir/foo_1.in", "dir/foo_1.out", Evaluator::EVALUATION_FILENAME));
+        EXPECT_CALL(logger, logTestCaseGradeSummary(grade));
+        EXPECT_CALL(logger, logTestCaseGradeDetails(grade));
     }
-    EXPECT_THAT(grader.grade(testCase, config), Eq(Verdict::ac()));
-
-    EXPECT_THAT(evaluationCaptor1.arg(), Eq(evaluationCaptor2.arg()));
+    EXPECT_THAT(grader.grade(testCase, config), Eq(grade));
 }
 
 TEST_F(TestCaseGraderTests, Grading_WA) {
+    ScoringResult scoringResult = ScoringResultBuilder()
+            .setExecutionResult(ExecutionResult())
+            .setVerdict(Verdict::wa())
+            .setPrivateInfo("diff")
+            .build();
     ON_CALL(scorer, score(_, _, _))
-            .WillByDefault(Return(ScoringResultBuilder()
-                    .setExecutionResult(ExecutionResultBuilder().setExitCode(0).build())
-                    .setVerdict(Verdict::wa())
-                    .setMessage("diff")
-                    .build()));
+            .WillByDefault(Return(scoringResult));
+
+    TestCaseGrade grade = TestCaseGradeCreator()
+            .setEvaluationResult(successfulEvaluationResult)
+            .setScoringResult(scoringResult)
+            .create();
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
         EXPECT_CALL(evaluator, evaluate(_, _, _));
         EXPECT_CALL(scorer, score(_, _, _));
-        EXPECT_CALL(logger, logTestCaseVerdict(Verdict::wa()));
-        EXPECT_CALL(logger, logTestCaseScoringMessage("diff"));
+        EXPECT_CALL(logger, logTestCaseGradeSummary(grade));
+        EXPECT_CALL(logger, logTestCaseGradeDetails(grade));
     }
 
-    EXPECT_THAT(grader.grade(testCase, config), Eq(Verdict::wa()));
+    EXPECT_THAT(grader.grade(testCase, config), Eq(grade));
 }
 
 TEST_F(TestCaseGraderTests, Grading_RTE) {
+    EvaluationResult evaluationResult = EvaluationResultBuilder()
+            .setVerdict(Verdict::rte())
+            .build();
     ON_CALL(evaluator, evaluate(_, _, _))
-            .WillByDefault(Return(EvaluationResultBuilder().setVerdict(Verdict::rte()).build()));
+            .WillByDefault(Return(evaluationResult));
+
+    TestCaseGrade grade = TestCaseGradeCreator()
+            .setEvaluationResult(evaluationResult)
+            .create();
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
         EXPECT_CALL(evaluator, evaluate(_, _, _));
-        EXPECT_CALL(logger, logTestCaseVerdict(Verdict::rte()));
-        EXPECT_CALL(logger, logExecutionFailure("solution", _));
+        EXPECT_CALL(logger, logTestCaseGradeSummary(grade));
+        EXPECT_CALL(logger, logTestCaseGradeDetails(grade));
     }
     EXPECT_CALL(scorer, score(_, _, _)).Times(0);
 
-    EXPECT_THAT(grader.grade(testCase, config), Eq(Verdict::rte()));
+    EXPECT_THAT(grader.grade(testCase, config), Eq(grade));
 }
 
 TEST_F(TestCaseGraderTests, Grading_ERR) {
-    ExecutionResult executionResult = ExecutionResultBuilder()
-            .setExitCode(1)
-            .setStandardError("error")
+    ScoringResult scoringResult = ScoringResultBuilder()
+            .setExecutionResult(ExecutionResultBuilder()
+                    .setExitCode(1)
+                    .setStandardError("error")
+                    .build())
+            .setVerdict(Verdict::err())
             .build();
     ON_CALL(scorer, score(_, _, _))
-            .WillByDefault(Return(ScoringResultBuilder()
-                    .setExecutionResult(executionResult)
-                    .setVerdict(Verdict::err())
-                    .build()));
+            .WillByDefault(Return(scoringResult));
+
+    TestCaseGrade grade = TestCaseGradeCreator()
+            .setEvaluationResult(successfulEvaluationResult)
+            .setScoringResult(scoringResult)
+            .create();
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
         EXPECT_CALL(evaluator, evaluate(_, _, _));
         EXPECT_CALL(scorer, score(_, _, _));
-        EXPECT_CALL(logger, logTestCaseVerdict(Verdict::err()));
-        EXPECT_CALL(logger, logExecutionFailure("scorer", executionResult));
+        EXPECT_CALL(logger, logTestCaseGradeSummary(grade));
+        EXPECT_CALL(logger, logTestCaseGradeDetails(grade));
     }
 
-    EXPECT_THAT(grader.grade(testCase, config), Eq(Verdict::err()));
+    EXPECT_THAT(grader.grade(testCase, config), Eq(grade));
 }
 
 }

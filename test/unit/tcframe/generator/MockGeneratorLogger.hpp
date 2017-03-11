@@ -13,8 +13,7 @@ public:
 
     MOCK_METHOD1(logTestGroupIntroduction, void(int));
     MOCK_METHOD1(logTestCaseIntroduction, void(string));
-    MOCK_METHOD1(logTestCaseScoringMessage, void(const string&));
-    MOCK_METHOD2(logExecutionFailure, void(const string&, const ExecutionResult&));
+    MOCK_METHOD1(logTestCaseGradeDetails, void(const TestCaseGrade&));
 
     MOCK_METHOD0(logIntroduction, void());
     MOCK_METHOD0(logSuccessfulResult, void());
@@ -27,7 +26,7 @@ public:
     MOCK_METHOD1(logConstraintsVerificationFailure, void(const ConstraintsVerificationResult&));
     MOCK_METHOD1(logMultipleTestCasesConstraintsVerificationFailure, void(
             const MultipleTestCasesConstraintsVerificationResult&));
-    MOCK_METHOD1(logSampleTestCaseCheckFailure, void(const string&));
+    MOCK_METHOD0(logSampleTestCaseCheckFailure, void());
     MOCK_METHOD0(logSampleTestCaseNoOutputNeededFailure, void());
     MOCK_METHOD1(logSimpleFailure, void(const string&));
 };
