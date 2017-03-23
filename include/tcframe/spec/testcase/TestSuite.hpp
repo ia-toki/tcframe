@@ -107,7 +107,7 @@ public:
         }
 
         hasCurSampleTestCase_ = true;
-        curSampleSubtaskIds_ = {-1};
+        curSampleSubtaskIds_ = {};
         curSubtaskIds_ = &curSampleSubtaskIds_;
         curSampleInputLines_ = optional<vector<string>>();
         curSampleOutputLines_ = optional<vector<string>>();

@@ -58,12 +58,12 @@ TEST_F(TestSuiteBuilderTests, Building_OnlySample) {
             TestGroup(0, {
                     TestCaseBuilder()
                             .setId("foo_sample_1")
-                            .setSubtaskIds({-1})
+                            .setSubtaskIds({})
                             .setData(new SampleTestCaseData("10\n20\n", "yes\n"))
                             .build(),
                     TestCaseBuilder()
                             .setId("foo_sample_2")
-                            .setSubtaskIds({-1})
+                            .setSubtaskIds({})
                             .setData(new SampleTestCaseData("30\n"))
                             .build()})});
 
@@ -120,12 +120,12 @@ TEST_F(TestSuiteBuilderTests, Building_Both) {
             TestGroup(0, {
                     TestCaseBuilder()
                             .setId("foo_sample_1")
-                            .setSubtaskIds({-1})
+                            .setSubtaskIds({})
                             .setData(new SampleTestCaseData("10\n20\n", "yes\n"))
                             .build(),
                     TestCaseBuilder()
                             .setId("foo_sample_2")
-                            .setSubtaskIds({-1})
+                            .setSubtaskIds({})
                             .setData(new SampleTestCaseData("30\n"))
                             .build()}),
             TestGroup(-1, {
