@@ -42,23 +42,23 @@ protected:
     MOCK(GeneratorLogger) logger;
 
     TestCase sampleTestCase = TestCaseBuilder()
-            .setId("foo_sample_1")
+            .setName("foo_sample_1")
             .setSubtaskIds({1, 2})
             .setData(new SampleTestCaseData("42\n"))
             .build();
     TestCase sampleTestCaseWithOutput = TestCaseBuilder()
-            .setId("foo_sample_1")
+            .setName("foo_sample_1")
             .setSubtaskIds({1, 2})
             .setData(new SampleTestCaseData("42\n", "yes\n"))
             .build();
     TestCase officialTestCase = TestCaseBuilder()
-            .setId("foo_1")
+            .setName("foo_1")
             .setDescription("N = 42")
             .setSubtaskIds({1, 2})
             .setData(new OfficialTestCaseData([&]{N = 42;}))
             .build();
     TestCase officialTestCaseWithInvalidClosure = TestCaseBuilder()
-            .setId("foo_1")
+            .setName("foo_1")
             .setDescription("N = 42")
             .setSubtaskIds({1, 2})
             .setData(new OfficialTestCaseData([&]{throw runtime_error("closure error");}))

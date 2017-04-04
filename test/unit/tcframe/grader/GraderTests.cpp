@@ -72,11 +72,11 @@ protected:
     void SetUp() {
         ON_CALL(testCaseGrader, grade(_, _))
                 .WillByDefault(Return(TestCaseGradeBuilder().setVerdict(Verdict::ac()).build()));
-        ON_CALL(testCaseGrader, grade(Property(&TestCase::id, StartsWith("foo_2")), _))
+        ON_CALL(testCaseGrader, grade(Property(&TestCase::name, StartsWith("foo_2")), _))
                 .WillByDefault(Return(TestCaseGradeBuilder().setVerdict(Verdict::rte()).build()));
-        ON_CALL(testCaseGrader, grade(Property(&TestCase::id, StartsWith("foo_3")), _))
+        ON_CALL(testCaseGrader, grade(Property(&TestCase::name, StartsWith("foo_3")), _))
                 .WillByDefault(Return(TestCaseGradeBuilder().setVerdict(Verdict::wa()).build()));
-        ON_CALL(testCaseGrader, grade(Property(&TestCase::id, StartsWith("foo_4")), _))
+        ON_CALL(testCaseGrader, grade(Property(&TestCase::name, StartsWith("foo_4")), _))
                 .WillByDefault(Return(TestCaseGradeBuilder().setVerdict(Verdict::tle()).build()));
     }
 };

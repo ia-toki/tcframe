@@ -11,7 +11,7 @@
 #include "OfficialTestCaseData.hpp"
 #include "SampleTestCaseData.hpp"
 #include "TestCase.hpp"
-#include "TestCaseIdCreator.hpp"
+#include "TestCaseNameCreator.hpp"
 #include "TestGroup.hpp"
 #include "tcframe/util.hpp"
 
@@ -117,7 +117,7 @@ public:
 
     TestSuiteBuilder& newTestGroup() {
         if (hasCurOfficialTestGroup_) {
-            addCurrentOfficialTestCase();
+            addCurrentOfficialTestGroup();
         } else {
             curOfficialTestGroupId_ = 0;
         }
@@ -165,7 +165,10 @@ public:
         // https://bugs.archlinux.org/task/35803
 
         curOfficialTestCases_.push_back(TestCaseBuilder()
-                .setId(TestCaseIdCreator::create(slug_, curOfficialTestGroupId_, (int) curOfficialTestCases_.size() + 1))
+                .setName(TestCaseNameCreator::create(
+                        slug_,
+                        curOfficialTestGroupId_,
+                        (int) curOfficialTestCases_.size() + 1))
                 .setSubtaskIds(curOfficialSubtaskIds_)
                 .setDescription(description)
                 .setData(new OfficialTestCaseData([=]{
@@ -182,7 +185,7 @@ public:
             addCurrentSampleTestCase();
         }
         if (!curOfficialTestCases_.empty()) {
-            addCurrentOfficialTestCase();
+            addCurrentOfficialTestGroup();
         }
 
         vector<TestGroup> testGroups;
@@ -218,13 +221,13 @@ private:
         }
 
         curSampleTestCases_.push_back(TestCaseBuilder()
-                .setId(TestCaseIdCreator::create(slug_, 0, (int) curSampleTestCases_.size() + 1))
+                .setName(TestCaseNameCreator::create(slug_, 0, (int) curSampleTestCases_.size() + 1))
                 .setSubtaskIds(curSampleSubtaskIds_)
                 .setData(data)
                 .build());
     }
 
-    void addCurrentOfficialTestCase() {
+    void addCurrentOfficialTestGroup() {
         curOfficialTestGroups_.push_back(TestGroup(curOfficialTestGroupId_, curOfficialTestCases_));
     }
 };

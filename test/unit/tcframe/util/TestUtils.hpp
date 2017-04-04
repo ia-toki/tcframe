@@ -10,12 +10,12 @@ namespace tcframe {
 
 class TestUtils {
 public:
-    static TestCase createFakeTestCase(string id) {
-        return createFakeTestCase(id, {-1});
+    static TestCase createFakeTestCase(string name) {
+        return createFakeTestCase(name, {-1});
     }
 
-    static TestCase createFakeTestCase(string id, set<int> subtaskIds) {
-        return TestCaseBuilder().setId(id).setSubtaskIds(subtaskIds).build();
+    static TestCase createFakeTestCase(string name, set<int> subtaskIds) {
+        return TestCaseBuilder().setName(name).setSubtaskIds(subtaskIds).build();
     }
 };
 

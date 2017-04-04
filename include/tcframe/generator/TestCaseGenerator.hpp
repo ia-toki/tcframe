@@ -52,10 +52,10 @@ public:
             , logger_(logger) {}
 
     virtual bool generate(const TestCase& testCase, const GeneratorConfig& config) {
-        logger_->logTestCaseIntroduction(testCase.id());
+        logger_->logTestCaseIntroduction(testCase.name());
 
-        string inputFilename = config.outputDir() + "/" + testCase.id() + ".in";
-        string outputFilename = config.outputDir() + "/" + testCase.id() + ".out";
+        string inputFilename = config.outputDir() + "/" + testCase.name() + ".in";
+        string outputFilename = config.outputDir() + "/" + testCase.name() + ".out";
 
         try {
             applyInput(testCase);
@@ -153,8 +153,8 @@ private:
 
     void modifyInputForMultipleTestCases(ostream* input, const GeneratorConfig& config) {
         if (config.multipleTestCasesCounter() != nullptr) {
-            int testCaseNo = 1;
-            *input << testCaseNo << endl;
+            int testCaseId = 1;
+            *input << testCaseId << endl;
         }
     }
 

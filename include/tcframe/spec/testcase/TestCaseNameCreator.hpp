@@ -8,15 +8,15 @@ using std::string;
 
 namespace tcframe {
 
-class TestCaseIdCreator {
+class TestCaseNameCreator {
 public:
-    TestCaseIdCreator() = delete;
+    TestCaseNameCreator() = delete;
 
-    static string create(const string& slug, int testGroupId, int testCaseNo) {
-        return createBaseId(slug, testGroupId) + "_" + StringUtils::toString(testCaseNo);
+    static string create(const string& slug, int testGroupId, int testCaseId) {
+        return createBaseName(slug, testGroupId) + "_" + StringUtils::toString(testCaseId);
     }
 
-    static string createBaseId(const string& slug, int testGroupId) {
+    static string createBaseName(const string& slug, int testGroupId) {
         if (testGroupId == 0) {
             return slug + "_sample";
         }
