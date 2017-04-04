@@ -27,7 +27,7 @@ public:
             , logger_(logger) {}
 
     virtual TestCaseGrade grade(const TestCase& testCase, const GraderConfig& config) {
-        logger_->logTestCaseIntroduction(testCase.id());
+        logger_->logTestCaseIntroduction(testCase.name());
 
         TestCaseGradeCreator gradeCreator;
 
@@ -51,7 +51,7 @@ public:
 
 private:
     EvaluationResult evaluate(const TestCase& testCase, const GraderConfig& config) {
-        string inputFilename = config.outputDir() + "/" + testCase.id() + ".in";
+        string inputFilename = config.outputDir() + "/" + testCase.name() + ".in";
         EvaluatorConfig evaluatorConfig = EvaluatorConfigBuilder()
                 .setSolutionCommand(config.solutionCommand())
                 .setTimeLimit(config.timeLimit())
@@ -62,8 +62,8 @@ private:
     }
 
     ScoringResult score(const TestCase& testCase, const GraderConfig& config) {
-        string inputFilename = config.outputDir() + "/" + testCase.id() + ".in";
-        string outputFilename = config.outputDir() + "/" + testCase.id() + ".out";
+        string inputFilename = config.outputDir() + "/" + testCase.name() + ".in";
+        string outputFilename = config.outputDir() + "/" + testCase.name() + ".out";
 
         return scorer_->score(inputFilename, outputFilename, Evaluator::EVALUATION_FILENAME);
     }

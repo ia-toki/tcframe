@@ -77,8 +77,8 @@ private:
     }
 
     bool combineMultipleTestCases(const TestGroup& testGroup, const GeneratorConfig& config) {
-        string baseId = TestCaseIdCreator::createBaseId(config.slug(), testGroup.id());
-        logger_->logMultipleTestCasesCombinationIntroduction(baseId);
+        string baseName = TestCaseNameCreator::createBaseName(config.slug(), testGroup.id());
+        logger_->logMultipleTestCasesCombinationIntroduction(baseName);
 
         *config.multipleTestCasesCounter() = (int) testGroup.testCases().size();
 
@@ -109,9 +109,9 @@ private:
     void combine(const TestGroup& testGroup, const GeneratorConfig& config) {
         int testCaseCount = (int) testGroup.testCases().size();
 
-        string baseId = TestCaseIdCreator::createBaseId(config.slug(), testGroup.id());
-        string baseIn = config.outputDir() + "/" + baseId + ".in";
-        string baseOut = config.outputDir() + "/" + baseId + ".out";
+        string baseName = TestCaseNameCreator::createBaseName(config.slug(), testGroup.id());
+        string baseIn = config.outputDir() + "/" + baseName + ".in";
+        string baseOut = config.outputDir() + "/" + baseName + ".out";
         bool needsOutput = config.needsOutput();
 
         ostringstream sout;
@@ -125,9 +125,9 @@ private:
         os_->execute(ExecutionRequestBuilder().setCommand(sout.str()).build());
 
         for (int i = 1; i <= testCaseCount; i++) {
-            string id = TestCaseIdCreator::create(config.slug(), testGroup.id(), i);
-            string in = config.outputDir() + "/" + id + ".in";
-            string out = config.outputDir() + "/" + id + ".out";
+            string name = TestCaseNameCreator::create(config.slug(), testGroup.id(), i);
+            string in = config.outputDir() + "/" + name + ".in";
+            string out = config.outputDir() + "/" + name + ".out";
 
             ostringstream sout2;
             sout2 << "tail -n +2 " << in << " >> " << baseIn;

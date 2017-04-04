@@ -47,8 +47,8 @@ public:
         engine_->logParagraph(2, "Reasons:");
     }
 
-    virtual void logMultipleTestCasesCombinationIntroduction(const string& testCaseBaseId) {
-        engine_->logHangingParagraph(1, "Combining test cases into a single file (" + testCaseBaseId + "): ");
+    virtual void logMultipleTestCasesCombinationIntroduction(const string& testCaseBaseName) {
+        engine_->logHangingParagraph(1, "Combining test cases into a single file (" + testCaseBaseName + "): ");
     }
 
     virtual void logMultipleTestCasesCombinationSuccessfulResult() {

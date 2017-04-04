@@ -20,7 +20,7 @@ protected:
     MOCK(Scorer) scorer;
     MOCK(GraderLogger) logger;
 
-    TestCase testCase = TestCaseBuilder().setId("foo_1").build();
+    TestCase testCase = TestCaseBuilder().setName("foo_1").build();
 
     GraderConfig config = GraderConfigBuilder("foo")
             .setSolutionCommand("python Sol.py")

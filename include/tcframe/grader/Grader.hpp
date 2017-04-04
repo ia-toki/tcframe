@@ -73,7 +73,7 @@ private:
 
         if (config.hasMultipleTestCases()) {
             TestCase testCase = TestCaseBuilder()
-                    .setId(TestCaseIdCreator::createBaseId(config.slug(), testGroup.id()))
+                    .setName(TestCaseNameCreator::createBaseName(config.slug(), testGroup.id()))
                     .setSubtaskIds(testGroup.testCases()[0].subtaskIds())
                     .build();
             gradeOnTestCase(testCase, config, subtaskVerdicts);
