@@ -136,14 +136,14 @@ TEST_F(BaseTestSpecTests, Lifecycle) {
 TEST_F(BaseTestSpecTests, TestSuite) {
     TestSuite testSuite = testSpecWithTestCases.buildTestSuite("foo", {});
     EXPECT_THAT(testSuite.testGroups(), ElementsAre(
-            AllOf(Property(&TestGroup::id, 0), Property(&TestGroup::testCases, SizeIs(2))),
-            AllOf(Property(&TestGroup::id, -1), Property(&TestGroup::testCases, SizeIs(2)))));
+            AllOf(Property(&TestGroup::id, TestGroup::SAMPLE_ID), Property(&TestGroup::testCases, SizeIs(2))),
+            AllOf(Property(&TestGroup::id, TestGroup::MAIN_ID), Property(&TestGroup::testCases, SizeIs(2)))));
 }
 
 TEST_F(BaseTestSpecTests, TestSuite_WithGroups) {
     TestSuite testSuite = testSpecWithTestGroups.buildTestSuite("foo", {1, 2});
     EXPECT_THAT(testSuite.testGroups(), ElementsAre(
-            AllOf(Property(&TestGroup::id, 0), Property(&TestGroup::testCases, SizeIs(2))),
+            AllOf(Property(&TestGroup::id, TestGroup::SAMPLE_ID), Property(&TestGroup::testCases, SizeIs(2))),
             AllOf(Property(&TestGroup::id, 1), Property(&TestGroup::testCases, SizeIs(3))),
             AllOf(Property(&TestGroup::id, 2), Property(&TestGroup::testCases, SizeIs(2)))));
 }

@@ -123,7 +123,6 @@ set(INCLUDE
         include/tcframe/spec/testcase/SampleTestCaseData.hpp
         include/tcframe/spec/testcase/TestCase.hpp
         include/tcframe/spec/testcase/TestCaseData.hpp
-        include/tcframe/spec/testcase/TestCaseNameCreator.hpp
         include/tcframe/spec/testcase/TestGroup.hpp
         include/tcframe/spec/testcase/TestSuite.hpp
         include/tcframe/spec/variable.hpp
@@ -186,7 +185,8 @@ set(TEST_UNIT
         test/unit/tcframe/spec/io/RawLineIOSegmentBuilderTests.cpp
         test/unit/tcframe/spec/io/RawLinesIOSegmentBuilderTests.cpp
         test/unit/tcframe/spec/random/RandomTests.cpp
-        test/unit/tcframe/spec/testcase/TestCaseNameCreatorTests.cpp
+        test/unit/tcframe/spec/testcase/TestCaseTests.cpp
+        test/unit/tcframe/spec/testcase/TestGroupTests.cpp
         test/unit/tcframe/spec/testcase/TestSuiteBuilderTests.cpp
         test/unit/tcframe/spec/variable/MatrixTests.cpp
         test/unit/tcframe/spec/variable/ScalarTests.cpp

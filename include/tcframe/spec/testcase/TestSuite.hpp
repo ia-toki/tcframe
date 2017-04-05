@@ -11,8 +11,8 @@
 #include "OfficialTestCaseData.hpp"
 #include "SampleTestCaseData.hpp"
 #include "TestCase.hpp"
-#include "TestCaseNameCreator.hpp"
 #include "TestGroup.hpp"
+#include "tcframe/spec/constraint.hpp"
 #include "tcframe/util.hpp"
 
 using std::inserter;
@@ -74,9 +74,9 @@ public:
     TestSuiteBuilder()
             : beforeClosure_([]{})
             , afterClosure_([]{})
-            , curSampleSubtaskIds_({-1})
-            , curOfficialSubtaskIds_({-1})
-            , curOfficialTestGroupId_(-1)
+            , curSampleSubtaskIds_({Subtask::MAIN_ID})
+            , curOfficialSubtaskIds_({Subtask::MAIN_ID})
+            , curOfficialTestGroupId_(TestGroup::MAIN_ID)
             , hasCurOfficialTestGroup_(false)
             , hasCurSampleTestCase_(false) {
     }
@@ -165,9 +165,8 @@ public:
         // https://bugs.archlinux.org/task/35803
 
         curOfficialTestCases_.push_back(TestCaseBuilder()
-                .setName(TestCaseNameCreator::create(
-                        slug_,
-                        curOfficialTestGroupId_,
+                .setName(TestCase::createName(
+                        TestGroup::createName(slug_, curOfficialTestGroupId_),
                         (int) curOfficialTestCases_.size() + 1))
                 .setSubtaskIds(curOfficialSubtaskIds_)
                 .setDescription(description)
@@ -189,7 +188,7 @@ public:
         }
 
         vector<TestGroup> testGroups;
-        testGroups.push_back(TestGroup(0, curSampleTestCases_));
+        testGroups.push_back(TestGroup(TestGroup::SAMPLE_ID, curSampleTestCases_));
         for (TestGroup testGroup : curOfficialTestGroups_) {
             testGroups.push_back(testGroup);
         }
@@ -221,7 +220,9 @@ private:
         }
 
         curSampleTestCases_.push_back(TestCaseBuilder()
-                .setName(TestCaseNameCreator::create(slug_, 0, (int) curSampleTestCases_.size() + 1))
+                .setName(TestCase::createName(
+                        TestGroup::createName(slug_, TestGroup::SAMPLE_ID),
+                        (int) curSampleTestCases_.size() + 1))
                 .setSubtaskIds(curSampleSubtaskIds_)
                 .setData(data)
                 .build());

@@ -3,6 +3,7 @@
 #include "LoggerEngine.hpp"
 #include "tcframe/grade.hpp"
 #include "tcframe/os.hpp"
+#include "tcframe/spec/testcase.hpp"
 #include "tcframe/util.hpp"
 
 namespace tcframe {
@@ -18,9 +19,9 @@ public:
             : engine_(engine) {}
 
     virtual void logTestGroupIntroduction(int testGroupId) {
-        if (testGroupId == 0) {
+        if (testGroupId == TestGroup::SAMPLE_ID) {
             engine_->logHeading("SAMPLE TEST CASES");
-        } else if (testGroupId == -1) {
+        } else if (testGroupId == TestGroup::MAIN_ID) {
             engine_->logHeading("OFFICIAL TEST CASES");
         } else {
             engine_->logHeading("TEST GROUP " + StringUtils::toString(testGroupId));

@@ -77,8 +77,8 @@ private:
     }
 
     bool combineMultipleTestCases(const TestGroup& testGroup, const GeneratorConfig& config) {
-        string baseName = TestCaseNameCreator::createBaseName(config.slug(), testGroup.id());
-        logger_->logMultipleTestCasesCombinationIntroduction(baseName);
+        string testGroupName = TestGroup::createName(config.slug(), testGroup.id());
+        logger_->logMultipleTestCasesCombinationIntroduction(testGroupName);
 
         *config.multipleTestCasesCounter() = (int) testGroup.testCases().size();
 
@@ -109,28 +109,28 @@ private:
     void combine(const TestGroup& testGroup, const GeneratorConfig& config) {
         int testCaseCount = (int) testGroup.testCases().size();
 
-        string baseName = TestCaseNameCreator::createBaseName(config.slug(), testGroup.id());
-        string baseIn = config.outputDir() + "/" + baseName + ".in";
-        string baseOut = config.outputDir() + "/" + baseName + ".out";
+        string testGroupName = TestGroup::createName(config.slug(), testGroup.id());
+        string testGroupIn = config.outputDir() + "/" + testGroupName + ".in";
+        string testGroupOut = config.outputDir() + "/" + testGroupName + ".out";
         bool needsOutput = config.needsOutput();
 
         ostringstream sout;
 
-        sout << "echo " << testCaseCount << " > " << baseIn;
+        sout << "echo " << testCaseCount << " > " << testGroupIn;
 
         if (needsOutput) {
-            sout << " && touch " << baseOut;
+            sout << " && touch " << testGroupOut;
         }
 
         os_->execute(ExecutionRequestBuilder().setCommand(sout.str()).build());
 
         for (int i = 1; i <= testCaseCount; i++) {
-            string name = TestCaseNameCreator::create(config.slug(), testGroup.id(), i);
-            string in = config.outputDir() + "/" + name + ".in";
-            string out = config.outputDir() + "/" + name + ".out";
+            string testCaseName = TestCase::createName(testGroupName, i);
+            string in = config.outputDir() + "/" + testCaseName + ".in";
+            string out = config.outputDir() + "/" + testCaseName + ".out";
 
             ostringstream sout2;
-            sout2 << "tail -n +2 " << in << " >> " << baseIn;
+            sout2 << "tail -n +2 " << in << " >> " << testGroupIn;
 
             if (needsOutput) {
                 sout2 << " && ";
@@ -139,10 +139,10 @@ private:
                     // Replace the prefix for the first tc, with the correct prefix for this tc
                     string firstPrefix = StringUtils::interpolate(outputPrefix, 1);
                     string correctPrefix = StringUtils::interpolate(outputPrefix, i);
-                    sout2 << "printf \"%b\" \"" << escapeForBash(correctPrefix) << "\" >> " << baseOut << " && ";
-                    sout2 << "tail -c +" << (firstPrefix.size() + 1) << " " << out << " >> " << baseOut;
+                    sout2 << "printf \"%b\" \"" << escapeForBash(correctPrefix) << "\" >> " << testGroupOut << " && ";
+                    sout2 << "tail -c +" << (firstPrefix.size() + 1) << " " << out << " >> " << testGroupOut;
                 } else {
-                    sout2 << "cat " << out << " >> " << baseOut;
+                    sout2 << "cat " << out << " >> " << testGroupOut;
                 }
             }
 
