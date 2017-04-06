@@ -12,6 +12,11 @@ using std::vector;
 namespace tcframe {
 
 struct TestGroup {
+    enum {
+        MAIN_ID = -1,
+        SAMPLE_ID = 0
+    };
+
 private:
     int id_;
     vector<TestCase> testCases_;
@@ -31,6 +36,16 @@ public:
 
     bool operator==(const TestGroup& o) const {
         return tie(id_, testCases_) == tie(o.id_, o.testCases_);
+    }
+
+    static string createName(const string& slug, int testGroupId) {
+        if (testGroupId == SAMPLE_ID) {
+            return slug + "_sample";
+        }
+        if (testGroupId != MAIN_ID) {
+            return slug + "_" + StringUtils::toString(testGroupId);
+        }
+        return slug;
     }
 };
 

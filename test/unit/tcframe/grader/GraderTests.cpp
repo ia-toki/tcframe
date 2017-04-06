@@ -36,17 +36,17 @@ protected:
     TestCase tc5 = TestUtils::createFakeTestCase("foo_4_2", {4});
 
     TestSuite testSuiteAC = TestSuite({
-            TestGroup(0, {stcA}),
-            TestGroup(-1, {tcA})});
+            TestGroup(TestGroup::SAMPLE_ID, {stcA}),
+            TestGroup(TestGroup::MAIN_ID, {tcA})});
     TestSuite testSuiteNonAC = TestSuite({
-            TestGroup(0, {stcA}),
-            TestGroup(-1, {tcA, tcB})});
+            TestGroup(TestGroup::SAMPLE_ID, {stcA}),
+            TestGroup(TestGroup::MAIN_ID, {tcA, tcB})});
     ConstraintSuite constraintSuite = ConstraintSuite(
-            {Subtask(-1, {})},
+            {Subtask(Subtask::MAIN_ID, {})},
             {});
 
     TestSuite testSuiteWithSubtasks = TestSuite({
-            TestGroup(0, {stc1, stc2}),
+            TestGroup(TestGroup::SAMPLE_ID, {stc1, stc2}),
             TestGroup(1, {tc1}),
             TestGroup(2, {tc2}),
             TestGroup(3, {tc3}),
@@ -55,7 +55,7 @@ protected:
             {Subtask(1, {}), Subtask(2, {}), Subtask(3, {}), Subtask(4, {})},
             {});
     ConstraintSuite constraintSuiteWithSubtasksWithGlobalConstraints = ConstraintSuite(
-            {Subtask(-1, {}), Subtask(1, {}), Subtask(2, {}), Subtask(3, {}), Subtask(4, {})},
+            {Subtask(Subtask::MAIN_ID, {}), Subtask(1, {}), Subtask(2, {}), Subtask(3, {}), Subtask(4, {})},
             {});
 
     GraderConfig config = GraderConfigBuilder("foo")
@@ -87,20 +87,20 @@ TEST_F(GraderTests, Grading_AC) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction("python Sol.py"));
-        EXPECT_CALL(logger, logTestGroupIntroduction(0));
+        EXPECT_CALL(logger, logTestGroupIntroduction(TestGroup::SAMPLE_ID));
         EXPECT_CALL(testCaseGrader, grade(stcA, config));
-        EXPECT_CALL(logger, logTestGroupIntroduction(-1));
+        EXPECT_CALL(logger, logTestGroupIntroduction(TestGroup::MAIN_ID));
         EXPECT_CALL(testCaseGrader, grade(tcA, config));
 
         EXPECT_CALL(logger, logResult(map<int, Verdict>{
-                {-1, Verdict::ac()}}));
+                {Subtask::MAIN_ID, Verdict::ac()}}));
     }
     grader.grade(testSuiteAC, constraintSuite, config);
 }
 
 TEST_F(GraderTests, Grading_NonAC) {
     EXPECT_CALL(logger, logResult(map<int, Verdict>{
-            {-1, Verdict::rte()}}));
+            {Subtask::MAIN_ID, Verdict::rte()}}));
     grader.grade(testSuiteNonAC, constraintSuite, config);
 }
 
@@ -108,7 +108,7 @@ TEST_F(GraderTests, Grading_WithSubtasks) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction("python Sol.py"));
-        EXPECT_CALL(logger, logTestGroupIntroduction(0));
+        EXPECT_CALL(logger, logTestGroupIntroduction(TestGroup::SAMPLE_ID));
         EXPECT_CALL(testCaseGrader, grade(stc1, config));
         EXPECT_CALL(testCaseGrader, grade(stc2, config));
         EXPECT_CALL(logger, logTestGroupIntroduction(1));
@@ -144,7 +144,7 @@ TEST_F(GraderTests, Grading_WithSubtasks_MultipleTestCases) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction("python Sol.py"));
-        EXPECT_CALL(logger, logTestGroupIntroduction(0));
+        EXPECT_CALL(logger, logTestGroupIntroduction(TestGroup::SAMPLE_ID));
         EXPECT_CALL(testCaseGrader, grade(
                 TestUtils::createFakeTestCase("foo_sample", {1, 2}), multipleTestCasesConfig));
         EXPECT_CALL(logger, logTestGroupIntroduction(1));

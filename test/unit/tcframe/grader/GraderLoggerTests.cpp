@@ -38,7 +38,7 @@ TEST_F(GraderLoggerTests, Result) {
         EXPECT_CALL(engine, logHeading("RESULT"));
         EXPECT_CALL(engine, logParagraph(1, Verdict::ac().name()));
     }
-    logger.logResult(map<int, Verdict>{{-1, Verdict::ac()}});
+    logger.logResult(map<int, Verdict>{{Subtask::MAIN_ID, Verdict::ac()}});
 }
 
 TEST_F(GraderLoggerTests, Result_WithSubtasks) {

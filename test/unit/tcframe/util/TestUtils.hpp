@@ -11,7 +11,7 @@ namespace tcframe {
 class TestUtils {
 public:
     static TestCase createFakeTestCase(string name) {
-        return createFakeTestCase(name, {-1});
+        return createFakeTestCase(name, {Subtask::MAIN_ID});
     }
 
     static TestCase createFakeTestCase(string name, set<int> subtaskIds) {

@@ -44,7 +44,7 @@ public:
     set<int> getDefinedSubtaskIds() const {
         set<int> definedSubtaskIds;
         for (const Subtask& subtask : constraints_) {
-            if (subtask.id() != -1) {
+            if (subtask.id() != Subtask::MAIN_ID) {
                 definedSubtaskIds.insert(subtask.id());
             }
         }
@@ -66,7 +66,7 @@ public:
 
     ConstraintSuiteBuilder()
             : hasCurrentSubtask_(false)
-            , curSubtaskId_(-1)
+            , curSubtaskId_(Subtask::MAIN_ID)
             , isInMultipleTestCasesConstraints_(false) {}
 
     ConstraintSuiteBuilder& newSubtask() {

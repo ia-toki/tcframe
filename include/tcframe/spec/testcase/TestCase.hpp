@@ -5,6 +5,7 @@
 #include <tuple>
 #include <utility>
 
+#include "TestCaseData.hpp"
 #include "tcframe/util.hpp"
 
 using std::move;
@@ -48,6 +49,10 @@ public:
             return false;
         }
         return data_ == nullptr || data_->equals(o.data_);
+    }
+
+    static string createName(const string& testGroupName, int testCaseId) {
+        return testGroupName + "_" + StringUtils::toString(testCaseId);
     }
 };
 

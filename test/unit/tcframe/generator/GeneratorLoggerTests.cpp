@@ -73,7 +73,7 @@ TEST_F(GeneratorLoggerTests, ConstraintsVerificationFailure) {
         EXPECT_CALL(engine, logListItem2(3, "A <= 10"));
         EXPECT_CALL(engine, logListItem2(3, "B <= 10"));
     }
-    ConstraintsVerificationResult result({{-1, {"A <= 10", "B <= 10"}}}, {});
+    ConstraintsVerificationResult result({{Subtask::MAIN_ID, {"A <= 10", "B <= 10"}}}, {});
     logger.logConstraintsVerificationFailure(result);
 }
 
@@ -117,7 +117,7 @@ TEST_F(GeneratorLoggerTests, ConstraintsVerificationFailure_WithConstraintsAndSu
         EXPECT_CALL(engine, logListItem2(3, "B <= 10"));
         EXPECT_CALL(engine, logListItem1(2, "Satisfies subtask 1 but is not assigned to it"));
     }
-    ConstraintsVerificationResult result({{-1, {"X <= 10"}}, {2, {"A <= 10", "B <= 10"}}}, {1});
+    ConstraintsVerificationResult result({{Subtask::MAIN_ID, {"X <= 10"}}, {2, {"A <= 10", "B <= 10"}}}, {1});
     logger.logConstraintsVerificationFailure(result);
 }
 

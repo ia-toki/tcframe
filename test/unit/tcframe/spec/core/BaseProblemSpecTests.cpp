@@ -138,7 +138,7 @@ TEST_F(BaseProblemSpecTests, IOFormat) {
 TEST_F(BaseProblemSpecTests, Constraints) {
     ConstraintSuite constraintSuite = ProblemSpecWithConstraints().buildConstraintSuite();
     EXPECT_THAT(constraintSuite.constraints(), ElementsAre(
-        AllOf(Property(&Subtask::id, -1), Property(&Subtask::constraints, SizeIs(2)))));
+        AllOf(Property(&Subtask::id, Subtask::MAIN_ID), Property(&Subtask::constraints, SizeIs(2)))));
 }
 
 TEST_F(BaseProblemSpecTests, MultipleTestCasesConstraints) {
@@ -149,7 +149,7 @@ TEST_F(BaseProblemSpecTests, MultipleTestCasesConstraints) {
 TEST_F(BaseProblemSpecTests, Subtasks) {
     ConstraintSuite constraintSuite = ProblemSpecWithSubtasks().buildConstraintSuite();
     EXPECT_THAT(constraintSuite.constraints(), ElementsAre(
-            AllOf(Property(&Subtask::id, -1), Property(&Subtask::constraints, SizeIs(2))),
+            AllOf(Property(&Subtask::id, Subtask::MAIN_ID), Property(&Subtask::constraints, SizeIs(2))),
             AllOf(Property(&Subtask::id, 1), Property(&Subtask::constraints, SizeIs(3))),
             AllOf(Property(&Subtask::id, 2), Property(&Subtask::constraints, SizeIs(2)))));
 }

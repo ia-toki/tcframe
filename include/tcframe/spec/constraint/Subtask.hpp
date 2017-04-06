@@ -10,7 +10,11 @@ using std::vector;
 
 namespace tcframe {
 
-class Subtask {
+struct Subtask {
+    enum {
+        MAIN_ID = -1
+    };
+
 private:
     int id_;
     vector<Constraint> constraints_;

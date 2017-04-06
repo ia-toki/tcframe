@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "tcframe/logger.hpp"
+#include "tcframe/spec/constraint.hpp"
 #include "tcframe/util.hpp"
 #include "tcframe/verifier.hpp"
 
@@ -47,8 +48,8 @@ public:
         engine_->logParagraph(2, "Reasons:");
     }
 
-    virtual void logMultipleTestCasesCombinationIntroduction(const string& testCaseBaseName) {
-        engine_->logHangingParagraph(1, "Combining test cases into a single file (" + testCaseBaseName + "): ");
+    virtual void logMultipleTestCasesCombinationIntroduction(const string& testGroupName) {
+        engine_->logHangingParagraph(1, "Combining test cases into a single file (" + testGroupName + "): ");
     }
 
     virtual void logMultipleTestCasesCombinationSuccessfulResult() {
@@ -65,7 +66,7 @@ public:
             int subtaskId = entry.first;
             const vector<string>& unsatisfiedConstraintDescriptions = entry.second;
 
-            if (subtaskId == -1) {
+            if (subtaskId == Subtask::MAIN_ID) {
                 engine_->logListItem1(2, "Does not satisfy constraints, on:");
             } else {
                 engine_->logListItem1(2, "Does not satisfy subtask " + StringUtils::toString(subtaskId) + ", on constraints:");

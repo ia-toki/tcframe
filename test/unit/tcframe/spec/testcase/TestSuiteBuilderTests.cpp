@@ -22,7 +22,7 @@ int TestSuiteBuilderTests::N;
 TEST_F(TestSuiteBuilderTests, Building_Nothing) {
     TestSuite testSuite = builder.build();
     TestSuite expected({
-            TestGroup(0, {})});
+            TestGroup(TestGroup::SAMPLE_ID, {})});
 
     EXPECT_THAT(testSuite, Eq(expected));
 }
@@ -55,7 +55,7 @@ TEST_F(TestSuiteBuilderTests, Building_OnlySample) {
             .newSampleTestCase() // should be ignored
             .build();
     TestSuite expected({
-            TestGroup(0, {
+            TestGroup(TestGroup::SAMPLE_ID, {
                     TestCaseBuilder()
                             .setName("foo_sample_1")
                             .setSubtaskIds({})
@@ -78,17 +78,17 @@ TEST_F(TestSuiteBuilderTests, Building_OnlyOfficial) {
             .build();
 
     TestSuite expected({
-            TestGroup(0, {}),
-            TestGroup(-1, {
+            TestGroup(TestGroup::SAMPLE_ID, {}),
+            TestGroup(TestGroup::MAIN_ID, {
                     TestCaseBuilder()
                             .setName("foo_1")
-                            .setSubtaskIds({-1})
+                            .setSubtaskIds({Subtask::MAIN_ID})
                             .setDescription("N = 1")
                             .setData(new OfficialTestCaseData([]{}))
                             .build(),
                     TestCaseBuilder()
                             .setName("foo_2")
-                            .setSubtaskIds({-1})
+                            .setSubtaskIds({Subtask::MAIN_ID})
                             .setDescription("N = 2")
                             .setData(new OfficialTestCaseData([]{}))
                             .build()})});
@@ -117,7 +117,7 @@ TEST_F(TestSuiteBuilderTests, Building_Both) {
             .addOfficialTestCase([]{}, "N = 2")
             .build();
     TestSuite expected({
-            TestGroup(0, {
+            TestGroup(TestGroup::SAMPLE_ID, {
                     TestCaseBuilder()
                             .setName("foo_sample_1")
                             .setSubtaskIds({})
@@ -128,16 +128,16 @@ TEST_F(TestSuiteBuilderTests, Building_Both) {
                             .setSubtaskIds({})
                             .setData(new SampleTestCaseData("30\n"))
                             .build()}),
-            TestGroup(-1, {
+            TestGroup(TestGroup::MAIN_ID, {
                     TestCaseBuilder()
                             .setName("foo_1")
-                            .setSubtaskIds({-1})
+                            .setSubtaskIds({Subtask::MAIN_ID})
                             .setDescription("N = 1")
                             .setData(new OfficialTestCaseData([]{}))
                             .build(),
                     TestCaseBuilder()
                             .setName("foo_2")
-                            .setSubtaskIds({-1})
+                            .setSubtaskIds({Subtask::MAIN_ID})
                             .setDescription("N = 2")
                             .setData(new OfficialTestCaseData([]{}))
                             .build()})});
@@ -173,7 +173,7 @@ TEST_F(TestSuiteBuilderTests, Building_WithGroups_OnlyOfficial) {
             .newTestGroup() // should be ignored
             .build();
     TestSuite expected({
-            TestGroup(0, {}),
+            TestGroup(TestGroup::SAMPLE_ID, {}),
             TestGroup(1, {
                     TestCaseBuilder()
                             .setName("foo_1_1")
@@ -248,7 +248,7 @@ TEST_F(TestSuiteBuilderTests, Building_WithGroups_Both) {
             .newTestGroup() // should be ignored
             .build();
     TestSuite expected({
-            TestGroup(0, {
+            TestGroup(TestGroup::SAMPLE_ID, {
                     TestCaseBuilder()
                             .setName("foo_sample_1")
                             .setSubtaskIds({1, 2, 3})

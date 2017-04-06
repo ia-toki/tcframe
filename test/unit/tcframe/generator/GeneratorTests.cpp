@@ -35,10 +35,10 @@ protected:
     TestCase tc3 = TestUtils::createFakeTestCase("foo_2_1");
 
     TestSuite simpleTestSuite = TestSuite({
-            TestGroup(0, {stc1, stc2})});
+            TestGroup(TestGroup::SAMPLE_ID, {stc1, stc2})});
 
     TestSuite testSuite = TestSuite({
-            TestGroup(0, {stc1, stc2}),
+            TestGroup(TestGroup::SAMPLE_ID, {stc1, stc2}),
             TestGroup(1, {tc1, tc2}),
             TestGroup(2, {tc3})});
 
@@ -74,7 +74,7 @@ TEST_F(GeneratorTests, Generation_Successful) {
         EXPECT_CALL(seedSetter, setSeed(42));
         EXPECT_CALL(os, forceMakeDir("dir"));
 
-        EXPECT_CALL(logger, logTestGroupIntroduction(0));
+        EXPECT_CALL(logger, logTestGroupIntroduction(TestGroup::SAMPLE_ID));
         EXPECT_CALL(testCaseGenerator, generate(stc1, config));
         EXPECT_CALL(testCaseGenerator, generate(stc2, config));
 
@@ -86,7 +86,7 @@ TEST_F(GeneratorTests, Generation_Successful) {
 TEST_F(GeneratorTests, Generation_Successful_MultipleTestGroups) {
     {
         InSequence sequence;
-        EXPECT_CALL(logger, logTestGroupIntroduction(0));
+        EXPECT_CALL(logger, logTestGroupIntroduction(TestGroup::SAMPLE_ID));
         EXPECT_CALL(logger, logTestGroupIntroduction(1));
         EXPECT_CALL(logger, logTestGroupIntroduction(2));
     }
@@ -108,7 +108,7 @@ TEST_F(GeneratorTests, Generation_MultipleTestCases_Successful) {
         EXPECT_CALL(logger, logIntroduction());
         EXPECT_CALL(os, forceMakeDir("dir"));
 
-        EXPECT_CALL(logger, logTestGroupIntroduction(0));
+        EXPECT_CALL(logger, logTestGroupIntroduction(TestGroup::SAMPLE_ID));
         EXPECT_CALL(testCaseGenerator, generate(stc1, multipleTestCasesConfig));
         EXPECT_CALL(testCaseGenerator, generate(stc2, multipleTestCasesConfig));
         EXPECT_CALL(logger, logMultipleTestCasesCombinationIntroduction("foo_sample"));
@@ -124,7 +124,7 @@ TEST_F(GeneratorTests, Generation_MultipleTestCases_Successful) {
 TEST_F(GeneratorTests, Generation_MultipleTestCases_Successful_MultipleTestGroups) {
     {
         InSequence sequence;
-        EXPECT_CALL(logger, logTestGroupIntroduction(0));
+        EXPECT_CALL(logger, logTestGroupIntroduction(TestGroup::SAMPLE_ID));
         EXPECT_CALL(logger, logMultipleTestCasesCombinationIntroduction("foo_sample"));
         EXPECT_CALL(logger, logTestGroupIntroduction(1));
         EXPECT_CALL(logger, logMultipleTestCasesCombinationIntroduction("foo_1"));

@@ -5,6 +5,7 @@
 #include "tcframe/grade.hpp"
 #include "tcframe/logger.hpp"
 #include "tcframe/scorer.hpp"
+#include "tcframe/spec/constraint.hpp"
 #include "tcframe/util.hpp"
 
 using std::map;
@@ -29,7 +30,7 @@ public:
     virtual void logResult(const map<int, Verdict>& subtaskVerdicts) {
         engine_->logHeading("RESULT");
         for (auto entry : subtaskVerdicts) {
-            if (entry.first == -1) {
+            if (entry.first == Subtask::MAIN_ID) {
                 engine_->logParagraph(1, entry.second.name());
             } else {
                 engine_->logParagraph(1, "Subtask " + StringUtils::toString(entry.first) + ": " + entry.second.name());

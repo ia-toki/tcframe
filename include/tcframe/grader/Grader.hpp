@@ -58,7 +58,7 @@ private:
 
         // remove global constraints for problem with subtasks
         if (subtaskIds.size() > 1) {
-            subtaskIds.erase(-1);
+            subtaskIds.erase(Subtask::MAIN_ID);
         }
 
         return subtaskIds;
@@ -73,7 +73,7 @@ private:
 
         if (config.hasMultipleTestCases()) {
             TestCase testCase = TestCaseBuilder()
-                    .setName(TestCaseNameCreator::createBaseName(config.slug(), testGroup.id()))
+                    .setName(TestGroup::createName(config.slug(), testGroup.id()))
                     .setSubtaskIds(testGroup.testCases()[0].subtaskIds())
                     .build();
             gradeOnTestCase(testCase, config, subtaskVerdicts);

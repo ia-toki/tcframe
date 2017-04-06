@@ -62,7 +62,7 @@ bool VerifierTests::b4;
 bool VerifierTests::b5;
 
 TEST_F(VerifierTests, Verification_Valid_AllConstraintsValid) {
-    ConstraintsVerificationResult result = verifier.verifyConstraints({-1});
+    ConstraintsVerificationResult result = verifier.verifyConstraints({Subtask::MAIN_ID});
 
     EXPECT_TRUE(result.isValid());
     EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), IsEmpty());
@@ -71,12 +71,12 @@ TEST_F(VerifierTests, Verification_Valid_AllConstraintsValid) {
 
 TEST_F(VerifierTests, Verification_Invalid_SomeConstraintsInvalid) {
     b2 = false;
-    ConstraintsVerificationResult result = verifier.verifyConstraints({-1});
+    ConstraintsVerificationResult result = verifier.verifyConstraints({Subtask::MAIN_ID});
 
     EXPECT_FALSE(result.isValid());
     EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), IsEmpty());
     EXPECT_THAT(result.unsatisfiedConstraintDescriptionsBySubtaskId(), ElementsAre(
-            Pair(-1, ElementsAre("1 <= B && B <= 10"))));
+            Pair(Subtask::MAIN_ID, ElementsAre("1 <= B && B <= 10"))));
 }
 
 TEST_F(VerifierTests, Verification_WithSubtasks_Valid_AllConstraintsValid) {
@@ -140,7 +140,7 @@ TEST_F(VerifierTests, Verification_WithConstraintsAndSubtasks_Invalid_GlobalCons
     EXPECT_FALSE(result.isValid());
     EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), IsEmpty());
     EXPECT_THAT(result.unsatisfiedConstraintDescriptionsBySubtaskId(), ElementsAre(
-            Pair(-1, ElementsAre("1 <= X && X <= 10"))));
+            Pair(Subtask::MAIN_ID, ElementsAre("1 <= X && X <= 10"))));
 }
 
 TEST_F(VerifierTests, Verification_MultipleTestCases_Valid_AllConstraintsValid) {

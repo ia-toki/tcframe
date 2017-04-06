@@ -19,12 +19,12 @@ protected:
 
 TEST_F(BaseLoggerTests, TestGroupIntroduction_Sample) {
     EXPECT_CALL(engine, logHeading("SAMPLE TEST CASES"));
-    logger.logTestGroupIntroduction(0);
+    logger.logTestGroupIntroduction(TestGroup::SAMPLE_ID);
 }
 
 TEST_F(BaseLoggerTests, TestGroupIntroduction_Official) {
     EXPECT_CALL(engine, logHeading("OFFICIAL TEST CASES"));
-    logger.logTestGroupIntroduction(-1);
+    logger.logTestGroupIntroduction(TestGroup::MAIN_ID);
 }
 
 TEST_F(BaseLoggerTests, TestGroupIntroduction_Official_WithGroups) {

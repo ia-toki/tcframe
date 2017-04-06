@@ -27,7 +27,7 @@ TEST_F(ConstraintSuiteBuilderTests, Building_OnlyConstraints) {
             .addConstraint([]{return true;}, "1 <= A && A <= 10")
             .addConstraint([]{return true;}, "1 <= B && B <= 10")
             .build();
-    ConstraintSuite expected({Subtask(-1, {
+    ConstraintSuite expected({Subtask(Subtask::MAIN_ID, {
             Constraint([]{return true;}, "1 <= A && A <= 10"),
             Constraint([]{return true;}, "1 <= B && B <= 10")})}, {});
 
@@ -52,7 +52,7 @@ TEST_F(ConstraintSuiteBuilderTests, Building_Both) {
             .prepareForMultipleTestCasesConstraints()
             .addConstraint([]{return true;}, "1 <= T && T <= 10")
             .build();
-    ConstraintSuite expected({Subtask(-1, {
+    ConstraintSuite expected({Subtask(Subtask::MAIN_ID, {
             Constraint([]{return true;}, "1 <= A && A <= 10"),
             Constraint([]{return true;}, "1 <= B && B <= 10")})}, {
             Constraint([]{return true;}, "1 <= T && T <= 10")});
@@ -102,7 +102,7 @@ TEST_F(ConstraintSuiteBuilderTests, Building_GlobalConstraintsAndSubtasks) {
             .addConstraint([]{return true;}, "1 <= D && D <= 10")
             .build();
     ConstraintSuite expected({
-             Subtask(-1, {
+             Subtask(Subtask::MAIN_ID, {
                      Constraint([]{return true;}, "1 <= X && X <= 100"),
                      Constraint([]{return true;}, "1 <= Y && Y <= 100")}),
              Subtask(1, {
