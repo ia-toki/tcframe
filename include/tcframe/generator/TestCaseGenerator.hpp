@@ -10,11 +10,10 @@
 #include "GeneratorConfig.hpp"
 #include "GeneratorLogger.hpp"
 #include "tcframe/evaluator.hpp"
-#include "tcframe/grade.hpp"
 #include "tcframe/io_manipulator.hpp"
 #include "tcframe/os.hpp"
-#include "tcframe/scorer.hpp"
 #include "tcframe/spec.hpp"
+#include "tcframe/verdict.hpp"
 #include "tcframe/verifier.hpp"
 
 using std::char_traits;
@@ -31,7 +30,6 @@ private:
     IOManipulator* ioManipulator_;
     OperatingSystem* os_;
     Evaluator* evaluator_;
-    Scorer* scorer_;
     GeneratorLogger* logger_;
 
 public:
@@ -42,13 +40,11 @@ public:
             IOManipulator* ioManipulator,
             OperatingSystem* os,
             Evaluator* evaluator,
-            Scorer* scorer,
             GeneratorLogger* logger)
             : verifier_(verifier)
             , ioManipulator_(ioManipulator)
             , os_(os)
             , evaluator_(evaluator)
-            , scorer_(scorer)
             , logger_(logger) {}
 
     virtual bool generate(const TestCase& testCase, const GeneratorConfig& config) {
@@ -61,7 +57,7 @@ public:
             applyInput(testCase);
             verifyInput(testCase);
             generateInput(testCase, inputFilename, config);
-            evaluateAndApplyOutput(testCase, inputFilename, outputFilename, config);
+            generateAndApplyOutput(testCase, inputFilename, outputFilename, config);
         } catch (GenerationException& e) {
             logger_->logTestCaseFailedResult(testCase.description());
             e.callback()();
@@ -108,7 +104,7 @@ private:
         os_->closeOpenedStream(input);
     }
 
-    void evaluateAndApplyOutput(
+    void generateAndApplyOutput(
             const TestCase& testCase,
             const string& inputFilename,
             const string& outputFilename,
@@ -126,12 +122,11 @@ private:
                 .setSolutionCommand(config.solutionCommand())
                 .build();
 
-        EvaluationResult evaluationResult = evaluator_->evaluate(inputFilename, outputFilename, evaluatorConfig);
-        if (!evaluationResult.executionResult().isSuccessful()) {
-            TestCaseGrade grade = TestCaseGradeCreator()
-                    .setEvaluationResult(evaluationResult)
-                    .create();
-            throw GenerationException([=] { logger_->logTestCaseGradeDetails(grade); });
+        GenerationResult generationResult = evaluator_->generate(inputFilename, outputFilename, evaluatorConfig);
+        if (!generationResult.executionResult().isSuccessful()) {
+            throw GenerationException([=] {
+                logger_->logExecutionResults({{"solution", generationResult.executionResult()}});
+            });
         }
 
         if (maybeSampleOutputString) {
@@ -187,18 +182,15 @@ private:
         string modifiedSampleOutputString = sampleOutputString;
         modifySampleOutputStringForMultipleTestCases(modifiedSampleOutputString, config);
 
-        ostream* sampleOutput = os_->openForWriting(Evaluator::EVALUATION_FILENAME);
+        ostream* sampleOutput = os_->openForWriting(Evaluator::EVALUATION_OUT_FILENAME);
         *sampleOutput << modifiedSampleOutputString;
         os_->closeOpenedStream(sampleOutput);
 
-        ScoringResult scoringResult = scorer_->score(inputFilename, outputFilename, Evaluator::EVALUATION_FILENAME);
-        TestCaseGrade grade = TestCaseGradeCreator()
-                .setScoringResult(scoringResult)
-                .create();
-        if (!(scoringResult.verdict() == Verdict::ac())) {
+        ScoringResult scoringResult = evaluator_->score(inputFilename, outputFilename);
+        if (!(scoringResult.verdict().status() == VerdictStatus::ac())) {
             throw GenerationException([=] {
                 logger_->logSampleTestCaseCheckFailure();
-                logger_->logTestCaseGradeDetails(grade);
+                logger_->logExecutionResults({{"scorer", scoringResult.executionResult()}});
             });
         }
     }

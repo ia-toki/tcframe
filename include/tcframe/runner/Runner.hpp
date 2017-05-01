@@ -10,9 +10,7 @@
 #include "tcframe/evaluator.hpp"
 #include "tcframe/generator.hpp"
 #include "tcframe/grader.hpp"
-#include "tcframe/grading_style.hpp"
 #include "tcframe/os.hpp"
-#include "tcframe/scorer.hpp"
 #include "tcframe/spec.hpp"
 #include "tcframe/util.hpp"
 #include "tcframe/verifier.hpp"
@@ -33,7 +31,7 @@ private:
     OperatingSystem* os_;
 
     RunnerLoggerFactory* runnerLoggerFactory_;
-    GradingStyleFactory* gradingStyleFactory_;
+    EvaluatorFactory* evaluatorFactory_;
     GeneratorFactory* generatorFactory_;
     GraderFactory* graderFactory_;
 
@@ -44,7 +42,7 @@ public:
             LoggerEngine* loggerEngine,
             OperatingSystem* os,
             RunnerLoggerFactory* runnerLoggerFactory,
-            GradingStyleFactory* gradingStyleFactory,
+            EvaluatorFactory* evaluatorFactory,
             GeneratorFactory* generatorFactory,
             GraderFactory* graderFactory)
             : specPath_(specPath)
@@ -52,7 +50,7 @@ public:
             , loggerEngine_(loggerEngine)
             , os_(os)
             , runnerLoggerFactory_(runnerLoggerFactory)
-            , gradingStyleFactory_(gradingStyleFactory)
+            , evaluatorFactory_(evaluatorFactory)
             , generatorFactory_(generatorFactory)
             , graderFactory_(graderFactory) {}
 
@@ -119,11 +117,9 @@ private:
 
         auto ioManipulator = new IOManipulator(spec.ioFormat());
         auto verifier = new Verifier(spec.constraintSuite());
-        auto gradingStyle = getGradingStyle(args, spec);
-        auto evaluator = gradingStyle.evaluator();
-        auto scorer = gradingStyle.scorer();
+        auto evaluator = getEvaluator(args, spec);
         auto logger = new GeneratorLogger(loggerEngine_);
-        auto testCaseGenerator = new TestCaseGenerator(verifier, ioManipulator, os_, evaluator, scorer, logger);
+        auto testCaseGenerator = new TestCaseGenerator(verifier, ioManipulator, os_, evaluator, logger);
         auto generator = generatorFactory_->create(spec.seedSetter(), testCaseGenerator, verifier, os_, logger);
 
         return generator->generate(spec.testSuite(), generatorConfig) ? 0 : 1;
@@ -148,22 +144,20 @@ private:
         GraderConfig graderConfig = configBuilder.build();
 
         auto logger = new GraderLogger(loggerEngine_);
-        auto gradingStyle = getGradingStyle(args, spec);
-        auto evaluator = gradingStyle.evaluator();
-        auto scorer = gradingStyle.scorer();
-        auto testCaseGrader = new TestCaseGrader(evaluator, scorer, logger);
+        auto evaluator = getEvaluator(args, spec);
+        auto testCaseGrader = new TestCaseGrader(evaluator, logger);
         auto grader = graderFactory_->create(testCaseGrader, logger);
 
         grader->grade(spec.testSuite(), spec.constraintSuite(), graderConfig);
         return 0;
     }
 
-    GradingStyle getGradingStyle(const Args& args, const Spec& spec) {
+    Evaluator* getEvaluator(const Args& args, const Spec& spec) {
         optional<string> scorerCommand;
         if (spec.styleConfig().needsCustomScorer()) {
             scorerCommand = optional<string>(args.scorer().value_or(CommonConfig::scorerCommand()));
         }
-        return gradingStyleFactory_->createBatch(os_, scorerCommand);
+        return evaluatorFactory_->createBatch(os_, scorerCommand);
     }
 
     void cleanUp() {

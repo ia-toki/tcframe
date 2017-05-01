@@ -71,13 +71,13 @@ protected:
 
     void SetUp() {
         ON_CALL(testCaseGrader, grade(_, _))
-                .WillByDefault(Return(TestCaseGradeBuilder().setVerdict(Verdict::ac()).build()));
+                .WillByDefault(Return(Verdict(VerdictStatus::ac())));
         ON_CALL(testCaseGrader, grade(Property(&TestCase::name, StartsWith("foo_2")), _))
-                .WillByDefault(Return(TestCaseGradeBuilder().setVerdict(Verdict::rte()).build()));
+                .WillByDefault(Return(Verdict(VerdictStatus::rte())));
         ON_CALL(testCaseGrader, grade(Property(&TestCase::name, StartsWith("foo_3")), _))
-                .WillByDefault(Return(TestCaseGradeBuilder().setVerdict(Verdict::wa()).build()));
+                .WillByDefault(Return(Verdict(VerdictStatus::wa())));
         ON_CALL(testCaseGrader, grade(Property(&TestCase::name, StartsWith("foo_4")), _))
-                .WillByDefault(Return(TestCaseGradeBuilder().setVerdict(Verdict::tle()).build()));
+                .WillByDefault(Return(Verdict(VerdictStatus::tle())));
     }
 };
 
@@ -93,14 +93,14 @@ TEST_F(GraderTests, Grading_AC) {
         EXPECT_CALL(testCaseGrader, grade(tcA, config));
 
         EXPECT_CALL(logger, logResult(map<int, Verdict>{
-                {Subtask::MAIN_ID, Verdict::ac()}}));
+                {Subtask::MAIN_ID, Verdict(VerdictStatus::ac())}}));
     }
     grader.grade(testSuiteAC, constraintSuite, config);
 }
 
 TEST_F(GraderTests, Grading_NonAC) {
     EXPECT_CALL(logger, logResult(map<int, Verdict>{
-            {Subtask::MAIN_ID, Verdict::rte()}}));
+            {Subtask::MAIN_ID, Verdict(VerdictStatus::rte())}}));
     grader.grade(testSuiteNonAC, constraintSuite, config);
 }
 
@@ -122,20 +122,20 @@ TEST_F(GraderTests, Grading_WithSubtasks) {
         EXPECT_CALL(testCaseGrader, grade(tc5, config));
 
         EXPECT_CALL(logger, logResult(map<int, Verdict>{
-                {1, Verdict::ac()},
-                {2, Verdict::rte()},
-                {3, Verdict::wa()},
-                {4, Verdict::tle()}}));
+                {1, Verdict(VerdictStatus::ac())},
+                {2, Verdict(VerdictStatus::rte())},
+                {3, Verdict(VerdictStatus::wa())},
+                {4, Verdict(VerdictStatus::tle())}}));
     }
     grader.grade(testSuiteWithSubtasks, constraintSuiteWithSubtasks, config);
 }
 
 TEST_F(GraderTests, Grading_WithSubtasks_WithGlobalConstraints) {
     EXPECT_CALL(logger, logResult(map<int, Verdict>{
-            {1, Verdict::ac()},
-            {2, Verdict::rte()},
-            {3, Verdict::wa()},
-            {4, Verdict::tle()}}));
+            {1, Verdict(VerdictStatus::ac())},
+            {2, Verdict(VerdictStatus::rte())},
+            {3, Verdict(VerdictStatus::wa())},
+            {4, Verdict(VerdictStatus::tle())}}));
 
     grader.grade(testSuiteWithSubtasks, constraintSuiteWithSubtasksWithGlobalConstraints, config);
 }
@@ -161,10 +161,10 @@ TEST_F(GraderTests, Grading_WithSubtasks_MultipleTestCases) {
                 TestUtils::createFakeTestCase("foo_4", {4}), multipleTestCasesConfig));
 
         EXPECT_CALL(logger, logResult(map<int, Verdict>{
-                {1, Verdict::ac()},
-                {2, Verdict::rte()},
-                {3, Verdict::wa()},
-                {4, Verdict::tle()}}));
+                {1, Verdict(VerdictStatus::ac())},
+                {2, Verdict(VerdictStatus::rte())},
+                {3, Verdict(VerdictStatus::wa())},
+                {4, Verdict(VerdictStatus::tle())}}));
     }
     grader.grade(testSuiteWithSubtasks, constraintSuiteWithSubtasks, multipleTestCasesConfig);
 }

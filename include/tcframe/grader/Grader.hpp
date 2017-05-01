@@ -9,10 +9,10 @@
 #include "GraderConfig.hpp"
 #include "GraderLogger.hpp"
 #include "TestCaseGrader.hpp"
-#include "tcframe/grade.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/spec.hpp"
 #include "tcframe/util.hpp"
+#include "tcframe/verdict.hpp"
 
 using std::map;
 using std::max;
@@ -39,7 +39,7 @@ public:
 
         map<int, Verdict> subtaskVerdicts;
         for (int subtaskId : getSubtaskIdsToGrade(constraintSuite)) {
-            subtaskVerdicts[subtaskId] = Verdict::ac();
+            subtaskVerdicts[subtaskId] = Verdict();
         }
 
         for (const TestGroup& testGroup : testSuite.testGroups()) {
@@ -85,9 +85,9 @@ private:
     }
 
     void gradeOnTestCase(const TestCase& testCase, const GraderConfig& config, map<int, Verdict>& subtaskVerdicts) {
-        TestCaseGrade grade = testCaseGrader_->grade(testCase, config);
+        Verdict verdict = testCaseGrader_->grade(testCase, config);
         for (int subtaskId : testCase.subtaskIds()) {
-            subtaskVerdicts[subtaskId] = max(subtaskVerdicts[subtaskId], grade.verdict());
+            subtaskVerdicts[subtaskId] = max(subtaskVerdicts[subtaskId], verdict);
         }
     }
 };

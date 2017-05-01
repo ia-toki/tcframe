@@ -10,7 +10,7 @@ namespace tcframe {
 
 class GenerationEteTests : public BaseEteTests {};
 
-TEST_F(GenerationEteTests, Normal) {
+TEST_F(GenerationEteTests, Normal ) {
     ASSERT_THAT(execStatus("cd test-ete/normal && ../scripts/generate.sh"), Eq(0));
 
     EXPECT_THAT(ls("test-ete/normal/tc"), UnorderedElementsAre(

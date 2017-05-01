@@ -1,5 +1,0 @@
-#include "tcframe/grade/EvaluationResult.hpp"
-#include "tcframe/grade/ScoringResult.hpp"
-#include "tcframe/grade/TestCaseGrade.hpp"
-#include "tcframe/grade/TestCaseGradeCreator.hpp"
-#include "tcframe/grade/Verdict.hpp"

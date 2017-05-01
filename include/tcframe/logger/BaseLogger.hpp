@@ -1,10 +1,13 @@
 #pragma once
 
+#include <map>
+
 #include "LoggerEngine.hpp"
-#include "tcframe/grade.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/spec/testcase.hpp"
 #include "tcframe/util.hpp"
+
+using std::map;
 
 namespace tcframe {
 
@@ -32,26 +35,22 @@ public:
         engine_->logHangingParagraph(1, testCaseName + ": ");
     }
 
-    virtual void logTestCaseGradeDetails(const TestCaseGrade& grade) {
-        if (grade.evaluationExecutionResult() && !grade.evaluationExecutionResult().value().isSuccessful()) {
-            logExecutionFailure("solution", grade.evaluationExecutionResult().value());
-        }
-        if (grade.scoringExecutionResult() && !grade.scoringExecutionResult().value().isSuccessful()) {
-            logExecutionFailure("scorer", grade.scoringExecutionResult().value());
-        }
-        if (grade.privateScoringInfo()) {
-            engine_->logListItem1(2, grade.privateScoringInfo().value());
-        }
-    }
+    virtual void logExecutionResults(const map<string, ExecutionResult>& executionResults) {
+        for (auto& entry : executionResults) {
+            const string& key = entry.first;
+            const ExecutionResult& executionResult = entry.second;
 
-    /* Visible for testing */
-    void logExecutionFailure(const string& context, const ExecutionResult& result) {
-        engine_->logListItem1(2, "Execution of " + context + " failed:");
-        if (result.exitCode()) {
-            engine_->logListItem2(3, "Exit code: " + StringUtils::toString(result.exitCode().value()));
-            engine_->logListItem2(3, "Standard error: " + result.standardError());
-        } else {
-            engine_->logListItem2(3, "Exit signal: " + result.exitSignal().value());
+            if (!executionResult.isSuccessful()) {
+                engine_->logListItem1(2, "Execution of " + key + " failed:");
+                if (executionResult.exitCode()) {
+                    engine_->logListItem2(3, "Exit code: " + StringUtils::toString(executionResult.exitCode().value()));
+                    engine_->logListItem2(3, "Standard error: " + executionResult.standardError());
+                } else {
+                    engine_->logListItem2(3, "Exit signal: " + executionResult.exitSignal().value());
+                }
+            } else if (!executionResult.standardError().empty()) {
+                engine_->logListItem1(2, key + ": " + executionResult.standardError());
+            }
         }
     }
 };

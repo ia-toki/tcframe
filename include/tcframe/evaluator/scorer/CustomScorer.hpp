@@ -1,0 +1,66 @@
+#pragma once
+
+#include <stdexcept>
+#include <streambuf>
+#include <string>
+
+#include "Scorer.hpp"
+#include "ScoringResult.hpp"
+#include "tcframe/os.hpp"
+#include "tcframe/verdict.hpp"
+
+using std::runtime_error;
+using std::string;
+
+namespace tcframe {
+
+class CustomScorer : public Scorer {
+private:
+    OperatingSystem* os_;
+    VerdictCreator* verdictCreator_;
+    string scorerCommand_;
+
+public:
+    CustomScorer(OperatingSystem* os, VerdictCreator* verdictCreator, const string& scorerCommand)
+            : os_(os)
+            , verdictCreator_(verdictCreator)
+            , scorerCommand_(scorerCommand) {}
+
+    ScoringResult score(const string& inputFilename, const string& outputFilename, const string& evaluationFilename) {
+        string scoringCommand = scorerCommand_
+                + " " + inputFilename
+                + " " + outputFilename
+                + " " + evaluationFilename;
+
+        ExecutionResult executionResult = os_->execute(ExecutionRequestBuilder()
+                .setCommand(scoringCommand)
+                .setOutputFilename(SCORING_OUT_FILENAME)
+                .setErrorFilename(SCORING_ERR_FILENAME)
+                .build());
+
+        Verdict verdict;
+        if (executionResult.isSuccessful()) {
+            istream* output = os_->openForReading(SCORING_OUT_FILENAME);
+            try {
+                verdict = verdictCreator_->fromStream(output);
+            } catch (runtime_error& e) {
+                verdict = Verdict(VerdictStatus::err());
+
+                string newStandardError = executionResult.standardError()
+                        + "\n"
+                        + e.what();
+                executionResult = ExecutionResultBuilder()
+                        .from(executionResult)
+                        .setStandardError(newStandardError)
+                        .build();
+            }
+            os_->closeOpenedStream(output);
+        } else {
+            verdict = Verdict(VerdictStatus::err());
+        }
+
+        return ScoringResult(verdict, executionResult);
+    }
+};
+
+}

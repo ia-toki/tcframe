@@ -48,7 +48,7 @@ Here is a sample output of a local grading for problems with subtasks.
 
 .. sourcecode:: bash
 
-    Grading...
+    Local grading with solution command: './alt_solution'...
 
     [ SAMPLE TEST CASES ]
       k-product_sample_1: Accepted
@@ -64,7 +64,7 @@ Here is a sample output of a local grading for problems with subtasks.
     [ TEST GROUP 3 ]
       k-product_3_1: Accepted
       k-product_3_2: Wrong Answer
-        * Diff:
+        * scorer: Diff:
     (expected) [line 01]    11
     (received) [line 01]    12
 
@@ -90,7 +90,7 @@ and here is for problems without subtasks
 
 .. sourcecode:: bash
 
-    Grading...
+    Local grading with solution command: './alt_solution'...
 
     [ SAMPLE TEST CASES ]
       k-product_sample_1: Accepted
@@ -100,7 +100,7 @@ and here is for problems without subtasks
       k-product_2: Accepted
       k-product_3: Accepted
       k-product_4: Wrong Answer
-        * Diff:
+        * scorer Diff:
     (expected) [line 01]    11
     (received) [line 01]    12
 

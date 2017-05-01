@@ -13,7 +13,7 @@ public:
 
     MOCK_METHOD1(logTestGroupIntroduction, void(int));
     MOCK_METHOD1(logTestCaseIntroduction, void(string));
-    MOCK_METHOD1(logTestCaseGradeDetails, void(const TestCaseGrade&));
+    MOCK_METHOD1(logExecutionResults, void(const map<string, ExecutionResult>&));
 
     MOCK_METHOD0(logIntroduction, void());
     MOCK_METHOD0(logSuccessfulResult, void());

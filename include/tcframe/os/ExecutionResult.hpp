@@ -38,7 +38,7 @@ public:
         return exceededCpuLimits_;
     }
 
-    const string standardError() const {
+    const string& standardError() const {
         return standardError_;
     }
 
@@ -57,6 +57,11 @@ private:
     ExecutionResult subject_;
 
 public:
+    ExecutionResultBuilder& from(ExecutionResult other) {
+        subject_ = other;
+        return *this;
+    }
+
     ExecutionResultBuilder& setExitCode(int exitCode) {
         subject_.exitCode_ = optional<int>(exitCode);
         subject_.exitSignal_ = optional<string>();

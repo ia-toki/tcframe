@@ -1,9 +1,9 @@
 #include "gmock/gmock.h"
 #include "../mock.hpp"
 
+#include "../evaluator/MockEvaluator.hpp"
 #include "../generator/MockGenerator.hpp"
 #include "../grader/MockGrader.hpp"
-#include "../grading_style/MockGradingStyleFactory.hpp"
 #include "../os/MockOperatingSystem.hpp"
 #include "MockRunnerLogger.hpp"
 #include "MockRunnerLoggerFactory.hpp"
@@ -63,12 +63,13 @@ protected:
     LoggerEngine* loggerEngine = new SimpleLoggerEngine();
 
     MOCK(RunnerLogger) runnerLogger;
+    MOCK(Evaluator) evaluator;
     MOCK(Generator) generator;
     MOCK(Grader) grader;
 
     MOCK(OperatingSystem) os;
     MOCK(RunnerLoggerFactory) runnerLoggerFactory;
-    MOCK(GradingStyleFactory) gradingStyleFactory;
+    MOCK(EvaluatorFactory) evaluatorFactory;
     MOCK(GeneratorFactory) generatorFactory;
     MOCK(GraderFactory) graderFactory;
 
@@ -77,7 +78,7 @@ protected:
 
     void SetUp() {
         ON_CALL(runnerLoggerFactory, create(_)).WillByDefault(Return(&runnerLogger));
-        ON_CALL(gradingStyleFactory, createBatch(_, _)).WillByDefault(Return(GradingStyle(nullptr, nullptr)));
+        ON_CALL(evaluatorFactory, createBatch(_, _)).WillByDefault(Return(&evaluator));
         ON_CALL(generatorFactory, create(_, _, _, _, _)).WillByDefault(Return(&generator));
         ON_CALL(graderFactory, create(_, _)).WillByDefault(Return(&grader));
         ON_CALL(os, execute(_)).WillByDefault(Return(ExecutionResultBuilder().setExitCode(0).build()));
@@ -86,14 +87,14 @@ protected:
     Runner<ProblemSpec> createRunner(const string& specPath) {
         return Runner<ProblemSpec>(
                 specPath, new TestSpec(), loggerEngine, &os,
-                &runnerLoggerFactory, &gradingStyleFactory, &generatorFactory, &graderFactory);
+                &runnerLoggerFactory, &evaluatorFactory, &generatorFactory, &graderFactory);
     }
 
     template<typename TProblem>
     Runner<TProblem> createRunner(BaseTestSpec<TProblem>* testSpec) {
         return Runner<TProblem>(
                 specPath, testSpec, loggerEngine, &os,
-                &runnerLoggerFactory, &gradingStyleFactory, &generatorFactory, &graderFactory);
+                &runnerLoggerFactory, &evaluatorFactory, &generatorFactory, &graderFactory);
     }
 };
 
@@ -131,7 +132,7 @@ TEST_F(RunnerTests, Run_Generation_Failed) {
 }
 
 TEST_F(RunnerTests, Run_Generation_UseDefaultOptions) {
-    EXPECT_CALL(gradingStyleFactory, createBatch(_, optional<string>()));
+    EXPECT_CALL(evaluatorFactory, createBatch(_, optional<string>()));
 
     EXPECT_CALL(generator, generate(_, GeneratorConfigBuilder("slug")
             .setSeed(0)
@@ -144,7 +145,7 @@ TEST_F(RunnerTests, Run_Generation_UseDefaultOptions) {
 }
 
 TEST_F(RunnerTests, Run_Generation_UseConfigOptions) {
-    EXPECT_CALL(gradingStyleFactory, createBatch(_, optional<string>("./scorer")));
+    EXPECT_CALL(evaluatorFactory, createBatch(_, optional<string>("./scorer")));
 
     EXPECT_CALL(generator, generate(_, GeneratorConfigBuilder("slug")
             .setMultipleTestCasesCounter(&T)
@@ -157,7 +158,7 @@ TEST_F(RunnerTests, Run_Generation_UseConfigOptions) {
 }
 
 TEST_F(RunnerTests, Run_Generation_UseArgsOptions) {
-    EXPECT_CALL(gradingStyleFactory, createBatch(_, optional<string>("\"java Scorer\"")));
+    EXPECT_CALL(evaluatorFactory, createBatch(_, optional<string>("\"java Scorer\"")));
 
     EXPECT_CALL(generator, generate(_, GeneratorConfigBuilder("slug")
             .setSeed(42)
@@ -188,7 +189,7 @@ TEST_F(RunnerTests, Run_Grading) {
 }
 
 TEST_F(RunnerTests, Run_Grading_UseDefaultOptions) {
-    EXPECT_CALL(gradingStyleFactory, createBatch(_, optional<string>()));
+    EXPECT_CALL(evaluatorFactory, createBatch(_, optional<string>()));
 
     EXPECT_CALL(grader, grade(_, _, GraderConfigBuilder("slug")
             .setHasMultipleTestCases(false)
@@ -205,7 +206,7 @@ TEST_F(RunnerTests, Run_Grading_UseDefaultOptions) {
 }
 
 TEST_F(RunnerTests, Run_Grading_UseConfigOptions) {
-    EXPECT_CALL(gradingStyleFactory, createBatch(_, optional<string>("./scorer")));
+    EXPECT_CALL(evaluatorFactory, createBatch(_, optional<string>("./scorer")));
 
     EXPECT_CALL(grader, grade(_, _, GraderConfigBuilder("slug")
             .setHasMultipleTestCases(true)
@@ -222,7 +223,7 @@ TEST_F(RunnerTests, Run_Grading_UseConfigOptions) {
 }
 
 TEST_F(RunnerTests, Run_Grading_UseArgsOptions) {
-    EXPECT_CALL(gradingStyleFactory, createBatch(_, optional<string>("\"java Scorer\"")));
+    EXPECT_CALL(evaluatorFactory, createBatch(_, optional<string>("\"java Scorer\"")));
 
     EXPECT_CALL(grader, grade(_, _, GraderConfigBuilder("slug")
             .setHasMultipleTestCases(true)

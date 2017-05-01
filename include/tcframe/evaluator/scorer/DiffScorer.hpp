@@ -3,9 +3,10 @@
 #include <string>
 
 #include "Scorer.hpp"
-#include "tcframe/grade.hpp"
+#include "ScoringResult.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/util.hpp"
+#include "tcframe/verdict.hpp"
 
 using std::string;
 
@@ -37,24 +38,26 @@ public:
 
         ExecutionResult executionResult = os_->execute(ExecutionRequestBuilder()
                 .setCommand(scoringCommand)
-                .setOutputFilename(SCORING_FILENAME)
+                .setOutputFilename(SCORING_OUT_FILENAME)
                 .build());
-        istream* output = os_->openForReading(SCORING_FILENAME);
-        string privateInfo = StringUtils::streamToString(output);
+        istream* output = os_->openForReading(SCORING_OUT_FILENAME);
+        string diff = StringUtils::streamToString(output);
         os_->closeOpenedStream(output);
 
-        ScoringResultBuilder scoringResult;
-        scoringResult.setExecutionResult(executionResult);
-
-        if (privateInfo.empty()) {
-            scoringResult.setVerdict(Verdict::ac());
+        Verdict verdict;
+        if (diff.empty()) {
+            verdict = Verdict(VerdictStatus::ac());
         } else {
-            scoringResult
-                    .setVerdict(Verdict::wa())
-                    .setPrivateInfo(privateInfo);
+            verdict = Verdict(VerdictStatus::wa());
         }
 
-        return scoringResult.build();
+        // TODO(fushar): Figure out how to directly output the diff to the standard error.
+        ExecutionResult newExecutionResult = ExecutionResultBuilder()
+                .from(executionResult)
+                .setStandardError(diff)
+                .build();
+
+        return ScoringResult(verdict, newExecutionResult);
     }
 };
 
