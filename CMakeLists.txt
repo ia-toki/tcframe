@@ -42,6 +42,11 @@ include_directories("${source_dir}/googlemock/include")
 include_directories(include)
 
 set(INCLUDE
+        include/tcframe/aggregator.hpp
+        include/tcframe/aggregator/Aggregator.hpp
+        include/tcframe/aggregator/AggregatorFactory.hpp
+        include/tcframe/aggregator/MinAggregator.hpp
+        include/tcframe/aggregator/SumAggregator.hpp
         include/tcframe/evaluator.hpp
         include/tcframe/evaluator/BatchEvaluator.hpp
         include/tcframe/evaluator/Evaluator.hpp
@@ -144,6 +149,9 @@ set(INCLUDE
 set(TEST_UNIT
         test/unit/tcframe/helper.hpp
         test/unit/tcframe/mock.hpp
+        test/unit/tcframe/aggregator/MinAggregatorTests.cpp
+        test/unit/tcframe/aggregator/MockAggregator.hpp
+        test/unit/tcframe/aggregator/SumAggregatorTests.cpp
         test/unit/tcframe/evaluator/BatchEvaluatorTests.cpp
         test/unit/tcframe/evaluator/MockEvaluator.hpp
         test/unit/tcframe/evaluator/scorer/MockScorer.hpp

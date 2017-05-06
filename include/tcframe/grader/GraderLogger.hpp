@@ -26,17 +26,18 @@ public:
         engine_->logParagraph(0, verdict.status().name());
     }
 
-    virtual void logResult(const map<int, Verdict>& subtaskVerdicts) {
-        engine_->logHeading("RESULT");
-        for (auto entry : subtaskVerdicts) {
-            if (entry.first == Subtask::MAIN_ID) {
-                engine_->logParagraph(1, entry.second.status().name());
-            } else {
+    virtual void logResult(const map<int, Verdict>& subtaskVerdicts, const Verdict& verdict) {
+        if (subtaskVerdicts.size() > 1) {
+            engine_->logHeading("SUBTASK RESULTS");
+            for (auto entry : subtaskVerdicts) {
                 engine_->logParagraph(
                         1,
                         "Subtask " + StringUtils::toString(entry.first) + ": " + entry.second.status().name());
             }
         }
+
+        engine_->logHeading("RESULT");
+        engine_->logParagraph(1, verdict.status().name());
     }
 };
 

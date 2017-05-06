@@ -21,7 +21,7 @@ public:
     MOCK_METHOD1(logIntroduction, void(const string&));
     MOCK_METHOD1(logTestCaseVerdict, void(const Verdict&));
 
-    MOCK_METHOD1(logResult, void(const map<int, Verdict>&));
+    MOCK_METHOD2(logResult, void(const map<int, Verdict>&, const Verdict&));
 };
 
 }

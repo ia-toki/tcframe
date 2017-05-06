@@ -34,19 +34,22 @@ TEST_F(GraderLoggerTests, Result) {
         EXPECT_CALL(engine, logHeading("RESULT"));
         EXPECT_CALL(engine, logParagraph(1, VerdictStatus::ac().name()));
     }
-    logger.logResult(map<int, Verdict>{{Subtask::MAIN_ID, Verdict(VerdictStatus::ac())}});
+    logger.logResult({{Subtask::MAIN_ID, Verdict(VerdictStatus::ac())}}, Verdict(VerdictStatus::ac()));
 }
 
 TEST_F(GraderLoggerTests, Result_WithSubtasks) {
     {
         InSequence sequence;
-        EXPECT_CALL(engine, logHeading("RESULT"));
+        EXPECT_CALL(engine, logHeading("SUBTASK RESULTS"));
         EXPECT_CALL(engine, logParagraph(1, "Subtask 1: " + VerdictStatus::ac().name()));
         EXPECT_CALL(engine, logParagraph(1, "Subtask 2: " + VerdictStatus::wa().name()));
+        EXPECT_CALL(engine, logHeading("RESULT"));
+        EXPECT_CALL(engine, logParagraph(1, VerdictStatus::wa().name()));
     }
-    logger.logResult(map<int, Verdict>{
+    logger.logResult({
             {1, Verdict(VerdictStatus::ac())},
-            {2, Verdict(VerdictStatus::wa())}});
+            {2, Verdict(VerdictStatus::wa())}},
+            Verdict(VerdictStatus::wa()));
 }
 
 }

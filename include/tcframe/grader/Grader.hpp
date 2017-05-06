@@ -9,6 +9,7 @@
 #include "GraderConfig.hpp"
 #include "GraderLogger.hpp"
 #include "TestCaseGrader.hpp"
+#include "tcframe/aggregator.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/spec.hpp"
 #include "tcframe/util.hpp"
@@ -25,49 +26,65 @@ namespace tcframe {
 class Grader {
 private:
     TestCaseGrader* testCaseGrader_;
+    Aggregator* aggregator_;
+    Aggregator* finalAggregator_;
     GraderLogger* logger_;
 
 public:
     virtual ~Grader() {}
 
-    Grader(TestCaseGrader* testCaseGrader, GraderLogger* logger)
+    Grader(TestCaseGrader* testCaseGrader, Aggregator* aggregator, Aggregator* finalAggregator, GraderLogger* logger)
             : testCaseGrader_(testCaseGrader)
+            , aggregator_(aggregator)
+            , finalAggregator_(finalAggregator)
             , logger_(logger) {}
 
     virtual void grade(const TestSuite& testSuite, const ConstraintSuite& constraintSuite, const GraderConfig& config) {
         logger_->logIntroduction(config.solutionCommand());
 
-        map<int, Verdict> subtaskVerdicts;
-        for (int subtaskId : getSubtaskIdsToGrade(constraintSuite)) {
-            subtaskVerdicts[subtaskId] = Verdict();
-        }
-
+        map<int, vector<Verdict>> verdictsBySubtaskId;
         for (const TestGroup& testGroup : testSuite.testGroups()) {
-            gradeOnTestGroup(testGroup, config, subtaskVerdicts);
+            gradeTestGroup(testGroup, config, verdictsBySubtaskId);
         }
 
-        logger_->logResult(subtaskVerdicts);
+        map<int, Subtask> subtasksById = getSubtasksToGrade(constraintSuite);
+        map<int, Verdict> subtaskVerdictsById;
+        vector<Verdict> subtaskVerdicts;
+
+        for (auto& entry : verdictsBySubtaskId) {
+            int subtaskId = entry.first;
+            const vector<Verdict>& verdicts = entry.second;
+
+            if (subtasksById.count(subtaskId)) {
+                Verdict subtaskVerdict = aggregator_->aggregate(verdicts);
+                subtaskVerdictsById[subtaskId] = subtaskVerdict;
+                subtaskVerdicts.push_back(subtaskVerdict);
+            }
+        }
+        Verdict verdict = finalAggregator_->aggregate(subtaskVerdicts);
+
+        logger_->logResult(subtaskVerdictsById, verdict);
     }
 
 private:
-    set<int> getSubtaskIdsToGrade(const ConstraintSuite& constraintSuite) {
-        set<int> subtaskIds;
+    map<int, Subtask> getSubtasksToGrade(const ConstraintSuite& constraintSuite) {
+        map<int, Subtask> subtaskByIds;
         for (const Subtask& subtask : constraintSuite.constraints()) {
-            subtaskIds.insert(subtask.id());
+            subtaskByIds[subtask.id()] = subtask;
         }
 
         // remove global constraints for problem with subtasks
-        if (subtaskIds.size() > 1) {
-            subtaskIds.erase(Subtask::MAIN_ID);
+        if (subtaskByIds.size() > 1) {
+            subtaskByIds.erase(Subtask::MAIN_ID);
         }
 
-        return subtaskIds;
+        return subtaskByIds;
     }
 
-    void gradeOnTestGroup(
+    void gradeTestGroup(
             const TestGroup& testGroup,
             const GraderConfig& config,
-            map<int, Verdict>& subtaskVerdicts) {
+            map<int, vector<Verdict>>& verdictsBySubtaskId) {
 
         logger_->logTestGroupIntroduction(testGroup.id());
 
@@ -76,26 +93,30 @@ private:
                     .setName(TestGroup::createName(config.slug(), testGroup.id()))
                     .setSubtaskIds(testGroup.testCases()[0].subtaskIds())
                     .build();
-            gradeOnTestCase(testCase, config, subtaskVerdicts);
+            gradeTestCase(testCase, config, verdictsBySubtaskId);
         } else {
             for (const TestCase& testCase : testGroup.testCases()) {
-                gradeOnTestCase(testCase, config, subtaskVerdicts);
+                gradeTestCase(testCase, config, verdictsBySubtaskId);
             }
         }
     }
 
-    void gradeOnTestCase(const TestCase& testCase, const GraderConfig& config, map<int, Verdict>& subtaskVerdicts) {
+    void gradeTestCase(
+            const TestCase& testCase,
+            const GraderConfig& config,
+            map<int, vector<Verdict>>& verdictsBySubtaskId) {
+
         Verdict verdict = testCaseGrader_->grade(testCase, config);
         for (int subtaskId : testCase.subtaskIds()) {
-            subtaskVerdicts[subtaskId] = max(subtaskVerdicts[subtaskId], verdict);
+            verdictsBySubtaskId[subtaskId].push_back(verdict);
         }
     }
 };
 
 class GraderFactory {
 public:
-    virtual Grader* create(TestCaseGrader* testCaseGrader, GraderLogger* logger) {
-        return new Grader(testCaseGrader, logger);
+    virtual Grader* create(TestCaseGrader* testCaseGrader, Aggregator* aggregator, GraderLogger* logger) {
+        return new Grader(testCaseGrader, aggregator, new SumAggregator(), logger);
     }
 };
 

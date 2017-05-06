@@ -7,6 +7,7 @@
 #include "RunnerLogger.hpp"
 #include "RunnerLoggerFactory.hpp"
 #include "SlugParser.hpp"
+#include "tcframe/aggregator.hpp"
 #include "tcframe/evaluator.hpp"
 #include "tcframe/generator.hpp"
 #include "tcframe/grader.hpp"
@@ -32,6 +33,7 @@ private:
 
     RunnerLoggerFactory* runnerLoggerFactory_;
     EvaluatorFactory* evaluatorFactory_;
+    AggregatorFactory* aggregatorFactory_;
     GeneratorFactory* generatorFactory_;
     GraderFactory* graderFactory_;
 
@@ -43,6 +45,7 @@ public:
             OperatingSystem* os,
             RunnerLoggerFactory* runnerLoggerFactory,
             EvaluatorFactory* evaluatorFactory,
+            AggregatorFactory* aggregatorFactory,
             GeneratorFactory* generatorFactory,
             GraderFactory* graderFactory)
             : specPath_(specPath)
@@ -51,6 +54,7 @@ public:
             , os_(os)
             , runnerLoggerFactory_(runnerLoggerFactory)
             , evaluatorFactory_(evaluatorFactory)
+            , aggregatorFactory_(aggregatorFactory)
             , generatorFactory_(generatorFactory)
             , graderFactory_(graderFactory) {}
 
@@ -146,7 +150,8 @@ private:
         auto logger = new GraderLogger(loggerEngine_);
         auto evaluator = getEvaluator(args, spec);
         auto testCaseGrader = new TestCaseGrader(evaluator, logger);
-        auto grader = graderFactory_->create(testCaseGrader, logger);
+        auto aggregator = getAggregator(spec);
+        auto grader = graderFactory_->create(testCaseGrader, aggregator, logger);
 
         grader->grade(spec.testSuite(), spec.constraintSuite(), graderConfig);
         return 0;
@@ -158,6 +163,11 @@ private:
             scorerCommand = optional<string>(args.scorer().value_or(CommonConfig::scorerCommand()));
         }
         return evaluatorFactory_->createBatch(os_, scorerCommand);
+    }
+
+    Aggregator* getAggregator(const Spec& spec) {
+        bool hasSubtasks = (spec.constraintSuite().constraints().size() > 1);
+        return aggregatorFactory_->create(hasSubtasks);
     }
 
     void cleanUp() {

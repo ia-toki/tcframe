@@ -20,6 +20,8 @@ private:
     vector<Constraint> constraints_;
 
 public:
+    Subtask() {}
+
     Subtask(int id, const vector<Constraint>& constraints)
             : id_(id)
             , constraints_(constraints) {}

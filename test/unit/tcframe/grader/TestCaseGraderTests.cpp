@@ -19,7 +19,7 @@ protected:
     MOCK(Evaluator) evaluator;
     MOCK(GraderLogger) logger;
 
-    TestCase testCase = TestUtils::createFakeTestCase("foo_1");
+    TestCase testCase = TestUtils::newTestCase("foo_1");
 
     GraderConfig config = GraderConfigBuilder("foo")
             .setSolutionCommand("python Sol.py")

@@ -1,3 +1,4 @@
+#include "tcframe/aggregator.hpp"
 #include "tcframe/evaluator.hpp"
 #include "tcframe/generator.hpp"
 #include "tcframe/grader.hpp"
@@ -15,6 +16,7 @@ int main(int argc, char* argv[]) {
     auto os = new UnixOperatingSystem();
     auto runnerLoggerFactory = new RunnerLoggerFactory();
     auto evaluatorFactory = new EvaluatorFactory();
+    auto aggregatorFactory = new AggregatorFactory();
     auto generatorFactory = new GeneratorFactory();
     auto graderFactory = new GraderFactory();
 
@@ -25,6 +27,7 @@ int main(int argc, char* argv[]) {
             os,
             runnerLoggerFactory,
             evaluatorFactory,
+            aggregatorFactory,
             generatorFactory,
             graderFactory);
 

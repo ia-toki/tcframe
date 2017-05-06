@@ -28,11 +28,11 @@ protected:
     MOCK(OperatingSystem) os;
     MOCK(GeneratorLogger) logger;
 
-    TestCase stc1 = TestUtils::createFakeTestCase("foo_sample_1");
-    TestCase stc2 = TestUtils::createFakeTestCase("foo_sample_2");
-    TestCase tc1 = TestUtils::createFakeTestCase("foo_1_1");
-    TestCase tc2 = TestUtils::createFakeTestCase("foo_1_2");
-    TestCase tc3 = TestUtils::createFakeTestCase("foo_2_1");
+    TestCase stc1 = TestUtils::newTestCase("foo_sample_1");
+    TestCase stc2 = TestUtils::newTestCase("foo_sample_2");
+    TestCase tc1 = TestUtils::newTestCase("foo_1_1");
+    TestCase tc2 = TestUtils::newTestCase("foo_1_2");
+    TestCase tc3 = TestUtils::newTestCase("foo_2_1");
 
     TestSuite simpleTestSuite = TestSuite({
             TestGroup(TestGroup::SAMPLE_ID, {stc1, stc2})});
