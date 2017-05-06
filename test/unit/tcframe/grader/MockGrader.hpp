@@ -9,7 +9,7 @@ namespace tcframe {
 class MockGrader : public Grader {
 public:
     MockGrader()
-            : Grader(nullptr, nullptr, nullptr, nullptr) {}
+            : Grader(nullptr, nullptr, nullptr) {}
 
     MOCK_METHOD3(grade, void(const TestSuite&, const ConstraintSuite&, const GraderConfig&));
 };

@@ -27,16 +27,14 @@ class Grader {
 private:
     TestCaseGrader* testCaseGrader_;
     Aggregator* aggregator_;
-    Aggregator* finalAggregator_;
     GraderLogger* logger_;
 
 public:
     virtual ~Grader() {}
 
-    Grader(TestCaseGrader* testCaseGrader, Aggregator* aggregator, Aggregator* finalAggregator, GraderLogger* logger)
+    Grader(TestCaseGrader* testCaseGrader, Aggregator* aggregator, GraderLogger* logger)
             : testCaseGrader_(testCaseGrader)
             , aggregator_(aggregator)
-            , finalAggregator_(finalAggregator)
             , logger_(logger) {}
 
     virtual void grade(const TestSuite& testSuite, const ConstraintSuite& constraintSuite, const GraderConfig& config) {
@@ -61,7 +59,7 @@ public:
                 subtaskVerdicts.push_back(subtaskVerdict);
             }
         }
-        Verdict verdict = finalAggregator_->aggregate(subtaskVerdicts);
+        Verdict verdict = aggregate(subtaskVerdicts);
 
         logger_->logResult(subtaskVerdictsById, verdict);
     }
@@ -111,12 +109,20 @@ private:
             verdictsBySubtaskId[subtaskId].push_back(verdict);
         }
     }
+
+    Verdict aggregate(const vector<Verdict>& subtaskVerdicts) {
+        VerdictStatus aggregatedStatus = VerdictStatus::ac();
+        for (const Verdict& verdict : subtaskVerdicts) {
+            aggregatedStatus = max(aggregatedStatus, verdict.status());
+        }
+        return Verdict(aggregatedStatus);
+    }
 };
 
 class GraderFactory {
 public:
     virtual Grader* create(TestCaseGrader* testCaseGrader, Aggregator* aggregator, GraderLogger* logger) {
-        return new Grader(testCaseGrader, aggregator, new SumAggregator(), logger);
+        return new Grader(testCaseGrader, aggregator, logger);
     }
 };
 

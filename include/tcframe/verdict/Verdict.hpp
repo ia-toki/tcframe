@@ -33,10 +33,6 @@ public:
     bool operator==(const Verdict& o) const {
         return tie(status_, points_) == tie(o.status_, o.points_);
     }
-
-    bool operator<(const Verdict& o) const {
-        return status_ < o.status_;
-    }
 };
 
 }

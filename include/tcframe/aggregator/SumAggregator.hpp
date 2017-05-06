@@ -16,11 +16,11 @@ public:
     virtual ~SumAggregator() {}
 
     Verdict aggregate(const vector<Verdict>& verdicts) {
-        Verdict aggregatedVerdict;
+        VerdictStatus aggregatedStatus = VerdictStatus::ac();
         for (const Verdict& verdict : verdicts) {
-            aggregatedVerdict = max(aggregatedVerdict, verdict);
+            aggregatedStatus = max(aggregatedStatus, verdict.status());
         }
-        return aggregatedVerdict;
+        return Verdict(aggregatedStatus);
     }
 };
 
