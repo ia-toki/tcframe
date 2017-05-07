@@ -41,6 +41,10 @@ public:
         return tie(constraints_, multipleTestCasesConstraints_) == tie(o.constraints_, multipleTestCasesConstraints_);
     }
 
+    bool hasSubtasks() const {
+        return constraints_.size() > 1;
+    }
+
     set<int> getDefinedSubtaskIds() const {
         set<int> definedSubtaskIds;
         for (const Subtask& subtask : constraints_) {
@@ -70,9 +74,7 @@ public:
             , isInMultipleTestCasesConstraints_(false) {}
 
     ConstraintSuiteBuilder& newSubtask() {
-        if (hasCurrentSubtask_ || !curConstraints.empty()) {
-            addCurrentSubtask();
-        }
+        addCurrentSubtask();
 
         if (!hasCurrentSubtask_) {
             curSubtaskId_ = 0;
@@ -100,7 +102,7 @@ public:
     }
 
     ConstraintSuite build() {
-        if (!curConstraints.empty()) {
+        if (subject_.constraints_.empty() || !curConstraints.empty()) {
             addCurrentSubtask();
         }
         return move(subject_);

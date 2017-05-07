@@ -166,8 +166,7 @@ private:
     }
 
     Aggregator* getAggregator(const Spec& spec) {
-        bool hasSubtasks = (spec.constraintSuite().constraints().size() > 1);
-        return aggregatorFactory_->create(hasSubtasks);
+        return aggregatorFactory_->create(spec.constraintSuite().hasSubtasks());
     }
 
     void cleanUp() {

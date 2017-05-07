@@ -178,6 +178,7 @@ set(TEST_UNIT
         test/unit/tcframe/runner/RunnerTests.cpp
         test/unit/tcframe/runner/RunnerLoggerTests.cpp
         test/unit/tcframe/runner/SlugParserTests.cpp
+        test/unit/tcframe/spec/constraint/ConstraintSuiteTests.cpp
         test/unit/tcframe/spec/constraint/ConstraintSuiteBuilderTests.cpp
         test/unit/tcframe/spec/core/BaseTestSpecTests.cpp
         test/unit/tcframe/spec/core/BaseProblemSpecTests.cpp

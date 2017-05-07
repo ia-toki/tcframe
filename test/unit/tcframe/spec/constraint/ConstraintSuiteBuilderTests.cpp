@@ -17,7 +17,7 @@ protected:
 TEST_F(ConstraintSuiteBuilderTests, Building_Nothing) {
     ConstraintSuite constraintSuite = builder
             .build();
-    ConstraintSuite expected({}, {});
+    ConstraintSuite expected({Subtask(Subtask::MAIN_ID, {})}, {});
 
     EXPECT_THAT(constraintSuite, Eq(expected));
 }
@@ -39,7 +39,7 @@ TEST_F(ConstraintSuiteBuilderTests, Building_OnlyMultipleTestCasesConstraints) {
             .prepareForMultipleTestCasesConstraints()
             .addConstraint([]{return true;}, "1 <= T && T <= 10")
             .build();
-    ConstraintSuite expected({}, {
+    ConstraintSuite expected({Subtask(Subtask::MAIN_ID, {})}, {
             Constraint([]{return true;}, "1 <= T && T <= 10")});
 
     EXPECT_THAT(constraintSuite, Eq(expected));
@@ -79,6 +79,7 @@ TEST_F(ConstraintSuiteBuilderTests, Building_WithSubtasks) {
             .newSubtask() // should be ignored
             .build();
     ConstraintSuite expected({
+            Subtask(Subtask::MAIN_ID, {}),
             Subtask(1, {
                     Constraint([]{return true;}, "1 <= A && A <= 10"),
                     Constraint([]{return true;}, "1 <= B && B <= 10")}),
