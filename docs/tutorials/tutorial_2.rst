@@ -38,13 +38,13 @@ Here is the complete problem statement:
 | The graph is connected
 | There is no edge connecting a node to itself
 |
-| **Subtask 1**
+| **Subtask 1 (20 points)**
 | M ≤ 20
 |
-| **Subtask 2**
+| **Subtask 2 (30 points)**
 | All W are equal
 |
-| **Subtask 3**
+| **Subtask 3 (50 points)**
 | No additional constraints
 |
 
@@ -102,14 +102,20 @@ Let's focus on the syntax differences compared to the first tutorial. Note that 
         }
 
         void Subtask1() {
+            Points(20);
+
             CONS(M <= 20);
         }
 
         void Subtask2() {
+            Points(30);
+
             CONS(allAreEqual(W));
         }
 
-        void Subtask3() {}
+        void Subtask3() {
+            Points(50);
+        }
 
     private:
         bool eachElementBetween(const vector<int>& v, int lo, int hi) {
@@ -357,14 +363,20 @@ Here is the complete spec file for our Minimum Spanning Tree problem.
         }
 
         void Subtask1() {
+            Points(20);
+
             CONS(M <= 20);
         }
 
         void Subtask2() {
+            Points(30);
+
             CONS(allAreEqual(W));
         }
 
-        void Subtask3() {}
+        void Subtask3() {
+            Points(50);
+        }
 
     private:
         bool eachElementBetween(const vector<int>& v, int lo, int hi) {

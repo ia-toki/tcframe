@@ -36,26 +36,26 @@ protected:
     TestCase tc2 = TestUtils::newTestCase("foo_2_1", {1, 2});
     TestCase tc3 = TestUtils::newTestCase("foo_3_1", {2});
 
-    Verdict stcAVerdict = Verdict(1);
-    Verdict stcBVerdict = Verdict(2);
-    Verdict tcAVerdict = Verdict(3);
-    Verdict tcBVerdict = Verdict(4);
-    Verdict stc1Verdict = Verdict(5);
-    Verdict stc2Verdict = Verdict(6);
-    Verdict tc1Verdict = Verdict(7);
-    Verdict tc2Verdict = Verdict(8);
-    Verdict tc3Verdict = Verdict(9);
+    Verdict stcAVerdict = Verdict(VerdictStatus::ac(), 1);
+    Verdict stcBVerdict = Verdict(VerdictStatus::ac(), 2);
+    Verdict tcAVerdict = Verdict(VerdictStatus::ac(), 3);
+    Verdict tcBVerdict = Verdict(VerdictStatus::ac(), 4);
+    Verdict stc1Verdict = Verdict(VerdictStatus::ac(), 5);
+    Verdict stc2Verdict = Verdict(VerdictStatus::ac(), 6);
+    Verdict tc1Verdict = Verdict(VerdictStatus::ac(), 7);
+    Verdict tc2Verdict = Verdict(VerdictStatus::ac(), 8);
+    Verdict tc3Verdict = Verdict(VerdictStatus::ac(), 9);
 
-    Verdict mainSubtaskVerdict = Verdict(VerdictStatus::ac());
-    Verdict subtask1Verdict = Verdict(VerdictStatus::wa());
-    Verdict subtask2Verdict = Verdict(VerdictStatus::tle());
-    Verdict verdict = Verdict(VerdictStatus::tle());
+    Verdict mainSubtaskVerdict = Verdict(VerdictStatus::ac(), Subtask::MAIN_POINTS);
+    Verdict subtask1Verdict = Verdict(VerdictStatus::wa(), 40);
+    Verdict subtask2Verdict = Verdict(VerdictStatus::tle(), 50);
+    Verdict verdict = Verdict(VerdictStatus::tle(), 90);
 
     TestSuite testSuite = TestSuite({
             TestGroup(TestGroup::SAMPLE_ID, {stcA, stcB}),
             TestGroup(TestGroup::MAIN_ID, {tcA, tcB})});
     ConstraintSuite constraintSuite = ConstraintSuite(
-            {Subtask(Subtask::MAIN_ID, {})},
+            {Subtask(Subtask::MAIN_ID, Subtask::MAIN_POINTS, {})},
             {});
 
     TestSuite testSuiteWithSubtasks = TestSuite({
@@ -63,7 +63,7 @@ protected:
             TestGroup(1, {tc1, tc2}),
             TestGroup(2, {tc3})});
     ConstraintSuite constraintSuiteWithSubtasks = ConstraintSuite(
-            {Subtask(1, {}), Subtask(2, {})},
+            {Subtask(1, 40, {}), Subtask(2, 50, {})},
             {});
     ConstraintSuite constraintSuiteWithSubtasksWithGlobalConstraints = ConstraintSuite(
             {Subtask(Subtask::MAIN_ID, {}), Subtask(1, {}), Subtask(2, {})},
@@ -106,7 +106,7 @@ TEST_F(GraderTests, Grading) {
         EXPECT_CALL(testCaseGrader, grade(tcA, config));
         EXPECT_CALL(testCaseGrader, grade(tcB, config));
 
-        EXPECT_CALL(aggregator, aggregate(vector<Verdict>{tcAVerdict, tcBVerdict}))
+        EXPECT_CALL(aggregator, aggregate(vector<Verdict>{tcAVerdict, tcBVerdict}, Subtask::MAIN_POINTS))
                 .WillOnce(Return(mainSubtaskVerdict));
 
         EXPECT_CALL(logger, logResult(
@@ -129,10 +129,10 @@ TEST_F(GraderTests, Grading_WithSubtasks) {
         EXPECT_CALL(logger, logTestGroupIntroduction(2));
         EXPECT_CALL(testCaseGrader, grade(tc3, config));
 
-        EXPECT_CALL(aggregator, aggregate(vector<Verdict>{stc1Verdict, tc1Verdict, tc2Verdict}))
+        EXPECT_CALL(aggregator, aggregate(vector<Verdict>{stc1Verdict, tc1Verdict, tc2Verdict}, 40))
                 .WillOnce(Return(subtask1Verdict));
         EXPECT_CALL(aggregator, aggregate(
-                vector<Verdict>{stc1Verdict, stc2Verdict, tc1Verdict, tc2Verdict, tc3Verdict}))
+                vector<Verdict>{stc1Verdict, stc2Verdict, tc1Verdict, tc2Verdict, tc3Verdict}, 50))
                 .WillOnce(Return(subtask2Verdict));
 
         EXPECT_CALL(logger, logResult(
@@ -145,10 +145,8 @@ TEST_F(GraderTests, Grading_WithSubtasks) {
 TEST_F(GraderTests, Grading_WithSubtasks_WithGlobalConstraints) {
     {
         InSequence sequence;
-        EXPECT_CALL(aggregator, aggregate(vector<Verdict>{stc1Verdict, tc1Verdict, tc2Verdict}))
-                .WillOnce(Return(subtask1Verdict));
-        EXPECT_CALL(aggregator, aggregate(
-                vector<Verdict>{stc1Verdict, stc2Verdict, tc1Verdict, tc2Verdict, tc3Verdict}))
+        EXPECT_CALL(aggregator, aggregate(_, _))
+                .WillOnce(Return(subtask1Verdict))
                 .WillOnce(Return(subtask2Verdict));
 
         EXPECT_CALL(logger, logResult(
@@ -172,10 +170,9 @@ TEST_F(GraderTests, Grading_WithSubtasks_MultipleTestCases) {
         EXPECT_CALL(testCaseGrader, grade(TestUtils::newTestCase("foo_2", {2}), multipleTestCasesConfig))
                 .WillOnce(Return(tc2Verdict));
 
-        EXPECT_CALL(aggregator, aggregate(vector<Verdict>{stc1Verdict, tc1Verdict}))
+        EXPECT_CALL(aggregator, aggregate(vector<Verdict>{stc1Verdict, tc1Verdict}, 40))
                 .WillOnce(Return(subtask1Verdict));
-        EXPECT_CALL(aggregator, aggregate(
-                vector<Verdict>{stc1Verdict, tc1Verdict, tc2Verdict}))
+        EXPECT_CALL(aggregator, aggregate(vector<Verdict>{stc1Verdict, tc1Verdict, tc2Verdict}, 50))
                 .WillOnce(Return(subtask2Verdict));
 
         EXPECT_CALL(logger, logResult(

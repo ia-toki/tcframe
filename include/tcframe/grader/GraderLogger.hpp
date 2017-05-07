@@ -23,7 +23,7 @@ public:
     }
 
     virtual void logTestCaseVerdict(const Verdict& verdict) {
-        engine_->logParagraph(0, verdict.status().name());
+        engine_->logParagraph(0, verdict.toString());
     }
 
     virtual void logResult(const map<int, Verdict>& subtaskVerdicts, const Verdict& verdict) {
@@ -32,12 +32,12 @@ public:
             for (auto entry : subtaskVerdicts) {
                 engine_->logParagraph(
                         1,
-                        "Subtask " + StringUtils::toString(entry.first) + ": " + entry.second.status().name());
+                        "Subtask " + StringUtils::toString(entry.first) + ": " + entry.second.toString());
             }
         }
 
         engine_->logHeading("RESULT");
-        engine_->logParagraph(1, verdict.status().name());
+        engine_->logParagraph(1, verdict.toString());
     }
 };
 

@@ -42,6 +42,14 @@ TEST_F(CustomScorerIntegrationTests, Scoring_WA) {
     EXPECT_THAT(result.verdict(), Eq(Verdict(VerdictStatus::wa())));
 }
 
+TEST_F(CustomScorerIntegrationTests, Scoring_OK) {
+    ScoringResult result = scorer.score(
+            "test-integration/evaluator/scorer/judge.in",
+            "test-integration/evaluator/scorer/judge.out",
+            "test-integration/evaluator/scorer/custom/contestant_ok.out");
+    EXPECT_THAT(result.verdict(), Eq(Verdict(VerdictStatus::ok(), 50)));
+}
+
 TEST_F(CustomScorerIntegrationTests, Scoring_ERR_Crash) {
     ScoringResult result = scorer.score(
             "test-integration/evaluator/scorer/judge.in",

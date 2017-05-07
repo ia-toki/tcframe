@@ -18,6 +18,10 @@ TEST_F(StringUtilsTests, ToString) {
     EXPECT_THAT(StringUtils::toString(42), Eq("42"));
 }
 
+TEST_F(StringUtilsTests, ToString_Precision) {
+    EXPECT_THAT(StringUtils::toString(42.1234, 2), Eq("42.12"));
+}
+
 TEST_F(StringUtilsTests, StreamToString) {
     EXPECT_THAT(StringUtils::streamToString(new istringstream(" hello, world! ")), Eq(" hello, world! "));
 }

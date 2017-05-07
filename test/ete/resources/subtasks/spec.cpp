@@ -25,11 +25,15 @@ protected:
     }
 
     void Subtask1() {
+        Points(70);
+
         CONS(1 <= A && A <= 10);
         CONS(1 <= B && B <= 10);
     }
 
     void Subtask2() {
+        Points(30);
+
         CONS(1 <= A && A <= 100);
         CONS(1 <= B && B <= 100);
     }

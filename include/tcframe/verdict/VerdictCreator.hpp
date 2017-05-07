@@ -31,6 +31,16 @@ public:
             return Verdict(VerdictStatus::ac());
         } else if (verdictString == "WA") {
             return Verdict(VerdictStatus::wa());
+        } else if (verdictString == "OK") {
+            string pointsString;
+            if (!getline(*in, pointsString)) {
+                throw runtime_error("Expected: <points> on the second line");
+            }
+            optional<double> points = StringUtils::toNumber<double>(pointsString);
+            if (points) {
+                return Verdict(VerdictStatus::ok(), points.value());
+            }
+            throw runtime_error("Unknown points format: " + pointsString);
         }
 
         throw runtime_error("Unknown verdict: " + verdictString);

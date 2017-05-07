@@ -93,12 +93,16 @@ protected:
     class ProblemSpecWithSubtasks : public ProblemSpecWithConstraints {
     protected:
         void Subtask1() {
+            Points(70.0);
+
             addConstraint([=] {return 1 <= A && A <= 100;}, "1 <= A && A <= 100");
             addConstraint([=] {return 1 <= B && B <= 100;}, "1 <= B && B <= 100");
             addConstraint([=] {return A != B;}, "A != B");
         }
 
         void Subtask2() {
+            Points(30.0);
+
             addConstraint([=] {return 1 <= A && A <= 1000;}, "1 <= A && A <= 1000");
             addConstraint([=] {return 1 <= B && B <= 1000;}, "1 <= B && B <= 1000");
         }

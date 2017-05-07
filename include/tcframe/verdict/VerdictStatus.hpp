@@ -25,20 +25,24 @@ public:
         return VerdictStatus("AC", "Accepted", 0);
     }
 
+    static VerdictStatus ok() {
+        return VerdictStatus("OK", "OK", 1);
+    }
+
     static VerdictStatus wa() {
-        return VerdictStatus("WA", "Wrong Answer", 1);
+        return VerdictStatus("WA", "Wrong Answer", 2);
     }
 
     static VerdictStatus rte() {
-        return VerdictStatus("RTE", "Runtime Error", 2);
+        return VerdictStatus("RTE", "Runtime Error", 3);
     }
 
     static VerdictStatus tle() {
-        return VerdictStatus("TLE", "Time Limit Exceeded", 3);
+        return VerdictStatus("TLE", "Time Limit Exceeded", 4);
     }
 
     static VerdictStatus err() {
-        return VerdictStatus("ERR", "Internal Error", 4);
+        return VerdictStatus("ERR", "Internal Error", 99);
     }
 
     const string& name() const {

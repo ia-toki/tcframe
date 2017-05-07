@@ -289,22 +289,39 @@ Defines the constraints to be imposed to the :ref:`input/output variables <api-r
 
 Defines the constraints to be imposed to the :ref:`input/output variables <api-ref_io-variables>` for each subtask (up to 25).
 
-**Defining constraints**
-
-The following macro is exposed to define constraints:
+**Macros/methods**
 
 .. py:function:: CONS(predicate)
 
     Defines a constraint. **predicate** is a boolean expression, whose value must be completely determined by the values of the input variables (only).
 
-    Example:
+.. cpp:function:: Points(double points)
 
-    .. sourcecode:: cpp
+    Sets the points assigned to a subtask. If not specified, the default is 0. Only available in ``SubtaskX()`` s.
 
-        void Subtask1() {
-            CONS(A <= B && B <= 1000);
-            CONS(graphDoesNotHaveCycles());
-        }
+Examples:
+
+.. sourcecode:: cpp
+
+    void MultipleTestCasesConstraints() {
+        CONS(1 <= T && T <= 20);
+    }
+
+.. sourcecode:: cpp
+
+    void Constraints() {
+        CONS(A <= B && B <= 1000);
+        CONS(graphDoesNotHaveCycles());
+    }
+
+.. sourcecode:: cpp
+
+    void Subtask1() {
+        Points(70);
+
+        CONS(A <= B && B <= 1000);
+        CONS(graphDoesNotHaveCycles());
+    }
 
 ----
 

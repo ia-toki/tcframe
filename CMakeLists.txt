@@ -211,6 +211,7 @@ set(TEST_UNIT
         test/unit/tcframe/util/TestUtils.hpp
         test/unit/tcframe/verdict/MockVerdictCreator.hpp
         test/unit/tcframe/verdict/VerdictCreatorTests.cpp
+        test/unit/tcframe/verdict/VerdictTests.cpp
         test/unit/tcframe/verifier/MockVerifier.hpp
         test/unit/tcframe/verifier/VerifierTests.cpp
 )
