@@ -437,7 +437,7 @@ You should get the following output:
 
 ::
 
-    Grading...
+    Local grading with solution command: './solution_alt'...
 
     [ SAMPLE TEST CASES ]
       sum_sample_1: Accepted
