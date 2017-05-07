@@ -31,7 +31,7 @@ In this type type of problem, you won't be writing a ``Constraints()`` method. I
 Subtask definitions
 -------------------
 
-A subtask is basically just a set of constraints. It can be specified by the method ``SubtaskX()``, where ``X`` is the subtask number. Inside the method, the constraint specifications are given, similar to what you usually do in the ``Constraints()`` method. Points for each subtask can be given using ```Points()`` method, that takes a floating-point number argument as the points.
+A subtask is basically just a set of constraints. It can be specified by the method ``SubtaskX()``, where ``X`` is the subtask number. Inside the method, the constraint specifications are given, similar to what you usually do in the ``Constraints()`` method. Points for each subtask can be given using ``Points()`` method, that takes a floating-point number argument as the points.
 
 Thus, the above example can be implemented as:
 
