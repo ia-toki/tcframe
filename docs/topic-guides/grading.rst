@@ -27,19 +27,22 @@ For example, suppose you have written a problem package for a problem. Your frie
 
 The verdict of each test case will be shown. The verdict will be one of the following:
 
-Accepted (AC)
-    The output produced by the solution matches.
+Accepted
+    The output produced by the solution is correct.
 
-Wrong Answer (WA)
-    The output produced by the solution does not match. The diff will be shown, truncated to the first 10 lines.
+OK [points]
+    The output produced by the solution is partially correct with the given points.
 
-Runtime Error (RTE)
+Wrong Answer
+    The output produced by the solution is incorrect. By default, the diff will be shown, truncated to the first 10 lines.
+
+Runtime Error
     The solution crashed or used memory above the limit, if specified.
 
-Time Limit Exceeded (TLE)
+Time Limit Exceeded
     The solution did not stop within the time limit, if specified.
 
-Internal Error (ERR)
+Internal Error
     Custom scorer (if any) crashed or did not give valid verdict.
 
 The verdict of each subtask will be also shown. The verdict of a subtask is the worst verdict of all verdicts of test cases that are assigned to it. Here, RTE is worse than WA, and WA is worse than AC.
@@ -77,14 +80,17 @@ Here is a sample output of a local grading for problems with subtasks.
       k-product_4_4: Accepted
       k-product_4_5: Accepted
       k-product_4_6: Runtime Error
-        * Execution of submission failed:
+        * Execution of solution failed:
           - Exit code: 1
           - Standard error:
 
+    [ SUBTASK RESULTS ]
+      Subtask 1: Accepted [40]
+      Subtask 2: Wrong Answer [0]
+      Subtask 3: Runtime Error [0]
+
     [ RESULT ]
-      Subtask 1: Accepted
-      Subtask 2: Wrong Answer
-      Subtask 3: Runtime Error
+      Runtime Error [40]
 
 and here is for problems without subtasks
 
@@ -98,14 +104,14 @@ and here is for problems without subtasks
     [ OFFICIAL TEST CASES ]
       k-product_1: Accepted
       k-product_2: Accepted
-      k-product_3: Accepted
+      k-product_3: OK [21]
       k-product_4: Wrong Answer
         * scorer Diff:
     (expected) [line 01]    11
     (received) [line 01]    12
 
     [ RESULT ]
-      Wrong Answer
+      Wrong Answer [71]
 
 This local grading feature is useful for creating "unit tests" for your test cases. For each problem, you can write many solutions with different intended results. For example, ``solution_123.cpp`` should pass subtasks 1 - 3; ``solution_12.cpp`` should pass subtasks 1 and 2 but not subtask 3, etc.
 
