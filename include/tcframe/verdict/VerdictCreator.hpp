@@ -32,10 +32,11 @@ public:
         } else if (verdictString == "WA") {
             return Verdict(VerdictStatus::wa());
         } else if (verdictString == "OK") {
-            string pointsString;
-            if (!getline(*in, pointsString)) {
+            string secondLine;
+            if (!getline(*in, secondLine)) {
                 throw runtime_error("Expected: <points> on the second line");
             }
+            string pointsString = StringUtils::split(secondLine, ' ')[0];
             optional<double> points = StringUtils::toNumber<double>(pointsString);
             if (points) {
                 return Verdict(VerdictStatus::ok(), points.value());

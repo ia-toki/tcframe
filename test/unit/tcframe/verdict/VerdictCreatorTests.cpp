@@ -29,6 +29,10 @@ TEST_F(VerdictCreatorTests, FromStream_OK) {
     EXPECT_THAT(verdictCreator.fromStream(new istringstream("OK\n70\n")), Eq(Verdict(VerdictStatus::ok(), 70)));
 }
 
+TEST_F(VerdictCreatorTests, FromStream_OK_WithFeedback) {
+    EXPECT_THAT(verdictCreator.fromStream(new istringstream("OK\n70 text\n")), Eq(Verdict(VerdictStatus::ok(), 70)));
+}
+
 TEST_F(VerdictCreatorTests, FromStream_OK_Failed_EmptySecondLine) {
     try {
         verdictCreator.fromStream(new istringstream("OK\n"));
