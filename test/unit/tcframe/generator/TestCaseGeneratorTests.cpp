@@ -61,24 +61,24 @@ protected:
             .setSubtaskIds({1, 2})
             .setData(new OfficialTestCaseData([&]{throw runtime_error("closure error");}))
             .build();
-    GeneratorConfig config = GeneratorConfigBuilder("foo")
+    GenerationOptions options = GenerationOptionsBuilder("foo")
             .setSolutionCommand("python Sol.py")
             .setOutputDir("dir")
             .build();
-    GeneratorConfig noOutputConfig = GeneratorConfigBuilder(config)
+    GenerationOptions noOutputOptions = GenerationOptionsBuilder(options)
             .setNeedsOutput(false)
             .build();
-    GeneratorConfig multipleTestCasesConfig = GeneratorConfigBuilder(config)
+    GenerationOptions multipleTestCasesOptions = GenerationOptionsBuilder(options)
             .setMultipleTestCasesCounter(&T)
             .build();
-    GeneratorConfig multipleTestCasesConfigWithOutputPrefix = GeneratorConfigBuilder(multipleTestCasesConfig)
+    GenerationOptions multipleTestCasesOptionsWithOutputPrefix = GenerationOptionsBuilder(multipleTestCasesOptions)
             .setMultipleTestCasesCounter(&T)
             .setMultipleTestCasesOutputPrefix("Case #%d: ")
             .build();
-    GeneratorConfig multipleTestCasesNoOutputConfig = GeneratorConfigBuilder(multipleTestCasesConfig)
+    GenerationOptions multipleTestCasesNoOutputOptions = GenerationOptionsBuilder(multipleTestCasesOptions)
             .setNeedsOutput(false)
             .build();
-    EvaluatorConfig evaluatorConfig = EvaluatorConfigBuilder()
+    EvaluationOptions evaluationOptions = EvaluationOptionsBuilder()
             .setSolutionCommand("python Sol.py")
             .build();
 
@@ -132,13 +132,13 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_Successful) {
         EXPECT_CALL(verifier, verifyConstraints(set<int>{1, 2}));
         EXPECT_CALL(os, openForWriting("dir/foo_sample_1.in"));
         EXPECT_CALL(os, closeOpenedStream(outForInput));
-        EXPECT_CALL(evaluator, generate("dir/foo_sample_1.in", "dir/foo_sample_1.out", evaluatorConfig));
+        EXPECT_CALL(evaluator, generate("dir/foo_sample_1.in", "dir/foo_sample_1.out", evaluationOptions));
         EXPECT_CALL(os, openForReading("dir/foo_sample_1.out"));
         EXPECT_CALL(ioManipulator, parseOutput(inForOutput));
         EXPECT_CALL(os, closeOpenedStream(inForOutput));
         EXPECT_CALL(logger, logTestCaseSuccessfulResult());
     }
-    EXPECT_TRUE(generator.generate(sampleTestCase, config));
+    EXPECT_TRUE(generator.generate(sampleTestCase, options));
     EXPECT_THAT(outForInput->str(), Eq("42\n"));
 }
 
@@ -154,7 +154,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_NoOutput_Successful) {
     }
     EXPECT_CALL(evaluator, evaluate(_, _, _)).Times(0);
     EXPECT_CALL(ioManipulator, parseOutput(_)).Times(0);
-    EXPECT_TRUE(generator.generate(sampleTestCase, noOutputConfig));
+    EXPECT_TRUE(generator.generate(sampleTestCase, noOutputOptions));
     EXPECT_THAT(outForInput->str(), Eq("42\n"));
 }
 
@@ -167,7 +167,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_Failed_InputApplication) {
         EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>()));
         EXPECT_CALL(logger, logSimpleFailure(message));
     }
-    EXPECT_FALSE(generator.generate(sampleTestCase, config));
+    EXPECT_FALSE(generator.generate(sampleTestCase, options));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Sample_Failed_OutputApplication) {
@@ -179,7 +179,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_Failed_OutputApplication) {
         EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>()));
         EXPECT_CALL(logger, logSimpleFailure(message));
     }
-    EXPECT_FALSE(generator.generate(sampleTestCase, config));
+    EXPECT_FALSE(generator.generate(sampleTestCase, options));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Successful) {
@@ -190,7 +190,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Successful) {
         EXPECT_CALL(verifier, verifyConstraints(set<int>{1, 2}));
         EXPECT_CALL(os, openForWriting("dir/foo_sample_1.in"));
         EXPECT_CALL(os, closeOpenedStream(outForInput));
-        EXPECT_CALL(evaluator, generate("dir/foo_sample_1.in", "dir/foo_sample_1.out", evaluatorConfig));
+        EXPECT_CALL(evaluator, generate("dir/foo_sample_1.in", "dir/foo_sample_1.out", evaluationOptions));
         EXPECT_CALL(os, openForWriting(Evaluator::EVALUATION_OUT_FILENAME));
         EXPECT_CALL(os, closeOpenedStream(outForEvaluation));
         EXPECT_CALL(evaluator, score("dir/foo_sample_1.in", "dir/foo_sample_1.out"));
@@ -200,7 +200,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Successful) {
         EXPECT_CALL(logger, logTestCaseSuccessfulResult());
     }
 
-    EXPECT_TRUE(generator.generate(sampleTestCaseWithOutput, config));
+    EXPECT_TRUE(generator.generate(sampleTestCaseWithOutput, options));
     EXPECT_THAT(outForInput->str(), Eq("42\n"));
     EXPECT_THAT(outForEvaluation->str(), Eq("yes\n"));
 }
@@ -221,7 +221,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Failed_Check) {
                 {"scorer", scoringExecutionResult}}));
     }
 
-    EXPECT_FALSE(generator.generate(sampleTestCaseWithOutput, config));
+    EXPECT_FALSE(generator.generate(sampleTestCaseWithOutput, options));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Failed_NoOutputNeeded) {
@@ -231,7 +231,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Failed_NoOutputNeede
         EXPECT_CALL(logger, logSampleTestCaseNoOutputNeededFailure());
     }
 
-    EXPECT_FALSE(generator.generate(sampleTestCaseWithOutput, noOutputConfig));
+    EXPECT_FALSE(generator.generate(sampleTestCaseWithOutput, noOutputOptions));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Successful) {
@@ -242,29 +242,29 @@ TEST_F(TestCaseGeneratorTests, Generation_Successful) {
         EXPECT_CALL(os, openForWriting("dir/foo_1.in"));
         EXPECT_CALL(ioManipulator, printInput(outForInput));
         EXPECT_CALL(os, closeOpenedStream(outForInput));
-        EXPECT_CALL(evaluator, generate("dir/foo_1.in", "dir/foo_1.out", evaluatorConfig));
+        EXPECT_CALL(evaluator, generate("dir/foo_1.in", "dir/foo_1.out", evaluationOptions));
         EXPECT_CALL(os, openForReading("dir/foo_1.out"));
         EXPECT_CALL(ioManipulator, parseOutput(inForOutput));
         EXPECT_CALL(os, closeOpenedStream(inForOutput));
         EXPECT_CALL(logger, logTestCaseSuccessfulResult());
     }
-    EXPECT_TRUE(generator.generate(officialTestCase, config));
+    EXPECT_TRUE(generator.generate(officialTestCase, options));
     EXPECT_THAT(N, Eq(42));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_MultipleTestCases_Successful) {
-    EXPECT_TRUE(generator.generate(officialTestCase, multipleTestCasesConfig));
+    EXPECT_TRUE(generator.generate(officialTestCase, multipleTestCasesOptions));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_MultipleTestCases_NoOutput_Successful) {
-    EXPECT_TRUE(generator.generate(officialTestCase, multipleTestCasesNoOutputConfig));
+    EXPECT_TRUE(generator.generate(officialTestCase, multipleTestCasesNoOutputOptions));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_MultipleTestCases_WithOutputPrefix_Sample_WithOutput_Successful) {
     ON_CALL(os, openForReading(EndsWith(".out")))
             .WillByDefault(Return(new istringstream("Case #1: yes\n")));
 
-    EXPECT_TRUE(generator.generate(sampleTestCaseWithOutput, multipleTestCasesConfigWithOutputPrefix));
+    EXPECT_TRUE(generator.generate(sampleTestCaseWithOutput, multipleTestCasesOptionsWithOutputPrefix));
     EXPECT_THAT(outForEvaluation->str(), Eq("Case #1: yes\n"));
 }
 
@@ -272,7 +272,7 @@ TEST_F(TestCaseGeneratorTests, Generation_MultipleTestCases_WithOutputPrefix_Suc
     ON_CALL(os, openForReading(EndsWith(".out")))
             .WillByDefault(Return(new istringstream("Case #1: yes\n")));
 
-    EXPECT_TRUE(generator.generate(officialTestCase, multipleTestCasesConfigWithOutputPrefix));
+    EXPECT_TRUE(generator.generate(officialTestCase, multipleTestCasesOptionsWithOutputPrefix));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_MultipleTestCases_WithOutputPrefix_Failed) {
@@ -281,7 +281,7 @@ TEST_F(TestCaseGeneratorTests, Generation_MultipleTestCases_WithOutputPrefix_Fai
         EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>("N = 42")));
         EXPECT_CALL(logger, logSimpleFailure("Output must start with \"Case #%d: \""));
     }
-    EXPECT_FALSE(generator.generate(officialTestCase, multipleTestCasesConfigWithOutputPrefix));
+    EXPECT_FALSE(generator.generate(officialTestCase, multipleTestCasesOptionsWithOutputPrefix));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Failed_InputApplication) {
@@ -290,7 +290,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Failed_InputApplication) {
         EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>("N = 42")));
         EXPECT_CALL(logger, logSimpleFailure("closure error"));
     }
-    EXPECT_FALSE(generator.generate(officialTestCaseWithInvalidClosure, config));
+    EXPECT_FALSE(generator.generate(officialTestCaseWithInvalidClosure, options));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Failed_Verification) {
@@ -302,7 +302,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Failed_Verification) {
         EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>("N = 42")));
         EXPECT_CALL(logger, logConstraintsVerificationFailure(verificationResult));
     }
-    EXPECT_FALSE(generator.generate(officialTestCase, config));
+    EXPECT_FALSE(generator.generate(officialTestCase, options));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Failed_InputGeneration) {
@@ -314,7 +314,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Failed_InputGeneration) {
         EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>("N = 42")));
         EXPECT_CALL(logger, logSimpleFailure(message));
     }
-    EXPECT_FALSE(generator.generate(officialTestCase, config));
+    EXPECT_FALSE(generator.generate(officialTestCase, options));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Failed_OutputGeneration) {
@@ -327,7 +327,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Failed_OutputGeneration) {
         EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>("N = 42")));
         EXPECT_CALL(logger, logExecutionResults(map<string, ExecutionResult>{{"solution", executionResult}}));
     }
-    EXPECT_FALSE(generator.generate(officialTestCase, config));
+    EXPECT_FALSE(generator.generate(officialTestCase, options));
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Failed_OutputApplication) {
@@ -339,7 +339,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Failed_OutputApplication) {
         EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>("N = 42")));
         EXPECT_CALL(logger, logSimpleFailure(message));
     }
-    EXPECT_FALSE(generator.generate(officialTestCase, config));
+    EXPECT_FALSE(generator.generate(officialTestCase, options));
 }
 
 }

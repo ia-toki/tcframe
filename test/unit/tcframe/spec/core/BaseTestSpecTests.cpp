@@ -1,6 +1,7 @@
 #include "gmock/gmock.h"
 
-#include "tcframe/runner.hpp"
+#include "tcframe/spec/core/BaseProblemSpec.hpp"
+#include "tcframe/spec/core/BaseTestSpec.hpp"
 
 using ::testing::A;
 using ::testing::AllOf;

@@ -12,8 +12,8 @@ using std::tie;
 
 namespace tcframe {
 
-struct GraderConfig {
-    friend class GraderConfigBuilder;
+struct GradingOptions {
+    friend class GradingOptionsBuilder;
 
 private:
     string slug_;
@@ -49,75 +49,75 @@ public:
         return memoryLimit_;
     }
 
-    bool operator==(const GraderConfig& o) const {
+    bool operator==(const GradingOptions& o) const {
         return tie(hasMultipleTestCases_, slug_, solutionCommand_, outputDir_, timeLimit_, memoryLimit_) ==
                 tie(o.hasMultipleTestCases_,o.slug_, o.solutionCommand_, o.outputDir_, o.timeLimit_,
                     o.memoryLimit_);
     }
 };
 
-class GraderConfigBuilder {
+class GradingOptionsBuilder {
 private:
-    GraderConfig subject_;
+    GradingOptions subject_;
 
 public:
-    GraderConfigBuilder(const GraderConfig& from)
+    GradingOptionsBuilder(const GradingOptions& from)
             : subject_(from) {}
 
-    GraderConfigBuilder(string slug) {
+    GradingOptionsBuilder(string slug) {
         subject_.slug_ = slug;
         subject_.hasMultipleTestCases_ = false;
         subject_.solutionCommand_ = CommonConfig::solutionCommand();
         subject_.outputDir_ = CommonConfig::outputDir();
     }
 
-    GraderConfigBuilder& setHasMultipleTestCases(optional<bool> hasMultipleTestCases) {
+    GradingOptionsBuilder& setHasMultipleTestCases(optional<bool> hasMultipleTestCases) {
         if (hasMultipleTestCases) {
             setHasMultipleTestCases(hasMultipleTestCases.value());
         }
         return *this;
     }
 
-    GraderConfigBuilder& setHasMultipleTestCases(bool hasMultipleTestCases) {
+    GradingOptionsBuilder& setHasMultipleTestCases(bool hasMultipleTestCases) {
         subject_.hasMultipleTestCases_ = hasMultipleTestCases;
         return *this;
     }
 
-    GraderConfigBuilder& setSolutionCommand(optional<string> solutionCommand) {
+    GradingOptionsBuilder& setSolutionCommand(optional<string> solutionCommand) {
         if (solutionCommand) {
             setSolutionCommand(solutionCommand.value());
         }
         return *this;
     }
 
-    GraderConfigBuilder& setSolutionCommand(string solutionCommand) {
+    GradingOptionsBuilder& setSolutionCommand(string solutionCommand) {
         subject_.solutionCommand_ = solutionCommand;
         return *this;
     }
 
-    GraderConfigBuilder& setOutputDir(optional<string> outputDir) {
+    GradingOptionsBuilder& setOutputDir(optional<string> outputDir) {
         if (outputDir) {
             setOutputDir(outputDir.value());
         }
         return *this;
     }
 
-    GraderConfigBuilder& setOutputDir(string outputDir) {
+    GradingOptionsBuilder& setOutputDir(string outputDir) {
         subject_.outputDir_ = outputDir;
         return *this;
     }
 
-    GraderConfigBuilder& setTimeLimit(int timeLimit) {
+    GradingOptionsBuilder& setTimeLimit(int timeLimit) {
         subject_.timeLimit_ = optional<int>(timeLimit);
         return *this;
     }
 
-    GraderConfigBuilder& setMemoryLimit(int memoryLimit) {
+    GradingOptionsBuilder& setMemoryLimit(int memoryLimit) {
         subject_.memoryLimit_ = optional<int>(memoryLimit);
         return *this;
     }
 
-    GraderConfig build() {
+    GradingOptions build() {
         return move(subject_);
     }
 };

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <string>
 #include <tuple>
 #include <utility>
@@ -7,14 +8,15 @@
 #include "tcframe/spec/core.hpp"
 #include "tcframe/util.hpp"
 
+using std::map;
 using std::move;
 using std::string;
 using std::tie;
 
 namespace tcframe {
 
-struct EvaluatorConfig {
-    friend class EvaluatorConfigBuilder;
+struct EvaluationOptions {
+    friend class EvaluationOptionsBuilder;
 
 private:
     string solutionCommand_;
@@ -34,61 +36,61 @@ public:
         return memoryLimit_;
     }
 
-    bool operator==(const EvaluatorConfig& o) const {
+    bool operator==(const EvaluationOptions& o) const {
         return tie(solutionCommand_, timeLimit_, memoryLimit_) ==
-                tie(o.solutionCommand_, o.timeLimit_, o.memoryLimit_);
+               tie(o.solutionCommand_, o.timeLimit_, o.memoryLimit_);
     }
 };
 
-class EvaluatorConfigBuilder {
+class EvaluationOptionsBuilder {
 private:
-    EvaluatorConfig subject_;
+    EvaluationOptions subject_;
 
 public:
-    EvaluatorConfigBuilder(const EvaluatorConfig& from)
+    EvaluationOptionsBuilder(const EvaluationOptions& from)
             : subject_(from) {}
 
-    EvaluatorConfigBuilder() {
+    EvaluationOptionsBuilder() {
         subject_.solutionCommand_ = CommonConfig::solutionCommand();
     }
 
-    EvaluatorConfigBuilder& setSolutionCommand(optional<string> solutionCommand) {
+    EvaluationOptionsBuilder& setSolutionCommand(optional<string> solutionCommand) {
         if (solutionCommand) {
             setSolutionCommand(solutionCommand.value());
         }
         return *this;
     }
 
-    EvaluatorConfigBuilder& setSolutionCommand(string solutionCommand) {
+    EvaluationOptionsBuilder& setSolutionCommand(string solutionCommand) {
         subject_.solutionCommand_ = solutionCommand;
         return *this;
     }
 
-    EvaluatorConfigBuilder& setTimeLimit(optional<int> timeLimit) {
+    EvaluationOptionsBuilder& setTimeLimit(optional<int> timeLimit) {
         if (timeLimit) {
             setTimeLimit(timeLimit.value());
         }
         return *this;
     }
 
-    EvaluatorConfigBuilder& setTimeLimit(int timeLimit) {
+    EvaluationOptionsBuilder& setTimeLimit(int timeLimit) {
         subject_.timeLimit_ = optional<int>(timeLimit);
         return *this;
     }
 
-    EvaluatorConfigBuilder& setMemoryLimit(optional<int> memoryLimit) {
+    EvaluationOptionsBuilder& setMemoryLimit(optional<int> memoryLimit) {
         if (memoryLimit) {
             setMemoryLimit(memoryLimit.value());
         }
         return *this;
     }
 
-    EvaluatorConfigBuilder& setMemoryLimit(int memoryLimit) {
+    EvaluationOptionsBuilder& setMemoryLimit(int memoryLimit) {
         subject_.memoryLimit_ = optional<int>(memoryLimit);
         return *this;
     }
 
-    EvaluatorConfig build() {
+    EvaluationOptions build() {
         return move(subject_);
     }
 };

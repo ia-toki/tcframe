@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "GraderConfig.hpp"
+#include "GradingOptions.hpp"
 #include "GraderLogger.hpp"
 #include "tcframe/evaluator.hpp"
 #include "tcframe/util.hpp"
@@ -24,10 +24,10 @@ public:
             : evaluator_(evaluator)
             , logger_(logger) {}
 
-    virtual Verdict grade(const TestCase& testCase, const GraderConfig& config) {
+    virtual Verdict grade(const TestCase& testCase, const GradingOptions& options) {
         logger_->logTestCaseIntroduction(testCase.name());
 
-        EvaluationResult evaluationResult = evaluate(testCase, config);
+        EvaluationResult evaluationResult = evaluate(testCase, options);
         Verdict verdict = evaluationResult.verdict();
 
         logger_->logTestCaseVerdict(verdict);
@@ -39,16 +39,16 @@ public:
     }
 
 private:
-    EvaluationResult evaluate(const TestCase& testCase, const GraderConfig& config) {
-        string inputFilename = config.outputDir() + "/" + testCase.name() + ".in";
-        string outputFilename = config.outputDir() + "/" + testCase.name() + ".out";
-        EvaluatorConfig evaluatorConfig = EvaluatorConfigBuilder()
-                .setSolutionCommand(config.solutionCommand())
-                .setTimeLimit(config.timeLimit())
-                .setMemoryLimit(config.memoryLimit())
+    EvaluationResult evaluate(const TestCase& testCase, const GradingOptions& options) {
+        string inputFilename = options.outputDir() + "/" + testCase.name() + ".in";
+        string outputFilename = options.outputDir() + "/" + testCase.name() + ".out";
+        EvaluationOptions evaluationConfig = EvaluationOptionsBuilder()
+                .setSolutionCommand(options.solutionCommand())
+                .setTimeLimit(options.timeLimit())
+                .setMemoryLimit(options.memoryLimit())
                 .build();
 
-        return evaluator_->evaluate(inputFilename, outputFilename, evaluatorConfig);
+        return evaluator_->evaluate(inputFilename, outputFilename, evaluationConfig);
     }
 };
 

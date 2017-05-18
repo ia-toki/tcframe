@@ -23,14 +23,6 @@ public:
     static string outputDir() {
         return "tc";
     }
-
-    static bool needsCustomScorer() {
-        return false;
-    }
-
-    static bool needsOutput() {
-        return true;
-    }
 };
 
 }

@@ -6,8 +6,9 @@
 #include "GradingConfig.hpp"
 #include "MultipleTestCasesConfig.hpp"
 #include "SeedSetter.hpp"
+#include "Spec.hpp"
 #include "StyleConfig.hpp"
-#include "tcframe/spec.hpp"
+#include "tcframe/spec/random.hpp"
 #include "tcframe/util.hpp"
 
 using std::vector;
@@ -116,13 +117,14 @@ public:
         MultipleTestCasesConfig multipleTestCasesConfig = TProblemSpec::buildMultipleTestCasesConfig();
         ConstraintSuite constraintSuite = TProblemSpec::buildConstraintSuite();
         TestSuite testSuite = buildTestSuite(slug, constraintSuite.getDefinedSubtaskIds());
-        return Spec(seedSetter,
-                    ioFormat,
-                    styleConfig,
-                    gradingConfig,
-                    multipleTestCasesConfig,
-                    constraintSuite,
-                    testSuite);
+        return Spec(
+                seedSetter,
+                ioFormat,
+                styleConfig,
+                gradingConfig,
+                multipleTestCasesConfig,
+                constraintSuite,
+                testSuite);
     }
 
 protected:

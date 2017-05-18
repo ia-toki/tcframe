@@ -2,7 +2,9 @@
 #include "../mock.hpp"
 
 #include "../aggregator/MockAggregator.hpp"
+#include "../aggregator/MockAggregatorRegistry.hpp"
 #include "../evaluator/MockEvaluator.hpp"
+#include "../evaluator/MockEvaluatorRegistry.hpp"
 #include "../generator/MockGenerator.hpp"
 #include "../grader/MockGrader.hpp"
 #include "../os/MockOperatingSystem.hpp"
@@ -77,10 +79,10 @@ protected:
 
     MOCK(OperatingSystem) os;
     MOCK(RunnerLoggerFactory) runnerLoggerFactory;
-    MOCK(EvaluatorFactory) evaluatorFactory;
-    MOCK(AggregatorFactory) aggregatorFactory;
     MOCK(GeneratorFactory) generatorFactory;
     MOCK(GraderFactory) graderFactory;
+    MOCK(EvaluatorRegistry) evaluatorRegistry;
+    MOCK(AggregatorRegistry) aggregatorRegistry;
 
     Runner<ProblemSpec> runner = createRunner(new TestSpec());
     Runner<ProblemSpecWithConfig> runnerWithConfig = createRunner(new TestSpecWithConfig());
@@ -88,24 +90,24 @@ protected:
 
     void SetUp() {
         ON_CALL(runnerLoggerFactory, create(_)).WillByDefault(Return(&runnerLogger));
-        ON_CALL(evaluatorFactory, createBatch(_, _)).WillByDefault(Return(&evaluator));
-        ON_CALL(aggregatorFactory, create(_)).WillByDefault(Return(&aggregator));
         ON_CALL(generatorFactory, create(_, _, _, _, _)).WillByDefault(Return(&generator));
         ON_CALL(graderFactory, create(_, _, _)).WillByDefault(Return(&grader));
+        ON_CALL(evaluatorRegistry, get(_, _)).WillByDefault(Return(&evaluator));
+        ON_CALL(aggregatorRegistry, get(_)).WillByDefault(Return(&aggregator));
         ON_CALL(os, execute(_)).WillByDefault(Return(ExecutionResult()));
     }
 
     Runner<ProblemSpec> createRunner(const string& specPath) {
         return Runner<ProblemSpec>(
                 specPath, new TestSpec(), loggerEngine, &os,
-                &runnerLoggerFactory, &evaluatorFactory, &aggregatorFactory, &generatorFactory, &graderFactory);
+                &runnerLoggerFactory, &generatorFactory, &graderFactory, &evaluatorRegistry, &aggregatorRegistry);
     }
 
     template<typename TProblem>
     Runner<TProblem> createRunner(BaseTestSpec<TProblem>* testSpec) {
         return Runner<TProblem>(
                 specPath, testSpec, loggerEngine, &os,
-                &runnerLoggerFactory, &evaluatorFactory, &aggregatorFactory, &generatorFactory, &graderFactory);
+                &runnerLoggerFactory, &generatorFactory, &graderFactory, &evaluatorRegistry, &aggregatorRegistry);
     }
 };
 
@@ -143,7 +145,7 @@ TEST_F(RunnerTests, Run_Generation_Failed) {
 }
 
 TEST_F(RunnerTests, Run_Generation_UseDefaultOptions) {
-    EXPECT_CALL(generator, generate(_, GeneratorConfigBuilder("slug")
+    EXPECT_CALL(generator, generate(_, GenerationOptionsBuilder("slug")
             .setSeed(0)
             .setSolutionCommand("./solution")
             .setOutputDir("tc")
@@ -154,7 +156,7 @@ TEST_F(RunnerTests, Run_Generation_UseDefaultOptions) {
 }
 
 TEST_F(RunnerTests, Run_Generation_UseConfigOptions) {
-    EXPECT_CALL(generator, generate(_, GeneratorConfigBuilder("slug")
+    EXPECT_CALL(generator, generate(_, GenerationOptionsBuilder("slug")
             .setMultipleTestCasesCounter(&T)
             .setSolutionCommand("./solution")
             .setOutputDir("tc")
@@ -165,7 +167,7 @@ TEST_F(RunnerTests, Run_Generation_UseConfigOptions) {
 }
 
 TEST_F(RunnerTests, Run_Generation_UseArgsOptions) {
-    EXPECT_CALL(generator, generate(_, GeneratorConfigBuilder("slug")
+    EXPECT_CALL(generator, generate(_, GenerationOptionsBuilder("slug")
             .setSeed(42)
             .setMultipleTestCasesCounter(&T)
             .setSolutionCommand("\"java Solution\"")
@@ -193,7 +195,7 @@ TEST_F(RunnerTests, Run_Grading) {
 }
 
 TEST_F(RunnerTests, Run_Grading_UseDefaultOptions) {
-    EXPECT_CALL(grader, grade(_, _, GraderConfigBuilder("slug")
+    EXPECT_CALL(grader, grade(_, _, GradingOptionsBuilder("slug")
             .setHasMultipleTestCases(false)
             .setTimeLimit(2)
             .setMemoryLimit(64)
@@ -208,7 +210,7 @@ TEST_F(RunnerTests, Run_Grading_UseDefaultOptions) {
 }
 
 TEST_F(RunnerTests, Run_Grading_UseConfigOptions) {
-    EXPECT_CALL(grader, grade(_, _, GraderConfigBuilder("slug")
+    EXPECT_CALL(grader, grade(_, _, GradingOptionsBuilder("slug")
             .setHasMultipleTestCases(true)
             .setSolutionCommand("./solution")
             .setOutputDir("tc")
@@ -223,7 +225,7 @@ TEST_F(RunnerTests, Run_Grading_UseConfigOptions) {
 }
 
 TEST_F(RunnerTests, Run_Grading_UseArgsOptions) {
-    EXPECT_CALL(grader, grade(_, _, GraderConfigBuilder("slug")
+    EXPECT_CALL(grader, grade(_, _, GradingOptionsBuilder("slug")
             .setHasMultipleTestCases(true)
             .setSolutionCommand("\"java Solution\"")
             .setOutputDir("testdata")
@@ -242,7 +244,7 @@ TEST_F(RunnerTests, Run_Grading_UseArgsOptions) {
 }
 
 TEST_F(RunnerTests, Run_Grading_UseArgsOptions_NoLimits) {
-    EXPECT_CALL(grader, grade(_, _, GraderConfigBuilder("slug")
+    EXPECT_CALL(grader, grade(_, _, GradingOptionsBuilder("slug")
             .setHasMultipleTestCases(true)
             .setSolutionCommand("\"java Solution\"")
             .setOutputDir("testdata")
@@ -258,18 +260,18 @@ TEST_F(RunnerTests, Run_Grading_UseArgsOptions_NoLimits) {
             nullptr});
 }
 
-TEST_F(RunnerTests, Run_Evaluator_Batch) {
-    EXPECT_CALL(evaluatorFactory, createBatch(_, optional<string>()));
+TEST_F(RunnerTests, Run_EvaluatorRegistry_NoCustomScorer) {
+    EXPECT_CALL(evaluatorRegistry, get(_, map<string, string>{}));
     runner.run(argc, argv);
 }
 
-TEST_F(RunnerTests, Run_Evaluator_Batch_CustomScorer_Default) {
-    EXPECT_CALL(evaluatorFactory, createBatch(_, optional<string>("./scorer")));
+TEST_F(RunnerTests, Run_EvaluatorRegistry_CustomScorer_Default) {
+    EXPECT_CALL(evaluatorRegistry, get(_, map<string, string>{{"scorer", CommonConfig::scorerCommand()}}));
     runnerWithConfig.run(argc, argv);
 }
 
-TEST_F(RunnerTests, Run_Evaluator_Batch_CustomScorer_Args) {
-    EXPECT_CALL(evaluatorFactory, createBatch(_, optional<string>("\"java Scorer\"")));
+TEST_F(RunnerTests, Run_EvaluatorRegistry_CustomScorer_Args) {
+    EXPECT_CALL(evaluatorRegistry, get(_, map<string, string>{{"scorer", "\"java Scorer\""}}));
     runnerWithConfig.run(3, new char*[4]{
             (char*) "./runner",
             (char*) "grade",
@@ -277,16 +279,16 @@ TEST_F(RunnerTests, Run_Evaluator_Batch_CustomScorer_Args) {
             nullptr});
 }
 
-TEST_F(RunnerTests, Run_Aggregator) {
-    EXPECT_CALL(aggregatorFactory, create(false));
+TEST_F(RunnerTests, Run_AggregatorRegistry) {
+    EXPECT_CALL(aggregatorRegistry, get(false));
     runner.run(2, new char*[3]{
             (char*) "./runner",
             (char*) "grade",
             nullptr});
 }
 
-TEST_F(RunnerTests, Run_Aggregator_WithSubtasks) {
-    EXPECT_CALL(aggregatorFactory, create(true));
+TEST_F(RunnerTests, Run_AggregatorRegistry_WithSubtasks) {
+    EXPECT_CALL(aggregatorRegistry, get(true));
     runnerWithSubtasks.run(2, new char*[3]{
             (char*) "./runner",
             (char*) "grade",

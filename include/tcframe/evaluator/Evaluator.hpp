@@ -2,8 +2,8 @@
 
 #include <string>
 
+#include "EvaluationOptions.hpp"
 #include "EvaluationResult.hpp"
-#include "EvaluatorConfig.hpp"
 #include "GenerationResult.hpp"
 #include "scorer.hpp"
 
@@ -20,12 +20,12 @@ public:
     virtual EvaluationResult evaluate(
             const string& inputFilename,
             const string& outputFilename,
-            const EvaluatorConfig& config) = 0;
+            const EvaluationOptions& options) = 0;
 
     virtual GenerationResult generate(
             const string& inputFilename,
             const string& outputFilename,
-            const EvaluatorConfig& config) = 0;
+            const EvaluationOptions& options) = 0;
 
     virtual ScoringResult score(const string& inputFilename, const string& outputFilename) = 0;
 };

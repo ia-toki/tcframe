@@ -32,10 +32,10 @@ private:
     OperatingSystem* os_;
 
     RunnerLoggerFactory* runnerLoggerFactory_;
-    EvaluatorFactory* evaluatorFactory_;
-    AggregatorFactory* aggregatorFactory_;
     GeneratorFactory* generatorFactory_;
     GraderFactory* graderFactory_;
+    EvaluatorRegistry* evaluatorRegistry_;
+    AggregatorRegistry* aggregatorRegistry_;
 
 public:
     Runner(
@@ -44,19 +44,19 @@ public:
             LoggerEngine* loggerEngine,
             OperatingSystem* os,
             RunnerLoggerFactory* runnerLoggerFactory,
-            EvaluatorFactory* evaluatorFactory,
-            AggregatorFactory* aggregatorFactory,
             GeneratorFactory* generatorFactory,
-            GraderFactory* graderFactory)
+            GraderFactory* graderFactory,
+            EvaluatorRegistry* evaluatorRegistry,
+            AggregatorRegistry* aggregatorRegistry)
             : specPath_(specPath)
             , testSpec_(testSpec)
             , loggerEngine_(loggerEngine)
             , os_(os)
             , runnerLoggerFactory_(runnerLoggerFactory)
-            , evaluatorFactory_(evaluatorFactory)
-            , aggregatorFactory_(aggregatorFactory)
             , generatorFactory_(generatorFactory)
-            , graderFactory_(graderFactory) {}
+            , graderFactory_(graderFactory)
+            , evaluatorRegistry_(evaluatorRegistry)
+            , aggregatorRegistry_(aggregatorRegistry) {}
 
     int run(int argc, char* argv[]) {
         auto runnerLogger = runnerLoggerFactory_->create(loggerEngine_);
@@ -110,7 +110,7 @@ private:
     int generate(const string& slug, const Args& args, const Spec& spec) {
         const MultipleTestCasesConfig& multipleTestCasesConfig = spec.multipleTestCasesConfig();
 
-        GeneratorConfig generatorConfig = GeneratorConfigBuilder(slug)
+        GenerationOptions options = GenerationOptionsBuilder(slug)
                 .setMultipleTestCasesCounter(multipleTestCasesConfig.counter())
                 .setMultipleTestCasesOutputPrefix(multipleTestCasesConfig.outputPrefix())
                 .setSeed(args.seed())
@@ -121,57 +121,55 @@ private:
 
         auto ioManipulator = new IOManipulator(spec.ioFormat());
         auto verifier = new Verifier(spec.constraintSuite());
-        auto evaluator = getEvaluator(args, spec);
+        auto helperCommands = getHelperCommands(args, spec.styleConfig());
+        auto evaluator = evaluatorRegistry_->get(os_, helperCommands);
         auto logger = new GeneratorLogger(loggerEngine_);
         auto testCaseGenerator = new TestCaseGenerator(verifier, ioManipulator, os_, evaluator, logger);
         auto generator = generatorFactory_->create(spec.seedSetter(), testCaseGenerator, verifier, os_, logger);
 
-        return generator->generate(spec.testSuite(), generatorConfig) ? 0 : 1;
+        return generator->generate(spec.testSuite(), options) ? 0 : 1;
     }
 
     int grade(const string& slug, const Args& args, const Spec& spec) {
         const MultipleTestCasesConfig& multipleTestCasesConfig = spec.multipleTestCasesConfig();
         const GradingConfig& gradingConfig = spec.gradingConfig();
 
-        GraderConfigBuilder configBuilder = GraderConfigBuilder(slug)
+        GradingOptionsBuilder optionsBuilder = GradingOptionsBuilder(slug)
                 .setHasMultipleTestCases(optional<bool>(multipleTestCasesConfig.counter()))
                 .setSolutionCommand(args.solution())
                 .setOutputDir(args.output());
 
         if (!args.noTimeLimit()) {
-            configBuilder.setTimeLimit(args.timeLimit().value_or(gradingConfig.timeLimit()));
+            optionsBuilder.setTimeLimit(args.timeLimit().value_or(gradingConfig.timeLimit()));
         }
         if (!args.noMemoryLimit()) {
-            configBuilder.setMemoryLimit(args.memoryLimit().value_or(gradingConfig.memoryLimit()));
+            optionsBuilder.setMemoryLimit(args.memoryLimit().value_or(gradingConfig.memoryLimit()));
         }
 
-        GraderConfig graderConfig = configBuilder.build();
+        GradingOptions options = optionsBuilder.build();
 
         auto logger = new GraderLogger(loggerEngine_);
-        auto evaluator = getEvaluator(args, spec);
+        auto helperCommands = getHelperCommands(args, spec.styleConfig());
+        auto evaluator = evaluatorRegistry_->get(os_, helperCommands);
         auto testCaseGrader = new TestCaseGrader(evaluator, logger);
-        auto aggregator = getAggregator(spec);
+        auto aggregator = aggregatorRegistry_->get(spec.constraintSuite().hasSubtasks());
         auto grader = graderFactory_->create(testCaseGrader, aggregator, logger);
 
-        grader->grade(spec.testSuite(), spec.constraintSuite(), graderConfig);
+        grader->grade(spec.testSuite(), spec.constraintSuite(), options);
         return 0;
-    }
-
-    Evaluator* getEvaluator(const Args& args, const Spec& spec) {
-        optional<string> scorerCommand;
-        if (spec.styleConfig().needsCustomScorer()) {
-            scorerCommand = optional<string>(args.scorer().value_or(CommonConfig::scorerCommand()));
-        }
-        return evaluatorFactory_->createBatch(os_, scorerCommand);
-    }
-
-    Aggregator* getAggregator(const Spec& spec) {
-        return aggregatorFactory_->create(spec.constraintSuite().hasSubtasks());
     }
 
     void cleanUp() {
         os_->execute(ExecutionRequestBuilder().setCommand("rm _*.out").build());
     }
+
+    static map<string, string> getHelperCommands(const Args& args, const StyleConfig& styleConfig) {
+        map<string, string> helperCommands;
+        if (styleConfig.needsCustomScorer()) {
+            helperCommands["scorer"] = args.scorer().value_or(CommonConfig::scorerCommand());
+        }
+        return helperCommands;
+    };
 };
 
 }

@@ -1,11 +1,12 @@
 #pragma once
 
 #include <functional>
-#include <vector>
 #include <set>
 #include <sstream>
 #include <string>
+#include <vector>
 
+#include "GenerationOptions.hpp"
 #include "GeneratorLogger.hpp"
 #include "TestCaseGenerator.hpp"
 #include "tcframe/os.hpp"
@@ -43,16 +44,16 @@ public:
             , os_(os)
             , logger_(logger) {}
 
-    virtual bool generate(const TestSuite& testSuite, const GeneratorConfig& config) {
+    virtual bool generate(const TestSuite& testSuite, const GenerationOptions& options) {
         logger_->logIntroduction();
 
-        seedSetter_->setSeed(config.seed());
+        seedSetter_->setSeed(options.seed());
 
-        os_->forceMakeDir(config.outputDir());
+        os_->forceMakeDir(options.outputDir());
 
         bool successful = true;
         for (const TestGroup& testGroup : testSuite.testGroups()) {
-            successful &= generateTestGroup(testGroup, config);
+            successful &= generateTestGroup(testGroup, options);
         }
         if (successful) {
             logger_->logSuccessfulResult();
@@ -63,28 +64,28 @@ public:
     }
 
 private:
-    bool generateTestGroup(const TestGroup& testGroup, const GeneratorConfig& config) {
+    bool generateTestGroup(const TestGroup& testGroup, const GenerationOptions& options) {
         logger_->logTestGroupIntroduction(testGroup.id());
 
         bool successful = true;
         for (const TestCase& testCase : testGroup.testCases()) {
-            successful &= testCaseGenerator_->generate(testCase, config);
+            successful &= testCaseGenerator_->generate(testCase, options);
         }
-        if (successful && config.multipleTestCasesCounter() != nullptr && !testGroup.testCases().empty()) {
-            return combineMultipleTestCases(testGroup, config);
+        if (successful && options.multipleTestCasesCounter() != nullptr && !testGroup.testCases().empty()) {
+            return combineMultipleTestCases(testGroup, options);
         }
         return successful;
     }
 
-    bool combineMultipleTestCases(const TestGroup& testGroup, const GeneratorConfig& config) {
-        string testGroupName = TestGroup::createName(config.slug(), testGroup.id());
+    bool combineMultipleTestCases(const TestGroup& testGroup, const GenerationOptions& options) {
+        string testGroupName = TestGroup::createName(options.slug(), testGroup.id());
         logger_->logMultipleTestCasesCombinationIntroduction(testGroupName);
 
-        *config.multipleTestCasesCounter() = (int) testGroup.testCases().size();
+        *options.multipleTestCasesCounter() = (int) testGroup.testCases().size();
 
         try {
             verify();
-            combine(testGroup, config);
+            combine(testGroup, options);
         } catch (GenerationException& e) {
             logger_->logMultipleTestCasesCombinationFailedResult();
             e.callback()();
@@ -106,13 +107,13 @@ private:
         }
     }
 
-    void combine(const TestGroup& testGroup, const GeneratorConfig& config) {
+    void combine(const TestGroup& testGroup, const GenerationOptions& options) {
         int testCaseCount = (int) testGroup.testCases().size();
 
-        string testGroupName = TestGroup::createName(config.slug(), testGroup.id());
-        string testGroupIn = config.outputDir() + "/" + testGroupName + ".in";
-        string testGroupOut = config.outputDir() + "/" + testGroupName + ".out";
-        bool needsOutput = config.needsOutput();
+        string testGroupName = TestGroup::createName(options.slug(), testGroup.id());
+        string testGroupIn = options.outputDir() + "/" + testGroupName + ".in";
+        string testGroupOut = options.outputDir() + "/" + testGroupName + ".out";
+        bool needsOutput = options.needsOutput();
 
         ostringstream sout;
 
@@ -126,16 +127,16 @@ private:
 
         for (int i = 1; i <= testCaseCount; i++) {
             string testCaseName = TestCase::createName(testGroupName, i);
-            string in = config.outputDir() + "/" + testCaseName + ".in";
-            string out = config.outputDir() + "/" + testCaseName + ".out";
+            string in = options.outputDir() + "/" + testCaseName + ".in";
+            string out = options.outputDir() + "/" + testCaseName + ".out";
 
             ostringstream sout2;
             sout2 << "tail -n +2 " << in << " >> " << testGroupIn;
 
             if (needsOutput) {
                 sout2 << " && ";
-                if (i > 1 && config.multipleTestCasesOutputPrefix()) {
-                    string outputPrefix = config.multipleTestCasesOutputPrefix().value();
+                if (i > 1 && options.multipleTestCasesOutputPrefix()) {
+                    string outputPrefix = options.multipleTestCasesOutputPrefix().value();
                     // Replace the prefix for the first tc, with the correct prefix for this tc
                     string firstPrefix = StringUtils::interpolate(outputPrefix, 1);
                     string correctPrefix = StringUtils::interpolate(outputPrefix, i);

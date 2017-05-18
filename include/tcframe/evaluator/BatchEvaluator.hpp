@@ -3,9 +3,9 @@
 #include <map>
 #include <string>
 
+#include "EvaluationOptions.hpp"
 #include "EvaluationResult.hpp"
 #include "Evaluator.hpp"
-#include "EvaluatorConfig.hpp"
 #include "GenerationResult.hpp"
 #include "scorer.hpp"
 #include "tcframe/os.hpp"
@@ -34,12 +34,12 @@ public:
     EvaluationResult evaluate(
             const string& inputFilename,
             const string& outputFilename,
-            const EvaluatorConfig& config) {
+            const EvaluationOptions& options) {
 
         map<string, ExecutionResult> executionResults;
         Verdict verdict;
 
-        GenerationResult generationResult = generate(inputFilename, EVALUATION_OUT_FILENAME, config);
+        GenerationResult generationResult = generate(inputFilename, EVALUATION_OUT_FILENAME, options);
         executionResults["solution"] = generationResult.executionResult();
 
         if (generationResult.verdict()) {
@@ -56,18 +56,18 @@ public:
     GenerationResult generate(
             const string& inputFilename,
             const string& outputFilename,
-            const EvaluatorConfig& config) {
+            const EvaluationOptions& options) {
 
         ExecutionRequestBuilder request = ExecutionRequestBuilder()
-                .setCommand(config.solutionCommand())
+                .setCommand(options.solutionCommand())
                 .setInputFilename(inputFilename)
                 .setOutputFilename(outputFilename);
 
-        if (config.timeLimit()) {
-            request.setTimeLimit(config.timeLimit().value());
+        if (options.timeLimit()) {
+            request.setTimeLimit(options.timeLimit().value());
         }
-        if (config.memoryLimit()) {
-            request.setMemoryLimit(config.memoryLimit().value());
+        if (options.memoryLimit()) {
+            request.setMemoryLimit(options.memoryLimit().value());
         }
 
         ExecutionResult executionResult = os_->execute(request.build());

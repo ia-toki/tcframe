@@ -1,6 +1,6 @@
 #include "gmock/gmock.h"
 
-#include "tcframe/runner.hpp"
+#include "tcframe/spec/core.hpp"
 
 using ::testing::Eq;
 using ::testing::StrEq;

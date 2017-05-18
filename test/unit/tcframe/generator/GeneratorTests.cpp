@@ -42,17 +42,17 @@ protected:
             TestGroup(1, {tc1, tc2}),
             TestGroup(2, {tc3})});
 
-    GeneratorConfig config = GeneratorConfigBuilder("foo")
+    GenerationOptions options = GenerationOptionsBuilder("foo")
             .setSeed(42)
             .setSolutionCommand("python Sol.py")
             .setOutputDir("dir")
             .build();
 
-    GeneratorConfig multipleTestCasesConfig = GeneratorConfigBuilder(config)
+    GenerationOptions multipleTestCasesOptions = GenerationOptionsBuilder(options)
             .setMultipleTestCasesCounter(&T)
             .build();
 
-    GeneratorConfig multipleTestCasesConfigWithOutputPrefix = GeneratorConfigBuilder(multipleTestCasesConfig)
+    GenerationOptions multipleTestCasesOptionsWithOutputPrefix = GenerationOptionsBuilder(multipleTestCasesOptions)
             .setMultipleTestCasesCounter(&T)
             .setMultipleTestCasesOutputPrefix("Case #%d: ")
             .build();
@@ -75,12 +75,12 @@ TEST_F(GeneratorTests, Generation_Successful) {
         EXPECT_CALL(os, forceMakeDir("dir"));
 
         EXPECT_CALL(logger, logTestGroupIntroduction(TestGroup::SAMPLE_ID));
-        EXPECT_CALL(testCaseGenerator, generate(stc1, config));
-        EXPECT_CALL(testCaseGenerator, generate(stc2, config));
+        EXPECT_CALL(testCaseGenerator, generate(stc1, options));
+        EXPECT_CALL(testCaseGenerator, generate(stc2, options));
 
         EXPECT_CALL(logger, logSuccessfulResult());
     }
-    EXPECT_TRUE(generator.generate(simpleTestSuite, config));
+    EXPECT_TRUE(generator.generate(simpleTestSuite, options));
 }
 
 TEST_F(GeneratorTests, Generation_Successful_MultipleTestGroups) {
@@ -90,7 +90,7 @@ TEST_F(GeneratorTests, Generation_Successful_MultipleTestGroups) {
         EXPECT_CALL(logger, logTestGroupIntroduction(1));
         EXPECT_CALL(logger, logTestGroupIntroduction(2));
     }
-    EXPECT_TRUE(generator.generate(testSuite, config));
+    EXPECT_TRUE(generator.generate(testSuite, options));
 }
 
 TEST_F(GeneratorTests, Generation_Failed) {
@@ -99,7 +99,7 @@ TEST_F(GeneratorTests, Generation_Failed) {
 
     EXPECT_CALL(logger, logFailedResult());
 
-    EXPECT_FALSE(generator.generate(simpleTestSuite, config));
+    EXPECT_FALSE(generator.generate(simpleTestSuite, options));
 }
 
 TEST_F(GeneratorTests, Generation_MultipleTestCases_Successful) {
@@ -109,15 +109,15 @@ TEST_F(GeneratorTests, Generation_MultipleTestCases_Successful) {
         EXPECT_CALL(os, forceMakeDir("dir"));
 
         EXPECT_CALL(logger, logTestGroupIntroduction(TestGroup::SAMPLE_ID));
-        EXPECT_CALL(testCaseGenerator, generate(stc1, multipleTestCasesConfig));
-        EXPECT_CALL(testCaseGenerator, generate(stc2, multipleTestCasesConfig));
+        EXPECT_CALL(testCaseGenerator, generate(stc1, multipleTestCasesOptions));
+        EXPECT_CALL(testCaseGenerator, generate(stc2, multipleTestCasesOptions));
         EXPECT_CALL(logger, logMultipleTestCasesCombinationIntroduction("foo_sample"));
         EXPECT_CALL(verifier, verifyMultipleTestCasesConstraints());
         EXPECT_CALL(logger, logMultipleTestCasesCombinationSuccessfulResult());
 
         EXPECT_CALL(logger, logSuccessfulResult());
     }
-    EXPECT_TRUE(generator.generate(simpleTestSuite, multipleTestCasesConfig));
+    EXPECT_TRUE(generator.generate(simpleTestSuite, multipleTestCasesOptions));
     EXPECT_THAT(T, Eq(2));
 }
 
@@ -131,7 +131,7 @@ TEST_F(GeneratorTests, Generation_MultipleTestCases_Successful_MultipleTestGroup
         EXPECT_CALL(logger, logTestGroupIntroduction(2));
         EXPECT_CALL(logger, logMultipleTestCasesCombinationIntroduction("foo_2"));
     }
-    EXPECT_TRUE(generator.generate(testSuite, multipleTestCasesConfig));
+    EXPECT_TRUE(generator.generate(testSuite, multipleTestCasesOptions));
 }
 
 TEST_F(GeneratorTests, Generation_MultipleTestCases_Failed_Verification) {
@@ -145,12 +145,12 @@ TEST_F(GeneratorTests, Generation_MultipleTestCases_Failed_Verification) {
 
         EXPECT_CALL(logger, logFailedResult());
     }
-    EXPECT_FALSE(generator.generate(simpleTestSuite, multipleTestCasesConfig));
+    EXPECT_FALSE(generator.generate(simpleTestSuite, multipleTestCasesOptions));
 }
 
 TEST_F(GeneratorTests, Generation_MultipleTestCases_WithOutputPrefix_Successful) {
     EXPECT_CALL(logger, logSuccessfulResult());
-    EXPECT_TRUE(generator.generate(simpleTestSuite, multipleTestCasesConfigWithOutputPrefix));
+    EXPECT_TRUE(generator.generate(simpleTestSuite, multipleTestCasesOptionsWithOutputPrefix));
     EXPECT_THAT(T, Eq(2));
 }
 

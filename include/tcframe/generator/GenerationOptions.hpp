@@ -14,8 +14,8 @@ using std::tie;
 
 namespace tcframe {
 
-struct GeneratorConfig {
-    friend class GeneratorConfigBuilder;
+struct GenerationOptions {
+    friend class GenerationOptionsBuilder;
 
 private:
     string slug_;
@@ -61,7 +61,7 @@ public:
         return needsOutput_;
     }
 
-    bool operator==(const GeneratorConfig& o) const {
+    bool operator==(const GenerationOptions& o) const {
         return tie(slug_, multipleTestCasesCounter_, multipleTestCasesOutputPrefix_,
                    seed_, solutionCommand_, outputDir_, needsOutput_) ==
                 tie(o.slug_, o.multipleTestCasesCounter_, o.multipleTestCasesOutputPrefix_,
@@ -69,90 +69,90 @@ public:
     }
 };
 
-class GeneratorConfigBuilder {
+class GenerationOptionsBuilder {
 private:
-    GeneratorConfig subject_;
+    GenerationOptions subject_;
 
 public:
-    GeneratorConfigBuilder(const GeneratorConfig& from)
+    GenerationOptionsBuilder(const GenerationOptions& from)
             : subject_(from) {}
 
-    GeneratorConfigBuilder(string slug) {
+    GenerationOptionsBuilder(string slug) {
         subject_.slug_ = slug;
         subject_.multipleTestCasesCounter_ = nullptr;
         subject_.seed_ = CommonConfig::seed();
         subject_.solutionCommand_ = CommonConfig::solutionCommand();
         subject_.outputDir_ = CommonConfig::outputDir();
-        subject_.needsOutput_ = CommonConfig::needsOutput();
+        subject_.needsOutput_ = true;
     }
 
-    GeneratorConfigBuilder& setMultipleTestCasesCounter(optional<int*> counter) {
+    GenerationOptionsBuilder& setMultipleTestCasesCounter(optional<int*> counter) {
         if (counter) {
             setMultipleTestCasesCounter(counter.value());
         }
         return *this;
     }
 
-    GeneratorConfigBuilder& setMultipleTestCasesCounter(int* counter) {
+    GenerationOptionsBuilder& setMultipleTestCasesCounter(int* counter) {
         subject_.multipleTestCasesCounter_ = counter;
         return *this;
     }
 
-    GeneratorConfigBuilder& setMultipleTestCasesOutputPrefix(optional<string> outputPrefix) {
+    GenerationOptionsBuilder& setMultipleTestCasesOutputPrefix(optional<string> outputPrefix) {
         if (outputPrefix) {
             setMultipleTestCasesOutputPrefix(outputPrefix.value());
         }
         return *this;
     }
 
-    GeneratorConfigBuilder& setMultipleTestCasesOutputPrefix(string outputPrefix) {
+    GenerationOptionsBuilder& setMultipleTestCasesOutputPrefix(string outputPrefix) {
         subject_.multipleTestCasesOutputPrefix_ = outputPrefix;
         subject_.multipleTestCasesFirstOutputPrefix_ = StringUtils::interpolate(outputPrefix, 1);
         return *this;
     }
 
-    GeneratorConfigBuilder& setSeed(optional<unsigned> seed) {
+    GenerationOptionsBuilder& setSeed(optional<unsigned> seed) {
         if (seed) {
             setSeed(seed.value());
         }
         return *this;
     }
 
-    GeneratorConfigBuilder& setSeed(unsigned seed) {
+    GenerationOptionsBuilder& setSeed(unsigned seed) {
         subject_.seed_ = seed;
         return *this;
     }
 
-    GeneratorConfigBuilder& setSolutionCommand(optional<string> solutionCommand) {
+    GenerationOptionsBuilder& setSolutionCommand(optional<string> solutionCommand) {
         if (solutionCommand) {
             setSolutionCommand(solutionCommand.value());
         }
         return *this;
     }
 
-    GeneratorConfigBuilder& setSolutionCommand(string solutionCommand) {
+    GenerationOptionsBuilder& setSolutionCommand(string solutionCommand) {
         subject_.solutionCommand_ = solutionCommand;
         return *this;
     }
 
-    GeneratorConfigBuilder& setOutputDir(optional<string> outputDir) {
+    GenerationOptionsBuilder& setOutputDir(optional<string> outputDir) {
         if (outputDir) {
             setOutputDir(outputDir.value());
         }
         return *this;
     }
 
-    GeneratorConfigBuilder& setOutputDir(string outputDir) {
+    GenerationOptionsBuilder& setOutputDir(string outputDir) {
         subject_.outputDir_ = outputDir;
         return *this;
     }
 
-    GeneratorConfigBuilder& setNeedsOutput(bool needsOutput) {
+    GenerationOptionsBuilder& setNeedsOutput(bool needsOutput) {
         subject_.needsOutput_ = needsOutput;
         return *this;
     }
 
-    GeneratorConfig build() {
+    GenerationOptions build() {
         return move(subject_);
     }
 };

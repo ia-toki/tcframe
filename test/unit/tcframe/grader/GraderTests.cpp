@@ -69,12 +69,12 @@ protected:
             {Subtask(Subtask::MAIN_ID, {}), Subtask(1, {}), Subtask(2, {})},
             {});
 
-    GraderConfig config = GraderConfigBuilder("foo")
+    GradingOptions options = GradingOptionsBuilder("foo")
             .setSolutionCommand("python Sol.py")
             .setOutputDir("dir")
             .build();
 
-    GraderConfig multipleTestCasesConfig = GraderConfigBuilder(config)
+    GradingOptions multipleTestCasesConfig = GradingOptionsBuilder(options)
             .setHasMultipleTestCases(true)
             .build();
 
@@ -100,11 +100,11 @@ TEST_F(GraderTests, Grading) {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction("python Sol.py"));
         EXPECT_CALL(logger, logTestGroupIntroduction(TestGroup::SAMPLE_ID));
-        EXPECT_CALL(testCaseGrader, grade(stcA, config));
-        EXPECT_CALL(testCaseGrader, grade(stcB, config));
+        EXPECT_CALL(testCaseGrader, grade(stcA, options));
+        EXPECT_CALL(testCaseGrader, grade(stcB, options));
         EXPECT_CALL(logger, logTestGroupIntroduction(TestGroup::MAIN_ID));
-        EXPECT_CALL(testCaseGrader, grade(tcA, config));
-        EXPECT_CALL(testCaseGrader, grade(tcB, config));
+        EXPECT_CALL(testCaseGrader, grade(tcA, options));
+        EXPECT_CALL(testCaseGrader, grade(tcB, options));
 
         EXPECT_CALL(aggregator, aggregate(vector<Verdict>{tcAVerdict, tcBVerdict}, Subtask::MAIN_POINTS))
                 .WillOnce(Return(mainSubtaskVerdict));
@@ -113,7 +113,7 @@ TEST_F(GraderTests, Grading) {
                 map<int, Verdict>{{Subtask::MAIN_ID, mainSubtaskVerdict}},
                 mainSubtaskVerdict));
     }
-    grader.grade(testSuite, constraintSuite, config);
+    grader.grade(testSuite, constraintSuite, options);
 }
 
 TEST_F(GraderTests, Grading_WithSubtasks) {
@@ -121,13 +121,13 @@ TEST_F(GraderTests, Grading_WithSubtasks) {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction("python Sol.py"));
         EXPECT_CALL(logger, logTestGroupIntroduction(TestGroup::SAMPLE_ID));
-        EXPECT_CALL(testCaseGrader, grade(stc1, config));
-        EXPECT_CALL(testCaseGrader, grade(stc2, config));
+        EXPECT_CALL(testCaseGrader, grade(stc1, options));
+        EXPECT_CALL(testCaseGrader, grade(stc2, options));
         EXPECT_CALL(logger, logTestGroupIntroduction(1));
-        EXPECT_CALL(testCaseGrader, grade(tc1, config));
-        EXPECT_CALL(testCaseGrader, grade(tc2, config));
+        EXPECT_CALL(testCaseGrader, grade(tc1, options));
+        EXPECT_CALL(testCaseGrader, grade(tc2, options));
         EXPECT_CALL(logger, logTestGroupIntroduction(2));
-        EXPECT_CALL(testCaseGrader, grade(tc3, config));
+        EXPECT_CALL(testCaseGrader, grade(tc3, options));
 
         EXPECT_CALL(aggregator, aggregate(vector<Verdict>{stc1Verdict, tc1Verdict, tc2Verdict}, 40))
                 .WillOnce(Return(subtask1Verdict));
@@ -139,7 +139,7 @@ TEST_F(GraderTests, Grading_WithSubtasks) {
                 map<int, Verdict>{{1, subtask1Verdict}, {2, subtask2Verdict}},
                 verdict));
     }
-    grader.grade(testSuiteWithSubtasks, constraintSuiteWithSubtasks, config);
+    grader.grade(testSuiteWithSubtasks, constraintSuiteWithSubtasks, options);
 }
 
 TEST_F(GraderTests, Grading_WithSubtasks_WithGlobalConstraints) {
@@ -153,7 +153,7 @@ TEST_F(GraderTests, Grading_WithSubtasks_WithGlobalConstraints) {
                 map<int, Verdict>{{1, subtask1Verdict}, {2, subtask2Verdict}},
                 verdict));
     }
-    grader.grade(testSuiteWithSubtasks, constraintSuiteWithSubtasksWithGlobalConstraints, config);
+    grader.grade(testSuiteWithSubtasks, constraintSuiteWithSubtasksWithGlobalConstraints, options);
 }
 
 TEST_F(GraderTests, Grading_WithSubtasks_MultipleTestCases) {

@@ -7,7 +7,7 @@
 #include <type_traits>
 
 #include "GenerationException.hpp"
-#include "GeneratorConfig.hpp"
+#include "GenerationOptions.hpp"
 #include "GeneratorLogger.hpp"
 #include "tcframe/evaluator.hpp"
 #include "tcframe/io_manipulator.hpp"
@@ -47,17 +47,17 @@ public:
             , evaluator_(evaluator)
             , logger_(logger) {}
 
-    virtual bool generate(const TestCase& testCase, const GeneratorConfig& config) {
+    virtual bool generate(const TestCase& testCase, const GenerationOptions& options) {
         logger_->logTestCaseIntroduction(testCase.name());
 
-        string inputFilename = config.outputDir() + "/" + testCase.name() + ".in";
-        string outputFilename = config.outputDir() + "/" + testCase.name() + ".out";
+        string inputFilename = options.outputDir() + "/" + testCase.name() + ".in";
+        string outputFilename = options.outputDir() + "/" + testCase.name() + ".out";
 
         try {
             applyInput(testCase);
             verifyInput(testCase);
-            generateInput(testCase, inputFilename, config);
-            generateAndApplyOutput(testCase, inputFilename, outputFilename, config);
+            generateInput(testCase, inputFilename, options);
+            generateAndApplyOutput(testCase, inputFilename, outputFilename, options);
         } catch (GenerationException& e) {
             logger_->logTestCaseFailedResult(testCase.description());
             e.callback()();
@@ -91,9 +91,9 @@ private:
         }
     }
 
-    void generateInput(const TestCase& testCase, const string& inputFilename, const GeneratorConfig& config) {
+    void generateInput(const TestCase& testCase, const string& inputFilename, const GenerationOptions& options) {
         ostream* input = os_->openForWriting(inputFilename);
-        modifyInputForMultipleTestCases(input, config);
+        modifyInputForMultipleTestCases(input, options);
 
         if (testCase.data()->type() == TestCaseDataType::SAMPLE) {
             SampleTestCaseData* data = (SampleTestCaseData*) testCase.data();
@@ -108,21 +108,21 @@ private:
             const TestCase& testCase,
             const string& inputFilename,
             const string& outputFilename,
-            const GeneratorConfig& config) {
+            const GenerationOptions& options) {
 
         optional<string> maybeSampleOutputString = getSampleOutputString(testCase);
-        if (!config.needsOutput()) {
+        if (!options.needsOutput()) {
             if (maybeSampleOutputString) {
                 throw GenerationException([=] { logger_->logSampleTestCaseNoOutputNeededFailure(); });
             }
             return;
         }
 
-        EvaluatorConfig evaluatorConfig = EvaluatorConfigBuilder()
-                .setSolutionCommand(config.solutionCommand())
+        EvaluationOptions evaluationConfig = EvaluationOptionsBuilder()
+                .setSolutionCommand(options.solutionCommand())
                 .build();
 
-        GenerationResult generationResult = evaluator_->generate(inputFilename, outputFilename, evaluatorConfig);
+        GenerationResult generationResult = evaluator_->generate(inputFilename, outputFilename, evaluationConfig);
         if (!generationResult.executionResult().isSuccessful()) {
             throw GenerationException([=] {
                 logger_->logExecutionResults({{"solution", generationResult.executionResult()}});
@@ -130,11 +130,11 @@ private:
         }
 
         if (maybeSampleOutputString) {
-            checkSampleOutput(maybeSampleOutputString.value(), inputFilename, outputFilename, config);
+            checkSampleOutput(maybeSampleOutputString.value(), inputFilename, outputFilename, options);
         }
 
         istream* output = os_->openForReading(outputFilename);
-        modifyOutputForMultipleTestCases(output, config);
+        modifyOutputForMultipleTestCases(output, options);
         ioManipulator_->parseOutput(output);
         os_->closeOpenedStream(output);
     }
@@ -146,23 +146,23 @@ private:
         return ((SampleTestCaseData*) testCase.data())->output();
     }
 
-    void modifyInputForMultipleTestCases(ostream* input, const GeneratorConfig& config) {
-        if (config.multipleTestCasesCounter() != nullptr) {
+    void modifyInputForMultipleTestCases(ostream* input, const GenerationOptions& options) {
+        if (options.multipleTestCasesCounter() != nullptr) {
             int testCaseId = 1;
             *input << testCaseId << endl;
         }
     }
 
-    void modifySampleOutputStringForMultipleTestCases(string& outputString, const GeneratorConfig& config) {
-        if (config.multipleTestCasesCounter() != nullptr && config.multipleTestCasesFirstOutputPrefix()) {
-            outputString = config.multipleTestCasesFirstOutputPrefix().value() + outputString;
+    void modifySampleOutputStringForMultipleTestCases(string& outputString, const GenerationOptions& options) {
+        if (options.multipleTestCasesCounter() != nullptr && options.multipleTestCasesFirstOutputPrefix()) {
+            outputString = options.multipleTestCasesFirstOutputPrefix().value() + outputString;
         }
     }
 
-    void modifyOutputForMultipleTestCases(istream* output, const GeneratorConfig& config) {
-        if (config.multipleTestCasesCounter() != nullptr && config.multipleTestCasesFirstOutputPrefix()) {
-            string prefix = config.multipleTestCasesOutputPrefix().value();
-            string firstPrefix = config.multipleTestCasesFirstOutputPrefix().value();
+    void modifyOutputForMultipleTestCases(istream* output, const GenerationOptions& options) {
+        if (options.multipleTestCasesCounter() != nullptr && options.multipleTestCasesFirstOutputPrefix()) {
+            string prefix = options.multipleTestCasesOutputPrefix().value();
+            string firstPrefix = options.multipleTestCasesFirstOutputPrefix().value();
             for (char p : firstPrefix) {
                 int c = output->peek();
                 if (c == char_traits<char>::eof() || (char) c != p) {
@@ -177,10 +177,10 @@ private:
             const string& sampleOutputString,
             const string& inputFilename,
             const string& outputFilename,
-            const GeneratorConfig& config) {
+            const GenerationOptions& options) {
 
         string modifiedSampleOutputString = sampleOutputString;
-        modifySampleOutputStringForMultipleTestCases(modifiedSampleOutputString, config);
+        modifySampleOutputStringForMultipleTestCases(modifiedSampleOutputString, options);
 
         ostream* sampleOutput = os_->openForWriting(Evaluator::EVALUATION_OUT_FILENAME);
         *sampleOutput << modifiedSampleOutputString;

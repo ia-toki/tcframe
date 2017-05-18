@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "GraderConfig.hpp"
+#include "GradingOptions.hpp"
 #include "GraderLogger.hpp"
 #include "TestCaseGrader.hpp"
 #include "tcframe/aggregator.hpp"
@@ -37,12 +37,15 @@ public:
             , aggregator_(aggregator)
             , logger_(logger) {}
 
-    virtual void grade(const TestSuite& testSuite, const ConstraintSuite& constraintSuite, const GraderConfig& config) {
-        logger_->logIntroduction(config.solutionCommand());
+    virtual void grade(
+            const TestSuite& testSuite,
+            const ConstraintSuite& constraintSuite,
+            const GradingOptions& options) {
+        logger_->logIntroduction(options.solutionCommand());
 
         map<int, vector<Verdict>> verdictsBySubtaskId;
         for (const TestGroup& testGroup : testSuite.testGroups()) {
-            gradeTestGroup(testGroup, config, verdictsBySubtaskId);
+            gradeTestGroup(testGroup, options, verdictsBySubtaskId);
         }
 
         map<int, Subtask> subtasksById = getSubtasksToGrade(constraintSuite);
@@ -81,30 +84,30 @@ private:
 
     void gradeTestGroup(
             const TestGroup& testGroup,
-            const GraderConfig& config,
+            const GradingOptions& options,
             map<int, vector<Verdict>>& verdictsBySubtaskId) {
 
         logger_->logTestGroupIntroduction(testGroup.id());
 
-        if (config.hasMultipleTestCases()) {
+        if (options.hasMultipleTestCases()) {
             TestCase testCase = TestCaseBuilder()
-                    .setName(TestGroup::createName(config.slug(), testGroup.id()))
+                    .setName(TestGroup::createName(options.slug(), testGroup.id()))
                     .setSubtaskIds(testGroup.testCases()[0].subtaskIds())
                     .build();
-            gradeTestCase(testCase, config, verdictsBySubtaskId);
+            gradeTestCase(testCase, options, verdictsBySubtaskId);
         } else {
             for (const TestCase& testCase : testGroup.testCases()) {
-                gradeTestCase(testCase, config, verdictsBySubtaskId);
+                gradeTestCase(testCase, options, verdictsBySubtaskId);
             }
         }
     }
 
     void gradeTestCase(
             const TestCase& testCase,
-            const GraderConfig& config,
+            const GradingOptions& options,
             map<int, vector<Verdict>>& verdictsBySubtaskId) {
 
-        Verdict verdict = testCaseGrader_->grade(testCase, config);
+        Verdict verdict = testCaseGrader_->grade(testCase, options);
         for (int subtaskId : testCase.subtaskIds()) {
             verdictsBySubtaskId[subtaskId].push_back(verdict);
         }

@@ -26,7 +26,7 @@ protected:
     MOCK(VerdictCreator) verdictCreator;
     MOCK(Scorer) scorer;
 
-    EvaluatorConfig config = EvaluatorConfigBuilder()
+    EvaluationOptions options = EvaluationOptionsBuilder()
             .setSolutionCommand("python Sol.py")
             .setTimeLimit(3)
             .setMemoryLimit(128)
@@ -58,7 +58,7 @@ TEST_F(BatchEvaluatorTests, Evaluation_AC) {
         EXPECT_CALL(scorer, score("dir/foo_1.in", "dir/foo_1.out", Evaluator::EVALUATION_OUT_FILENAME));
     }
 
-    EXPECT_THAT(evaluator.evaluate("dir/foo_1.in", "dir/foo_1.out", config), Eq(EvaluationResult(
+    EXPECT_THAT(evaluator.evaluate("dir/foo_1.in", "dir/foo_1.out", options), Eq(EvaluationResult(
             Verdict(VerdictStatus::ac()),
             {{"solution", ExecutionResult()}, {"scorer", ExecutionResult()}})));
 }
@@ -72,7 +72,7 @@ TEST_F(BatchEvaluatorTests, Evaluation_FromScorer) {
         EXPECT_CALL(scorer, score(_, _, _));
     }
 
-    EXPECT_THAT(evaluator.evaluate("dir/foo_1.in", "dir/foo_1.out", config), Eq(EvaluationResult(
+    EXPECT_THAT(evaluator.evaluate("dir/foo_1.in", "dir/foo_1.out", options), Eq(EvaluationResult(
             Verdict(VerdictStatus::wa()),
             {{"solution", ExecutionResult()}, {"scorer", ExecutionResult()}})));
 }
@@ -86,7 +86,7 @@ TEST_F(BatchEvaluatorTests, Evaluation_FromSolution) {
         EXPECT_CALL(scorer, score(_, _, _)).Times(0);
     }
 
-    EXPECT_THAT(evaluator.evaluate("dir/foo_1.in", "dir/foo_1.out", config), Eq(EvaluationResult(
+    EXPECT_THAT(evaluator.evaluate("dir/foo_1.in", "dir/foo_1.out", options), Eq(EvaluationResult(
             Verdict(VerdictStatus::rte()),
             {{"solution", ExecutionResult()}})));
 }

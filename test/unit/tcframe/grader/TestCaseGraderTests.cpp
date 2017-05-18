@@ -21,13 +21,13 @@ protected:
 
     TestCase testCase = TestUtils::newTestCase("foo_1");
 
-    GraderConfig config = GraderConfigBuilder("foo")
+    GradingOptions options = GradingOptionsBuilder("foo")
             .setSolutionCommand("python Sol.py")
             .setOutputDir("dir")
             .setTimeLimit(3)
             .setMemoryLimit(128)
             .build();
-    EvaluatorConfig evaluatorConfig = EvaluatorConfigBuilder()
+    EvaluationOptions evaluationOptions = EvaluationOptionsBuilder()
             .setSolutionCommand("python Sol.py")
             .setTimeLimit(3)
             .setMemoryLimit(128)
@@ -44,11 +44,11 @@ TEST_F(TestCaseGraderTests, Grading_AC) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
-        EXPECT_CALL(evaluator, evaluate("dir/foo_1.in", "dir/foo_1.out", evaluatorConfig));
+        EXPECT_CALL(evaluator, evaluate("dir/foo_1.in", "dir/foo_1.out", evaluationOptions));
         EXPECT_CALL(logger, logTestCaseVerdict(verdict));
         EXPECT_CALL(logger, logExecutionResults(executionResults));
     }
-    EXPECT_THAT(grader.grade(testCase, config), Eq(verdict));
+    EXPECT_THAT(grader.grade(testCase, options), Eq(verdict));
 }
 
 TEST_F(TestCaseGraderTests, Grading_TLE) {
@@ -64,7 +64,7 @@ TEST_F(TestCaseGraderTests, Grading_TLE) {
         EXPECT_CALL(logger, logTestCaseVerdict(verdict));
         EXPECT_CALL(logger, logExecutionResults(_)).Times(0);
     }
-    EXPECT_THAT(grader.grade(testCase, config), Eq(verdict));
+    EXPECT_THAT(grader.grade(testCase, options), Eq(verdict));
 }
 
 

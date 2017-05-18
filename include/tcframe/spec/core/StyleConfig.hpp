@@ -39,8 +39,8 @@ public:
     virtual ~StyleConfigBuilder() {}
 
     StyleConfigBuilder() {
-        subject_.needsOutput_ = CommonConfig::needsOutput();
-        subject_.needsCustomScorer_ = CommonConfig::needsCustomScorer();
+        subject_.needsOutput_ = true;
+        subject_.needsCustomScorer_ = false;
     }
 
     StyleConfigBuilder& CustomScorer() {

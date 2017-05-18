@@ -44,15 +44,16 @@ include_directories(include)
 set(INCLUDE
         include/tcframe/aggregator.hpp
         include/tcframe/aggregator/Aggregator.hpp
-        include/tcframe/aggregator/AggregatorFactory.hpp
+        include/tcframe/aggregator/AggregatorRegistry.hpp
         include/tcframe/aggregator/MinAggregator.hpp
         include/tcframe/aggregator/SumAggregator.hpp
         include/tcframe/evaluator.hpp
         include/tcframe/evaluator/BatchEvaluator.hpp
-        include/tcframe/evaluator/Evaluator.hpp
+        include/tcframe/evaluator/EvaluationOptions.hpp
         include/tcframe/evaluator/EvaluationResult.hpp
-        include/tcframe/evaluator/EvaluatorConfig.hpp
-        include/tcframe/evaluator/EvaluatorFactory.hpp
+        include/tcframe/evaluator/Evaluator.hpp
+        include/tcframe/evaluator/EvaluatorHelperRegistry.hpp
+        include/tcframe/evaluator/EvaluatorRegistry.hpp
         include/tcframe/evaluator/GenerationResult.hpp
         include/tcframe/evaluator/scorer.hpp
         include/tcframe/evaluator/scorer/CustomScorer.hpp
@@ -61,14 +62,14 @@ set(INCLUDE
         include/tcframe/evaluator/scorer/ScoringResult.hpp
         include/tcframe/generator.hpp
         include/tcframe/generator/GenerationException.hpp
+        include/tcframe/generator/GenerationOptions.hpp
         include/tcframe/generator/Generator.hpp
-        include/tcframe/generator/GeneratorConfig.hpp
         include/tcframe/generator/GeneratorLogger.hpp
         include/tcframe/generator/TestCaseGenerator.hpp
         include/tcframe/grader.hpp
         include/tcframe/grader/Grader.hpp
-        include/tcframe/grader/GraderConfig.hpp
         include/tcframe/grader/GraderLogger.hpp
+        include/tcframe/grader/GradingOptions.hpp
         include/tcframe/grader/TestCaseGrader.hpp
         include/tcframe/io_manipulator.hpp
         include/tcframe/io_manipulator/GridIOSegmentManipulator.hpp
@@ -98,7 +99,6 @@ set(INCLUDE
         include/tcframe/spec/constraint/Constraint.hpp
         include/tcframe/spec/constraint/ConstraintSuite.hpp
         include/tcframe/spec/constraint/Subtask.hpp
-        include/tcframe/spec/Spec.hpp
         include/tcframe/spec/core.hpp
         include/tcframe/spec/core/BaseTestSpec.hpp
         include/tcframe/spec/core/BaseProblemSpec.hpp
@@ -107,6 +107,7 @@ set(INCLUDE
         include/tcframe/spec/core/Magic.hpp
         include/tcframe/spec/core/MultipleTestCasesConfig.hpp
         include/tcframe/spec/core/SeedSetter.hpp
+        include/tcframe/spec/core/Spec.hpp
         include/tcframe/spec/core/StyleConfig.hpp
         include/tcframe/spec/io.hpp
         include/tcframe/spec/io/GridIOSegment.hpp
@@ -151,9 +152,11 @@ set(TEST_UNIT
         test/unit/tcframe/mock.hpp
         test/unit/tcframe/aggregator/MinAggregatorTests.cpp
         test/unit/tcframe/aggregator/MockAggregator.hpp
+        test/unit/tcframe/aggregator/MockAggregatorRegistry.hpp
         test/unit/tcframe/aggregator/SumAggregatorTests.cpp
         test/unit/tcframe/evaluator/BatchEvaluatorTests.cpp
         test/unit/tcframe/evaluator/MockEvaluator.hpp
+        test/unit/tcframe/evaluator/MockEvaluatorRegistry.hpp
         test/unit/tcframe/evaluator/scorer/MockScorer.hpp
         test/unit/tcframe/generator/GeneratorLoggerTests.cpp
         test/unit/tcframe/generator/GeneratorTests.cpp

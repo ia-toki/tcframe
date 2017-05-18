@@ -11,25 +11,16 @@
 using tcframe::Runner;
 
 int main(int argc, char* argv[]) {
-    auto testSpec = new TestSpec();
-    auto loggerEngine = new SimpleLoggerEngine();
-    auto os = new UnixOperatingSystem();
-    auto runnerLoggerFactory = new RunnerLoggerFactory();
-    auto evaluatorFactory = new EvaluatorFactory();
-    auto aggregatorFactory = new AggregatorFactory();
-    auto generatorFactory = new GeneratorFactory();
-    auto graderFactory = new GraderFactory();
-
     Runner<ProblemSpec> runner(
             __TCFRAME_SPEC_FILE__,
-            testSpec,
-            loggerEngine,
-            os,
-            runnerLoggerFactory,
-            evaluatorFactory,
-            aggregatorFactory,
-            generatorFactory,
-            graderFactory);
+            new TestSpec(),
+            new SimpleLoggerEngine(),
+            new UnixOperatingSystem(),
+            new RunnerLoggerFactory(),
+            new GeneratorFactory(),
+            new GraderFactory(),
+            new EvaluatorRegistry(new EvaluatorHelperRegistry()),
+            new AggregatorRegistry());
 
     return runner.run(argc, argv);
 }

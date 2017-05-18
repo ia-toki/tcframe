@@ -11,7 +11,7 @@ public:
     MockGenerator()
             : Generator(nullptr, nullptr, nullptr, nullptr, nullptr) {}
 
-    MOCK_METHOD2(generate, bool(const TestSuite&, const GeneratorConfig&));
+    MOCK_METHOD2(generate, bool(const TestSuite&, const GenerationOptions&));
 };
 
 class MockGeneratorFactory : public GeneratorFactory {

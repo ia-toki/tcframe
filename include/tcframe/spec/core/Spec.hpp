@@ -1,7 +1,11 @@
 #pragma once
 
+#include "GradingConfig.hpp"
+#include "MultipleTestCasesConfig.hpp"
+#include "SeedSetter.hpp"
+#include "StyleConfig.hpp"
 #include "tcframe/spec/constraint.hpp"
-#include "tcframe/spec/core.hpp"
+#include "tcframe/spec/constraint.hpp"
 #include "tcframe/spec/io.hpp"
 #include "tcframe/spec/testcase.hpp"
 
