@@ -60,6 +60,38 @@ Thus, the above example can be implemented as:
 
 ----
 
+Global constraints
+------------------
+
+It is possible to specify a set of constraints that apply to every subtask, via the ``Constraints()`` method. For example, we can extract common constraints in the above example as follows:
+
+.. sourcecode:: cpp
+
+    void Constraints() {
+        CONS(1 <= N && N <= 100);
+        CONS(1 <= K && K <= 100);
+    }
+
+    void Subtask1() {
+        Points(20);
+
+        CONS(N == 1);
+    }
+
+    void Subtask2() {
+        Points(20);
+
+        CONS(K == 1);
+    }
+
+    void Subtask3() {
+        Points(60);
+
+        // no additional constraints
+    }
+
+----
+
 Test groups
 -----------
 
