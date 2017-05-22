@@ -19,11 +19,11 @@ Then, you can "grade" a solution, by executing:
 
 where ``<solution-command>`` is the command for executing the solution. If it is omitted, the default is ``./solution``.
 
-For example, suppose you have written a problem package for a problem. Your friend also has written an alternate solution to the problem, and he wants to check whether his solution agrees with yours. Let's assume that his solution file is ``alt_solution.cpp``. Compile it into ``alt_solution``, place it in the problem package, and then run
+For example, suppose you have written a problem package for a problem. Your friend also has written an alternate solution to the problem, and he wants to check whether his solution agrees with yours. Let's assume that his solution file is ``solution_alt.cpp``. Compile it into ``solution_alt``, place it in the problem package, and then run
 
 ::
 
-    ./runner grade --solution=./alt_solution
+    ./runner grade --solution=./solution_alt
 
 The verdict of each test case will be shown. The verdict will be one of the following:
 
@@ -48,7 +48,7 @@ Here is a sample output of a local grading for problems with subtasks.
 
 .. sourcecode:: bash
 
-    Local grading with solution command: './alt_solution'...
+    Local grading with solution command: './solution_alt'...
 
     [ SAMPLE TEST CASES ]
       k-product_sample_1: Accepted
@@ -90,7 +90,7 @@ and here is for problems without subtasks
 
 .. sourcecode:: bash
 
-    Local grading with solution command: './alt_solution'...
+    Local grading with solution command: './solution_alt'...
 
     [ SAMPLE TEST CASES ]
       k-product_sample_1: Accepted
