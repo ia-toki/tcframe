@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iomanip>
 #include <istream>
 #include <set>
 #include <sstream>
@@ -9,11 +10,13 @@
 
 #include "optional.hpp"
 
+using std::fixed;
 using std::istream;
 using std::istreambuf_iterator;
 using std::istringstream;
 using std::ostringstream;
 using std::set;
+using std::setprecision;
 using std::string;
 using std::vector;
 
@@ -27,6 +30,13 @@ public:
     static string toString(T obj) {
         ostringstream out;
         out << obj;
+        return out.str();
+    }
+
+    template<typename T>
+    static string toString(T obj, int precision) {
+        ostringstream out;
+        out << fixed << setprecision(2) << obj;
         return out.str();
     }
 

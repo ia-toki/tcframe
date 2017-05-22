@@ -31,23 +31,29 @@ In this type type of problem, you won't be writing a ``Constraints()`` method. I
 Subtask definitions
 -------------------
 
-A subtask is basically just a set of constraints. It can be specified by the method ``SubtaskX()``, where ``X`` is the subtask number. Inside the method, the constraint specifications are given, similar to what you usually do in the ``Constraints()`` method.
+A subtask is basically just a set of constraints. It can be specified by the method ``SubtaskX()``, where ``X`` is the subtask number. Inside the method, the constraint specifications are given, similar to what you usually do in the ``Constraints()`` method. Points for each subtask can be given using ``Points()`` method, that takes a floating-point number argument as the points.
 
 Thus, the above example can be implemented as:
 
 .. sourcecode:: cpp
 
     void Subtask1() {
+        Points(20);
+
         CONS(N == 1);
         CONS(1 <= K && K <= 100);
     }
 
     void Subtask2() {
+        Points(20);
+
         CONS(1 <= N && N <= 100);
         CONS(K == 1);
     }
 
     void Subtask3() {
+        Points(60);
+
         CONS(1 <= N && N <= 100);
         CONS(1 <= K && K <= 100);
     }
@@ -58,10 +64,3 @@ Test groups
 -----------
 
 If your problem has subtasks, you will be writing :ref:`test groups <test-groups>`, not test cases.
-
-----
-
-Notes
------
-
-Currently, **tcframe** does not provide a way to specify subtask points. It is up to the grader to implement the scoring.

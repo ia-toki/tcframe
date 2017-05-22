@@ -9,7 +9,7 @@ namespace tcframe {
 
 class MockAggregator : public Aggregator {
 public:
-    MOCK_METHOD1(aggregate, Verdict(const vector<Verdict>&));
+    MOCK_METHOD2(aggregate, Verdict(const vector<Verdict>&, double));
 };
 
 class MockAggregatorFactory : public AggregatorFactory {

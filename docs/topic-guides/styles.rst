@@ -28,8 +28,15 @@ The custom scorer will receive the following arguments:
 
 The custom scorer must print the test case verdict to the standard output, which is a line consisting of either:
 
-- ``AC``: indicates that the contestant's output is correct
-- ``WA``: indicates that the contestant's output is incorrect
+- ``AC``: indicates that the contestant's output is correct. It will be given 100 / (number of test cases in its subtask) points.
+- ``WA``: indicates that the contestant's output is incorrect. It will be given 0 points.
+- ``OK``: indicates that the contestant's output is partially correct. The second line must contain a floating-point number denoting the points. For example:
+
+  ::
+
+      OK
+      9
+
 
 The custom scorer must be compiled prior test cases generation/local grading, and the execution command should be passed to the runner program as the ``--scorer`` option. For example:
 

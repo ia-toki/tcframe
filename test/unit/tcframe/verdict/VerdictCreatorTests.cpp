@@ -17,15 +17,41 @@ protected:
     VerdictCreator verdictCreator;
 };
 
-TEST_F(VerdictCreatorTests, FromStream_Successful_AC) {
+TEST_F(VerdictCreatorTests, FromStream_AC) {
     EXPECT_THAT(verdictCreator.fromStream(new istringstream("AC\n")), Eq(Verdict(VerdictStatus::ac())));
 }
 
-TEST_F(VerdictCreatorTests, FromStream_Successful_WA) {
+TEST_F(VerdictCreatorTests, FromStream_WA) {
     EXPECT_THAT(verdictCreator.fromStream(new istringstream("WA\n")), Eq(Verdict(VerdictStatus::wa())));
 }
 
-TEST_F(VerdictCreatorTests, FromStream_Failed_Empty) {
+TEST_F(VerdictCreatorTests, FromStream_OK) {
+    EXPECT_THAT(verdictCreator.fromStream(new istringstream("OK\n70\n")), Eq(Verdict(VerdictStatus::ok(), 70)));
+}
+
+TEST_F(VerdictCreatorTests, FromStream_OK_WithFeedback) {
+    EXPECT_THAT(verdictCreator.fromStream(new istringstream("OK\n70 text\n")), Eq(Verdict(VerdictStatus::ok(), 70)));
+}
+
+TEST_F(VerdictCreatorTests, FromStream_OK_Failed_EmptySecondLine) {
+    try {
+        verdictCreator.fromStream(new istringstream("OK\n"));
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Expected: <points> on the second line"));
+    }
+}
+
+TEST_F(VerdictCreatorTests, FromStream_OK_Failed_UnknownPointsFormat) {
+    try {
+        verdictCreator.fromStream(new istringstream("OK\nabc\n"));
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Unknown points format: abc"));
+    }
+}
+
+TEST_F(VerdictCreatorTests, FromStream_Empty) {
     try {
         verdictCreator.fromStream(new istringstream(""));
         FAIL();
@@ -34,7 +60,7 @@ TEST_F(VerdictCreatorTests, FromStream_Failed_Empty) {
     }
 }
 
-TEST_F(VerdictCreatorTests, FromStream_Failed_UnknownVerdict) {
+TEST_F(VerdictCreatorTests, FromStream_UnknownVerdict) {
     try {
         verdictCreator.fromStream(new istringstream("hokus pokus"));
         FAIL();

@@ -62,8 +62,9 @@ private:
 
     bool hasCurrentSubtask_;
     int curSubtaskId_;
+    double curPoints_;
     bool isInMultipleTestCasesConstraints_;
-    vector<Constraint> curConstraints;
+    vector<Constraint> curConstraints_;
 
 public:
     virtual ~ConstraintSuiteBuilder() {}
@@ -71,6 +72,7 @@ public:
     ConstraintSuiteBuilder()
             : hasCurrentSubtask_(false)
             , curSubtaskId_(Subtask::MAIN_ID)
+            , curPoints_(0)
             , isInMultipleTestCasesConstraints_(false) {}
 
     ConstraintSuiteBuilder& newSubtask() {
@@ -82,8 +84,14 @@ public:
 
         hasCurrentSubtask_ = true;
         curSubtaskId_++;
-        curConstraints.clear();
+        curConstraints_.clear();
+        curPoints_ = 0;
 
+        return *this;
+    }
+
+    ConstraintSuiteBuilder& Points(double points) {
+        curPoints_ = points;
         return *this;
     }
 
@@ -96,21 +104,30 @@ public:
         if (isInMultipleTestCasesConstraints_) {
             subject_.multipleTestCasesConstraints_.push_back(Constraint(predicate, description));
         } else {
-            curConstraints.push_back(Constraint(predicate, description));
+            curConstraints_.push_back(Constraint(predicate, description));
         }
         return *this;
     }
 
     ConstraintSuite build() {
-        if (subject_.constraints_.empty() || !curConstraints.empty()) {
+        if (subject_.constraints_.empty() || !curConstraints_.empty()) {
             addCurrentSubtask();
+        }
+        if (subject_.constraints_.size() == 1) {
+            assignMainSubtaskPoints();
         }
         return move(subject_);
     }
 
 private:
     void addCurrentSubtask() {
-        subject_.constraints_.push_back(Subtask(curSubtaskId_, curConstraints));
+        subject_.constraints_.push_back(Subtask(curSubtaskId_, curPoints_, curConstraints_));
+    }
+
+    void assignMainSubtaskPoints() {
+        Subtask mainSubtask = subject_.constraints_.back();
+        subject_.constraints_.pop_back();
+        subject_.constraints_.push_back(Subtask(Subtask::MAIN_ID, Subtask::MAIN_POINTS, mainSubtask.constraints()));
     }
 };
 

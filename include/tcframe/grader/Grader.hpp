@@ -54,7 +54,7 @@ public:
             const vector<Verdict>& verdicts = entry.second;
 
             if (subtasksById.count(subtaskId)) {
-                Verdict subtaskVerdict = aggregator_->aggregate(verdicts);
+                Verdict subtaskVerdict = aggregator_->aggregate(verdicts, subtasksById[subtaskId].points());
                 subtaskVerdictsById[subtaskId] = subtaskVerdict;
                 subtaskVerdicts.push_back(subtaskVerdict);
             }
@@ -112,10 +112,12 @@ private:
 
     Verdict aggregate(const vector<Verdict>& subtaskVerdicts) {
         VerdictStatus aggregatedStatus = VerdictStatus::ac();
+        double aggregatedPoints = 0;
         for (const Verdict& verdict : subtaskVerdicts) {
             aggregatedStatus = max(aggregatedStatus, verdict.status());
+            aggregatedPoints += verdict.points().value();
         }
-        return Verdict(aggregatedStatus);
+        return Verdict(aggregatedStatus, aggregatedPoints);
     }
 };
 

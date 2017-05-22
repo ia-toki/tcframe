@@ -13,10 +13,24 @@ protected:
     SumAggregator aggregator;
 };
 
-TEST_F(SumAggregatorTests, Aggregate) {
-    EXPECT_THAT(aggregator.aggregate({
-            Verdict(VerdictStatus::wa()), Verdict(VerdictStatus::tle()), Verdict(VerdictStatus::rte())}),
-            Eq(Verdict(VerdictStatus::tle())));
+TEST_F(SumAggregatorTests, Aggregate_FullPoints) {
+    vector<Verdict> verdicts = {
+            Verdict(VerdictStatus::ac()),
+            Verdict(VerdictStatus::ac())};
+    EXPECT_THAT(aggregator.aggregate(verdicts, 100), Eq(Verdict(VerdictStatus::ac(), 100)));
+}
+
+TEST_F(SumAggregatorTests, Aggregate_PartialPoints) {
+    vector<Verdict> verdicts = {
+            Verdict(VerdictStatus::ac()),
+            Verdict(VerdictStatus::tle()),
+            Verdict(VerdictStatus::ok(), 30),
+            Verdict(VerdictStatus::wa())};
+    EXPECT_THAT(aggregator.aggregate(verdicts, 100), Eq(Verdict(VerdictStatus::tle(), 55)));
+}
+
+TEST_F(SumAggregatorTests, Aggregate_EmptyVerdicts) {
+    EXPECT_THAT(aggregator.aggregate(vector<Verdict>(), 100), Eq(Verdict(VerdictStatus::ac(), 100)));
 }
 
 }

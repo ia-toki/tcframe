@@ -10,7 +10,7 @@ namespace tcframe {
 
 class Aggregator {
 public:
-    virtual Verdict aggregate(const vector<Verdict>& verdicts) = 0;
+    virtual Verdict aggregate(const vector<Verdict>& verdicts, double points) = 0;
 };
 
 }

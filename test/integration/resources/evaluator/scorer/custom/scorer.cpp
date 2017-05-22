@@ -1,7 +1,10 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-/* AC if contestant's second line is a permutation of judge's. */
+/*
+ * AC if contestant's second line is a permutation of judge's.
+ * OK 50 if not, but the largest elements are the same.
+ * */
 
 int N;
 
@@ -34,8 +37,14 @@ int main(int argc, char* argv[]) {
 
     tc_in >> N;
 
-    if (read(tc_out) == read(con_out)) {
+    vector<int> ans_judge = read(tc_out);
+    vector<int> ans_con = read(con_out);
+
+    if (ans_judge == ans_con) {
         cout << "AC" << endl;
+    } else if (ans_judge.back() == ans_con.back()) {
+        cout << "OK" << endl;
+        cout << "50" << endl;
     } else {
         cout << "WA" << endl;
     }
