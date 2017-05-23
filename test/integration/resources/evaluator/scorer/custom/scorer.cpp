@@ -3,7 +3,6 @@ using namespace std;
 
 /*
  * AC if contestant's second line is a permutation of judge's.
- * OK 50 if not, but the largest elements are the same.
  * */
 
 int N;
@@ -11,16 +10,6 @@ int N;
 vector<int> read(ifstream& out) {
     string answer;
     out >> answer;
-
-    if (answer == "crash") {
-        // division by zero
-        return vector<int>(1 / (N - 3));
-    }
-    if (answer == "bogus") {
-        // bogus output
-        cout << "bogus" << endl;
-        exit(0);
-    }
 
     vector<int> numbers(N);
     for (int i = 0; i < N; i++) {
@@ -42,9 +31,6 @@ int main(int argc, char* argv[]) {
 
     if (ans_judge == ans_con) {
         cout << "AC" << endl;
-    } else if (ans_judge.back() == ans_con.back()) {
-        cout << "OK" << endl;
-        cout << "50" << endl;
     } else {
         cout << "WA" << endl;
     }

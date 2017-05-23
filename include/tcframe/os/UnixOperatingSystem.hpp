@@ -71,22 +71,18 @@ public:
             sout << " < " << request.inputFilename().value();
         }
         if (request.outputFilename()) {
-            sout << " > " << request.outputFilename().value();
+            sout << " 1> " << request.outputFilename().value();
         } else {
-            sout << " > /dev/null";
+            sout << " 1> /dev/null";
         }
-        if (request.errorFilename()) {
-            sout << " 2> " << request.errorFilename().value();
-        } else {
-            sout << " 2> " << ERROR_FILENAME;
-        }
+        sout << " 2> " << ERROR_FILENAME;
 
         ExecutionResultBuilder result;
 
         int exitValue = system(sout.str().c_str());
         int exitStatus = WEXITSTATUS(exitValue);
 
-        if (WIFSIGNALED(exitStatus)) {
+        if (exitStatus & (1<<7)) {
             int signal = WTERMSIG(exitStatus);
             result.setExitSignal(strsignal(signal));
             if (signal == SIGXCPU) {
@@ -96,12 +92,10 @@ public:
             result.setExitCode(exitStatus);
         }
 
-        if (!request.errorFilename()) {
-            istream* errorStream = openForReading(ERROR_FILENAME);
-            string errorString = StringUtils::streamToString(errorStream);
-            closeOpenedStream(errorStream);
-            result.setStandardError(errorString);
-        }
+        istream* errorStream = openForReading(ERROR_FILENAME);
+        string errorString = StringUtils::streamToString(errorStream);
+        closeOpenedStream(errorStream);
+        result.setStandardError(errorString);
 
         return result.build();
     }

@@ -11,7 +11,6 @@ namespace tcframe {
 class Scorer {
 public:
     static constexpr const char* SCORING_OUT_FILENAME = "_scoring.out";
-    static constexpr const char* SCORING_ERR_FILENAME = "_scoring.err";
 
     virtual ~Scorer() {}
 

@@ -157,6 +157,7 @@ set(TEST_UNIT
         test/unit/tcframe/evaluator/BatchEvaluatorTests.cpp
         test/unit/tcframe/evaluator/MockEvaluator.hpp
         test/unit/tcframe/evaluator/MockEvaluatorRegistry.hpp
+        test/unit/tcframe/evaluator/scorer/CustomScorerTests.cpp
         test/unit/tcframe/evaluator/scorer/MockScorer.hpp
         test/unit/tcframe/generator/GeneratorLoggerTests.cpp
         test/unit/tcframe/generator/GeneratorTests.cpp
@@ -231,6 +232,7 @@ target_link_libraries(test_unit
 set(TEST_INTEGRATION
         test/integration/tcframe/evaluator/scorer/CustomScorerIntegrationTests.cpp
         test/integration/tcframe/evaluator/scorer/DiffScorerIntegrationTests.cpp
+        test/integration/tcframe/os/UnixOperatingSystemIntegrationTests.cpp
 )
 
 add_executable(test_integration ${INCLUDE} ${TEST_INTEGRATION})

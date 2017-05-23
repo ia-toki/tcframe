@@ -35,7 +35,6 @@ public:
         ExecutionResult executionResult = os_->execute(ExecutionRequestBuilder()
                 .setCommand(scoringCommand)
                 .setOutputFilename(SCORING_OUT_FILENAME)
-                .setErrorFilename(SCORING_ERR_FILENAME)
                 .build());
 
         Verdict verdict;

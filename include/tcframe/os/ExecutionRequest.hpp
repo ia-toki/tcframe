@@ -19,7 +19,6 @@ private:
     string command_;
     optional<string> inputFilename_;
     optional<string> outputFilename_;
-    optional<string> errorFilename_;
     optional<int> timeLimit_;
     optional<int> memoryLimit_;
 
@@ -36,10 +35,6 @@ public:
         return outputFilename_;
     }
 
-    const optional<string>& errorFilename() const {
-        return errorFilename_;
-    }
-
     const optional<int>& timeLimit() const {
         return timeLimit_;
     }
@@ -49,8 +44,8 @@ public:
     }
 
     bool operator==(const ExecutionRequest& o) const {
-        return tie(command_, inputFilename_, outputFilename_, errorFilename_, timeLimit_, memoryLimit_)
-                == tie(o.command_, o.inputFilename_, o.outputFilename_, o.errorFilename_, o.timeLimit_, o.memoryLimit_);
+        return tie(command_, inputFilename_, outputFilename_, timeLimit_, memoryLimit_)
+                == tie(o.command_, o.inputFilename_, o.outputFilename_, o.timeLimit_, o.memoryLimit_);
     }
 };
 
@@ -71,11 +66,6 @@ public:
 
     ExecutionRequestBuilder& setOutputFilename(string outputFilename) {
         subject_.outputFilename_ = optional<string>(outputFilename);
-        return *this;
-    }
-
-    ExecutionRequestBuilder& setErrorFilename(string errorFilename) {
-        subject_.errorFilename_ = optional<string>(errorFilename);
         return *this;
     }
 
