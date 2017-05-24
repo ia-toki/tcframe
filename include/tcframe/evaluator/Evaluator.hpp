@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdexcept>
 #include <string>
 
 #include "EvaluationOptions.hpp"
@@ -7,6 +8,7 @@
 #include "GenerationResult.hpp"
 #include "scorer.hpp"
 
+using std::logic_error;
 using std::string;
 
 namespace tcframe {
@@ -25,9 +27,14 @@ public:
     virtual GenerationResult generate(
             const string& inputFilename,
             const string& outputFilename,
-            const EvaluationOptions& options) = 0;
+            const EvaluationOptions& options) {
 
-    virtual ScoringResult score(const string& inputFilename, const string& outputFilename) = 0;
+        throw logic_error("unsupported");
+    }
+
+    virtual ScoringResult score(const string& inputFilename, const string& outputFilename) {
+        throw logic_error("unsupported");
+    }
 };
 
 }

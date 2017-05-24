@@ -17,23 +17,78 @@ using ::testing::Eq;
 using ::testing::Ne;
 using ::testing::Return;
 using ::testing::Test;
+using ::testing::Truly;
 
 namespace tcframe {
 
-class RunnerTests : public Test {
-public:
-    static int T;
-
+class BaseRunnerTests : public Test {
 protected:
     class ProblemSpec : public BaseProblemSpec {
     protected:
         void InputFormat() {}
     };
 
+    string specPath = "/Users/fushar/january contest/c_slug/spec.cpp";
+
+    int argc = 1;
+    char** argv =  new char*[1]{(char*) "./runner"};
+
+    LoggerEngine* loggerEngine = new SimpleLoggerEngine();
+
+    MOCK(RunnerLogger) runnerLogger;
+    MOCK(Evaluator) evaluator;
+    MOCK(Aggregator) aggregator;
+    MOCK(Generator) generator;
+    MOCK(Grader) grader;
+
+    MOCK(OperatingSystem) os;
+    MOCK(RunnerLoggerFactory) runnerLoggerFactory;
+    MOCK(GeneratorFactory) generatorFactory;
+    MOCK(GraderFactory) graderFactory;
+    MOCK(EvaluatorRegistry) evaluatorRegistry;
+    MOCK(AggregatorRegistry) aggregatorRegistry;
+
+    void SetUp() {
+        ON_CALL(runnerLoggerFactory, create(_)).WillByDefault(Return(&runnerLogger));
+        ON_CALL(generatorFactory, create(_, _, _, _, _)).WillByDefault(Return(&generator));
+        ON_CALL(graderFactory, create(_, _, _)).WillByDefault(Return(&grader));
+        ON_CALL(evaluatorRegistry, get(_, _, _)).WillByDefault(Return(&evaluator));
+        ON_CALL(aggregatorRegistry, get(_)).WillByDefault(Return(&aggregator));
+        ON_CALL(os, execute(_)).WillByDefault(Return(ExecutionResult()));
+    }
+
+    template<typename TProblem>
+    Runner<TProblem> createRunner(BaseTestSpec<TProblem>* testSpec) {
+        return Runner<TProblem>(
+                specPath, testSpec, loggerEngine, &os,
+                &runnerLoggerFactory, &generatorFactory, &graderFactory, &evaluatorRegistry, &aggregatorRegistry);
+    }
+
+    struct HelperKeyIs {
+        string key_;
+        string value_;
+
+        HelperKeyIs(const string& key, const string& value)
+                : key_(key)
+                , value_(value) {}
+
+        bool operator()(const map<string, string>& m) const {
+            if (value_.empty()) {
+                return !m.count(key_);
+            }
+            return m.count(key_) && m.at(key_) == value_;
+        }
+    };
+};
+
+class RunnerTests : public BaseRunnerTests {
+public:
+    static int T;
+
+protected:
     class ProblemSpecWithConfig : public ProblemSpec {
     protected:
         void StyleConfig() {
-            CustomScorer();
             NoOutput();
         }
 
@@ -64,49 +119,13 @@ protected:
         }
     };
 
-    string specPath = "/Users/fushar/january contest/c_slug/spec.cpp";
-
-    int argc = 1;
-    char** argv =  new char*[1]{(char*) "./runner"};
-
-    LoggerEngine* loggerEngine = new SimpleLoggerEngine();
-
-    MOCK(RunnerLogger) runnerLogger;
-    MOCK(Evaluator) evaluator;
-    MOCK(Aggregator) aggregator;
-    MOCK(Generator) generator;
-    MOCK(Grader) grader;
-
-    MOCK(OperatingSystem) os;
-    MOCK(RunnerLoggerFactory) runnerLoggerFactory;
-    MOCK(GeneratorFactory) generatorFactory;
-    MOCK(GraderFactory) graderFactory;
-    MOCK(EvaluatorRegistry) evaluatorRegistry;
-    MOCK(AggregatorRegistry) aggregatorRegistry;
-
-    Runner<ProblemSpec> runner = createRunner(new TestSpec());
-    Runner<ProblemSpecWithConfig> runnerWithConfig = createRunner(new TestSpecWithConfig());
-    Runner<ProblemSpecWithSubtasks> runnerWithSubtasks = createRunner(new TestSpecWithSubtasks());
-
-    void SetUp() {
-        ON_CALL(runnerLoggerFactory, create(_)).WillByDefault(Return(&runnerLogger));
-        ON_CALL(generatorFactory, create(_, _, _, _, _)).WillByDefault(Return(&generator));
-        ON_CALL(graderFactory, create(_, _, _)).WillByDefault(Return(&grader));
-        ON_CALL(evaluatorRegistry, get(_, _)).WillByDefault(Return(&evaluator));
-        ON_CALL(aggregatorRegistry, get(_)).WillByDefault(Return(&aggregator));
-        ON_CALL(os, execute(_)).WillByDefault(Return(ExecutionResult()));
-    }
+    Runner<ProblemSpec> runner = BaseRunnerTests::createRunner(new TestSpec());
+    Runner<ProblemSpecWithConfig> runnerWithConfig = BaseRunnerTests::createRunner(new TestSpecWithConfig());
+    Runner<ProblemSpecWithSubtasks> runnerWithSubtasks = BaseRunnerTests::createRunner(new TestSpecWithSubtasks());
 
     Runner<ProblemSpec> createRunner(const string& specPath) {
         return Runner<ProblemSpec>(
                 specPath, new TestSpec(), loggerEngine, &os,
-                &runnerLoggerFactory, &generatorFactory, &graderFactory, &evaluatorRegistry, &aggregatorRegistry);
-    }
-
-    template<typename TProblem>
-    Runner<TProblem> createRunner(BaseTestSpec<TProblem>* testSpec) {
-        return Runner<TProblem>(
-                specPath, testSpec, loggerEngine, &os,
                 &runnerLoggerFactory, &generatorFactory, &graderFactory, &evaluatorRegistry, &aggregatorRegistry);
     }
 };
@@ -124,7 +143,7 @@ TEST_F(RunnerTests, Run_ArgsParsing_Failed) {
 }
 
 TEST_F(RunnerTests, Run_Specification_Failed) {
-    Runner<ProblemSpec> badRunner = createRunner(new BadTestSpec());
+    Runner<ProblemSpec> badRunner = BaseRunnerTests::createRunner(new BadTestSpec());
 
     EXPECT_CALL(generator, generate(_, _)).Times(0);
     EXPECT_CALL(runnerLogger, logSpecificationFailure(vector<string>{"An error"}));
@@ -257,25 +276,6 @@ TEST_F(RunnerTests, Run_Grading_UseArgsOptions_NoLimits) {
             (char*) "--output=testdata",
             (char*) "--no-time-limit",
             (char*) "--no-memory-limit",
-            nullptr});
-}
-
-TEST_F(RunnerTests, Run_EvaluatorRegistry_NoCustomScorer) {
-    EXPECT_CALL(evaluatorRegistry, get(_, map<string, string>{}));
-    runner.run(argc, argv);
-}
-
-TEST_F(RunnerTests, Run_EvaluatorRegistry_CustomScorer_Default) {
-    EXPECT_CALL(evaluatorRegistry, get(_, map<string, string>{{"scorer", CommonConfig::scorerCommand()}}));
-    runnerWithConfig.run(argc, argv);
-}
-
-TEST_F(RunnerTests, Run_EvaluatorRegistry_CustomScorer_Args) {
-    EXPECT_CALL(evaluatorRegistry, get(_, map<string, string>{{"scorer", "\"java Scorer\""}}));
-    runnerWithConfig.run(3, new char*[4]{
-            (char*) "./runner",
-            (char*) "grade",
-            (char*) "--scorer=\"java Scorer\"",
             nullptr});
 }
 

@@ -4,6 +4,7 @@
 
 #include "tcframe/os.hpp"
 #include "tcframe/util.hpp"
+#include "communicator.hpp"
 #include "scorer.hpp"
 
 using std::string;
@@ -20,6 +21,10 @@ public:
         } else {
             return new DiffScorer(os);
         }
+    }
+
+    virtual Communicator* getCommunicator(OperatingSystem* os, const string& communicatorCommand) {
+        return new Communicator(os, new VerdictCreator(), communicatorCommand);
     }
 };
 

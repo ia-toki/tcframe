@@ -18,14 +18,15 @@ class ArgsParser {
 public:
     static Args parse(int argc, char* argv[]) {
         option longopts[] = {
-                { "memory-limit",    required_argument, nullptr, 'a'},
-                { "no-memory-limit", no_argument      , nullptr, 'b'},
-                { "no-time-limit",   no_argument      , nullptr, 'c'},
-                { "scorer",          required_argument, nullptr, 'd'},
-                { "seed",            required_argument, nullptr, 'e'},
-                { "solution",        required_argument, nullptr, 'f'},
-                { "output",          required_argument, nullptr, 'g'},
-                { "time-limit",      required_argument, nullptr, 'h'},
+                { "communicator",    required_argument, nullptr, 'a'},
+                { "memory-limit",    required_argument, nullptr, 'b'},
+                { "no-memory-limit", no_argument      , nullptr, 'c'},
+                { "no-time-limit",   no_argument      , nullptr, 'd'},
+                { "output",          required_argument, nullptr, 'e'},
+                { "scorer",          required_argument, nullptr, 'f'},
+                { "seed",            required_argument, nullptr, 'g'},
+                { "solution",        required_argument, nullptr, 'h'},
+                { "time-limit",      required_argument, nullptr, 'i'},
                 { 0, 0, 0, 0 }};
 
         Args args;
@@ -43,27 +44,30 @@ public:
         while ((c = getopt_long_only(argc, argv, ":", longopts, nullptr)) != -1) {
             switch (c) {
                 case 'a':
-                    args.memoryLimit_ = StringUtils::toNumber<int>(optarg);
+                    args.communicator_ = optional<string>(optarg);
                     break;
                 case 'b':
-                    args.noMemoryLimit_ = true;
+                    args.memoryLimit_ = StringUtils::toNumber<int>(optarg);
                     break;
                 case 'c':
-                    args.noTimeLimit_ = true;
+                    args.noMemoryLimit_ = true;
                     break;
                 case 'd':
-                    args.scorer_ = optional<string>(optarg);
+                    args.noTimeLimit_ = true;
                     break;
                 case 'e':
-                    args.seed_ = StringUtils::toNumber<unsigned>(optarg);
-                    break;
-                case 'f':
-                    args.solution_ = optional<string>(optarg);
-                    break;
-                case 'g':
                     args.output_ = optional<string>(optarg);
                     break;
+                case 'f':
+                    args.scorer_ = optional<string>(optarg);
+                    break;
+                case 'g':
+                    args.seed_ = StringUtils::toNumber<unsigned>(optarg);
+                    break;
                 case 'h':
+                    args.solution_ = optional<string>(optarg);
+                    break;
+                case 'i':
                     args.timeLimit_ = StringUtils::toNumber<int>(optarg);
                     break;
                 case ':':

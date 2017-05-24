@@ -11,7 +11,7 @@ public:
     MockEvaluatorRegistry()
             : EvaluatorRegistry(nullptr) {}
 
-    MOCK_METHOD2(get, Evaluator*(OperatingSystem*, const map<string, string>&));
+    MOCK_METHOD3(get, Evaluator*(EvaluationStyle, OperatingSystem*, const map<string, string>&));
 };
 
 }

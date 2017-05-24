@@ -10,14 +10,24 @@ using std::tie;
 
 namespace tcframe {
 
+enum class EvaluationStyle {
+    BATCH,
+    INTERACTIVE
+};
+
 struct StyleConfig {
     friend class StyleConfigBuilder;
 
 private:
+    EvaluationStyle evaluationStyle_;
     bool needsCustomScorer_;
     bool needsOutput_;
 
 public:
+    EvaluationStyle evaluationStyle() const {
+        return evaluationStyle_;
+    }
+
     bool needsCustomScorer() const {
         return needsCustomScorer_;
     }
@@ -27,7 +37,8 @@ public:
     }
 
     bool operator==(const StyleConfig& o) const {
-        return tie(needsOutput_) == tie(o.needsOutput_);
+        return tie(evaluationStyle_, needsCustomScorer_, needsOutput_)
+               == tie(o.evaluationStyle_, o.needsCustomScorer_, o.needsOutput_);
     }
 };
 
@@ -39,8 +50,19 @@ public:
     virtual ~StyleConfigBuilder() {}
 
     StyleConfigBuilder() {
+        subject_.evaluationStyle_ = EvaluationStyle::BATCH;
         subject_.needsOutput_ = true;
         subject_.needsCustomScorer_ = false;
+    }
+
+    StyleConfigBuilder& BatchEvaluator() {
+        subject_.evaluationStyle_ = EvaluationStyle::BATCH;
+        return *this;
+    }
+
+    StyleConfigBuilder& InteractiveEvaluator() {
+        subject_.evaluationStyle_ = EvaluationStyle::INTERACTIVE;
+        return *this;
     }
 
     StyleConfigBuilder& CustomScorer() {
