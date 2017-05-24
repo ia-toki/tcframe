@@ -43,4 +43,13 @@ TEST_F(GradingEteTests, Subtasks) {
             HasSubstr("Wrong Answer [70]")));
 }
 
+TEST_F(GradingEteTests, Interactive) {
+    string result = exec("cd test-ete/interactive && ../scripts/grade-with-communicator.sh");
+    EXPECT_THAT(result, AllOf(
+            HasSubstr("interactive_sample_1: Time Limit Exceeded"),
+            HasSubstr("interactive_1: Accepted"),
+            HasSubstr("interactive_2: Accepted"),
+            HasSubstr("interactive_3: Time Limit Exceeded")));
+}
+
 }

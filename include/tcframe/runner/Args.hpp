@@ -20,14 +20,15 @@ public:
 private:
     Command command_;
 
+    optional<string> communicator_;
     optional<int> memoryLimit_;
     bool noMemoryLimit_;
     bool noTimeLimit_;
     optional<string> scorer_;
     optional<unsigned> seed_;
     optional<string> solution_;
-    optional<string> output_;
     optional<int> timeLimit_;
+    optional<string> output_;
 
 public:
     Args()
@@ -36,6 +37,10 @@ public:
 
     Command command() const {
         return command_;
+    }
+
+    const optional<string>& communicator() const {
+        return communicator_;
     }
 
     const optional<int>& memoryLimit() const {
@@ -50,6 +55,10 @@ public:
         return noTimeLimit_;
     }
 
+    const optional<string>& output() const {
+        return output_;
+    }
+
     const optional<string>& scorer() const {
         return scorer_;
     }
@@ -60,10 +69,6 @@ public:
 
     const optional<string>& solution() const {
         return solution_;
-    }
-
-    const optional<string>& output() const {
-        return output_;
     }
 
     const optional<int>& timeLimit() const {

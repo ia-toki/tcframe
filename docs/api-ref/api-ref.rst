@@ -242,6 +242,14 @@ Problem styles
 
 Defines the options to enable for problem styles. The following methods are exposed:
 
+.. cpp:function:: BatchEvaluator()
+
+    Declares that the problem uses batch evaluator.
+
+.. cpp:function:: InteractiveEvaluator()
+
+    Declares that the problem uses interactive evaluator.
+
 .. cpp:function:: CustomScorer()
 
     Declares that the problem needs a custom scorer.
@@ -605,6 +613,10 @@ Local grading
 .. py:function:: --scorer=<command>
 
     The custom scorer command to use. Default: ``./scorer``.
+
+.. py:function:: --communicator=<command>
+
+    The communicator command to use. Default: ``./communicator``.
 
 .. py:function:: --time-limit=<time-limit-in-seconds>
 

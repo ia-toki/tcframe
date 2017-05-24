@@ -110,19 +110,26 @@ private:
     int generate(const string& slug, const Args& args, const Spec& spec) {
         const MultipleTestCasesConfig& multipleTestCasesConfig = spec.multipleTestCasesConfig();
 
-        GenerationOptions options = GenerationOptionsBuilder(slug)
+        GenerationOptionsBuilder optionsBuilder = GenerationOptionsBuilder(slug)
                 .setMultipleTestCasesCounter(multipleTestCasesConfig.counter())
                 .setMultipleTestCasesOutputPrefix(multipleTestCasesConfig.outputPrefix())
                 .setSeed(args.seed())
                 .setSolutionCommand(args.solution())
-                .setOutputDir(args.output())
-                .setNeedsOutput(spec.styleConfig().needsOutput())
-                .build();
+                .setOutputDir(args.output());
+
+        EvaluatorConfig evaluatorConfig = evaluatorRegistry_->getConfig(spec.styleConfig().evaluationStyle());
+        if (evaluatorConfig.testCaseOutputType() == TestCaseOutputType::NOT_REQUIRED) {
+            optionsBuilder.setNeedsOutput(false);
+        } else {
+            optionsBuilder.setNeedsOutput(spec.styleConfig().needsOutput());
+        }
+
+        GenerationOptions options = optionsBuilder.build();
 
         auto ioManipulator = new IOManipulator(spec.ioFormat());
         auto verifier = new Verifier(spec.constraintSuite());
         auto helperCommands = getHelperCommands(args, spec.styleConfig());
-        auto evaluator = evaluatorRegistry_->get(os_, helperCommands);
+        auto evaluator = evaluatorRegistry_->get(spec.styleConfig().evaluationStyle(), os_, helperCommands);
         auto logger = new GeneratorLogger(loggerEngine_);
         auto testCaseGenerator = new TestCaseGenerator(verifier, ioManipulator, os_, evaluator, logger);
         auto generator = generatorFactory_->create(spec.seedSetter(), testCaseGenerator, verifier, os_, logger);
@@ -150,7 +157,7 @@ private:
 
         auto logger = new GraderLogger(loggerEngine_);
         auto helperCommands = getHelperCommands(args, spec.styleConfig());
-        auto evaluator = evaluatorRegistry_->get(os_, helperCommands);
+        auto evaluator = evaluatorRegistry_->get(spec.styleConfig().evaluationStyle(), os_, helperCommands);
         auto testCaseGrader = new TestCaseGrader(evaluator, logger);
         auto aggregator = aggregatorRegistry_->get(spec.constraintSuite().hasSubtasks());
         auto grader = graderFactory_->create(testCaseGrader, aggregator, logger);
@@ -168,6 +175,7 @@ private:
         if (styleConfig.needsCustomScorer()) {
             helperCommands["scorer"] = args.scorer().value_or(CommonConfig::scorerCommand());
         }
+        helperCommands["communicator"] = args.communicator().value_or(CommonConfig::communicatorCommand());
         return helperCommands;
     };
 };

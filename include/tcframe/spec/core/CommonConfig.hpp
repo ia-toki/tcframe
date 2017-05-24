@@ -20,6 +20,10 @@ public:
         return "./scorer";
     }
 
+    static string communicatorCommand() {
+        return "./communicator";
+    }
+
     static string outputDir() {
         return "tc";
     }

@@ -52,9 +52,14 @@ set(INCLUDE
         include/tcframe/evaluator/EvaluationOptions.hpp
         include/tcframe/evaluator/EvaluationResult.hpp
         include/tcframe/evaluator/Evaluator.hpp
+        include/tcframe/evaluator/EvaluatorConfig.hpp
         include/tcframe/evaluator/EvaluatorHelperRegistry.hpp
         include/tcframe/evaluator/EvaluatorRegistry.hpp
+        include/tcframe/evaluator/InteractiveEvaluator.hpp
         include/tcframe/evaluator/GenerationResult.hpp
+        include/tcframe/evaluator/communicator.hpp
+        include/tcframe/evaluator/communicator/CommunicationResult.hpp
+        include/tcframe/evaluator/communicator/Communicator.hpp
         include/tcframe/evaluator/scorer.hpp
         include/tcframe/evaluator/scorer/CustomScorer.hpp
         include/tcframe/evaluator/scorer/DiffScorer.hpp
@@ -154,8 +159,11 @@ set(TEST_UNIT
         test/unit/tcframe/aggregator/MockAggregatorRegistry.hpp
         test/unit/tcframe/aggregator/SumAggregatorTests.cpp
         test/unit/tcframe/evaluator/BatchEvaluatorTests.cpp
+        test/unit/tcframe/evaluator/InteractiveEvaluatorTests.cpp
         test/unit/tcframe/evaluator/MockEvaluator.hpp
         test/unit/tcframe/evaluator/MockEvaluatorRegistry.hpp
+        test/unit/tcframe/evaluator/communicator/CommunicatorTests.cpp
+        test/unit/tcframe/evaluator/communicator/MockCommunicator.hpp
         test/unit/tcframe/evaluator/scorer/CustomScorerTests.cpp
         test/unit/tcframe/evaluator/scorer/MockScorer.hpp
         test/unit/tcframe/generator/GeneratorLoggerTests.cpp
@@ -176,6 +184,9 @@ set(TEST_UNIT
         test/unit/tcframe/logger/SimpleLoggerEngineTests.cpp
         test/unit/tcframe/os/MockOperatingSystem.hpp
         test/unit/tcframe/runner/ArgsParserTests.cpp
+        test/unit/tcframe/runner/BatchRunnerTests.cpp
+        test/unit/tcframe/runner/BaseRunnerTests.hpp
+        test/unit/tcframe/runner/InteractiveRunnerTests.cpp
         test/unit/tcframe/runner/MockRunnerLogger.hpp
         test/unit/tcframe/runner/MockRunnerLoggerFactory.hpp
         test/unit/tcframe/runner/RunnerTests.cpp
@@ -229,6 +240,7 @@ target_link_libraries(test_unit
 )
 
 set(TEST_INTEGRATION
+        test/integration/tcframe/evaluator/communicator/CommunicatorIntegrationTests.cpp
         test/integration/tcframe/evaluator/scorer/CustomScorerIntegrationTests.cpp
         test/integration/tcframe/evaluator/scorer/DiffScorerIntegrationTests.cpp
         test/integration/tcframe/os/OperatingSystemIntegrationTests.cpp

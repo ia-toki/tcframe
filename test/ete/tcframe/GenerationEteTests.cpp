@@ -169,4 +169,15 @@ TEST_F(GenerationEteTests, Multi_WithOutputPrefix) {
             "6\n"));
 }
 
+TEST_F(GenerationEteTests, Interactive) {
+    ASSERT_THAT(execStatus("cd test-ete/interactive && ../scripts/generate.sh"), Eq(0));
+
+    EXPECT_THAT(ls("test-ete/interactive/tc"), UnorderedElementsAre(
+            "interactive_sample_1.in",
+            "interactive_1.in",
+            "interactive_2.in",
+            "interactive_3.in"
+    ));
+}
+
 }
