@@ -160,7 +160,7 @@ private:
     }
 
     void cleanUp() {
-        os_->execute(ExecutionRequestBuilder().setCommand("rm _*.out").build());
+        os_->execute(ExecutionRequestBuilder().setCommand("rm __tcframe_*").build());
     }
 
     static map<string, string> getHelperCommands(const Args& args, const StyleConfig& styleConfig) {

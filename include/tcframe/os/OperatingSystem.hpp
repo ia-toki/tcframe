@@ -23,7 +23,7 @@ namespace tcframe {
 
 class OperatingSystem {
 private:
-    static constexpr const char* ERROR_FILENAME = "_error.out";
+    static constexpr const char* ERROR_FILENAME = "__tcframe_error.out";
 
 public:
     virtual istream* openForReading(const string& filename) {

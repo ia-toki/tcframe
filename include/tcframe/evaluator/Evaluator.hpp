@@ -13,7 +13,7 @@ namespace tcframe {
 
 class Evaluator {
 public:
-    static constexpr const char* EVALUATION_OUT_FILENAME = "_evaluation.out";
+    static constexpr const char* EVALUATION_OUT_FILENAME = "__tcframe_evaluation.out";
 
     virtual ~Evaluator() {}
 
