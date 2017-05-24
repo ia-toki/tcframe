@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
             __TCFRAME_SPEC_FILE__,
             new TestSpec(),
             new SimpleLoggerEngine(),
-            new UnixOperatingSystem(),
+            new OperatingSystem(),
             new RunnerLoggerFactory(),
             new GeneratorFactory(),
             new GraderFactory(),

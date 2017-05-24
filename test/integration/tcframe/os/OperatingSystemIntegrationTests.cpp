@@ -2,7 +2,7 @@
 
 #include <cstdlib>
 
-#include "tcframe/os/UnixOperatingSystem.hpp"
+#include "tcframe/os/OperatingSystem.hpp"
 #include "tcframe/util.hpp"
 
 using ::testing::Eq;
@@ -10,9 +10,9 @@ using ::testing::Test;
 
 namespace tcframe {
 
-class UnixOperatingSystemIntegrationTests : public Test {
+class OperatingSystemIntegrationTests : public Test {
 protected:
-    UnixOperatingSystem os;
+    OperatingSystem os;
 
     static string readFile(const string& path) {
         ifstream in(path);
@@ -22,7 +22,7 @@ protected:
     }
 };
 
-TEST_F(UnixOperatingSystemIntegrationTests, Execution_Successful) {
+TEST_F(OperatingSystemIntegrationTests, Execution_Successful) {
     system(
             "g++ -o "
             "test-integration/os/program "
@@ -42,7 +42,7 @@ TEST_F(UnixOperatingSystemIntegrationTests, Execution_Successful) {
     EXPECT_THAT(result.standardError(), Eq("44\n"));
 }
 
-TEST_F(UnixOperatingSystemIntegrationTests, Execution_ExceededTimeLimits) {
+TEST_F(OperatingSystemIntegrationTests, Execution_ExceededTimeLimits) {
     system(
             "g++ -o "
             "test-integration/os/program_tl "
@@ -55,13 +55,12 @@ TEST_F(UnixOperatingSystemIntegrationTests, Execution_ExceededTimeLimits) {
 
     EXPECT_FALSE(result.isSuccessful());
     EXPECT_FALSE(result.exitCode());
-    EXPECT_TRUE(result.exitSignal());
-    EXPECT_TRUE(result.exceededCpuLimits());
+    EXPECT_THAT(result.exitSignal(), Eq(optional<int>(SIGXCPU)));
 }
 
 #ifndef __APPLE__
 
-TEST_F(UnixOperatingSystemIntegrationTests, Execution_ExceededMemoryLimits) {
+TEST_F(OperatingSystemIntegrationTests, Execution_ExceededMemoryLimits) {
     system(
             "g++ -o "
             "test-integration/os/program_ml "
@@ -74,12 +73,12 @@ TEST_F(UnixOperatingSystemIntegrationTests, Execution_ExceededMemoryLimits) {
 
     EXPECT_FALSE(result.isSuccessful());
     EXPECT_FALSE(result.exitCode());
-    EXPECT_TRUE(result.exitSignal());
+    EXPECT_THAT(result.exitSignal(), Eq(optional<int>(SIGKILL)));
 }
 
 #endif
 
-TEST_F(UnixOperatingSystemIntegrationTests,  Execution_Crashed_ExitCode) {
+TEST_F(OperatingSystemIntegrationTests,  Execution_Crashed_ExitCode) {
     system(
             "g++ -o "
             "test-integration/os/program_exit-code "
@@ -94,7 +93,7 @@ TEST_F(UnixOperatingSystemIntegrationTests,  Execution_Crashed_ExitCode) {
     EXPECT_FALSE(result.exitSignal());
 }
 
-TEST_F(UnixOperatingSystemIntegrationTests, Execution_Crashed_ExitSignal) {
+TEST_F(OperatingSystemIntegrationTests, Execution_Crashed_ExitSignal) {
     system(
             "g++ -o "
             "test-integration/os/program_exit-signal "
@@ -106,7 +105,7 @@ TEST_F(UnixOperatingSystemIntegrationTests, Execution_Crashed_ExitSignal) {
 
     EXPECT_FALSE(result.isSuccessful());
     EXPECT_FALSE(result.exitCode());
-    EXPECT_TRUE(result.exitSignal());
+    EXPECT_THAT(result.exitSignal(), Eq(optional<int>(SIGFPE)));
 }
 
 }

@@ -75,8 +75,7 @@ TEST_F(VerdictCreatorTests, FromExecutionResult_Nothing) {
 
 TEST_F(VerdictCreatorTests, FromExecutionResult_TLE) {
     ExecutionResult executionResult = ExecutionResultBuilder()
-            .setExitSignal("SIGXCPU")
-            .setExceededCpuLimits(true)
+            .setExitSignal(SIGXCPU)
             .build();
     EXPECT_THAT(verdictCreator.fromExecutionResult(executionResult), Eq(Verdict(VerdictStatus::tle())));
 }

@@ -53,8 +53,7 @@ TEST_F(TestCaseGraderTests, Grading_AC) {
 
 TEST_F(TestCaseGraderTests, Grading_TLE) {
     Verdict verdict(VerdictStatus::tle());
-    map<string, ExecutionResult> executionResults = {
-            {"solution", ExecutionResultBuilder().setExceededCpuLimits(true).build()}};
+    map<string, ExecutionResult> executionResults = {{"solution", ExecutionResult()}};
     ON_CALL(evaluator, evaluate(_, _, _))
             .WillByDefault(Return(EvaluationResult(verdict, executionResults)));
     {

@@ -3,6 +3,7 @@
 #include <istream>
 #include <stdexcept>
 #include <string>
+#include <sys/signal.h>
 
 #include "Verdict.hpp"
 #include "tcframe/os.hpp"
@@ -48,7 +49,7 @@ public:
     }
 
     virtual optional<Verdict> fromExecutionResult(const ExecutionResult& executionResult) {
-        if (executionResult.exceededCpuLimits()) {
+        if (executionResult.exitSignal() == optional<int>(SIGXCPU)) {
             return optional<Verdict>(Verdict(VerdictStatus::tle()));
         } else if (!executionResult.isSuccessful()) {
             return optional<Verdict>(Verdict(VerdictStatus::rte()));

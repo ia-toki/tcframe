@@ -86,7 +86,6 @@ set(INCLUDE
         include/tcframe/os/ExecutionResult.hpp
         include/tcframe/os/ExecutionRequest.hpp
         include/tcframe/os/OperatingSystem.hpp
-        include/tcframe/os/UnixOperatingSystem.hpp
         include/tcframe/runner.hpp
         include/tcframe/runner/Args.hpp
         include/tcframe/runner/ArgsParser.hpp
@@ -232,7 +231,7 @@ target_link_libraries(test_unit
 set(TEST_INTEGRATION
         test/integration/tcframe/evaluator/scorer/CustomScorerIntegrationTests.cpp
         test/integration/tcframe/evaluator/scorer/DiffScorerIntegrationTests.cpp
-        test/integration/tcframe/os/UnixOperatingSystemIntegrationTests.cpp
+        test/integration/tcframe/os/OperatingSystemIntegrationTests.cpp
 )
 
 add_executable(test_integration ${INCLUDE} ${TEST_INTEGRATION})

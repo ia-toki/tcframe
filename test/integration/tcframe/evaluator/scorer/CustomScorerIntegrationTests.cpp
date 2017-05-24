@@ -15,7 +15,7 @@ namespace tcframe {
 class CustomScorerIntegrationTests : public Test {
 protected:
     CustomScorer scorer = CustomScorer(
-            new UnixOperatingSystem(),
+            new OperatingSystem(),
             new VerdictCreator(),
             "test-integration/evaluator/scorer/custom/scorer");
 

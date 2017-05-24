@@ -1,6 +1,8 @@
 #pragma once
 
 #include <map>
+#include <string>
+#include <sys/signal.h>
 
 #include "LoggerEngine.hpp"
 #include "tcframe/os.hpp"
@@ -8,6 +10,7 @@
 #include "tcframe/util.hpp"
 
 using std::map;
+using std::string;
 
 namespace tcframe {
 
@@ -46,7 +49,7 @@ public:
                     engine_->logListItem2(3, "Exit code: " + StringUtils::toString(executionResult.exitCode().value()));
                     engine_->logListItem2(3, "Standard error: " + executionResult.standardError());
                 } else {
-                    engine_->logListItem2(3, "Exit signal: " + executionResult.exitSignal().value());
+                    engine_->logListItem2(3, "Exit signal: " + string(strsignal(executionResult.exitSignal().value())));
                 }
             } else if (!executionResult.standardError().empty()) {
                 engine_->logListItem1(2, key + ": " + executionResult.standardError());

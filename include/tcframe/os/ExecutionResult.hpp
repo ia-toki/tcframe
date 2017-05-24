@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <sys/signal.h>
 #include <tuple>
 #include <utility>
 
@@ -17,25 +18,19 @@ struct ExecutionResult {
 
 private:
     optional<int> exitCode_;
-    optional<string> exitSignal_;
-    bool exceededCpuLimits_;
+    optional<int> exitSignal_;
     string standardError_;
 
 public:
     ExecutionResult()
-            : exitCode_(optional<int>(0))
-            , exceededCpuLimits_(false) {}
+            : exitCode_(optional<int>(0)) {}
 
     const optional<int>& exitCode() const {
         return exitCode_;
     }
 
-    const optional<string>& exitSignal() const {
+    const optional<int>& exitSignal() const {
         return exitSignal_;
-    }
-
-    bool exceededCpuLimits() const {
-        return exceededCpuLimits_;
     }
 
     const string& standardError() const {
@@ -47,8 +42,8 @@ public:
     }
 
     bool operator==(const ExecutionResult& o) const {
-        return tie(exitCode_, exitSignal_, exceededCpuLimits_, standardError_)
-               == tie(o.exitCode_, o.exitSignal_, o.exceededCpuLimits_, standardError_);
+        return tie(exitCode_, exitSignal_, standardError_)
+               == tie(o.exitCode_, o.exitSignal_, standardError_);
     }
 };
 
@@ -64,18 +59,13 @@ public:
 
     ExecutionResultBuilder& setExitCode(int exitCode) {
         subject_.exitCode_ = optional<int>(exitCode);
-        subject_.exitSignal_ = optional<string>();
+        subject_.exitSignal_ = optional<int>();
         return *this;
     }
 
-    ExecutionResultBuilder& setExitSignal(string exitSignal) {
+    ExecutionResultBuilder& setExitSignal(int exitSignal) {
         subject_.exitCode_ = optional<int>();
-        subject_.exitSignal_ = optional<string>(exitSignal);
-        return *this;
-    }
-
-    ExecutionResultBuilder& setExceededCpuLimits(bool exceededCpuLimits) {
-        subject_.exceededCpuLimits_ = exceededCpuLimits;
+        subject_.exitSignal_ = optional<int>(exitSignal);
         return *this;
     }
 

@@ -13,7 +13,7 @@ namespace tcframe {
 
 class DiffScorerIntegrationTests : public Test {
 protected:
-    DiffScorer scorer = DiffScorer(new UnixOperatingSystem());
+    DiffScorer scorer = DiffScorer(new OperatingSystem());
 };
 
 TEST_F(DiffScorerIntegrationTests, Scoring_AC) {
