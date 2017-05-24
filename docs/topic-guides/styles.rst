@@ -41,6 +41,8 @@ Enabled by calling ``InteractiveEvaluator()``. The solution will participate in 
 Helper programs
 ---------------
 
+.. _styles_scorer:
+
 Scorer
 ******
 
@@ -52,8 +54,8 @@ A scorer is a program which decides the verdict of a test case. It will receive 
 
 It must print the test case verdict to the standard output, which is a line consisting of either:
 
-- ``AC``: indicates that the contestant's output is correct. It will be given 100 / (number of test cases in its subtask) points.
-- ``WA``: indicates that the contestant's output is incorrect. It will be given 0 points.
+- ``AC``: indicates that the contestant's output is correct.
+- ``WA``: indicates that the contestant's output is incorrect.
 - ``OK``: indicates that the contestant's output is partially correct. The second line must contain a floating-point number denoting the points. For example:
 
   ::
@@ -61,6 +63,7 @@ It must print the test case verdict to the standard output, which is a line cons
       OK
       9
 
+See also :ref:`local grading verdicts <grading_verdicts>` on how the verdicts will be interpreted during local grading.
 
 The scorer must be compiled prior to test cases generation/local grading, and the execution command should be passed to the runner program as the ``--scorer`` option. For example:
 
@@ -107,6 +110,8 @@ Here is an example scorer which gives AC if the contestant's output differs not 
         }
     }
 
+.. _styles_communicator:
+
 Communicator
 ************
 
@@ -122,7 +127,7 @@ The communicator must be compiled prior to local grading, and the execution comm
 
     ./runner grade --solution=./solution_alt --communicator=./my_communicator
 
-The default scorer command is ``./communicator`` if not specified.
+The default communicator command is ``./communicator`` if not specified.
 
 Here is an example communicator program in a typical binary search problem.
 

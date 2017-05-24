@@ -32,7 +32,7 @@ TEST_F(GraderLoggerTests, Result) {
     Verdict verdict(VerdictStatus::ac());
     {
         InSequence sequence;
-        EXPECT_CALL(engine, logHeading("RESULT"));
+        EXPECT_CALL(engine, logHeading("VERDICT"));
         EXPECT_CALL(engine, logParagraph(1, verdict.toString()));
     }
     logger.logResult({{Subtask::MAIN_ID, verdict}}, verdict);
@@ -44,10 +44,10 @@ TEST_F(GraderLoggerTests, Result_WithSubtasks) {
     Verdict verdict(VerdictStatus::wa(), 70);
     {
         InSequence sequence;
-        EXPECT_CALL(engine, logHeading("SUBTASK RESULTS"));
+        EXPECT_CALL(engine, logHeading("SUBTASK VERDICTS"));
         EXPECT_CALL(engine, logParagraph(1, "Subtask 1: " + subtask1Verdict.toString()));
         EXPECT_CALL(engine, logParagraph(1, "Subtask 2: " + subtask2Verdict.toString()));
-        EXPECT_CALL(engine, logHeading("RESULT"));
+        EXPECT_CALL(engine, logHeading("VERDICT"));
         EXPECT_CALL(engine, logParagraph(1, verdict.toString()));
     }
     logger.logResult({
