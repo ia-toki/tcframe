@@ -9,7 +9,6 @@
 #include "../grader/MockGrader.hpp"
 #include "../os/MockOperatingSystem.hpp"
 #include "MockRunnerLogger.hpp"
-#include "MockRunnerLoggerFactory.hpp"
 #include "tcframe/runner/Runner.hpp"
 
 using ::testing::_;

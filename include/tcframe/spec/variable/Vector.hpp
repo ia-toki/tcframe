@@ -42,6 +42,8 @@ private:
     vector<T>* var_;
 
 public:
+    virtual ~VectorImpl() {}
+
     VectorImpl(vector<T>& var, const string& name)
             : Vector(name)
             , var_(&var) {}
@@ -105,6 +107,8 @@ private:
     vector<string>* var_;
 
 public:
+    virtual ~RawVectorImpl() {}
+
     RawVectorImpl(vector<string>& var, const string& name)
             : VectorImpl(var, name)
             , var_(&var) {}

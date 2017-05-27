@@ -1,5 +1,6 @@
 #pragma once
 
+#include <istream>
 #include <stdexcept>
 #include <streambuf>
 #include <string>
@@ -9,6 +10,7 @@
 #include "tcframe/os.hpp"
 #include "tcframe/verdict.hpp"
 
+using std::istream;
 using std::runtime_error;
 using std::string;
 

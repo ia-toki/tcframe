@@ -43,6 +43,8 @@ private:
     bool hasSpaces_;
 
 public:
+    virtual ~MatrixImpl() {}
+
     MatrixImpl(vector<vector<T>>& var, const string& name)
             : Matrix(name)
             , var_(&var)

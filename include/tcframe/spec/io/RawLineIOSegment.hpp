@@ -20,6 +20,8 @@ private:
     Scalar* variable_;
 
 public:
+    virtual ~RawLineIOSegment() {}
+
     IOSegmentType type() const {
         return IOSegmentType::RAW_LINE;
     }

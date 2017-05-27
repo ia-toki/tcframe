@@ -96,7 +96,6 @@ set(INCLUDE
         include/tcframe/runner/ArgsParser.hpp
         include/tcframe/runner/Runner.hpp
         include/tcframe/runner/RunnerLogger.hpp
-        include/tcframe/runner/RunnerLoggerFactory.hpp
         include/tcframe/runner/SlugParser.hpp
         include/tcframe/spec.hpp
         include/tcframe/spec/constraint.hpp
@@ -172,6 +171,12 @@ set(TEST_UNIT
         test/unit/tcframe/generator/MockGeneratorLogger.hpp
         test/unit/tcframe/generator/MockTestCaseGenerator.hpp
         test/unit/tcframe/generator/TestCaseGeneratorTests.cpp
+        test/unit/tcframe/grader/GraderTests.cpp
+        test/unit/tcframe/grader/GraderLoggerTests.cpp
+        test/unit/tcframe/grader/MockGrader.hpp
+        test/unit/tcframe/grader/MockGraderLogger.hpp
+        test/unit/tcframe/grader/MockTestCaseGrader.hpp
+        test/unit/tcframe/grader/TestCaseGraderTests.cpp
         test/unit/tcframe/io_manipulator/GridIOSegmentManipulatorTests.cpp
         test/unit/tcframe/io_manipulator/IOManipulatorTests.cpp
         test/unit/tcframe/io_manipulator/LineIOSegmentManipulatorTests.cpp
@@ -188,7 +193,6 @@ set(TEST_UNIT
         test/unit/tcframe/runner/BaseRunnerTests.hpp
         test/unit/tcframe/runner/InteractiveRunnerTests.cpp
         test/unit/tcframe/runner/MockRunnerLogger.hpp
-        test/unit/tcframe/runner/MockRunnerLoggerFactory.hpp
         test/unit/tcframe/runner/RunnerTests.cpp
         test/unit/tcframe/runner/RunnerLoggerTests.cpp
         test/unit/tcframe/runner/SlugParserTests.cpp
@@ -214,12 +218,6 @@ set(TEST_UNIT
         test/unit/tcframe/spec/variable/VariableTests.cpp
         test/unit/tcframe/spec/variable/VectorTests.cpp
         test/unit/tcframe/spec/variable/WhitespaceManipulatorTests.cpp
-        test/unit/tcframe/grader/GraderTests.cpp
-        test/unit/tcframe/grader/GraderLoggerTests.cpp
-        test/unit/tcframe/grader/MockGrader.hpp
-        test/unit/tcframe/grader/MockGraderLogger.hpp
-        test/unit/tcframe/grader/MockTestCaseGrader.hpp
-        test/unit/tcframe/grader/TestCaseGraderTests.cpp
         test/unit/tcframe/util/OptionalTests.cpp
         test/unit/tcframe/util/StringUtilsTests.cpp
         test/unit/tcframe/util/TestUtils.hpp

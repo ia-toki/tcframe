@@ -17,6 +17,8 @@ private:
     optional<string> output_;
 
 public:
+    virtual ~SampleTestCaseData() {}
+
     SampleTestCaseData(const string& input)
             : input_(input) {}
 

@@ -38,8 +38,6 @@ private:
     MultipleTestCasesConfig subject_;
 
 public:
-    virtual ~MultipleTestCasesConfigBuilder() {}
-
     MultipleTestCasesConfigBuilder& Counter(int& var) {
         subject_.counter_ = optional<int*>(&var);
         return *this;

@@ -23,7 +23,7 @@ private:
 public:
     virtual ~Verifier() {}
 
-    Verifier(ConstraintSuite constraintSuite)
+    Verifier(const ConstraintSuite& constraintSuite)
             : constraintSuite_(move(constraintSuite)) {}
 
     virtual ConstraintsVerificationResult verifyConstraints(const set<int>& subtaskIds) {

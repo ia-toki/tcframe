@@ -13,7 +13,7 @@ private:
 public:
     virtual ~SeedSetter() {}
 
-    SeedSetter(function<void(unsigned)> setter)
+    SeedSetter(const function<void(unsigned)>& setter)
             : setter_(setter) {}
 
     virtual void setSeed(unsigned seed) {

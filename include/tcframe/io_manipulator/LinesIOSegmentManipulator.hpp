@@ -47,9 +47,10 @@ public:
                     }
                     Matrix* matrixVariable = (Matrix*) variable;
                     matrixVariable->parseAndAddRowFrom(in, j);
-                    lastVariableName = TokenFormatter::formatMatrixElement(variable->name(),
-                                                                           j,
-                                                                           matrixVariable->columns(j) - 1);
+                    lastVariableName = TokenFormatter::formatMatrixElement(
+                            variable->name(),
+                            j,
+                            matrixVariable->columns(j) - 1);
                 }
                 isFirstColumn = false;
             }

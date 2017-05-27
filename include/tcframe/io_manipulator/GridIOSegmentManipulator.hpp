@@ -21,9 +21,10 @@ public:
         variable->clear();
         variable->parseFrom(in, segment->rows()(), segment->columns()());
 
-        return TokenFormatter::formatMatrixElement(variable->name(),
-                                                   variable->rows() - 1,
-                                                   variable->columns(variable->rows() - 1) - 1);
+        return TokenFormatter::formatMatrixElement(
+                variable->name(),
+                variable->rows() - 1,
+                variable->columns(variable->rows() - 1) - 1);
     }
 
     static void print(GridIOSegment* segment, ostream* out) {

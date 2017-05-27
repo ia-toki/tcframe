@@ -1,12 +1,8 @@
 #pragma once
 
-#include <string>
-
 #include "tcframe/aggregator/Aggregator.hpp"
 #include "tcframe/aggregator/MinAggregator.hpp"
 #include "tcframe/aggregator/SumAggregator.hpp"
-
-using std::string;
 
 namespace tcframe {
 

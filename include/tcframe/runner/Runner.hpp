@@ -5,7 +5,6 @@
 #include "Args.hpp"
 #include "ArgsParser.hpp"
 #include "RunnerLogger.hpp"
-#include "RunnerLoggerFactory.hpp"
 #include "SlugParser.hpp"
 #include "tcframe/aggregator.hpp"
 #include "tcframe/evaluator.hpp"

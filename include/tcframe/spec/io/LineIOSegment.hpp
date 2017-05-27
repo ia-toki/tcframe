@@ -50,6 +50,8 @@ private:
     vector<LineIOSegmentVariable> variables_;
 
 public:
+    virtual ~LineIOSegment() {}
+
     IOSegmentType type() const {
         return IOSegmentType::LINE;
     }

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include <vector>
 
 #include "GridIOSegmentManipulator.hpp"
@@ -11,7 +10,6 @@
 #include "tcframe/spec/io.hpp"
 #include "tcframe/spec/variable.hpp"
 
-using std::endl;
 using std::istream;
 using std::ostream;
 using std::vector;

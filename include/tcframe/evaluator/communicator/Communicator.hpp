@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdexcept>
 #include <string>
 #include <sys/signal.h>
 
@@ -9,6 +10,7 @@
 #include "tcframe/util.hpp"
 #include "tcframe/verdict.hpp"
 
+using std::runtime_error;
 using std::string;
 
 namespace tcframe {

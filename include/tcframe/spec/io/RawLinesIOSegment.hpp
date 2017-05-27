@@ -23,6 +23,8 @@ private:
     function<int()> size_;
 
 public:
+    virtual ~RawLinesIOSegment() {}
+
     IOSegmentType type() const {
         return IOSegmentType::RAW_LINES;
     }

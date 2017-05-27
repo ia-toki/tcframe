@@ -34,8 +34,6 @@ private:
     GradingConfig subject_;
 
 public:
-    virtual ~GradingConfigBuilder() {}
-
     GradingConfigBuilder() {
         subject_.timeLimit_ = 2;
         subject_.memoryLimit_ = 64;

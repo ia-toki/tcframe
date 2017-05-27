@@ -1,5 +1,4 @@
 #include "gmock/gmock.h"
-#include "../mock.hpp"
 
 #include "tcframe/aggregator/SumAggregator.hpp"
 

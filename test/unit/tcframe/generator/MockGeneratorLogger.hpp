@@ -12,7 +12,7 @@ public:
             : GeneratorLogger(nullptr) {}
 
     MOCK_METHOD1(logTestGroupIntroduction, void(int));
-    MOCK_METHOD1(logTestCaseIntroduction, void(string));
+    MOCK_METHOD1(logTestCaseIntroduction, void(const string&));
     MOCK_METHOD1(logExecutionResults, void(const map<string, ExecutionResult>&));
 
     MOCK_METHOD0(logIntroduction, void());

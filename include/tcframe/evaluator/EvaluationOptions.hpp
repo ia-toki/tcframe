@@ -1,6 +1,5 @@
 #pragma once
 
-#include <map>
 #include <string>
 #include <tuple>
 #include <utility>
@@ -8,7 +7,6 @@
 #include "tcframe/spec/core.hpp"
 #include "tcframe/util.hpp"
 
-using std::map;
 using std::move;
 using std::string;
 using std::tie;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <istream>
 #include <string>
 
 #include "Scorer.hpp"
@@ -8,6 +9,7 @@
 #include "tcframe/util.hpp"
 #include "tcframe/verdict.hpp"
 
+using std::istream;
 using std::string;
 
 namespace tcframe {

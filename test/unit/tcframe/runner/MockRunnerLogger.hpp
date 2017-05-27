@@ -14,4 +14,10 @@ public:
     MOCK_METHOD1(logSpecificationFailure, void(const vector<string>&));
 };
 
+class MockRunnerLoggerFactory : public RunnerLoggerFactory {
+public:
+    MOCK_METHOD1(create, RunnerLogger*(LoggerEngine*));
+};
+
+
 }

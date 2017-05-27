@@ -47,8 +47,6 @@ private:
     StyleConfig subject_;
 
 public:
-    virtual ~StyleConfigBuilder() {}
-
     StyleConfigBuilder() {
         subject_.evaluationStyle_ = EvaluationStyle::BATCH;
         subject_.needsOutput_ = true;

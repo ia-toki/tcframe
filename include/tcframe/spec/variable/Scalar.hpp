@@ -37,6 +37,8 @@ private:
     T* var_;
 
 public:
+    virtual ~ScalarImpl() {}
+
     ScalarImpl(T& var, const string& name)
             : Scalar(name)
             , var_(&var) {}
@@ -55,6 +57,8 @@ private:
     string* var_;
 
 public:
+    virtual ~RawScalarImpl() {}
+
     RawScalarImpl(string& var, const string& name)
             : ScalarImpl(var, name)
             , var_(&var) {}

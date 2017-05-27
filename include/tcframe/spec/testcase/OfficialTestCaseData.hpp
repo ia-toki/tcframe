@@ -13,6 +13,8 @@ private:
     function<void()> closure_;
 
 public:
+    virtual ~OfficialTestCaseData() {}
+
     OfficialTestCaseData(const function<void()>& closure)
             : closure_(closure) {}
 

@@ -34,7 +34,7 @@ public:
         }
     }
 
-    virtual void logTestCaseIntroduction(string testCaseName) {
+    virtual void logTestCaseIntroduction(const string& testCaseName) {
         engine_->logHangingParagraph(1, testCaseName + ": ");
     }
 

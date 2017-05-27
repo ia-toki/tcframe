@@ -26,4 +26,13 @@ public:
     }
 };
 
+class RunnerLoggerFactory {
+public:
+    virtual ~RunnerLoggerFactory() {}
+
+    virtual RunnerLogger* create(LoggerEngine* engine) {
+        return new RunnerLogger(engine);
+    }
+};
+
 }

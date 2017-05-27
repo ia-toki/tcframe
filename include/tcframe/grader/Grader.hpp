@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <map>
-#include <set>
 #include <string>
 #include <vector>
 
@@ -17,7 +16,6 @@
 
 using std::map;
 using std::max;
-using std::set;
 using std::string;
 using std::vector;
 
