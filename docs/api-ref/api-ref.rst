@@ -633,3 +633,7 @@ Local grading
 .. py:function:: --no-memory-limit
 
     Unsets the memory limit specified by ``MemoryLimit()`` in grading config.
+
+.. py:function:: --brief
+
+    Makes the output of the local grading concise by only showing the verdicts.

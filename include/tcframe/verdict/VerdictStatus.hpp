@@ -45,6 +45,10 @@ public:
         return VerdictStatus("ERR", "Internal Error", 99);
     }
 
+    const string& code() const {
+        return code_;
+    }
+
     const string& name() const {
         return name_;
     }

@@ -161,6 +161,44 @@ and here is for problems with subtasks.
 
 This local grading feature is useful for creating "unit tests" for your test cases. For each problem, you can write many solutions with different intended results. For example, ``solution_123.cpp`` should pass subtasks 1 - 3; ``solution_12.cpp`` should pass subtasks 1 and 2 but not subtask 3, etc.
 
+Brief mode
+----------
+
+You can pass an additional ``--brief`` argument to make the output concise. This is primarily intended to be consumed by scripts instead of human eyes.
+
+The first line of the output contains the overall the verdict in the following format:
+
+::
+
+    <status code> <points>
+
+where the status code mapping is:
+
+- ``AC``: Accepted
+- ``OK``: OK
+- ``WA``: Wrong Answer
+- ``RTE``: Runtime Error
+- ``TLE``: Time Limit Exceeded
+- ``ERR``: Internal Error
+
+
+If the problem has subtasks, the subtask verdicts will be output in the following lines, one line per subtask verdict ordered by subtask number, in the same format as above.
+
+The sample outputs from the previous sections would become the following using ``--brief`` argument:
+
+::
+
+    WA 71
+
+and
+
+::
+
+    RTE 40
+    AC 40
+    WA 0
+    RTE 0
+
 Notes
 -----
 

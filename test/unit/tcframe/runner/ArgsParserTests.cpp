@@ -13,6 +13,7 @@ class ArgsParserTests : public Test {};
 TEST_F(ArgsParserTests, Parsing_AllOptions) {
     char* argv[] = {
             (char*) "./runner",
+            (char*) "--brief",
             (char*) "--communicator=python Communicator.py",
             (char*) "--memory-limit=128",
             (char*) "--output=my/testdata",
@@ -24,6 +25,7 @@ TEST_F(ArgsParserTests, Parsing_AllOptions) {
     int argc = sizeof(argv) / sizeof(char*) - 1;
 
     Args args = ArgsParser::parse(argc, argv);
+    EXPECT_TRUE(args.brief());
     EXPECT_FALSE(args.noMemoryLimit());
     EXPECT_FALSE(args.noTimeLimit());
 
@@ -47,6 +49,7 @@ TEST_F(ArgsParserTests, Parsing_SomeOptions) {
     int argc = sizeof(argv) / sizeof(char*) - 1;
 
     Args args = ArgsParser::parse(argc, argv);
+    EXPECT_FALSE(args.brief());
     EXPECT_TRUE(args.noMemoryLimit());
     EXPECT_TRUE(args.noTimeLimit());
     EXPECT_THAT(args.output(), Eq(optional<string>("my/testdata")));

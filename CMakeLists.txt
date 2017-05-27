@@ -73,9 +73,11 @@ set(INCLUDE
         include/tcframe/generator/GeneratorLogger.hpp
         include/tcframe/generator/TestCaseGenerator.hpp
         include/tcframe/grader.hpp
+        include/tcframe/grader/BriefGraderLogger.hpp
         include/tcframe/grader/DefaultGraderLogger.hpp
         include/tcframe/grader/Grader.hpp
         include/tcframe/grader/GraderLogger.hpp
+        include/tcframe/grader/GraderLoggerFactory.hpp
         include/tcframe/grader/GradingOptions.hpp
         include/tcframe/grader/TestCaseGrader.hpp
         include/tcframe/io_manipulator.hpp
@@ -174,10 +176,12 @@ set(TEST_UNIT
         test/unit/tcframe/generator/MockGeneratorLogger.hpp
         test/unit/tcframe/generator/MockTestCaseGenerator.hpp
         test/unit/tcframe/generator/TestCaseGeneratorTests.cpp
+        test/unit/tcframe/grader/BriefGraderLoggerTests.cpp
         test/unit/tcframe/grader/DefaultGraderLoggerTests.cpp
         test/unit/tcframe/grader/GraderTests.cpp
         test/unit/tcframe/grader/MockGrader.hpp
         test/unit/tcframe/grader/MockGraderLogger.hpp
+        test/unit/tcframe/grader/MockGraderLoggerFactory.hpp
         test/unit/tcframe/grader/MockTestCaseGrader.hpp
         test/unit/tcframe/grader/TestCaseGraderTests.cpp
         test/unit/tcframe/io_manipulator/GridIOSegmentManipulatorTests.cpp

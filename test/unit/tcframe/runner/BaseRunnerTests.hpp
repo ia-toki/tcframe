@@ -7,6 +7,8 @@
 #include "../evaluator/MockEvaluatorRegistry.hpp"
 #include "../generator/MockGenerator.hpp"
 #include "../grader/MockGrader.hpp"
+#include "../grader/MockGraderLogger.hpp"
+#include "../grader/MockGraderLoggerFactory.hpp"
 #include "../os/MockOperatingSystem.hpp"
 #include "MockRunnerLogger.hpp"
 #include "tcframe/runner/Runner.hpp"
@@ -36,6 +38,7 @@ protected:
     LoggerEngine* loggerEngine = new SimpleLoggerEngine();
 
     MOCK(RunnerLogger) runnerLogger;
+    MOCK(GraderLogger) graderLogger;
     MOCK(Evaluator) evaluator;
     MOCK(Aggregator) aggregator;
     MOCK(Generator) generator;
@@ -43,6 +46,7 @@ protected:
 
     MOCK(OperatingSystem) os;
     MOCK(RunnerLoggerFactory) runnerLoggerFactory;
+    MOCK(GraderLoggerFactory) graderLoggerFactory;
     MOCK(GeneratorFactory) generatorFactory;
     MOCK(GraderFactory) graderFactory;
     MOCK(EvaluatorRegistry) evaluatorRegistry;
@@ -50,6 +54,7 @@ protected:
 
     void SetUp() {
         ON_CALL(runnerLoggerFactory, create(_)).WillByDefault(Return(&runnerLogger));
+        ON_CALL(graderLoggerFactory, create(_, _)).WillByDefault(Return(&graderLogger));
         ON_CALL(generatorFactory, create(_, _, _, _, _)).WillByDefault(Return(&generator));
         ON_CALL(graderFactory, create(_, _, _)).WillByDefault(Return(&grader));
         ON_CALL(evaluatorRegistry, get(_, _, _)).WillByDefault(Return(&evaluator));
@@ -60,8 +65,8 @@ protected:
     template<typename TProblem>
     Runner<TProblem> createRunner(BaseTestSpec<TProblem>* testSpec) {
         return Runner<TProblem>(
-                specPath, testSpec, loggerEngine, &os,
-                &runnerLoggerFactory, &generatorFactory, &graderFactory, &evaluatorRegistry, &aggregatorRegistry);
+                specPath, testSpec, loggerEngine, &os,&runnerLoggerFactory, &graderLoggerFactory,
+                &generatorFactory, &graderFactory, &evaluatorRegistry, &aggregatorRegistry);
     }
 
     struct HelperKeyIs {

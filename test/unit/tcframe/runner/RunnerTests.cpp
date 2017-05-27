@@ -49,8 +49,8 @@ protected:
 
     Runner<ProblemSpec> createRunner(const string& specPath) {
         return Runner<ProblemSpec>(
-                specPath, new TestSpec(), loggerEngine, &os,
-                &runnerLoggerFactory, &generatorFactory, &graderFactory, &evaluatorRegistry, &aggregatorRegistry);
+                specPath, new TestSpec(), loggerEngine, &os, &runnerLoggerFactory, &graderLoggerFactory,
+                &generatorFactory, &graderFactory, &evaluatorRegistry, &aggregatorRegistry);
     }
 };
 
@@ -200,6 +200,25 @@ TEST_F(RunnerTests, Run_Grading_UseArgsOptions_NoLimits) {
             (char*) "--output=testdata",
             (char*) "--no-time-limit",
             (char*) "--no-memory-limit",
+            nullptr});
+}
+
+TEST_F(RunnerTests, Run_Grading_DefaultLogger) {
+    EXPECT_CALL(graderLoggerFactory, create(_, false));
+
+    runner.run(2, new char*[3]{
+            (char*) "./runner",
+            (char*) "grade",
+            nullptr});
+}
+
+TEST_F(RunnerTests, Run_Grading_BriefLogger) {
+    EXPECT_CALL(graderLoggerFactory, create(_, true));
+
+    runner.run(3, new char*[4]{
+            (char*) "./runner",
+            (char*) "grade",
+            (char*) "--brief",
             nullptr});
 }
 

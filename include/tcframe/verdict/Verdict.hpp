@@ -39,8 +39,20 @@ public:
         return tie(status_, points_) == tie(o.status_, o.points_);
     }
 
+    string toBriefString() const {
+        string points = pointsToString();
+        if (!points.empty()) {
+            points = " " + points;
+        }
+        return status_.code() + points;
+    }
+
     string toString() const {
-        return status_.name() + pointsToString();
+        string points = pointsToString();
+        if (!points.empty()) {
+            points = " [" + points + "]";
+        }
+        return status_.name() + points;
     }
 
 private:
@@ -52,10 +64,10 @@ private:
         while (points.back() == '0') {
             points.pop_back();
         }
-        while (points.back() == '.') {
+        if (points.back() == '.') {
             points.pop_back();
         }
-        return " [" + points + "]";
+        return points;
     }
 };
 

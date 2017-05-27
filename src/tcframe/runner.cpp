@@ -17,6 +17,7 @@ int main(int argc, char* argv[]) {
             new SimpleLoggerEngine(),
             new OperatingSystem(),
             new RunnerLoggerFactory(),
+            new GraderLoggerFactory(),
             new GeneratorFactory(),
             new GraderFactory(),
             new EvaluatorRegistry(new EvaluatorHelperRegistry()),
