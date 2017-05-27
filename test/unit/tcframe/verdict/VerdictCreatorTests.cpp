@@ -56,7 +56,7 @@ TEST_F(VerdictCreatorTests, FromStream_Empty) {
         verdictCreator.fromStream(new istringstream(""));
         FAIL();
     } catch (runtime_error& e) {
-        EXPECT_THAT(e.what(), StrEq("Expected: <verdict> on the first line"));
+        EXPECT_THAT(e.what(), StrEq("Expected: <status> on the first line"));
     }
 }
 
@@ -65,7 +65,7 @@ TEST_F(VerdictCreatorTests, FromStream_UnknownVerdict) {
         verdictCreator.fromStream(new istringstream("hokus pokus"));
         FAIL();
     } catch (runtime_error& e) {
-        EXPECT_THAT(e.what(), StrEq("Unknown verdict: hokus pokus"));
+        EXPECT_THAT(e.what(), StrEq("Unknown status: hokus pokus"));
     }
 }
 

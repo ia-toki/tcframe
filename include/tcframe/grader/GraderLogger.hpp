@@ -28,7 +28,7 @@ public:
 
     virtual void logResult(const map<int, Verdict>& subtaskVerdicts, const Verdict& verdict) {
         if (subtaskVerdicts.size() > 1) {
-            engine_->logHeading("SUBTASK RESULTS");
+            engine_->logHeading("SUBTASK VERDICTS");
             for (auto entry : subtaskVerdicts) {
                 engine_->logParagraph(
                         1,
@@ -36,7 +36,7 @@ public:
             }
         }
 
-        engine_->logHeading("RESULT");
+        engine_->logHeading("VERDICT");
         engine_->logParagraph(1, verdict.toString());
     }
 };

@@ -454,7 +454,7 @@ You should get the following output:
           - Floating point exception: 8
       sum_4: Accepted
 
-    [ RESULT ]
+    [ VERDICT ]
       Time Limit Exceeded [25]
 
 We get a detailed verdict of each test case. Nice, isn't it? The final result here is **Time Limit Exceeded**, which is the "worst" verdict among all test case verdicts, and we get 25 points because we get one test case correct out of all four test cases.

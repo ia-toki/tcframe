@@ -23,16 +23,16 @@ public:
     virtual Verdict fromStream(istream* in) {
         Verdict builder;
 
-        string verdictString;
-        if (!getline(*in, verdictString)) {
-            throw runtime_error("Expected: <verdict> on the first line");
+        string statusString;
+        if (!getline(*in, statusString)) {
+            throw runtime_error("Expected: <status> on the first line");
         }
 
-        if (verdictString == "AC") {
+        if (statusString == "AC") {
             return Verdict(VerdictStatus::ac());
-        } else if (verdictString == "WA") {
+        } else if (statusString == "WA") {
             return Verdict(VerdictStatus::wa());
-        } else if (verdictString == "OK") {
+        } else if (statusString == "OK") {
             string secondLine;
             if (!getline(*in, secondLine)) {
                 throw runtime_error("Expected: <points> on the second line");
@@ -45,7 +45,7 @@ public:
             throw runtime_error("Unknown points format: " + pointsString);
         }
 
-        throw runtime_error("Unknown verdict: " + verdictString);
+        throw runtime_error("Unknown status: " + statusString);
     }
 
     virtual optional<Verdict> fromExecutionResult(const ExecutionResult& executionResult) {
