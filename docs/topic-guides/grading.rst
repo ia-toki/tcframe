@@ -52,7 +52,7 @@ Time Limit Exceeded
     The solution did not stop within the time limit, if specified.
 
 Internal Error
-    Custom :ref:`scorer <styles_scorer>` / :ref:`communicator <styles_communicator>` (if any) crashed or did not give valid verdict.
+    Custom :ref:`scorer <styles_scorer>` / :ref:`communicator <styles_communicator>` (if any) crashed or did not give a valid verdict.
 
 Test case verdicts
 ******************
@@ -62,14 +62,14 @@ The verdict of each test case will be shown. For OK statuses, the points (given 
 Subtask verdicts
 ****************
 
-If the problem has subtasks, the verdict of each subtask will be also shown. The verdict of a subtask is the combination of:
+If the problem has subtasks, the verdict of each subtask will be shown as well. The verdict of a subtask is the combination of:
 
 - status: the worst status of test case verdicts in the subtask
 - points:
 
-  - 0, if no test case verdicts in the subtask have Accepted or OK status,
-  - the minimum points of OK verdicts in the subtask, if at least one test case verdict is OK (and the rest are Accepted), or
-  - the subtask points (assigned via ``Points()``), if all test case verdicts in the subtask are Accepted.
+  - the subtask points (assigned via ``Points()``), if all test case verdicts in the subtask are Accepted,
+  - the minimum points of OK verdicts in the subtask, if at least one test case verdict is OK and the rest are Accepted, or
+  - 0, otherwise.
 
 Overall verdict
 ***************
