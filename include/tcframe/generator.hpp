@@ -1,5 +1,6 @@
 #pragma once
 
+#include "tcframe/generator/DefaultGeneratorLogger.hpp"
 #include "tcframe/generator/GenerationException.hpp"
 #include "tcframe/generator/GenerationOptions.hpp"
 #include "tcframe/generator/Generator.hpp"

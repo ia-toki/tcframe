@@ -2,7 +2,7 @@
 #include "../mock.hpp"
 
 #include "../logger/MockLoggerEngine.hpp"
-#include "tcframe/generator/GeneratorLogger.hpp"
+#include "tcframe/generator/DefaultGeneratorLogger.hpp"
 
 using ::testing::_;
 using ::testing::InSequence;
@@ -10,20 +10,20 @@ using ::testing::Test;
 
 namespace tcframe {
 
-class GeneratorLoggerTests : public Test {
+class DefaultGeneratorLoggerTests : public Test {
 protected:
     MOCK(LoggerEngine) engine;
 
-    GeneratorLogger logger = GeneratorLogger(&engine);
+    DefaultGeneratorLogger logger = DefaultGeneratorLogger(&engine);
 };
 
-TEST_F(GeneratorLoggerTests, Introduction) {
+TEST_F(DefaultGeneratorLoggerTests, Introduction) {
     EXPECT_CALL(engine, logParagraph(0, "Generating test cases..."));
 
     logger.logIntroduction();
 }
 
-TEST_F(GeneratorLoggerTests, Result_Successful) {
+TEST_F(DefaultGeneratorLoggerTests, Result_Successful) {
     {
         InSequence sequence;
         EXPECT_CALL(engine, logParagraph(0, ""));
@@ -32,7 +32,7 @@ TEST_F(GeneratorLoggerTests, Result_Successful) {
     logger.logSuccessfulResult();
 }
 
-TEST_F(GeneratorLoggerTests, Result_Failed) {
+TEST_F(DefaultGeneratorLoggerTests, Result_Failed) {
     {
         InSequence sequence;
         EXPECT_CALL(engine, logParagraph(0, ""));
@@ -41,13 +41,13 @@ TEST_F(GeneratorLoggerTests, Result_Failed) {
     logger.logFailedResult();
 }
 
-TEST_F(GeneratorLoggerTests, TestCaseResult_Successful) {
+TEST_F(DefaultGeneratorLoggerTests, TestCaseResult_Successful) {
     EXPECT_CALL(engine, logParagraph(0, "OK"));
 
     logger.logTestCaseSuccessfulResult();
 }
 
-TEST_F(GeneratorLoggerTests, TestCaseResult_Failed) {
+TEST_F(DefaultGeneratorLoggerTests, TestCaseResult_Failed) {
     {
         InSequence sequence;
         EXPECT_CALL(engine, logParagraph(0, "FAILED"));
@@ -57,7 +57,7 @@ TEST_F(GeneratorLoggerTests, TestCaseResult_Failed) {
     logger.logTestCaseFailedResult(optional<string>("N = 1"));
 }
 
-TEST_F(GeneratorLoggerTests, TestCaseResult_Failed_WithoutDescription) {
+TEST_F(DefaultGeneratorLoggerTests, TestCaseResult_Failed_WithoutDescription) {
     {
         InSequence sequence;
         EXPECT_CALL(engine, logParagraph(0, "FAILED"));
@@ -66,7 +66,7 @@ TEST_F(GeneratorLoggerTests, TestCaseResult_Failed_WithoutDescription) {
     logger.logTestCaseFailedResult(optional<string>());
 }
 
-TEST_F(GeneratorLoggerTests, ConstraintsVerificationFailure) {
+TEST_F(DefaultGeneratorLoggerTests, ConstraintsVerificationFailure) {
     {
         InSequence sequence;
         EXPECT_CALL(engine, logListItem1(2, "Does not satisfy constraints, on:"));
@@ -77,7 +77,7 @@ TEST_F(GeneratorLoggerTests, ConstraintsVerificationFailure) {
     logger.logConstraintsVerificationFailure(result);
 }
 
-TEST_F(GeneratorLoggerTests, SampleTestCaseCheckFailure) {
+TEST_F(DefaultGeneratorLoggerTests, SampleTestCaseCheckFailure) {
     {
         InSequence sequence;
         EXPECT_CALL(engine,
@@ -86,13 +86,13 @@ TEST_F(GeneratorLoggerTests, SampleTestCaseCheckFailure) {
     logger.logSampleTestCaseCheckFailure();
 }
 
-TEST_F(GeneratorLoggerTests, SampleTestCaseNoOutputNeededFailure) {
+TEST_F(DefaultGeneratorLoggerTests, SampleTestCaseNoOutputNeededFailure) {
     EXPECT_CALL(engine,
                 logListItem1(2, "Problem does not need test case outputs, but this sample test case has output"));
     logger.logSampleTestCaseNoOutputNeededFailure();
 }
 
-TEST_F(GeneratorLoggerTests, ConstraintsVerificationFailure_WithSubtasks) {
+TEST_F(DefaultGeneratorLoggerTests, ConstraintsVerificationFailure_WithSubtasks) {
     {
         InSequence sequence;
         EXPECT_CALL(engine, logListItem1(2, "Does not satisfy subtask 2, on constraints:"));
@@ -107,7 +107,7 @@ TEST_F(GeneratorLoggerTests, ConstraintsVerificationFailure_WithSubtasks) {
     logger.logConstraintsVerificationFailure(result);
 }
 
-TEST_F(GeneratorLoggerTests, ConstraintsVerificationFailure_WithConstraintsAndSubtasks) {
+TEST_F(DefaultGeneratorLoggerTests, ConstraintsVerificationFailure_WithConstraintsAndSubtasks) {
     {
         InSequence sequence;
         EXPECT_CALL(engine, logListItem1(2, "Does not satisfy constraints, on:"));
@@ -121,19 +121,19 @@ TEST_F(GeneratorLoggerTests, ConstraintsVerificationFailure_WithConstraintsAndSu
     logger.logConstraintsVerificationFailure(result);
 }
 
-TEST_F(GeneratorLoggerTests, MultipleTestCasesCombinationIntroduction) {
+TEST_F(DefaultGeneratorLoggerTests, MultipleTestCasesCombinationIntroduction) {
     EXPECT_CALL(engine, logHangingParagraph(1, "Combining test cases into a single file (foo_3): "));
 
     logger.logMultipleTestCasesCombinationIntroduction("foo_3");
 }
 
-TEST_F(GeneratorLoggerTests, MultipleTestCasesCombinationResult_Successful) {
+TEST_F(DefaultGeneratorLoggerTests, MultipleTestCasesCombinationResult_Successful) {
     EXPECT_CALL(engine, logParagraph(0, "OK"));
 
     logger.logMultipleTestCasesCombinationSuccessfulResult();
 }
 
-TEST_F(GeneratorLoggerTests, MultipleTestCasesCombinationResult_Failed) {
+TEST_F(DefaultGeneratorLoggerTests, MultipleTestCasesCombinationResult_Failed) {
     {
         InSequence sequence;
         EXPECT_CALL(engine, logParagraph(0, "FAILED"));

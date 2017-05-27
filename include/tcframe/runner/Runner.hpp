@@ -129,7 +129,7 @@ private:
         auto verifier = new Verifier(spec.constraintSuite());
         auto helperCommands = getHelperCommands(args, spec.styleConfig());
         auto evaluator = evaluatorRegistry_->get(spec.styleConfig().evaluationStyle(), os_, helperCommands);
-        auto logger = new GeneratorLogger(loggerEngine_);
+        auto logger = new DefaultGeneratorLogger(loggerEngine_);
         auto testCaseGenerator = new TestCaseGenerator(verifier, ioManipulator, os_, evaluator, logger);
         auto generator = generatorFactory_->create(spec.seedSetter(), testCaseGenerator, verifier, os_, logger);
 
@@ -154,7 +154,7 @@ private:
 
         GradingOptions options = optionsBuilder.build();
 
-        auto logger = new GraderLogger(loggerEngine_);
+        auto logger = new DefaultGraderLogger(loggerEngine_);
         auto helperCommands = getHelperCommands(args, spec.styleConfig());
         auto evaluator = evaluatorRegistry_->get(spec.styleConfig().evaluationStyle(), os_, helperCommands);
         auto testCaseGrader = new TestCaseGrader(evaluator, logger);

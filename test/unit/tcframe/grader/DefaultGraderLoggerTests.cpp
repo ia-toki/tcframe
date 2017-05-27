@@ -2,33 +2,33 @@
 #include "../mock.hpp"
 
 #include "../logger/MockLoggerEngine.hpp"
-#include "tcframe/grader/GraderLogger.hpp"
+#include "tcframe/grader/DefaultGraderLogger.hpp"
 
 using ::testing::InSequence;
 using ::testing::Test;
 
 namespace tcframe {
 
-class GraderLoggerTests : public Test {
+class DefaultGraderLoggerTests : public Test {
 protected:
     MOCK(LoggerEngine) engine;
 
-    GraderLogger logger = GraderLogger(&engine);
+    DefaultGraderLogger logger = DefaultGraderLogger(&engine);
 };
 
-TEST_F(GraderLoggerTests, Introduction) {
+TEST_F(DefaultGraderLoggerTests, Introduction) {
     EXPECT_CALL(engine, logParagraph(0, "Local grading with solution command: './solution'..."));
 
     logger.logIntroduction("./solution");
 }
 
-TEST_F(GraderLoggerTests, TestCaseVerdict) {
+TEST_F(DefaultGraderLoggerTests, TestCaseVerdict) {
     EXPECT_CALL(engine, logParagraph(0, VerdictStatus::ac().name()));
 
     logger.logTestCaseVerdict(Verdict(VerdictStatus::ac()));
 }
 
-TEST_F(GraderLoggerTests, Result) {
+TEST_F(DefaultGraderLoggerTests, Result) {
     Verdict verdict(VerdictStatus::ac());
     {
         InSequence sequence;
@@ -38,7 +38,7 @@ TEST_F(GraderLoggerTests, Result) {
     logger.logResult({{Subtask::MAIN_ID, verdict}}, verdict);
 }
 
-TEST_F(GraderLoggerTests, Result_WithSubtasks) {
+TEST_F(DefaultGraderLoggerTests, Result_WithSubtasks) {
     Verdict subtask1Verdict(VerdictStatus::ac(), 70);
     Verdict subtask2Verdict(VerdictStatus::wa(), 0);
     Verdict verdict(VerdictStatus::wa(), 70);

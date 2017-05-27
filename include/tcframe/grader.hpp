@@ -1,5 +1,6 @@
 #pragma once
 
+#include "tcframe/grader/DefaultGraderLogger.hpp"
 #include "tcframe/grader/Grader.hpp"
 #include "tcframe/grader/GraderLogger.hpp"
 #include "tcframe/grader/GradingOptions.hpp"

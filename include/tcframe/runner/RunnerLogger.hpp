@@ -10,12 +10,15 @@ using std::vector;
 
 namespace tcframe {
 
-class RunnerLogger : public BaseLogger {
+class RunnerLogger {
+private:
+    LoggerEngine* engine_;
+
 public:
     virtual ~RunnerLogger() {}
 
     RunnerLogger(LoggerEngine* engine)
-            : BaseLogger(engine) {}
+            : engine_(engine) {}
 
     virtual void logSpecificationFailure(const vector<string>& messages) {
         engine_->logHeading("SPECIFICATIONS");

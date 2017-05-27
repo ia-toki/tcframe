@@ -8,9 +8,6 @@ namespace tcframe {
 
 class MockGraderLogger : public GraderLogger {
 public:
-    MockGraderLogger()
-            : GraderLogger(nullptr) {}
-
     MOCK_METHOD1(logTestGroupIntroduction, void(int));
     MOCK_METHOD1(logTestCaseIntroduction, void(const string&));
     MOCK_METHOD1(logExecutionResults, void(const map<string, ExecutionResult>&));

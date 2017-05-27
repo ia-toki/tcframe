@@ -66,12 +66,14 @@ set(INCLUDE
         include/tcframe/evaluator/scorer/Scorer.hpp
         include/tcframe/evaluator/scorer/ScoringResult.hpp
         include/tcframe/generator.hpp
+        include/tcframe/generator/DefaultGeneratorLogger.hpp
         include/tcframe/generator/GenerationException.hpp
         include/tcframe/generator/GenerationOptions.hpp
         include/tcframe/generator/Generator.hpp
         include/tcframe/generator/GeneratorLogger.hpp
         include/tcframe/generator/TestCaseGenerator.hpp
         include/tcframe/grader.hpp
+        include/tcframe/grader/DefaultGraderLogger.hpp
         include/tcframe/grader/Grader.hpp
         include/tcframe/grader/GraderLogger.hpp
         include/tcframe/grader/GradingOptions.hpp
@@ -85,6 +87,7 @@ set(INCLUDE
         include/tcframe/io_manipulator/RawLinesIOSegmentManipulator.hpp
         include/tcframe/logger.hpp
         include/tcframe/logger/BaseLogger.hpp
+        include/tcframe/logger/DefaultBaseLogger.hpp
         include/tcframe/logger/LoggerEngine.hpp
         include/tcframe/logger/SimpleLoggerEngine.hpp
         include/tcframe/os.hpp
@@ -165,14 +168,14 @@ set(TEST_UNIT
         test/unit/tcframe/evaluator/communicator/MockCommunicator.hpp
         test/unit/tcframe/evaluator/scorer/CustomScorerTests.cpp
         test/unit/tcframe/evaluator/scorer/MockScorer.hpp
-        test/unit/tcframe/generator/GeneratorLoggerTests.cpp
+        test/unit/tcframe/generator/DefaultGeneratorLoggerTests.cpp
         test/unit/tcframe/generator/GeneratorTests.cpp
         test/unit/tcframe/generator/MockGenerator.hpp
         test/unit/tcframe/generator/MockGeneratorLogger.hpp
         test/unit/tcframe/generator/MockTestCaseGenerator.hpp
         test/unit/tcframe/generator/TestCaseGeneratorTests.cpp
+        test/unit/tcframe/grader/DefaultGraderLoggerTests.cpp
         test/unit/tcframe/grader/GraderTests.cpp
-        test/unit/tcframe/grader/GraderLoggerTests.cpp
         test/unit/tcframe/grader/MockGrader.hpp
         test/unit/tcframe/grader/MockGraderLogger.hpp
         test/unit/tcframe/grader/MockTestCaseGrader.hpp
@@ -184,7 +187,7 @@ set(TEST_UNIT
         test/unit/tcframe/io_manipulator/MockIOManipulator.hpp
         test/unit/tcframe/io_manipulator/RawLineIOSegmentManipulatorTests.cpp
         test/unit/tcframe/io_manipulator/RawLinesIOSegmentManipulatorTests.cpp
-        test/unit/tcframe/logger/BaseLogggerTests.cpp
+        test/unit/tcframe/logger/DefaultBaseLogggerTests.cpp
         test/unit/tcframe/logger/MockLoggerEngine.hpp
         test/unit/tcframe/logger/SimpleLoggerEngineTests.cpp
         test/unit/tcframe/os/MockOperatingSystem.hpp
