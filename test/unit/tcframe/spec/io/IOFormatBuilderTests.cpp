@@ -88,48 +88,12 @@ TEST_F(IOFormatBuilderTests, Building_Failed_LinesSegmentWithoutSizeNotLast) {
     } catch (runtime_error& e) {
         EXPECT_THAT(e.what(), StrEq("Lines segment without size can only be the last segment"));
     }
-
-    try {
-        builder.prepareForOutputFormat();
-        builder
-                .newLineIOSegment()
-                .addScalarVariable(Scalar::create(X, "X"));
-        builder
-                .newLinesIOSegment()
-                .addVectorVariable(Vector::create(Y, "Y"));
-        builder
-                .newGridIOSegment()
-                .addMatrixVariable(Matrix::create(Z, "Z"))
-                .setSize([] {return 2;}, [] {return 3;});
-        builder.build();
-        FAIL();
-    } catch (runtime_error& e) {
-        EXPECT_THAT(e.what(), StrEq("Lines segment without size can only be the last segment"));
-    }
 }
 
 
 TEST_F(IOFormatBuilderTests, Building_Failed_RawLinesSegmentWithoutSizeNotLast) {
     try {
         builder.prepareForInputFormat();
-        builder
-                .newLineIOSegment()
-                .addScalarVariable(Scalar::create(X, "X"));
-        builder
-                .newRawLinesIOSegment()
-                .addVectorVariable(Vector::createRaw(V, "V"));
-        builder
-                .newGridIOSegment()
-                .addMatrixVariable(Matrix::create(Z, "Z"))
-                .setSize([] {return 2;}, [] {return 3;});
-        builder.build();
-        FAIL();
-    } catch (runtime_error& e) {
-        EXPECT_THAT(e.what(), StrEq("Raw lines segment without size can only be the last segment"));
-    }
-
-    try {
-        builder.prepareForOutputFormat();
         builder
                 .newLineIOSegment()
                 .addScalarVariable(Scalar::create(X, "X"));

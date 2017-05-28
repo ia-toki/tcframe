@@ -2,7 +2,6 @@
 
 #include "tcframe/spec/core/BaseProblemSpec.hpp"
 
-using ::testing::A;
 using ::testing::AllOf;
 using ::testing::ElementsAre;
 using ::testing::Eq;
@@ -16,6 +15,9 @@ namespace tcframe {
 class BaseProblemSpecTests : public Test {
 protected:
     class ProblemSpec : public BaseProblemSpec {
+    public:
+        int Z;
+
     protected:
         int T;
         int A, B;
@@ -29,23 +31,17 @@ protected:
             newLinesIOSegment()
                     .addVectorVariable(Vector::create(X, "X"))
                     .setSize([] {return 3;});
-            newGridIOSegment()
-                    .addMatrixVariable(Matrix::create(M, "M"))
-                    .setSize([] {return 2;}, [] {return 3;})
-                    .build();
+        }
+
+        void BeforeOutputFormat() {
+            Z = 42;
         }
 
         void OutputFormat() {
-            newLinesIOSegment()
-                    .addVectorVariable(Vector::create(X, "X"))
-                    .setSize([] {return 3;});
             newGridIOSegment()
                     .addMatrixVariable(Matrix::create(M, "M"))
                     .setSize([] {return 2;}, [] {return 3;})
                     .build();
-            newLineIOSegment()
-                    .addScalarVariable(Scalar::create(A, "A"))
-                    .addScalarVariable(Scalar::create(B, "B"));
         }
     };
 
@@ -128,15 +124,15 @@ TEST_F(BaseProblemSpecTests, GradingConfig) {
 }
 
 TEST_F(BaseProblemSpecTests, IOFormat) {
-    IOFormat ioFormat = ProblemSpec().buildIOFormat();
-    EXPECT_THAT(ioFormat.inputFormat(), ElementsAre(
-        A<LineIOSegment*>(),
-        A<LinesIOSegment*>(),
-        A<GridIOSegment*>()));
-    EXPECT_THAT(ioFormat.outputFormat(), ElementsAre(
-            A<LinesIOSegment*>(),
-            A<GridIOSegment*>(),
-            A<LineIOSegment*>()));
+    ProblemSpec problemSpec;
+    problemSpec.Z = 0;
+
+    IOFormat ioFormat = problemSpec.buildIOFormat();
+    EXPECT_THAT(ioFormat.inputFormat(), SizeIs(2));
+    EXPECT_THAT(ioFormat.outputFormat(), SizeIs(1));
+
+    ioFormat.beforeOutputFormat()();
+    EXPECT_THAT(problemSpec.Z, Eq(42));
 }
 
 TEST_F(BaseProblemSpecTests, Constraints) {
