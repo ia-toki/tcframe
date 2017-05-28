@@ -68,8 +68,6 @@ public:
     IOFormatBuilder()
             : lastBuilder_(nullptr) {}
 
-    virtual ~IOFormatBuilder() {}
-
     void prepareForInputFormat() {
         addLastSegment();
         currentFormat_ = &subject_.inputFormat_;

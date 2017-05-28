@@ -22,25 +22,25 @@ public:
     DefaultGeneratorLogger(LoggerEngine* engine)
             : DefaultBaseLogger(engine) {}
 
-    virtual void logIntroduction() {
+    void logIntroduction() {
         engine_->logParagraph(0, "Generating test cases...");
     }
 
-    virtual void logSuccessfulResult() {
+    void logSuccessfulResult() {
         engine_->logParagraph(0, "");
         engine_->logParagraph(0, "Generation finished. All test cases OK.");
     }
 
-    virtual void logFailedResult() {
+    void logFailedResult() {
         engine_->logParagraph(0, "");
         engine_->logParagraph(0, "Generation finished. Some test cases FAILED.");
     }
 
-    virtual void logTestCaseSuccessfulResult() {
+    void logTestCaseSuccessfulResult() {
         engine_->logParagraph(0, "OK");
     }
 
-    virtual void logTestCaseFailedResult(const optional<string>& testCaseDescription) {
+    void logTestCaseFailedResult(const optional<string>& testCaseDescription) {
         engine_->logParagraph(0, "FAILED");
         if (testCaseDescription) {
             engine_->logParagraph(2, "Description: " + testCaseDescription.value());
@@ -48,20 +48,20 @@ public:
         engine_->logParagraph(2, "Reasons:");
     }
 
-    virtual void logMultipleTestCasesCombinationIntroduction(const string& testGroupName) {
+    void logMultipleTestCasesCombinationIntroduction(const string& testGroupName) {
         engine_->logHangingParagraph(1, "Combining test cases into a single file (" + testGroupName + "): ");
     }
 
-    virtual void logMultipleTestCasesCombinationSuccessfulResult() {
+    void logMultipleTestCasesCombinationSuccessfulResult() {
         engine_->logParagraph(0, "OK");
     }
 
-    virtual void logMultipleTestCasesCombinationFailedResult() {
+    void logMultipleTestCasesCombinationFailedResult() {
         engine_->logParagraph(0, "FAILED");
         engine_->logParagraph(2, "Reasons:");
     }
 
-    virtual void logConstraintsVerificationFailure(const ConstraintsVerificationResult& result) {
+    void logConstraintsVerificationFailure(const ConstraintsVerificationResult& result) {
         for (const auto& entry : result.unsatisfiedConstraintDescriptionsBySubtaskId()) {
             int subtaskId = entry.first;
             const vector<string>& unsatisfiedConstraintDescriptions = entry.second;
@@ -81,7 +81,7 @@ public:
         }
     }
 
-    virtual void logMultipleTestCasesConstraintsVerificationFailure(
+    void logMultipleTestCasesConstraintsVerificationFailure(
             const MultipleTestCasesConstraintsVerificationResult& result) {
 
         engine_->logListItem1(2, "Does not satisfy constraints, on:");
@@ -91,15 +91,15 @@ public:
         }
     }
 
-    virtual void logSampleTestCaseCheckFailure() {
+    void logSampleTestCaseCheckFailure() {
         engine_->logListItem1(2, "Sample test case output does not match with actual output produced by the solution");
     }
 
-    virtual void logSampleTestCaseNoOutputNeededFailure() {
+    void logSampleTestCaseNoOutputNeededFailure() {
         engine_->logListItem1(2, "Problem does not need test case outputs, but this sample test case has output");
     }
 
-    virtual void logSimpleFailure(const string& message) {
+    void logSimpleFailure(const string& message) {
         engine_->logListItem1(2, message);
     }
 };

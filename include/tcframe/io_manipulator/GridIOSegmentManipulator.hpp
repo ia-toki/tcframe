@@ -16,6 +16,8 @@ namespace tcframe {
 
 class GridIOSegmentManipulator {
 public:
+    GridIOSegmentManipulator() = delete;
+
     static string parse(GridIOSegment* segment, istream* in) {
         Matrix* variable = segment->variable();
         variable->clear();

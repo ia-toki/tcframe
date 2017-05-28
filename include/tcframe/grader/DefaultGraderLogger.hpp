@@ -18,15 +18,15 @@ public:
     DefaultGraderLogger(LoggerEngine* engine)
             : DefaultBaseLogger(engine) {}
 
-    virtual void logIntroduction(const string& solutionCommand) {
+    void logIntroduction(const string& solutionCommand) {
         engine_->logParagraph(0, "Local grading with solution command: '" + solutionCommand + "'...");
     }
 
-    virtual void logTestCaseVerdict(const Verdict& verdict) {
+    void logTestCaseVerdict(const Verdict& verdict) {
         engine_->logParagraph(0, verdict.toString());
     }
 
-    virtual void logResult(const map<int, Verdict>& subtaskVerdicts, const Verdict& verdict) {
+    void logResult(const map<int, Verdict>& subtaskVerdicts, const Verdict& verdict) {
         if (subtaskVerdicts.size() > 1) {
             engine_->logHeading("SUBTASK VERDICTS");
             for (auto entry : subtaskVerdicts) {

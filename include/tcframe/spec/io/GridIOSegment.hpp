@@ -23,6 +23,8 @@ private:
     function<int()> columns_;
 
 public:
+    virtual ~GridIOSegment() {}
+
     GridIOSegment()
             : variable_(nullptr)
             , rows_([] {return NO_SIZE;})

@@ -16,6 +16,8 @@ namespace tcframe {
 
 class ArgsParser {
 public:
+    ArgsParser() = delete;
+
     static Args parse(int argc, char* argv[]) {
         option longopts[] = {
                 { "communicator",    required_argument, nullptr, 'a'},

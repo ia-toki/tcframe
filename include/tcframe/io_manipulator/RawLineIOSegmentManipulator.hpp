@@ -14,6 +14,8 @@ namespace tcframe {
 
 class RawLineIOSegmentManipulator {
 public:
+    RawLineIOSegmentManipulator() = delete;
+
     static string parse(RawLineIOSegment* segment, istream* in) {
         string lastVariableName = TokenFormatter::formatVariable(segment->variable()->name());
         segment->variable()->parseFrom(in);

@@ -69,8 +69,6 @@ private:
     optional<vector<string>> curSampleOutputLines_;
 
 public:
-    virtual ~TestSuiteBuilder() {}
-
     TestSuiteBuilder()
             : beforeClosure_([]{})
             , afterClosure_([]{})

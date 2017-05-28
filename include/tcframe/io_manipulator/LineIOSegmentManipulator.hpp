@@ -16,6 +16,8 @@ namespace tcframe {
 
 class LineIOSegmentManipulator {
 public:
+    LineIOSegmentManipulator() = delete;
+
     static string parse(LineIOSegment* segment, istream* in) {
         string lastVariableName;
         for (const LineIOSegmentVariable& segmentVariable : segment->variables()) {

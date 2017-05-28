@@ -16,6 +16,8 @@ namespace tcframe {
 
 class RawLinesIOSegmentManipulator {
 public:
+    RawLinesIOSegmentManipulator() = delete;
+
     static string parse(RawLinesIOSegment* segment, istream* in) {
         string lastVariableName;
 

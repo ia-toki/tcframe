@@ -16,6 +16,8 @@ namespace tcframe {
 
 class LinesIOSegmentManipulator {
 public:
+    LinesIOSegmentManipulator() = delete;
+
     static string parse(LinesIOSegment* segment, istream* in) {
         for (Variable* variable : segment->variables()) {
             if (variable->type() == VariableType::VECTOR) {

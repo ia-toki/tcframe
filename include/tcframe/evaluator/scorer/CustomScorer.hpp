@@ -23,6 +23,8 @@ private:
     string scorerCommand_;
 
 public:
+    virtual ~CustomScorer() {}
+
     CustomScorer(OperatingSystem* os, VerdictCreator* verdictCreator, const string& scorerCommand)
             : os_(os)
             , verdictCreator_(verdictCreator)

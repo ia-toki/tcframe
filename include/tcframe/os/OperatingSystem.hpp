@@ -26,6 +26,8 @@ private:
     static constexpr const char* ERROR_FILENAME = "__tcframe_error.out";
 
 public:
+    virtual ~OperatingSystem() {}
+
     virtual istream* openForReading(const string& filename) {
         ifstream* file = new ifstream();
         file->open(filename);
