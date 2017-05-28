@@ -2,6 +2,10 @@
 
 #include <climits>
 
+#include <vector>
+
+using std::vector;
+
 namespace tcframe {
 
 const int NO_SIZE = INT_MIN;
@@ -29,5 +33,7 @@ public:
 
     virtual IOSegment* build() = 0;
 };
+
+using IOSegments = vector<IOSegment*>;
 
 }

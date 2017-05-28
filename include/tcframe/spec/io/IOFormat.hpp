@@ -23,12 +23,12 @@ struct IOFormat {
     friend class IOFormatBuilder;
 
 private:
-    vector<IOSegment*> inputFormat_;
+    IOSegments inputFormat_;
     function<void()> beforeOutputFormat_;
-    vector<IOSegment*> outputFormat_;
+    IOSegments outputFormat_;
 
 public:
-    const vector<IOSegment*>& inputFormat() const {
+    const IOSegments& inputFormat() const {
         return inputFormat_;
     }
 
@@ -36,7 +36,7 @@ public:
         return beforeOutputFormat_;
     }
 
-    const vector<IOSegment*>& outputFormat() const {
+    const IOSegments& outputFormat() const {
         return outputFormat_;
     }
 
@@ -45,7 +45,7 @@ public:
     }
 
 private:
-    bool equals(const vector<IOSegment*>& a, const vector<IOSegment*>& b) const {
+    bool equals(const IOSegments& a, const IOSegments& b) const {
         if (a.size() != b.size()) {
             return false;
         }
@@ -61,7 +61,7 @@ private:
 class IOFormatBuilder {
 private:
     IOFormat subject_;
-    vector<IOSegment*>* currentFormat_;
+    IOSegments* currentFormat_;
     IOSegmentBuilder* lastBuilder_;
 
 public:

@@ -42,7 +42,7 @@ public:
     }
 
 private:
-    void print(const vector<IOSegment*>& segments, ostream* out) {
+    void print(const IOSegments& segments, ostream* out) {
         for (IOSegment* segment : segments) {
             if (segment->type() == IOSegmentType::GRID) {
                 GridIOSegmentManipulator::print((GridIOSegment*) segment, out);
@@ -58,7 +58,7 @@ private:
         }
     }
 
-    void parse(const vector<IOSegment*>& segments, istream* in) {
+    void parse(const IOSegments& segments, istream* in) {
         string lastVariableName;
         for (IOSegment* segment : segments) {
             if (segment->type() == IOSegmentType::GRID) {
