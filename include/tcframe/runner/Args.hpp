@@ -20,6 +20,7 @@ public:
 private:
     Command command_;
 
+    bool brief_;
     optional<string> communicator_;
     optional<int> memoryLimit_;
     bool noMemoryLimit_;
@@ -32,11 +33,16 @@ private:
 
 public:
     Args()
-            : noMemoryLimit_(false)
+            : brief_(false)
+            , noMemoryLimit_(false)
             , noTimeLimit_(false) {}
 
     Command command() const {
         return command_;
+    }
+
+    bool brief() const {
+        return brief_;
     }
 
     const optional<string>& communicator() const {

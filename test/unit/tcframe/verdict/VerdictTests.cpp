@@ -25,4 +25,14 @@ TEST_F(VerdictTests, ToString_WithPoints) {
     EXPECT_THAT(verdict4.toString(), Eq(verdict4.status().name() + " [30.12]"));
 }
 
+TEST_F(VerdictTests, ToBriefString_WithoutPoints) {
+    Verdict verdict(VerdictStatus::wa());
+    EXPECT_THAT(verdict.toBriefString(), Eq(verdict.status().code()));
+}
+
+TEST_F(VerdictTests, ToBriefString_WithPoints) {
+    Verdict verdict(VerdictStatus::ok(), 30);
+    EXPECT_THAT(verdict.toBriefString(), Eq(verdict.status().code() + " 30"));
+}
+
 }

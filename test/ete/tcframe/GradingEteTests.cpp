@@ -3,6 +3,7 @@
 #include "BaseEteTests.cpp"
 
 using ::testing::AllOf;
+using ::testing::Eq;
 using ::testing::HasSubstr;
 using ::testing::Test;
 
@@ -18,6 +19,11 @@ TEST_F(GradingEteTests, Normal) {
             HasSubstr("normal_2: Runtime Error"),
             HasSubstr("normal_3: Time Limit Exceeded")));
     EXPECT_THAT(result, HasSubstr("Time Limit Exceeded [33.33]"));
+}
+
+TEST_F(GradingEteTests, Normal_Brief) {
+    string result = exec("cd test-ete/normal && ../scripts/grade.sh --brief");
+    EXPECT_THAT(result, Eq("TLE 33.33\n"));
 }
 
 TEST_F(GradingEteTests, Normal_CustomScorer) {

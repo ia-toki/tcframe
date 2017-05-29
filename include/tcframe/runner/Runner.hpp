@@ -31,6 +31,7 @@ private:
     OperatingSystem* os_;
 
     RunnerLoggerFactory* runnerLoggerFactory_;
+    GraderLoggerFactory* graderLoggerFactory_;
     GeneratorFactory* generatorFactory_;
     GraderFactory* graderFactory_;
     EvaluatorRegistry* evaluatorRegistry_;
@@ -43,6 +44,7 @@ public:
             LoggerEngine* loggerEngine,
             OperatingSystem* os,
             RunnerLoggerFactory* runnerLoggerFactory,
+            GraderLoggerFactory* graderLoggerFactory,
             GeneratorFactory* generatorFactory,
             GraderFactory* graderFactory,
             EvaluatorRegistry* evaluatorRegistry,
@@ -52,6 +54,7 @@ public:
             , loggerEngine_(loggerEngine)
             , os_(os)
             , runnerLoggerFactory_(runnerLoggerFactory)
+            , graderLoggerFactory_(graderLoggerFactory)
             , generatorFactory_(generatorFactory)
             , graderFactory_(graderFactory)
             , evaluatorRegistry_(evaluatorRegistry)
@@ -154,7 +157,7 @@ private:
 
         GradingOptions options = optionsBuilder.build();
 
-        auto logger = new DefaultGraderLogger(loggerEngine_);
+        auto logger = graderLoggerFactory_->create(loggerEngine_, args.brief());
         auto helperCommands = getHelperCommands(args, spec.styleConfig());
         auto evaluator = evaluatorRegistry_->get(spec.styleConfig().evaluationStyle(), os_, helperCommands);
         auto testCaseGrader = new TestCaseGrader(evaluator, logger);
