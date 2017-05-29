@@ -15,9 +15,6 @@ namespace tcframe {
 class BaseProblemSpecTests : public Test {
 protected:
     class ProblemSpec : public BaseProblemSpec {
-    public:
-        int Z;
-
     protected:
         int T;
         int A, B;
@@ -32,7 +29,13 @@ protected:
                     .addVectorVariable(Vector::create(X, "X"))
                     .setSize([] {return 3;});
         }
+    };
 
+    class ProblemSpecWithOutputFormat : public ProblemSpec {
+    public:
+        int Z;
+
+    protected:
         void BeforeOutputFormat() {
             Z = 42;
         }
@@ -43,6 +46,31 @@ protected:
                     .setSize([] {return 2;}, [] {return 3;})
                     .build();
         }
+    };
+
+    class ProblemSpecWithMultipleOutputFormats : public ProblemSpec {
+    protected:
+        void OutputFormat1() {
+            newLineIOSegment()
+                    .addScalarVariable(Scalar::create(A, "A"))
+                    .addScalarVariable(Scalar::create(B, "B"));
+            newLinesIOSegment()
+                    .addVectorVariable(Vector::create(X, "X"))
+                    .setSize([] {return 3;});
+        }
+
+        void OutputFormat2() {
+            newGridIOSegment()
+                    .addMatrixVariable(Matrix::create(M, "M"))
+                    .setSize([] {return 2;}, [] {return 3;})
+                    .build();
+        }
+    };
+
+    class ProblemSpecWithInvalidOutputFormats : public ProblemSpecWithOutputFormat {
+    protected:
+        void OutputFormat1() {}
+        void OutputFormat2() {}
     };
 
     class ProblemSpecWithStyleConfig : public ProblemSpec {
@@ -124,15 +152,32 @@ TEST_F(BaseProblemSpecTests, GradingConfig) {
 }
 
 TEST_F(BaseProblemSpecTests, IOFormat) {
-    ProblemSpec problemSpec;
+    ProblemSpecWithOutputFormat problemSpec;
     problemSpec.Z = 0;
 
     IOFormat ioFormat = problemSpec.buildIOFormat();
     EXPECT_THAT(ioFormat.inputFormat(), SizeIs(2));
-    EXPECT_THAT(ioFormat.outputFormat(), SizeIs(1));
+    ASSERT_THAT(ioFormat.outputFormats(), SizeIs(1));
+    EXPECT_THAT(ioFormat.outputFormats()[0], SizeIs(1));
 
     ioFormat.beforeOutputFormat()();
     EXPECT_THAT(problemSpec.Z, Eq(42));
+}
+
+TEST_F(BaseProblemSpecTests, IOFormat_MultipleOutputFormats) {
+    IOFormat ioFormat = ProblemSpecWithMultipleOutputFormats().buildIOFormat();
+    ASSERT_THAT(ioFormat.outputFormats(), SizeIs(2));
+    EXPECT_THAT(ioFormat.outputFormats()[0], SizeIs(2));
+    EXPECT_THAT(ioFormat.outputFormats()[1], SizeIs(1));
+}
+
+TEST_F(BaseProblemSpecTests, IOFormat_MultipleOutputFormats_Invalid) {
+    try {
+        ProblemSpecWithInvalidOutputFormats().buildIOFormat();
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("If OutputFormat() is specified, no other OutputFormatX() can be specified"));
+    }
 }
 
 TEST_F(BaseProblemSpecTests, Constraints) {

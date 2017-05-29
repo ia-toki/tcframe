@@ -25,7 +25,7 @@ struct IOFormat {
 private:
     IOSegments inputFormat_;
     function<void()> beforeOutputFormat_;
-    IOSegments outputFormat_;
+    vector<IOSegments> outputFormats_;
 
 public:
     const IOSegments& inputFormat() const {
@@ -36,12 +36,12 @@ public:
         return beforeOutputFormat_;
     }
 
-    const IOSegments& outputFormat() const {
-        return outputFormat_;
+    const vector<IOSegments>& outputFormats() const {
+        return outputFormats_;
     }
 
     bool operator==(const IOFormat& o) const {
-        return equals(inputFormat_, o.inputFormat_) && equals(outputFormat_, o.outputFormat_);
+        return equals(inputFormat_, o.inputFormat_) && equals(outputFormats_, o.outputFormats_);
     }
 
 private:
@@ -51,6 +51,18 @@ private:
         }
         for (int i = 0; i < a.size(); i++) {
             if (!a[i]->equals(b[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool equals(const vector<IOSegments>& a, const vector<IOSegments>& b) const {
+        if (a.size() != b.size()) {
+            return false;
+        }
+        for (int i = 0; i < a.size(); i++) {
+            if (!equals(a[i], b[i])) {
                 return false;
             }
         }
@@ -77,9 +89,10 @@ public:
         subject_.beforeOutputFormat_ = beforeOutputFormat;
     }
 
-    void prepareForOutputFormat() {
+    void newOutputFormat() {
         addLastSegment();
-        currentFormat_ = &subject_.outputFormat_;
+        subject_.outputFormats_.push_back(IOSegments());
+        currentFormat_ = &subject_.outputFormats_.back();
     }
 
     LineIOSegmentBuilder& newLineIOSegment() {
@@ -119,6 +132,9 @@ public:
 
     IOFormat build() {
         addLastSegment();
+        if (!subject_.outputFormats_.empty() && subject_.outputFormats_.back().empty()) {
+            subject_.outputFormats_.pop_back();
+        }
         return move(subject_);
     }
 

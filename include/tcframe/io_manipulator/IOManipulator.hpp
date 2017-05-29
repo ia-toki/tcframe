@@ -1,5 +1,8 @@
 #pragma once
 
+#include <istream>
+#include <ostream>
+#include <string>
 #include <vector>
 
 #include "GridIOSegmentManipulator.hpp"
@@ -12,6 +15,7 @@
 
 using std::istream;
 using std::ostream;
+using std::string;
 using std::vector;
 
 namespace tcframe {
@@ -35,9 +39,32 @@ public:
     }
 
     virtual void parseOutput(istream* in) {
-        if (!ioFormat_.outputFormat().empty()) {
+        if (!ioFormat_.outputFormats().empty()) {
             ioFormat_.beforeOutputFormat()();
-            parse(ioFormat_.outputFormat(), in);
+
+            long long initialPos = in->tellg();
+            bool successful = false;
+            string errorMessage;
+            for (const IOSegments& outputFormat : ioFormat_.outputFormats()) {
+                try {
+                    parse(outputFormat, in);
+                    successful = true;
+                    break;
+                } catch (runtime_error& e) {
+                    in->clear();
+                    in->seekg(initialPos);
+                    if (errorMessage.empty()) {
+                        errorMessage = e.what();
+                    }
+                }
+            }
+
+            if (!successful) {
+                if (ioFormat_.outputFormats().size() == 1) {
+                    throw runtime_error(errorMessage);
+                }
+                throw runtime_error("Test case output does not conform to any of the output formats");
+            }
         }
     }
 
