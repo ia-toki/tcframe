@@ -18,30 +18,21 @@ protected:
     int A;
     int N;
     string S;
-    vector<int> V;
+    vector<int> U, V;
     vector<string> W;
     vector<vector<int>> M;
 
-    IOManipulator* manipulatorEmpty;
+    IOManipulator* manipulator;
     IOManipulator* manipulatorWithOutputFormat;
-    IOManipulator* manipulatorWithScalarLast;
-    IOManipulator* manipulatorWithVectorLast;
-    IOManipulator* manipulatorWithMatrixLast;
+    IOManipulator* manipulatorWithMultipleOutputFormats;
 
     void SetUp() {
         {
             IOFormatBuilder ioFormatBuilder;
-            ioFormatBuilder.prepareForInputFormat();
-            IOFormat ioFormat = ioFormatBuilder.build();
-
-            manipulatorEmpty = new IOManipulator(ioFormat);
-        }
-        {
-            IOFormatBuilder ioFormatBuilder;
-            ioFormatBuilder.prepareForOutputFormat();
             ioFormatBuilder.setBeforeOutputFormat([=] {N = 3;});
+            ioFormatBuilder.newOutputFormat();
             ioFormatBuilder.newLinesIOSegment()
-                    .addVectorVariable(Vector::create(V, "V"))
+                    .addVectorVariable(Vector::create(U, "U"))
                     .setSize([=] {return N;});
             IOFormat ioFormat = ioFormatBuilder.build();
 
@@ -49,24 +40,18 @@ protected:
         }
         {
             IOFormatBuilder ioFormatBuilder;
-            ioFormatBuilder.prepareForInputFormat();
-            ioFormatBuilder.newLineIOSegment()
-                    .addScalarVariable(Scalar::create(A, "A"));
-            IOFormat ioFormat = ioFormatBuilder.build();
-
-            manipulatorWithScalarLast = new IOManipulator(ioFormat);
-        }
-        {
-            IOFormatBuilder ioFormatBuilder;
-            ioFormatBuilder.prepareForInputFormat();
-            ioFormatBuilder.newLineIOSegment()
-                    .addScalarVariable(Scalar::create(A, "A"));
+            ioFormatBuilder.setBeforeOutputFormat([=] {N = 3;});
+            ioFormatBuilder.newOutputFormat();
+            ioFormatBuilder.newLinesIOSegment()
+                    .addVectorVariable(Vector::create(U, "U"))
+                    .setSize([=] {return N;});
+            ioFormatBuilder.newOutputFormat();
             ioFormatBuilder.newLinesIOSegment()
                     .addVectorVariable(Vector::create(V, "V"))
-                    .setSize([] {return 2;});
+                    .setSize([=] {return N + 1;});
             IOFormat ioFormat = ioFormatBuilder.build();
 
-            manipulatorWithVectorLast = new IOManipulator(ioFormat);
+            manipulatorWithMultipleOutputFormats = new IOManipulator(ioFormat);
         }
         {
             IOFormatBuilder ioFormatBuilder;
@@ -86,14 +71,14 @@ protected:
                     .setSize([] {return 2;}, [] {return 2;});
             IOFormat ioFormat = ioFormatBuilder.build();
 
-            manipulatorWithMatrixLast = new IOManipulator(ioFormat);
+            manipulator = new IOManipulator(ioFormat);
         }
     }
 };
 
 TEST_F(IOManipulatorTests, Parsing_Successful) {
     istringstream in("123\nhello, world!\n42\n7\n lorem ipsum \n dolor  \n5 6\n7 8\n");
-    manipulatorWithMatrixLast->parseInput(&in);
+    manipulator->parseInput(&in);
     EXPECT_THAT(A, Eq(123));
     EXPECT_THAT(S, Eq("hello, world!"));
     EXPECT_THAT(V, Eq((vector<int>{42, 7})));
@@ -102,6 +87,12 @@ TEST_F(IOManipulatorTests, Parsing_Successful) {
 }
 
 TEST_F(IOManipulatorTests, Parsing_Failed_MissingEof_Empty) {
+    IOFormatBuilder ioFormatBuilder;
+    ioFormatBuilder.prepareForInputFormat();
+    IOFormat ioFormat = ioFormatBuilder.build();
+
+    IOManipulator* manipulatorEmpty = new IOManipulator(ioFormat);
+
     istringstream in("123\n42\n7\n5 6\n7 8\nbogus");
     try {
         manipulatorEmpty->parseInput(&in);
@@ -112,6 +103,14 @@ TEST_F(IOManipulatorTests, Parsing_Failed_MissingEof_Empty) {
 }
 
 TEST_F(IOManipulatorTests, Parsing_Failed_MissingEof_WithScalarLast) {
+    IOFormatBuilder ioFormatBuilder;
+    ioFormatBuilder.prepareForInputFormat();
+    ioFormatBuilder.newLineIOSegment()
+            .addScalarVariable(Scalar::create(A, "A"));
+    IOFormat ioFormat = ioFormatBuilder.build();
+
+    IOManipulator* manipulatorWithScalarLast = new IOManipulator(ioFormat);
+
     istringstream in("123\n42\n7\n5 6\n7 8\nbogus");
     try {
         manipulatorWithScalarLast->parseInput(&in);
@@ -122,6 +121,17 @@ TEST_F(IOManipulatorTests, Parsing_Failed_MissingEof_WithScalarLast) {
 }
 
 TEST_F(IOManipulatorTests, Parsing_Failed_MissingEof_WithVectorLast) {
+    IOFormatBuilder ioFormatBuilder;
+    ioFormatBuilder.prepareForInputFormat();
+    ioFormatBuilder.newLineIOSegment()
+            .addScalarVariable(Scalar::create(A, "A"));
+    ioFormatBuilder.newLinesIOSegment()
+            .addVectorVariable(Vector::create(V, "V"))
+            .setSize([] {return 2;});
+    IOFormat ioFormat = ioFormatBuilder.build();
+
+    IOManipulator* manipulatorWithVectorLast = new IOManipulator(ioFormat);
+
     istringstream in("123\n42\n7\n5 6\n7 8\nbogus");
     try {
         manipulatorWithVectorLast->parseInput(&in);
@@ -134,7 +144,7 @@ TEST_F(IOManipulatorTests, Parsing_Failed_MissingEof_WithVectorLast) {
 TEST_F(IOManipulatorTests, Parsing_Failed_MissingEof_WithMatrixLast) {
     istringstream in("123\nhello, world!\n42\n7\n lorem ipsum \n dolor  \n5 6\n7 8\nbogus");
     try {
-        manipulatorWithMatrixLast->parseInput(&in);
+        manipulator->parseInput(&in);
         FAIL();
     } catch(runtime_error& e) {
         EXPECT_THAT(e.what(), StrEq("Expected: <EOF> after 'M[1][1]'"));
@@ -145,7 +155,39 @@ TEST_F(IOManipulatorTests, Parsing_Output) {
     istringstream in("1\n2\n3\n");
     N = 0;
     manipulatorWithOutputFormat->parseOutput(&in);
-    EXPECT_THAT(V, Eq((vector<int>{1, 2, 3})));
+    EXPECT_THAT(U, Eq((vector<int>{1, 2, 3})));
+}
+
+TEST_F(IOManipulatorTests, Parsing_Output_Failed) {
+    istringstream in("");
+    N = 0;
+    try {
+        manipulatorWithOutputFormat->parseOutput(&in);
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Cannot parse for 'U[0]'. Found: <EOF>"));
+    }
+}
+
+TEST_F(IOManipulatorTests, Parsing_Output_Multiple) {
+    istringstream in1("1\n2\n3\n");
+    istringstream in2("1\n2\n3\n4\n");
+    N = 0;
+    manipulatorWithMultipleOutputFormats->parseOutput(&in1);
+    manipulatorWithMultipleOutputFormats->parseOutput(&in2);
+    EXPECT_THAT(U, Eq((vector<int>{1, 2, 3})));
+    EXPECT_THAT(V, Eq((vector<int>{1, 2, 3, 4})));
+}
+
+TEST_F(IOManipulatorTests, Parsing_Output_Multiple_Failed) {
+    istringstream in("");
+    N = 0;
+    try {
+        manipulatorWithMultipleOutputFormats->parseOutput(&in);
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Test case output does not conform to any of the output formats"));
+    }
 }
 
 TEST_F(IOManipulatorTests, Printing_Successful) {
@@ -155,7 +197,7 @@ TEST_F(IOManipulatorTests, Printing_Successful) {
     W = {" lorem ipsum ", " dolor  "};
     M = {{5, 6}, {7, 8}};
     ostringstream out;
-    manipulatorWithMatrixLast->printInput(&out);
+    manipulator->printInput(&out);
     EXPECT_THAT(out.str(), Eq("123\nhello, world!\n42\n7\n lorem ipsum \n dolor  \n5 6\n7 8\n"));
 }
 

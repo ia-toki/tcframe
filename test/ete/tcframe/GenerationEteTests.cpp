@@ -42,8 +42,12 @@ TEST_F(GenerationEteTests, Normal_ComplexFormats) {
     EXPECT_THAT(ls("test-ete/normal-complex-formats/tc"), UnorderedElementsAre(
             "normal-complex-formats_sample_1.in",
             "normal-complex-formats_sample_1.out",
+            "normal-complex-formats_sample_2.in",
+            "normal-complex-formats_sample_2.out",
             "normal-complex-formats_1.in",
-            "normal-complex-formats_1.out"
+            "normal-complex-formats_1.out",
+            "normal-complex-formats_2.in",
+            "normal-complex-formats_2.out"
     ));
 }
 

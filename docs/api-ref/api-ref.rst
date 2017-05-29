@@ -69,13 +69,18 @@ Defines the input format. It is mandatory.
 
     virtual void BeforeOutputFormat() {}
 
-Executed right before the produced output is validated against the output format. See :ref:`io-formats_before-output-format` for more details.
+Executed right before the produced output is validated against the output format(s). See :ref:`io-formats_before-output-format` for more details.
 
 .. sourcecode:: cpp
 
     virtual void OutputFormat() {}
 
-Defines the output format. It is optional; if not implemented, then the output will not be validated.
+    virtual void OutputFormat1() {}
+    virtual void OutputFormat2() {}
+    // ...
+    virtual void OutputFormat5() {}
+
+Defines the possible output format(s). If there is only one output format, only ``OutputFormat()`` can be specified, otherwise multiple ``OutputFormatX()`` should be specified.
 
 **Defining format**
 

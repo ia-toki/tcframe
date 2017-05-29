@@ -129,6 +129,41 @@ You can declare a helper variable, e.g. ``update_count``, and have ``LINES(answe
         LINES(answers) % SIZE(update_count);
     }
 
+----
+
+.. _io-formats_multiple-output-formats:
+
+Multiple output formats
+-----------------------
+
+Sometimes, there are more than one possible output formats. For example: "If there is no valid solution, output a single line containing -1. Otherwise, the first line of the output should contain **K**, followed by a line containing **K** space-separated integers representing the answer."
+
+This can be accomplished using ``OutputFormatX()``, where ``X`` is the output format number. A test case output is valid if it conforms to at least one of the output formats.
+
+.. note::
+
+    As of this version, you can define up to 5 output formats: **OutputFormat1()** .. **OutputFormat5()**.
+
+The above example could be implemented as follows.
+
+.. sourcecode:: cpp
+
+    int impossible;
+
+    int K;
+    vector<int> answers;
+
+    void OutputFormat1() {
+        LINE(impossible);
+    }
+
+    void OutputFormat2() {
+        LINE(K);
+        LINE(answers % SIZE(K));
+    }
+
+----
+
 Notes
 -----
 
@@ -139,13 +174,5 @@ Constants in I/O segments
 
     As a workaround, just create an input variable and initialize it to ``BEGIN``.
 
-Complex conditional I/O format that can't be handled by jagged vectors
-    There is **NO** known general workaround yet. We're still working on designing how to handle complex format.
-
-    However, there are workarounds for simple cases, for example:
-
-    "Output the required sum, or the string ``IMPOSSIBLE`` if there is no solution."
-
-    In this case, you can just use a string as the output variable. The downside is that it is not type-safe; for example, the generation won't fail if the reference solution mistakenly output an invalid string such as ``123abc``.
-
-However, a last resort for a workaround does exist for output format. If you have complex output format, you can just omit the method ``OutputFormat()`` altogether and your solution's output won't be checked at all for validity.
+Complex conditional I/O format that can't be handled by jagged vectors/raw line(s)
+    As a workaround, if you have a very complex output format, you can just omit the methods ``OutputFormat()``/``OutputFormatX()`` altogether and your solution's output won't be checked at all for validity.

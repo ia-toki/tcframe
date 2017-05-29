@@ -20,6 +20,13 @@ class BaseProblemSpec
           protected MultipleTestCasesConfigBuilder,
           protected ConstraintSuiteBuilder {
 private:
+    vector<void(BaseProblemSpec::*)()> outputFormats_ = {
+            &BaseProblemSpec::OutputFormat1,
+            &BaseProblemSpec::OutputFormat2,
+            &BaseProblemSpec::OutputFormat3,
+            &BaseProblemSpec::OutputFormat4,
+            &BaseProblemSpec::OutputFormat5};
+
     vector<void(BaseProblemSpec::*)()> subtasks_ = {
             &BaseProblemSpec::Subtask1,
             &BaseProblemSpec::Subtask2,
@@ -56,8 +63,25 @@ public:
         IOFormatBuilder::setBeforeOutputFormat([this] {
             BeforeOutputFormat();
         });
-        IOFormatBuilder::prepareForOutputFormat();
-        OutputFormat();
+        try {
+            IOFormatBuilder::newOutputFormat();
+            OutputFormat();
+            for (auto outputFormat : outputFormats_) {
+                try {
+                    (this->*outputFormat)();
+                    throw runtime_error("If OutputFormat() is specified, no other OutputFormatX() can be specified");
+                } catch (NotImplementedException&) {}
+            }
+        } catch (NotImplementedException&) {
+            for (auto outputFormat : outputFormats_) {
+                try {
+                    (this->*outputFormat)();
+                    IOFormatBuilder::newOutputFormat();
+                } catch (NotImplementedException&) {
+                    break;
+                }
+            }
+        }
         return IOFormatBuilder::build();
     }
 
@@ -95,7 +119,12 @@ public:
 protected:
     virtual void InputFormat() = 0;
     virtual void BeforeOutputFormat() {}
-    virtual void OutputFormat() {}
+    virtual void OutputFormat() {throw NotImplementedException();}
+    virtual void OutputFormat1() {throw NotImplementedException();}
+    virtual void OutputFormat2() {throw NotImplementedException();}
+    virtual void OutputFormat3() {throw NotImplementedException();}
+    virtual void OutputFormat4() {throw NotImplementedException();}
+    virtual void OutputFormat5() {throw NotImplementedException();}
     virtual void StyleConfig() {}
     virtual void GradingConfig() {}
     virtual void MultipleTestCasesConfig() {}
