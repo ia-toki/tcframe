@@ -107,11 +107,10 @@ At a very high level, with some details omitted, it works as follows:
 
 **tcframe** supports:
 
-- Standard batch problems; i.e., problems which requires the solution to read from stdin and print to stdout.
-- Constraints specified in IOI-style subtasks.
+- Batch and interactive problems.
+- ICPC-style problems and IOI-style problems with subtasks and points.
 - Multiple test cases per file.
-- Simulating submission against the generated test cases.
-- Specifying time and memory limits.
+- Local grading against the generated test cases, with time and memory limits.
 - Basic random number generation helper.
 
 ## Requirements
