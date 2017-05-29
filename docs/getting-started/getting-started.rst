@@ -44,7 +44,7 @@ Installation
 
 Firstly, we must get **tcframe** on our system. It consists of C++ header files and a few helper scripts.
 
-Download the latest **tcframe** `here <https://github.com/tcframe/tcframe/releases/download/v1.3.0/tcframe_1.3.0.zip>`_. Extract the zip file somewhere on your system; for example, ``~/tcframe``. We will call this directory "**tcframe** home". Confirm that you extracted it correctly by verifying that the directory ``include`` exists directly inside **tcframe** home.
+Download the latest **tcframe** `here <https://github.com/tcframe/tcframe/releases/download/v1.4.0/tcframe_1.4.0.zip>`_. Extract the zip file somewhere on your system; for example, ``~/tcframe``. We will call this directory "**tcframe** home". Confirm that you extracted it correctly by verifying that the directory ``include`` exists directly inside **tcframe** home.
 
 Then, add the following lines to your ``~/.bashrc``. This will set the environment variable ``TCFRAME_HOME`` to our **tcframe** home directory, and make ``tcframe`` command available everywhere.
 
