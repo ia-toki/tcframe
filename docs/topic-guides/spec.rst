@@ -92,6 +92,12 @@ A spec file is compiled into a runner program using the following **tcframe** co
 
 The above command will compile ``spec.cpp`` into an executable ``runner`` program in the problem package directory.
 
+It is also possible to specify additional compilation flags, by setting the ``$TCFRAME_CXX_FLAGS`` environment variable. For example:
+
+::
+
+    export TCFRAME_CXX_FLAGS="-Wall -O2"
+
 ----
 
 Runner program

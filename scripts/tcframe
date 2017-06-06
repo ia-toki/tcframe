@@ -17,7 +17,7 @@ build() {
         exit 1
     fi
 
-    g++ -std=c++11 -D__TCFRAME_SPEC_FILE__="\"$SPEC_FILE\"" -I "$TCFRAME_HOME/include" -o $RUNNER_EXEC "$TCFRAME_HOME/src/tcframe/runner.cpp"
+    g++ -std=c++11 -D__TCFRAME_SPEC_FILE__="\"$SPEC_FILE\"" -I "$TCFRAME_HOME/include" $TCFRAME_CXX_FLAGS -o $RUNNER_EXEC "$TCFRAME_HOME/src/tcframe/runner.cpp"
 }
 
 version() {
