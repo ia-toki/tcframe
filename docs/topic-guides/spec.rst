@@ -3,7 +3,7 @@
 Spec and runner
 ===============
 
-The core activity when preparing test cases using **tcframe** is writing spec files. A spec file, along with a reference solution program, completely define the test cases of a single problem. A spec file is compilable into a single executable called **runner program**, which generates the test cases when executed.
+The core activity when preparing test cases using **tcframe** is writing spec files. A spec file, along with a reference solution program and optionally some evaluator helper files, completely define the test cases of a single problem. A spec file is compilable into a single executable called **runner program**, which generates the test cases when executed.
 
 To write a spec file, create a C++ source file called ``spec.cpp`` in the problem package directory, and include the following header:
 

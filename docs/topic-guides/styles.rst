@@ -38,6 +38,8 @@ Enabled by calling ``InteractiveEvaluator()``. The solution will participate in 
 
 ----
 
+.. _styles_helpers:
+
 Helper programs
 ---------------
 

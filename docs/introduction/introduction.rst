@@ -5,16 +5,16 @@ Introduction
 
 **tcframe** is a C++ framework for generating test cases of competitive programming problems. This framework helps problem writers prepare test cases in a structured manner and ensures that the generated test cases are valid according to the specified constraints.
 
-At a very high level, with some details omitted, it works as follows:
+Example high-level usage:
 
-#. You specify input/output variables.
+#. Specify input/output variables.
 
    .. sourcecode:: cpp
 
        int A, B;
        int sum;
 
-#. You specify input/output formats.
+#. Specify input/output formats, using a rich set of format macros.
 
    .. sourcecode:: cpp
 
@@ -25,7 +25,7 @@ At a very high level, with some details omitted, it works as follows:
            LINE(sum);
        }
 
-#. You specify the grading configuration.
+#. Specify the grading configuration.
 
    .. sourcecode:: cpp
 
@@ -34,7 +34,7 @@ At a very high level, with some details omitted, it works as follows:
            MemoryLimit(64);
        }
 
-#. You specify the constraints.
+#. Specify the constraints. Subtasks are supported.
 
    .. sourcecode:: cpp
 
@@ -43,7 +43,7 @@ At a very high level, with some details omitted, it works as follows:
            CONS(1 <= B && B <= 1000);
        }
 
-#. You specify the sample test cases.
+#. Specify the sample test cases.
 
    .. sourcecode:: cpp
 
@@ -64,7 +64,7 @@ At a very high level, with some details omitted, it works as follows:
            });
        }
 
-#. You specify the official test cases. Random number generator is available.
+#. Specify the official test cases. Simple random number generator is available.
 
    .. sourcecode:: cpp
 
@@ -74,7 +74,7 @@ At a very high level, with some details omitted, it works as follows:
            CASE(A = rnd.nextInt(1, 1000), B = rnd.nextInt(1, 1000));
        }
 
-#. You write the official solution to this problem, using any programming language you wish. Of course, it is the infamous A+B problem.
+#. Write and compile the official solution to this problem, using any programming language you wish. Of course, it is the infamous A+B problem.
 
    .. sourcecode:: cpp
 
@@ -87,7 +87,7 @@ At a very high level, with some details omitted, it works as follows:
            cout << (A + B) << endl;
        }
 
-#. You run the generator. Actual test cases (``.in`` and ``.out`` files) will be generated. Profit!
+#. Run the generator. Actual test cases (``.in`` and ``.out`` files) will be generated. Profit!
 
 #. If you ever specified an invalid test case, such as ``CASE(A = 0, B = 1)``, you will get a nice error message:
 
@@ -106,12 +106,11 @@ Features
 
 **tcframe** supports:
 
-- Standard batch problems; i.e., problems which requires the solution to read from stdin and print to stdout.
-- Constraints specified in IOI-style subtasks.
-- ICPC-style multiple test cases per file.
-- Simple local grading of solutions against generated test cases.
-- Specifying time and memory limits.
-- Basic random number generation helper.
+- Batch and interactive problems.
+- ICPC-style problems and IOI-style problems with subtasks and points.
+- Multiple test cases per file.
+- Local grading against the generated test cases, with time and memory limits.
+- Simple random number generation helper.
 
 ----
 
@@ -120,25 +119,25 @@ Requirements
 
 **tcframe** requires:
 
-- Linux/OS X. Windows is currently not supported yet
-- GCC ≥ 4.8. **tcframe** relies heavily on C++11 features
+- Linux/OS X. Windows is not supported.
+- GCC ≥ 4.8. **tcframe** relies heavily on C++11 features.
 
 ----
 
 Motivations
 -----------
 
-**Why do we even need to write a generator for test cases, in the first place?**
+**Why do we need test case generators?**
 
-- That's primarily because writing test cases manually is error-prone and time-consuming.
-- To enable distributing the test cases as a single, small generator file. No need to send 20 MB ``testcases.zip`` over email anymore.
-- During problem development, constraints often change. Using a generator, we can easily fix the constraint and just run the generator again.
+- Writing test cases manually is error-prone and time-consuming.
+- To enable distributing the test cases as a single, small generator file. No need to send 20 MB of ``testcases.zip`` over email anymore.
+- During problem development, constraints often change. Using a generator, we can easily amend the constraints and rerun the generator when needed.
 
-**OK. But why do we need a framework for that?**
+**Why do we need a framework for that?**
 
-- The main problem is that not all people know how to write a good test cases generator.
-- To avoid writing repetitive and boring tasks. For example: creating test case files with correct suffixes (``foo_1.in``, ``foo_1.out``), running official solution against the test case input files, etc.
-- To make all problems in a contest have test cases generator with consistent format.
+- Not everyone knows how to write a good test cases generator.
+- To avoid writing repetitive and boring tasks. For example: creating test case files with correct suffixes (``foo_1.in``, ``foo_1.out``), running the official solution against the test case input files, etc.
+- To have a consistent format for generators, so that problem writers in a contest can better collaborate in writing test case generators.
 
 ----
 
@@ -157,4 +156,4 @@ License
 
 **tcframe** is released under MIT license.
 
-Source code can be found on `GitHub <https://github.com/tcframe/tcframe>`_. Issues and pull requests are welcome.
+Source code can be found on `GitHub <https://github.com/tcframe/tcframe>`_.

@@ -9,16 +9,16 @@
 
 Consult the complete documentation at http://docs.tcframe.org/.
 
-At a very high level, with some details omitted, it works as follows:
+Example high-level usage:
 
-1. You specify input/output variables.
+1. Specify input/output variables.
 
     ```cpp
     int A, B;
     int sum;
     ```
 
-1. You specify input/output formats.
+1. Specify input/output formats, using a rich set of format macros.
 
     ```cpp
     void InputFormat() {
@@ -29,7 +29,7 @@ At a very high level, with some details omitted, it works as follows:
     }
     ```
 
-1. You specify the grading configuration.
+1. Specify the grading configuration.
 
     ```cpp
     void GradingConfig() {
@@ -38,7 +38,7 @@ At a very high level, with some details omitted, it works as follows:
     }
     ```
 
-1. You specify the constraints.
+1. Specify the constraints. Subtasks are supported.
 
     ```cpp
     void Constraints() {
@@ -47,7 +47,7 @@ At a very high level, with some details omitted, it works as follows:
     }
     ```
 
-1. You specify the sample test cases.
+1. Specify the sample test cases.
 
     ```cpp
     void SampleTestCase1() {
@@ -68,7 +68,7 @@ At a very high level, with some details omitted, it works as follows:
     }
     ```
 
-1. You specify the official test cases. Random number generator is available.
+1. Specify the official test cases. Simple random number generator is available.
 
     ```cpp
     void TestCases() {
@@ -78,7 +78,7 @@ At a very high level, with some details omitted, it works as follows:
     }
     ```
 
-1. You write the official solution to this problem, using any programming language you wish. Of course, it is the infamous A+B problem.
+1. Write and compile the official solution to this problem, using any programming language you wish. Of course, it is the infamous A+B problem.
 
     ```cpp
     #include <iostream>
@@ -91,7 +91,7 @@ At a very high level, with some details omitted, it works as follows:
     }
     ```
 
-1. You run the generator. Actual test cases (`.in` and `.out` files) will be generated. Profit!
+1. Run the generator. Actual test cases (`.in` and `.out` files) will be generated. Profit!
 
 1. If you ever specified an invalid test case, such as `CASE(A = 0, B = 1)`, you will get a nice error message:
 
@@ -111,28 +111,28 @@ At a very high level, with some details omitted, it works as follows:
 - ICPC-style problems and IOI-style problems with subtasks and points.
 - Multiple test cases per file.
 - Local grading against the generated test cases, with time and memory limits.
-- Basic random number generation helper.
+- Simple random number generation helper.
 
 ## Requirements
 
 **tcframe** requires:
 
-- Linux/OS X. Windows is currently not supported yet
-- GCC ≥ 4.8. **tcframe** relies heavily on C++11 features
+- Linux/macOS. Windows is not supported.
+- GCC ≥ 4.8. **tcframe** relies heavily on C++11 features.
 
 ## Motivations
 
-**Why do we even need to write a generator for test cases, in the first place?**
+**Why do we need test case generators?**
 
-- That's primarily because writing test cases manually is error-prone and time-consuming.
-- To enable distributing the test cases as a single, small generator file. No need to send 20 MB testcases.zip over email anymore.
-- During problem development, constraints often change. Using a generator, we can easily fix the constraint and just run the generator again.
+- Writing test cases manually is error-prone and time-consuming.
+- To enable distributing the test cases as a single, small generator file. No need to send 20 MB of `testcases.zip` over email anymore.
+- During problem development, constraints often change. Using a generator, we can easily amend the constraints and rerun the generator when needed.
 
-**OK. But why do we need a framework for that?**
+**Why do we need a framework for that?**
 
-- The main problem is that not all people know how to write a good test cases generator.
-- To avoid writing repetitive and boring tasks. For example: creating test case files with correct suffixes (`foo_1.in`, `foo_1.out`), running official solution against the test case input files, etc.
-- To make all problems in a contest have test cases generator with consistent format.
+- Not everyone knows how to write a good test cases generator.
+- To avoid writing repetitive and boring tasks. For example: creating test case files with correct suffixes (`foo_1.in`, `foo_1.out`), running the official solution against the test case input files, etc.
+- To have a consistent format for generators, so that problem writers in a contest can better collaborate in writing test case generators.
 
 ## Credits
 
@@ -143,5 +143,3 @@ At a very high level, with some details omitted, it works as follows:
 ## License
 
 **tcframe** is released under MIT license.
-
-Issues and pull requests are welcome.

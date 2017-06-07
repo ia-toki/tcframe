@@ -22,3 +22,6 @@ Components of a problem package
 
 Solution files
     A reference solution and one or more alternate solutions to the problem.
+
+:ref:`Evaluator helper files <styles_helpers>`
+   Optional, e.g. custom scorer and communicator.
