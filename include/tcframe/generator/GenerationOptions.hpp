@@ -80,10 +80,6 @@ public:
     GenerationOptionsBuilder(string slug) {
         subject_.slug_ = slug;
         subject_.multipleTestCasesCounter_ = nullptr;
-        subject_.seed_ = CommonConfig::seed();
-        subject_.solutionCommand_ = CommonConfig::solutionCommand();
-        subject_.outputDir_ = CommonConfig::outputDir();
-        subject_.needsOutput_ = true;
     }
 
     GenerationOptionsBuilder& setMultipleTestCasesCounter(optional<int*> counter) {
@@ -111,34 +107,13 @@ public:
         return *this;
     }
 
-    GenerationOptionsBuilder& setSeed(optional<unsigned> seed) {
-        if (seed) {
-            setSeed(seed.value());
-        }
-        return *this;
-    }
-
     GenerationOptionsBuilder& setSeed(unsigned seed) {
         subject_.seed_ = seed;
         return *this;
     }
 
-    GenerationOptionsBuilder& setSolutionCommand(optional<string> solutionCommand) {
-        if (solutionCommand) {
-            setSolutionCommand(solutionCommand.value());
-        }
-        return *this;
-    }
-
     GenerationOptionsBuilder& setSolutionCommand(string solutionCommand) {
         subject_.solutionCommand_ = solutionCommand;
-        return *this;
-    }
-
-    GenerationOptionsBuilder& setOutputDir(optional<string> outputDir) {
-        if (outputDir) {
-            setOutputDir(outputDir.value());
-        }
         return *this;
     }
 

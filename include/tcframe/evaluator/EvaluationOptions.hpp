@@ -48,16 +48,7 @@ public:
     EvaluationOptionsBuilder(const EvaluationOptions& from)
             : subject_(from) {}
 
-    EvaluationOptionsBuilder() {
-        subject_.solutionCommand_ = CommonConfig::solutionCommand();
-    }
-
-    EvaluationOptionsBuilder& setSolutionCommand(optional<string> solutionCommand) {
-        if (solutionCommand) {
-            setSolutionCommand(solutionCommand.value());
-        }
-        return *this;
-    }
+    EvaluationOptionsBuilder() {}
 
     EvaluationOptionsBuilder& setSolutionCommand(string solutionCommand) {
         subject_.solutionCommand_ = solutionCommand;

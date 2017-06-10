@@ -70,6 +70,7 @@ protected:
             {});
 
     GradingOptions options = GradingOptionsBuilder("foo")
+            .setHasMultipleTestCases(false)
             .setSolutionCommand("python Sol.py")
             .setOutputDir("dir")
             .build();

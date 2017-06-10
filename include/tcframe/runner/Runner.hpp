@@ -20,6 +20,14 @@ using std::endl;
 
 namespace tcframe {
 
+struct RunnerDefaults {
+    static constexpr unsigned SEED = 0;
+    static constexpr const char* OUTPUT_DIR = "tc";
+    static constexpr const char* SOLUTION_COMMAND = "./solution";
+    static constexpr const char* SCORER_COMMAND = "./scorer";
+    static constexpr const char* COMMUNICATOR_COMMAND = "./communicator";
+};
+
 template<typename TProblemSpec>
 class Runner {
 private:
@@ -115,9 +123,9 @@ private:
         GenerationOptionsBuilder optionsBuilder = GenerationOptionsBuilder(slug)
                 .setMultipleTestCasesCounter(multipleTestCasesConfig.counter())
                 .setMultipleTestCasesOutputPrefix(multipleTestCasesConfig.outputPrefix())
-                .setSeed(args.seed())
-                .setSolutionCommand(args.solution())
-                .setOutputDir(args.output());
+                .setSeed(args.seed().value_or(unsigned(RunnerDefaults::SEED)))
+                .setSolutionCommand(args.solution().value_or(string(RunnerDefaults::SOLUTION_COMMAND)))
+                .setOutputDir(args.output().value_or(string(RunnerDefaults::OUTPUT_DIR)));
 
         EvaluatorConfig evaluatorConfig = evaluatorRegistry_->getConfig(spec.styleConfig().evaluationStyle());
         if (evaluatorConfig.testCaseOutputType() == TestCaseOutputType::NOT_REQUIRED) {
@@ -144,9 +152,9 @@ private:
         const GradingConfig& gradingConfig = spec.gradingConfig();
 
         GradingOptionsBuilder optionsBuilder = GradingOptionsBuilder(slug)
-                .setHasMultipleTestCases(optional<bool>(multipleTestCasesConfig.counter()))
-                .setSolutionCommand(args.solution())
-                .setOutputDir(args.output());
+                .setHasMultipleTestCases((bool) multipleTestCasesConfig.counter())
+                .setSolutionCommand(args.solution().value_or(string(RunnerDefaults::SOLUTION_COMMAND)))
+                .setOutputDir(args.output().value_or(string(RunnerDefaults::OUTPUT_DIR)));
 
         if (!args.noTimeLimit()) {
             optionsBuilder.setTimeLimit(args.timeLimit().value_or(gradingConfig.timeLimit()));
@@ -175,9 +183,9 @@ private:
     static map<string, string> getHelperCommands(const Args& args, const StyleConfig& styleConfig) {
         map<string, string> helperCommands;
         if (styleConfig.needsCustomScorer()) {
-            helperCommands["scorer"] = args.scorer().value_or(CommonConfig::scorerCommand());
+            helperCommands["scorer"] = args.scorer().value_or(string(RunnerDefaults::SCORER_COMMAND));
         }
-        helperCommands["communicator"] = args.communicator().value_or(CommonConfig::communicatorCommand());
+        helperCommands["communicator"] = args.communicator().value_or(string(RunnerDefaults::COMMUNICATOR_COMMAND));
         return helperCommands;
     };
 };

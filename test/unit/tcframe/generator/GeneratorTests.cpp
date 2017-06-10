@@ -46,6 +46,7 @@ protected:
             .setSeed(42)
             .setSolutionCommand("python Sol.py")
             .setOutputDir("dir")
+            .setNeedsOutput(true)
             .build();
 
     GenerationOptions multipleTestCasesOptions = GenerationOptionsBuilder(options)

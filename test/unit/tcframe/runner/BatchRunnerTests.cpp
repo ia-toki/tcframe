@@ -33,7 +33,7 @@ TEST_F(BatchRunnerTests, Run_Generation_EvaluatorRegistry_NoCustomScorer) {
 
 TEST_F(BatchRunnerTests, Run_Generation_EvaluatorRegistry_CustomScorer_Default) {
     EXPECT_CALL(evaluatorRegistry,
-                get(EvaluationStyle::BATCH, _,  Truly(HelperKeyIs("scorer", CommonConfig::scorerCommand()))));
+                get(EvaluationStyle::BATCH, _,  Truly(HelperKeyIs("scorer", string(RunnerDefaults::SCORER_COMMAND)))));
 
     runnerWithCustomScorer.run(argc, argv);
 }
@@ -56,7 +56,7 @@ TEST_F(BatchRunnerTests, Run_Grading_EvaluatorRegistry_NoCustomScorer) {
 
 TEST_F(BatchRunnerTests, Run_Grading_EvaluatorRegistry_CustomScorer_Default) {
     EXPECT_CALL(evaluatorRegistry,
-                get(EvaluationStyle::BATCH, _,  Truly(HelperKeyIs("scorer", CommonConfig::scorerCommand()))));
+                get(EvaluationStyle::BATCH, _,  Truly(HelperKeyIs("scorer", string(RunnerDefaults::SCORER_COMMAND)))));
 
     runnerWithCustomScorer.run(2, new char*[3]{
             (char*) "./runner",

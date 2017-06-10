@@ -89,10 +89,10 @@ TEST_F(RunnerTests, Run_Generation_Failed) {
 
 TEST_F(RunnerTests, Run_Generation_UseDefaultOptions) {
     EXPECT_CALL(generator, generate(_, GenerationOptionsBuilder("slug")
-            .setSeed(0)
-            .setSolutionCommand("./solution")
-            .setOutputDir("tc")
-            .setNeedsOutput(true)
+            .setSeed(RunnerDefaults::SEED)
+            .setSolutionCommand(RunnerDefaults::SOLUTION_COMMAND)
+            .setOutputDir(RunnerDefaults::OUTPUT_DIR)
+            .setNeedsOutput(StyleConfig::DEFAULT_NEEDS_OUTPUT)
             .build()));
 
     runner.run(argc, argv);
@@ -101,8 +101,9 @@ TEST_F(RunnerTests, Run_Generation_UseDefaultOptions) {
 TEST_F(RunnerTests, Run_Generation_UseConfigOptions) {
     EXPECT_CALL(generator, generate(_, GenerationOptionsBuilder("slug")
             .setMultipleTestCasesCounter(&T)
-            .setSolutionCommand("./solution")
-            .setOutputDir("tc")
+            .setSeed(RunnerDefaults::SEED)
+            .setSolutionCommand(RunnerDefaults::SOLUTION_COMMAND)
+            .setOutputDir(RunnerDefaults::OUTPUT_DIR)
             .setNeedsOutput(false)
             .build()));
 
@@ -111,8 +112,8 @@ TEST_F(RunnerTests, Run_Generation_UseConfigOptions) {
 
 TEST_F(RunnerTests, Run_Generation_UseArgsOptions) {
     EXPECT_CALL(generator, generate(_, GenerationOptionsBuilder("slug")
-            .setSeed(42)
             .setMultipleTestCasesCounter(&T)
+            .setSeed(42)
             .setSolutionCommand("\"java Solution\"")
             .setOutputDir("testdata")
             .setNeedsOutput(false)
@@ -140,10 +141,10 @@ TEST_F(RunnerTests, Run_Grading) {
 TEST_F(RunnerTests, Run_Grading_UseDefaultOptions) {
     EXPECT_CALL(grader, grade(_, _, GradingOptionsBuilder("slug")
             .setHasMultipleTestCases(false)
-            .setTimeLimit(2)
-            .setMemoryLimit(64)
-            .setSolutionCommand("./solution")
-            .setOutputDir("tc")
+            .setTimeLimit(GradingConfig::DEFAULT_TIME_LIMIT)
+            .setMemoryLimit(GradingConfig::DEFAULT_MEMORY_LIMIT)
+            .setSolutionCommand(RunnerDefaults::SOLUTION_COMMAND)
+            .setOutputDir(RunnerDefaults::OUTPUT_DIR)
             .build()));
 
     runner.run(2, new char*[3]{
@@ -155,8 +156,8 @@ TEST_F(RunnerTests, Run_Grading_UseDefaultOptions) {
 TEST_F(RunnerTests, Run_Grading_UseConfigOptions) {
     EXPECT_CALL(grader, grade(_, _, GradingOptionsBuilder("slug")
             .setHasMultipleTestCases(true)
-            .setSolutionCommand("./solution")
-            .setOutputDir("tc")
+            .setSolutionCommand(RunnerDefaults::SOLUTION_COMMAND)
+            .setOutputDir(RunnerDefaults::OUTPUT_DIR)
             .setTimeLimit(3)
             .setMemoryLimit(128)
             .build()));

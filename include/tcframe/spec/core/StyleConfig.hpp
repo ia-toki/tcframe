@@ -3,8 +3,6 @@
 #include <tuple>
 #include <utility>
 
-#include "CommonConfig.hpp"
-
 using std::move;
 using std::tie;
 
@@ -17,6 +15,11 @@ enum class EvaluationStyle {
 
 struct StyleConfig {
     friend class StyleConfigBuilder;
+
+public:
+    static const EvaluationStyle DEFAULT_EVALUATION_STYLE = EvaluationStyle::BATCH;
+    static const bool DEFAULT_NEEDS_OUTPUT = true;
+    static const bool DEFAULT_NEEDS_CUSTOM_SCORER = false;
 
 private:
     EvaluationStyle evaluationStyle_;
@@ -48,9 +51,9 @@ private:
 
 public:
     StyleConfigBuilder() {
-        subject_.evaluationStyle_ = EvaluationStyle::BATCH;
-        subject_.needsOutput_ = true;
-        subject_.needsCustomScorer_ = false;
+        subject_.evaluationStyle_ = StyleConfig::DEFAULT_EVALUATION_STYLE;
+        subject_.needsOutput_ = StyleConfig::DEFAULT_NEEDS_OUTPUT;
+        subject_.needsCustomScorer_ = StyleConfig::DEFAULT_NEEDS_CUSTOM_SCORER;
     }
 
     StyleConfigBuilder& BatchEvaluator() {

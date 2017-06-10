@@ -66,16 +66,6 @@ public:
 
     GradingOptionsBuilder(string slug) {
         subject_.slug_ = slug;
-        subject_.hasMultipleTestCases_ = false;
-        subject_.solutionCommand_ = CommonConfig::solutionCommand();
-        subject_.outputDir_ = CommonConfig::outputDir();
-    }
-
-    GradingOptionsBuilder& setHasMultipleTestCases(optional<bool> hasMultipleTestCases) {
-        if (hasMultipleTestCases) {
-            setHasMultipleTestCases(hasMultipleTestCases.value());
-        }
-        return *this;
     }
 
     GradingOptionsBuilder& setHasMultipleTestCases(bool hasMultipleTestCases) {
@@ -83,22 +73,8 @@ public:
         return *this;
     }
 
-    GradingOptionsBuilder& setSolutionCommand(optional<string> solutionCommand) {
-        if (solutionCommand) {
-            setSolutionCommand(solutionCommand.value());
-        }
-        return *this;
-    }
-
     GradingOptionsBuilder& setSolutionCommand(string solutionCommand) {
         subject_.solutionCommand_ = solutionCommand;
-        return *this;
-    }
-
-    GradingOptionsBuilder& setOutputDir(optional<string> outputDir) {
-        if (outputDir) {
-            setOutputDir(outputDir.value());
-        }
         return *this;
     }
 

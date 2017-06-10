@@ -62,8 +62,10 @@ protected:
             .setData(new OfficialTestCaseData([&]{throw runtime_error("closure error");}))
             .build();
     GenerationOptions options = GenerationOptionsBuilder("foo")
+            .setSeed(0)
             .setSolutionCommand("python Sol.py")
             .setOutputDir("dir")
+            .setNeedsOutput(true)
             .build();
     GenerationOptions noOutputOptions = GenerationOptionsBuilder(options)
             .setNeedsOutput(false)

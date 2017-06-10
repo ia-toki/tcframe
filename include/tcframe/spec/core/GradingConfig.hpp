@@ -11,6 +11,10 @@ namespace tcframe {
 struct GradingConfig {
     friend class GradingConfigBuilder;
 
+public:
+    static constexpr int DEFAULT_TIME_LIMIT = 2;
+    static constexpr int DEFAULT_MEMORY_LIMIT = 64;
+
 private:
     int timeLimit_;
     int memoryLimit_;
@@ -35,8 +39,8 @@ private:
 
 public:
     GradingConfigBuilder() {
-        subject_.timeLimit_ = 2;
-        subject_.memoryLimit_ = 64;
+        subject_.timeLimit_ = GradingConfig::DEFAULT_TIME_LIMIT;
+        subject_.memoryLimit_ = GradingConfig::DEFAULT_MEMORY_LIMIT;
     }
 
     GradingConfigBuilder& TimeLimit(int timeLimitInSeconds) {

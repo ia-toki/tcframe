@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 
-#include "CommonConfig.hpp"
 #include "GradingConfig.hpp"
 #include "MultipleTestCasesConfig.hpp"
 #include "SeedSetter.hpp"

@@ -42,7 +42,7 @@ TEST_F(InteractiveRunnerTests, Run_Generation_EvaluatorRegistry_Communicator_Def
     EXPECT_CALL(evaluatorRegistry, get(
             EvaluationStyle::INTERACTIVE,
             _,
-            Truly(HelperKeyIs("communicator", CommonConfig::communicatorCommand()))));
+            Truly(HelperKeyIs("communicator", RunnerDefaults::COMMUNICATOR_COMMAND))));
 
     runner.run(argc, argv);
 }
@@ -63,7 +63,7 @@ TEST_F(InteractiveRunnerTests, Run_Grading_EvaluatorRegistry_Communicator_Defaul
     EXPECT_CALL(evaluatorRegistry, get(
             EvaluationStyle::INTERACTIVE,
             _,
-            Truly(HelperKeyIs("communicator", CommonConfig::communicatorCommand()))));
+            Truly(HelperKeyIs("communicator", RunnerDefaults::COMMUNICATOR_COMMAND))));
 
     runner.run(2, new char*[3]{
             (char*) "./runner",
