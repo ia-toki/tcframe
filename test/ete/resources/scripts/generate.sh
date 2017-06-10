@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -ex
+set -e
 
 export TCFRAME_HOME=../../tcframe
 export TCFRAME_CXX_FLAGS="-I .."
