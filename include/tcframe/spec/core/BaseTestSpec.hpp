@@ -1,5 +1,7 @@
 #pragma once
 
+#include <set>
+#include <string>
 #include <vector>
 
 #include "CommonConfig.hpp"
@@ -11,6 +13,8 @@
 #include "tcframe/spec/random.hpp"
 #include "tcframe/util.hpp"
 
+using std::set;
+using std::string;
 using std::vector;
 
 namespace tcframe {
