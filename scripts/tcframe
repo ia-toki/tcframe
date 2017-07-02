@@ -12,12 +12,12 @@ build() {
     SPEC_FILE="$PWD/spec.cpp"
     RUNNER_EXEC="$PWD/runner"
 
-    if [ ! -f $SPEC_FILE ]; then
-        echo "tcframe: build error: spec file $SPEC_FILE does not exist"
+    if [ ! -f "$SPEC_FILE" ]; then
+        echo "tcframe: build error: spec file '$SPEC_FILE' does not exist"
         exit 1
     fi
 
-    g++ -std=c++11 -D__TCFRAME_SPEC_FILE__="\"$SPEC_FILE\"" -I "$TCFRAME_HOME/include" $TCFRAME_CXX_FLAGS -o $RUNNER_EXEC "$TCFRAME_HOME/src/tcframe/runner.cpp"
+    g++ -std=c++11 -D__TCFRAME_SPEC_FILE__="\"$SPEC_FILE\"" -I "$TCFRAME_HOME/include" $TCFRAME_CXX_FLAGS -o "$RUNNER_EXEC" "$TCFRAME_HOME/src/tcframe/runner.cpp"
 }
 
 version() {
