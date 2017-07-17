@@ -140,6 +140,10 @@ set(INCLUDE
         include/tcframe/spec/variable/Variable.hpp
         include/tcframe/spec/variable/Vector.hpp
         include/tcframe/spec/variable/WhitespaceManipulator.hpp
+        include/tcframe/spec/verifier.hpp
+        include/tcframe/spec/verifier/ConstraintsVerificationResult.hpp
+        include/tcframe/spec/verifier/MultipleTestCasesConstraintsVerificationResult.hpp
+        include/tcframe/spec/verifier/Verifier.hpp
         include/tcframe/util.hpp
         include/tcframe/util/NotImplementedException.hpp
         include/tcframe/util/StringUtils.hpp
@@ -148,10 +152,6 @@ set(INCLUDE
         include/tcframe/verdict/Verdict.hpp
         include/tcframe/verdict/VerdictCreator.hpp
         include/tcframe/verdict/VerdictStatus.hpp
-        include/tcframe/verifier.hpp
-        include/tcframe/verifier/ConstraintsVerificationResult.hpp
-        include/tcframe/verifier/MultipleTestCasesConstraintsVerificationResult.hpp
-        include/tcframe/verifier/Verifier.hpp
 )
 
 set(TEST_UNIT
@@ -224,14 +224,14 @@ set(TEST_UNIT
         test/unit/tcframe/spec/variable/VariableTests.cpp
         test/unit/tcframe/spec/variable/VectorTests.cpp
         test/unit/tcframe/spec/variable/WhitespaceManipulatorTests.cpp
+        test/unit/tcframe/spec/verifier/MockVerifier.hpp
+        test/unit/tcframe/spec/verifier/VerifierTests.cpp
         test/unit/tcframe/util/OptionalTests.cpp
         test/unit/tcframe/util/StringUtilsTests.cpp
         test/unit/tcframe/util/TestUtils.hpp
         test/unit/tcframe/verdict/MockVerdictCreator.hpp
         test/unit/tcframe/verdict/VerdictCreatorTests.cpp
         test/unit/tcframe/verdict/VerdictTests.cpp
-        test/unit/tcframe/verifier/MockVerifier.hpp
-        test/unit/tcframe/verifier/VerifierTests.cpp
 )
 
 add_executable(test_unit ${INCLUDE} ${TEST_UNIT})

@@ -14,7 +14,6 @@
 #include "tcframe/os.hpp"
 #include "tcframe/spec.hpp"
 #include "tcframe/verdict.hpp"
-#include "tcframe/verifier.hpp"
 
 using std::char_traits;
 using std::endl;

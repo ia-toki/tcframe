@@ -4,8 +4,8 @@
 
 #include "tcframe/logger.hpp"
 #include "tcframe/spec/constraint.hpp"
+#include "tcframe/spec/verifier.hpp"
 #include "tcframe/util.hpp"
-#include "tcframe/verifier.hpp"
 
 using std::string;
 

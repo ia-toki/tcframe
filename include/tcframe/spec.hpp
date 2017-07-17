@@ -6,4 +6,5 @@
 #include "tcframe/spec/random.hpp"
 #include "tcframe/spec/testcase.hpp"
 #include "tcframe/spec/variable.hpp"
+#include "tcframe/spec/verifier.hpp"
 

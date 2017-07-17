@@ -1,6 +1,6 @@
 #include "gmock/gmock.h"
 
-#include "tcframe/verifier/Verifier.hpp"
+#include "tcframe/spec/verifier/Verifier.hpp"
 
 using ::testing::ElementsAre;
 using ::testing::IsEmpty;

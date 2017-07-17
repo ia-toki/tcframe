@@ -2,7 +2,7 @@
 
 #include "gmock/gmock.h"
 
-#include "tcframe/verifier/Verifier.hpp"
+#include "tcframe/spec/verifier/Verifier.hpp"
 
 namespace tcframe {
 

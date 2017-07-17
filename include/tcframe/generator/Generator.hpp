@@ -11,7 +11,6 @@
 #include "TestCaseGenerator.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/spec/core.hpp"
-#include "tcframe/verifier.hpp"
 
 using std::function;
 using std::istringstream;

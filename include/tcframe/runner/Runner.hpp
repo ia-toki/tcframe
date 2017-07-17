@@ -13,7 +13,6 @@
 #include "tcframe/os.hpp"
 #include "tcframe/spec.hpp"
 #include "tcframe/util.hpp"
-#include "tcframe/verifier.hpp"
 
 using std::cout;
 using std::endl;
