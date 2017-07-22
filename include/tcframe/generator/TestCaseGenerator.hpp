@@ -10,7 +10,6 @@
 #include "GenerationOptions.hpp"
 #include "GeneratorLogger.hpp"
 #include "tcframe/evaluator.hpp"
-#include "tcframe/io_manipulator.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/spec.hpp"
 #include "tcframe/verdict.hpp"

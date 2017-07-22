@@ -80,13 +80,6 @@ set(INCLUDE
         include/tcframe/grader/GraderLoggerFactory.hpp
         include/tcframe/grader/GradingOptions.hpp
         include/tcframe/grader/TestCaseGrader.hpp
-        include/tcframe/io_manipulator.hpp
-        include/tcframe/io_manipulator/GridIOSegmentManipulator.hpp
-        include/tcframe/io_manipulator/IOManipulator.hpp
-        include/tcframe/io_manipulator/LineIOSegmentManipulator.hpp
-        include/tcframe/io_manipulator/LinesIOSegmentManipulator.hpp
-        include/tcframe/io_manipulator/RawLineIOSegmentManipulator.hpp
-        include/tcframe/io_manipulator/RawLinesIOSegmentManipulator.hpp
         include/tcframe/logger.hpp
         include/tcframe/logger/BaseLogger.hpp
         include/tcframe/logger/DefaultBaseLogger.hpp
@@ -124,6 +117,13 @@ set(INCLUDE
         include/tcframe/spec/io/LinesIOSegment.hpp
         include/tcframe/spec/io/RawLineIOSegment.hpp
         include/tcframe/spec/io/RawLinesIOSegment.hpp
+        include/tcframe/spec/io_manipulator.hpp
+        include/tcframe/spec/io_manipulator/GridIOSegmentManipulator.hpp
+        include/tcframe/spec/io_manipulator/IOManipulator.hpp
+        include/tcframe/spec/io_manipulator/LineIOSegmentManipulator.hpp
+        include/tcframe/spec/io_manipulator/LinesIOSegmentManipulator.hpp
+        include/tcframe/spec/io_manipulator/RawLineIOSegmentManipulator.hpp
+        include/tcframe/spec/io_manipulator/RawLinesIOSegmentManipulator.hpp
         include/tcframe/spec/random.hpp
         include/tcframe/spec/random/Random.hpp
         include/tcframe/spec/testcase.hpp
@@ -183,13 +183,6 @@ set(TEST_UNIT
         test/unit/tcframe/grader/MockGraderLoggerFactory.hpp
         test/unit/tcframe/grader/MockTestCaseGrader.hpp
         test/unit/tcframe/grader/TestCaseGraderTests.cpp
-        test/unit/tcframe/io_manipulator/GridIOSegmentManipulatorTests.cpp
-        test/unit/tcframe/io_manipulator/IOManipulatorTests.cpp
-        test/unit/tcframe/io_manipulator/LineIOSegmentManipulatorTests.cpp
-        test/unit/tcframe/io_manipulator/LinesIOSegmentManipulatorTests.cpp
-        test/unit/tcframe/io_manipulator/MockIOManipulator.hpp
-        test/unit/tcframe/io_manipulator/RawLineIOSegmentManipulatorTests.cpp
-        test/unit/tcframe/io_manipulator/RawLinesIOSegmentManipulatorTests.cpp
         test/unit/tcframe/logger/DefaultBaseLogggerTests.cpp
         test/unit/tcframe/logger/MockLoggerEngine.hpp
         test/unit/tcframe/logger/SimpleLoggerEngineTests.cpp
@@ -214,6 +207,13 @@ set(TEST_UNIT
         test/unit/tcframe/spec/io/LinesIOSegmentBuilderTests.cpp
         test/unit/tcframe/spec/io/RawLineIOSegmentBuilderTests.cpp
         test/unit/tcframe/spec/io/RawLinesIOSegmentBuilderTests.cpp
+        test/unit/tcframe/spec/io_manipulator/GridIOSegmentManipulatorTests.cpp
+        test/unit/tcframe/spec/io_manipulator/IOManipulatorTests.cpp
+        test/unit/tcframe/spec/io_manipulator/LineIOSegmentManipulatorTests.cpp
+        test/unit/tcframe/spec/io_manipulator/LinesIOSegmentManipulatorTests.cpp
+        test/unit/tcframe/spec/io_manipulator/MockIOManipulator.hpp
+        test/unit/tcframe/spec/io_manipulator/RawLineIOSegmentManipulatorTests.cpp
+        test/unit/tcframe/spec/io_manipulator/RawLinesIOSegmentManipulatorTests.cpp
         test/unit/tcframe/spec/random/RandomTests.cpp
         test/unit/tcframe/spec/testcase/TestCaseTests.cpp
         test/unit/tcframe/spec/testcase/TestGroupTests.cpp

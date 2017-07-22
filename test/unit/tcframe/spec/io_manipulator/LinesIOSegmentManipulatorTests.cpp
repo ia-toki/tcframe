@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-#include "tcframe/io_manipulator/LinesIOSegmentManipulator.hpp"
+#include "tcframe/spec/io_manipulator/LinesIOSegmentManipulator.hpp"
 
 using ::testing::Eq;
 using ::testing::StrEq;

@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-#include "tcframe/io_manipulator/GridIOSegmentManipulator.hpp"
+#include "tcframe/spec/io_manipulator/GridIOSegmentManipulator.hpp"
 
 using ::testing::Eq;
 using ::testing::StrEq;

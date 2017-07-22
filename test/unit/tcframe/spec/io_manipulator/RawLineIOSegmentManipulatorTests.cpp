@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-#include "tcframe/io_manipulator/RawLineIOSegmentManipulator.hpp"
+#include "tcframe/spec/io_manipulator/RawLineIOSegmentManipulator.hpp"
 
 using ::testing::Eq;
 using ::testing::StrEq;

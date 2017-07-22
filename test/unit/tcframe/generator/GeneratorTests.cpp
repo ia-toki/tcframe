@@ -1,7 +1,6 @@
 #include "gmock/gmock.h"
 #include "../mock.hpp"
 
-#include "../io_manipulator/MockIOManipulator.hpp"
 #include "../os/MockOperatingSystem.hpp"
 #include "../spec/core/MockSeedSetter.hpp"
 #include "../spec/verifier/MockVerifier.hpp"

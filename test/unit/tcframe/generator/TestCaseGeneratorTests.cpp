@@ -4,8 +4,8 @@
 #include <sstream>
 
 #include "../evaluator/MockEvaluator.hpp"
-#include "../io_manipulator/MockIOManipulator.hpp"
 #include "../os/MockOperatingSystem.hpp"
+#include "../spec/io_manipulator/MockIOManipulator.hpp"
 #include "../spec/verifier/MockVerifier.hpp"
 #include "MockGeneratorLogger.hpp"
 #include "tcframe/generator/TestCaseGenerator.hpp"
