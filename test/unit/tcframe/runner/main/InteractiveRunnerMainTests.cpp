@@ -1,8 +1,8 @@
-#include "BaseRunnerTests.hpp"
+#include "BaseRunnerMainTests.hpp"
 
 namespace tcframe {
 
-class InteractiveRunnerTests : public BaseRunnerTests {
+class InteractiveRunnerMainTests : public BaseRunnerMainTests {
 protected:
     class InteractiveProblemSpec : public ProblemSpec {
     protected:
@@ -23,22 +23,22 @@ protected:
     class InteractiveWithRedundantNoOutputTestSpec :
             public BaseTestSpec<InteractiveWithRedundantNoOutputProblemSpec> {};
 
-    Runner<InteractiveProblemSpec> runner = createRunner(new InteractiveTestSpec());
-    Runner<InteractiveWithRedundantNoOutputProblemSpec> runnerWithRedundantNoOutput =
+    RunnerMain<InteractiveProblemSpec> runner = createRunner(new InteractiveTestSpec());
+    RunnerMain<InteractiveWithRedundantNoOutputProblemSpec> runnerWithRedundantNoOutput =
             createRunner(new InteractiveWithRedundantNoOutputTestSpec());
 };
 
-TEST_F(InteractiveRunnerTests, Run_Generation_NoOutput) {
+TEST_F(InteractiveRunnerMainTests, Run_Generation_NoOutput) {
     EXPECT_CALL(generator, generate(_, Property(&GenerationOptions::needsOutput, false)));
     runner.run(argc, argv);
 }
 
-TEST_F(InteractiveRunnerTests, Run_Generation_NoOutput_Redundant) {
+TEST_F(InteractiveRunnerMainTests, Run_Generation_NoOutput_Redundant) {
     EXPECT_CALL(generator, generate(_, Property(&GenerationOptions::needsOutput, false)));
     runnerWithRedundantNoOutput.run(argc, argv);
 }
 
-TEST_F(InteractiveRunnerTests, Run_Generation_EvaluatorRegistry_Communicator_Default) {
+TEST_F(InteractiveRunnerMainTests, Run_Generation_EvaluatorRegistry_Communicator_Default) {
     EXPECT_CALL(evaluatorRegistry, get(
             EvaluationStyle::INTERACTIVE,
             _,
@@ -47,7 +47,7 @@ TEST_F(InteractiveRunnerTests, Run_Generation_EvaluatorRegistry_Communicator_Def
     runner.run(argc, argv);
 }
 
-TEST_F(InteractiveRunnerTests, Run_Generation_EvaluatorRegistry_Communicator_Args) {
+TEST_F(InteractiveRunnerMainTests, Run_Generation_EvaluatorRegistry_Communicator_Args) {
     EXPECT_CALL(evaluatorRegistry, get(
             EvaluationStyle::INTERACTIVE,
             _,
@@ -59,7 +59,7 @@ TEST_F(InteractiveRunnerTests, Run_Generation_EvaluatorRegistry_Communicator_Arg
             nullptr});
 }
 
-TEST_F(InteractiveRunnerTests, Run_Grading_EvaluatorRegistry_Communicator_Default) {
+TEST_F(InteractiveRunnerMainTests, Run_Grading_EvaluatorRegistry_Communicator_Default) {
     EXPECT_CALL(evaluatorRegistry, get(
             EvaluationStyle::INTERACTIVE,
             _,
@@ -71,7 +71,7 @@ TEST_F(InteractiveRunnerTests, Run_Grading_EvaluatorRegistry_Communicator_Defaul
             nullptr});
 }
 
-TEST_F(InteractiveRunnerTests, Run_Grading_EvaluatorRegistry_Communicator_Args) {
+TEST_F(InteractiveRunnerMainTests, Run_Grading_EvaluatorRegistry_Communicator_Args) {
     EXPECT_CALL(evaluatorRegistry, get(
             EvaluationStyle::INTERACTIVE,
             _,

@@ -2,7 +2,7 @@
 
 #include "gmock/gmock.h"
 
-#include "tcframe/runner/RunnerLogger.hpp"
+#include "tcframe/runner/logger/RunnerLogger.hpp"
 
 namespace tcframe {
 

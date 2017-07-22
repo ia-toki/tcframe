@@ -1,17 +1,17 @@
 #include "gmock/gmock.h"
-#include "../mock.hpp"
+#include "../../mock.hpp"
 
-#include "../aggregator/MockAggregator.hpp"
-#include "../aggregator/MockAggregatorRegistry.hpp"
-#include "../evaluator/MockEvaluator.hpp"
-#include "../evaluator/MockEvaluatorRegistry.hpp"
-#include "../generator/MockGenerator.hpp"
-#include "../grader/MockGrader.hpp"
-#include "../grader/MockGraderLogger.hpp"
-#include "../grader/MockGraderLoggerFactory.hpp"
-#include "../os/MockOperatingSystem.hpp"
-#include "MockRunnerLogger.hpp"
-#include "tcframe/runner/Runner.hpp"
+#include "../../aggregator/MockAggregator.hpp"
+#include "../../aggregator/MockAggregatorRegistry.hpp"
+#include "../../evaluator/MockEvaluator.hpp"
+#include "../../evaluator/MockEvaluatorRegistry.hpp"
+#include "../../generator/MockGenerator.hpp"
+#include "../../grader/MockGrader.hpp"
+#include "../../grader/MockGraderLogger.hpp"
+#include "../../grader/MockGraderLoggerFactory.hpp"
+#include "../../os/MockOperatingSystem.hpp"
+#include "../logger/MockRunnerLogger.hpp"
+#include "tcframe/runner/main/RunnerMain.hpp"
 
 using ::testing::_;
 using ::testing::Eq;
@@ -23,7 +23,7 @@ using ::testing::Truly;
 
 namespace tcframe {
 
-class BaseRunnerTests : public Test {
+class BaseRunnerMainTests : public Test {
 protected:
     class ProblemSpec : public BaseProblemSpec {
     protected:
@@ -63,8 +63,8 @@ protected:
     }
 
     template<typename TProblem>
-    Runner<TProblem> createRunner(BaseTestSpec<TProblem>* testSpec) {
-        return Runner<TProblem>(
+    RunnerMain<TProblem> createRunner(BaseTestSpec<TProblem>* testSpec) {
+        return RunnerMain<TProblem>(
                 specPath, testSpec, loggerEngine, &os,&runnerLoggerFactory, &graderLoggerFactory,
                 &generatorFactory, &graderFactory, &evaluatorRegistry, &aggregatorRegistry);
     }

@@ -4,13 +4,13 @@
 
 #include "Args.hpp"
 #include "ArgsParser.hpp"
-#include "RunnerLogger.hpp"
 #include "SlugParser.hpp"
 #include "tcframe/aggregator.hpp"
 #include "tcframe/evaluator.hpp"
 #include "tcframe/generator.hpp"
 #include "tcframe/grader.hpp"
 #include "tcframe/os.hpp"
+#include "tcframe/runner/logger.hpp"
 #include "tcframe/spec.hpp"
 #include "tcframe/util.hpp"
 
@@ -28,7 +28,7 @@ struct RunnerDefaults {
 };
 
 template<typename TProblemSpec>
-class Runner {
+class RunnerMain {
 private:
     string specPath_;
 
@@ -45,7 +45,7 @@ private:
     AggregatorRegistry* aggregatorRegistry_;
 
 public:
-    Runner(
+    RunnerMain(
             const string& specPath,
             BaseTestSpec<TProblemSpec>* testSpec,
             LoggerEngine* loggerEngine,

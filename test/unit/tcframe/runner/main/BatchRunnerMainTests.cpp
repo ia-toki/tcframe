@@ -1,8 +1,8 @@
-#include "BaseRunnerTests.hpp"
+#include "BaseRunnerMainTests.hpp"
 
 namespace tcframe {
 
-class BatchRunnerTests : public BaseRunnerTests {
+class BatchRunnerMainTests : public BaseRunnerMainTests {
 protected:
     class BatchProblemSpec : public ProblemSpec {
     protected:
@@ -22,23 +22,23 @@ protected:
     class BatchTestSpec : public BaseTestSpec<BatchProblemSpec> {};
     class BatchWithCustomScorerTestSpec : public BaseTestSpec<BatchWithCustomScorerProblemSpec> {};
 
-    Runner<BatchProblemSpec> runner = createRunner(new BatchTestSpec());
-    Runner<BatchWithCustomScorerProblemSpec> runnerWithCustomScorer = createRunner(new BatchWithCustomScorerTestSpec());
+    RunnerMain<BatchProblemSpec> runner = createRunner(new BatchTestSpec());
+    RunnerMain<BatchWithCustomScorerProblemSpec> runnerWithCustomScorer = createRunner(new BatchWithCustomScorerTestSpec());
 };
 
-TEST_F(BatchRunnerTests, Run_Generation_EvaluatorRegistry_NoCustomScorer) {
+TEST_F(BatchRunnerMainTests, Run_Generation_EvaluatorRegistry_NoCustomScorer) {
     EXPECT_CALL(evaluatorRegistry, get(EvaluationStyle::BATCH, _, Truly(HelperKeyIs("scorer", ""))));
     runner.run(argc, argv);
 }
 
-TEST_F(BatchRunnerTests, Run_Generation_EvaluatorRegistry_CustomScorer_Default) {
+TEST_F(BatchRunnerMainTests, Run_Generation_EvaluatorRegistry_CustomScorer_Default) {
     EXPECT_CALL(evaluatorRegistry,
                 get(EvaluationStyle::BATCH, _,  Truly(HelperKeyIs("scorer", string(RunnerDefaults::SCORER_COMMAND)))));
 
     runnerWithCustomScorer.run(argc, argv);
 }
 
-TEST_F(BatchRunnerTests, Run_Generation_EvaluatorRegistry_CustomScorer_Args) {
+TEST_F(BatchRunnerMainTests, Run_Generation_EvaluatorRegistry_CustomScorer_Args) {
     EXPECT_CALL(evaluatorRegistry, get(EvaluationStyle::BATCH, _, Truly(HelperKeyIs("scorer", "\"java Scorer\""))));
     runnerWithCustomScorer.run(2, new char*[3]{
             (char*) "./runner",
@@ -46,7 +46,7 @@ TEST_F(BatchRunnerTests, Run_Generation_EvaluatorRegistry_CustomScorer_Args) {
             nullptr});
 }
 
-TEST_F(BatchRunnerTests, Run_Grading_EvaluatorRegistry_NoCustomScorer) {
+TEST_F(BatchRunnerMainTests, Run_Grading_EvaluatorRegistry_NoCustomScorer) {
     EXPECT_CALL(evaluatorRegistry, get(EvaluationStyle::BATCH, _, Truly(HelperKeyIs("scorer", ""))));
     runner.run(2, new char*[3]{
             (char*) "./runner",
@@ -54,7 +54,7 @@ TEST_F(BatchRunnerTests, Run_Grading_EvaluatorRegistry_NoCustomScorer) {
             nullptr});
 }
 
-TEST_F(BatchRunnerTests, Run_Grading_EvaluatorRegistry_CustomScorer_Default) {
+TEST_F(BatchRunnerMainTests, Run_Grading_EvaluatorRegistry_CustomScorer_Default) {
     EXPECT_CALL(evaluatorRegistry,
                 get(EvaluationStyle::BATCH, _,  Truly(HelperKeyIs("scorer", string(RunnerDefaults::SCORER_COMMAND)))));
 
@@ -64,7 +64,7 @@ TEST_F(BatchRunnerTests, Run_Grading_EvaluatorRegistry_CustomScorer_Default) {
             nullptr});
 }
 
-TEST_F(BatchRunnerTests, Run_Grading_EvaluatorRegistry_CustomScorer_Args) {
+TEST_F(BatchRunnerMainTests, Run_Grading_EvaluatorRegistry_CustomScorer_Args) {
     EXPECT_CALL(evaluatorRegistry, get(EvaluationStyle::BATCH, _, Truly(HelperKeyIs("scorer", "\"java Scorer\""))));
     runnerWithCustomScorer.run(3, new char*[4]{
             (char*) "./runner",

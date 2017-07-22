@@ -1,6 +1,6 @@
 #include "gmock/gmock.h"
 
-#include "tcframe/runner/ArgsParser.hpp"
+#include "tcframe/runner/main/ArgsParser.hpp"
 
 using ::testing::Eq;
 using ::testing::StrEq;
