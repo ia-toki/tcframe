@@ -1,9 +1,15 @@
 #pragma once
 
 #include "tcframe/spec/io/GridIOSegment.hpp"
+#include "tcframe/spec/io/GridIOSegmentManipulator.hpp"
 #include "tcframe/spec/io/IOFormat.hpp"
+#include "tcframe/spec/io/IOManipulator.hpp"
 #include "tcframe/spec/io/IOSegment.hpp"
 #include "tcframe/spec/io/LineIOSegment.hpp"
+#include "tcframe/spec/io/LineIOSegmentManipulator.hpp"
 #include "tcframe/spec/io/LinesIOSegment.hpp"
+#include "tcframe/spec/io/LinesIOSegmentManipulator.hpp"
 #include "tcframe/spec/io/RawLineIOSegment.hpp"
+#include "tcframe/spec/io/RawLineIOSegmentManipulator.hpp"
 #include "tcframe/spec/io/RawLinesIOSegment.hpp"
+#include "tcframe/spec/io/RawLinesIOSegmentManipulator.hpp"

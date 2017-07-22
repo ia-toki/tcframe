@@ -3,7 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "tcframe/spec/io.hpp"
+#include "GridIOSegment.hpp"
 #include "tcframe/spec/variable.hpp"
 #include "tcframe/util.hpp"
 
@@ -16,9 +16,7 @@ namespace tcframe {
 
 class GridIOSegmentManipulator {
 public:
-    GridIOSegmentManipulator() = delete;
-
-    static string parse(GridIOSegment* segment, istream* in) {
+    string parse(GridIOSegment* segment, istream* in) {
         Matrix* variable = segment->variable();
         variable->clear();
         variable->parseFrom(in, segment->rows()(), segment->columns()());
@@ -29,7 +27,7 @@ public:
                 variable->columns(variable->rows() - 1) - 1);
     }
 
-    static void print(GridIOSegment* segment, ostream* out) {
+    void print(GridIOSegment* segment, ostream* out) {
         checkMatrixSize(segment);
 
         Matrix* variable = segment->variable();

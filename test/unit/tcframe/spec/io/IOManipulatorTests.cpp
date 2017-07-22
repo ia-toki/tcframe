@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-#include "tcframe/spec/io_manipulator/IOManipulator.hpp"
+#include "tcframe/spec/io/IOManipulator.hpp"
 
 using ::testing::Eq;
 using ::testing::StrEq;

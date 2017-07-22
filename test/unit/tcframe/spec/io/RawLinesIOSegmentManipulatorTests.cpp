@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-#include "tcframe/spec/io_manipulator/RawLinesIOSegmentManipulator.hpp"
+#include "tcframe/spec/io/RawLinesIOSegmentManipulator.hpp"
 
 using ::testing::Eq;
 using ::testing::StrEq;
@@ -25,26 +25,28 @@ protected:
     RawLinesIOSegment* segmentWithoutSize = RawLinesIOSegmentBuilder()
             .addVectorVariable(Vector::createRaw(V, "V"))
             .build();
+    
+    RawLinesIOSegmentManipulator manipulator;
 };
 
 TEST_F(RawLinesIOSegmentManipulatorTests, Parsing_Successful) {
     istringstream in("hello, world!\n  lorem  ipsum \n");
 
-    RawLinesIOSegmentManipulator::parse(segment, &in);
+    manipulator.parse(segment, &in);
     EXPECT_THAT(V, Eq(vector<string>{"hello, world!", "  lorem  ipsum "}));
 }
 
 TEST_F(RawLinesIOSegmentManipulatorTests, Parsing_Successful_CheckLastVariable) {
     istringstream in("hello, world!\n  lorem  ipsum \n");
 
-    EXPECT_THAT(RawLinesIOSegmentManipulator::parse(segment, &in), Eq("'V[1]'"));
+    EXPECT_THAT(manipulator.parse(segment, &in), Eq("'V[1]'"));
 }
 
 TEST_F(RawLinesIOSegmentManipulatorTests, Parsing_Failed_MissingNewline) {
     istringstream in("hello, world!\n  lorem  ipsum ");
 
     try {
-        RawLinesIOSegmentManipulator::parse(segment, &in);
+        manipulator.parse(segment, &in);
         FAIL();
     } catch (runtime_error& e) {
         EXPECT_THAT(e.what(), StrEq("Expected: <newline> after 'V[1]'"));
@@ -54,21 +56,21 @@ TEST_F(RawLinesIOSegmentManipulatorTests, Parsing_Failed_MissingNewline) {
 TEST_F(RawLinesIOSegmentManipulatorTests, Parsing_WithoutSize_Successful) {
     istringstream in("hello, world!\n  lorem  ipsum \n");
 
-    RawLinesIOSegmentManipulator::parse(segmentWithoutSize, &in);
+    manipulator.parse(segmentWithoutSize, &in);
     EXPECT_THAT(V, Eq(vector<string>{"hello, world!", "  lorem  ipsum "}));
 }
 
 TEST_F(RawLinesIOSegmentManipulatorTests, Parsing_WithoutSize_Successful_CheckLastVariable) {
     istringstream in("hello, world!\n  lorem  ipsum \n");
 
-    EXPECT_THAT(RawLinesIOSegmentManipulator::parse(segmentWithoutSize, &in), Eq("'V[1]'"));
+    EXPECT_THAT(manipulator.parse(segmentWithoutSize, &in), Eq("'V[1]'"));
 }
 
 TEST_F(RawLinesIOSegmentManipulatorTests, Parsing_WithoutSize_Failed_MissingNewline) {
     istringstream in("hello, world!\n  lorem  ipsum ");
 
     try {
-        RawLinesIOSegmentManipulator::parse(segmentWithoutSize, &in);
+        manipulator.parse(segmentWithoutSize, &in);
         FAIL();
     } catch (runtime_error& e) {
         EXPECT_THAT(e.what(), StrEq("Expected: <newline> after 'V[1]'"));
@@ -80,7 +82,7 @@ TEST_F(RawLinesIOSegmentManipulatorTests, Printing_Successful) {
 
     V = {"hello, world!", "  lorem  ipsum "};
 
-    RawLinesIOSegmentManipulator::print(segment, &out);
+    manipulator.print(segment, &out);
     EXPECT_THAT(out.str(), Eq("hello, world!\n  lorem  ipsum \n"));
 }
 
@@ -90,7 +92,7 @@ TEST_F(RawLinesIOSegmentManipulatorTests, Printing_Failed_SizeMismatch) {
     V = {"hello, world!"};
 
     try {
-        RawLinesIOSegmentManipulator::print(segment, &out);
+        manipulator.print(segment, &out);
         FAIL();
     } catch (runtime_error& e) {
         EXPECT_THAT(e.what(), StrEq("Number of elements of 'V' unsatisfied. Expected: 2, actual: 1"));
@@ -102,7 +104,7 @@ TEST_F(RawLinesIOSegmentManipulatorTests, Printing_WithoutSize_Successful) {
 
     V = {"hello, world!", "  lorem  ipsum "};
 
-    RawLinesIOSegmentManipulator::print(segmentWithoutSize, &out);
+    manipulator.print(segmentWithoutSize, &out);
     EXPECT_THAT(out.str(), Eq("hello, world!\n  lorem  ipsum \n"));
 }
 

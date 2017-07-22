@@ -111,19 +111,18 @@ set(INCLUDE
         include/tcframe/spec/core/StyleConfig.hpp
         include/tcframe/spec/io.hpp
         include/tcframe/spec/io/GridIOSegment.hpp
+        include/tcframe/spec/io/GridIOSegmentManipulator.hpp
         include/tcframe/spec/io/IOFormat.hpp
+        include/tcframe/spec/io/IOManipulator.hpp
         include/tcframe/spec/io/IOSegment.hpp
         include/tcframe/spec/io/LineIOSegment.hpp
+        include/tcframe/spec/io/LineIOSegmentManipulator.hpp
         include/tcframe/spec/io/LinesIOSegment.hpp
+        include/tcframe/spec/io/LinesIOSegmentManipulator.hpp
         include/tcframe/spec/io/RawLineIOSegment.hpp
+        include/tcframe/spec/io/RawLineIOSegmentManipulator.hpp
         include/tcframe/spec/io/RawLinesIOSegment.hpp
-        include/tcframe/spec/io_manipulator.hpp
-        include/tcframe/spec/io_manipulator/GridIOSegmentManipulator.hpp
-        include/tcframe/spec/io_manipulator/IOManipulator.hpp
-        include/tcframe/spec/io_manipulator/LineIOSegmentManipulator.hpp
-        include/tcframe/spec/io_manipulator/LinesIOSegmentManipulator.hpp
-        include/tcframe/spec/io_manipulator/RawLineIOSegmentManipulator.hpp
-        include/tcframe/spec/io_manipulator/RawLinesIOSegmentManipulator.hpp
+        include/tcframe/spec/io/RawLinesIOSegmentManipulator.hpp
         include/tcframe/spec/random.hpp
         include/tcframe/spec/random/Random.hpp
         include/tcframe/spec/testcase.hpp
@@ -202,18 +201,18 @@ set(TEST_UNIT
         test/unit/tcframe/spec/core/MagicTests.cpp
         test/unit/tcframe/spec/core/MockSeedSetter.hpp
         test/unit/tcframe/spec/io/GridIOSegmentBuilderTests.cpp
+        test/unit/tcframe/spec/io/GridIOSegmentManipulatorTests.cpp
         test/unit/tcframe/spec/io/IOFormatBuilderTests.cpp
+        test/unit/tcframe/spec/io/IOManipulatorTests.cpp
         test/unit/tcframe/spec/io/LineIOSegmentBuilderTests.cpp
+        test/unit/tcframe/spec/io/LineIOSegmentManipulatorTests.cpp
         test/unit/tcframe/spec/io/LinesIOSegmentBuilderTests.cpp
+        test/unit/tcframe/spec/io/LinesIOSegmentManipulatorTests.cpp
+        test/unit/tcframe/spec/io/MockIOManipulator.hpp
         test/unit/tcframe/spec/io/RawLineIOSegmentBuilderTests.cpp
+        test/unit/tcframe/spec/io/RawLineIOSegmentManipulatorTests.cpp
         test/unit/tcframe/spec/io/RawLinesIOSegmentBuilderTests.cpp
-        test/unit/tcframe/spec/io_manipulator/GridIOSegmentManipulatorTests.cpp
-        test/unit/tcframe/spec/io_manipulator/IOManipulatorTests.cpp
-        test/unit/tcframe/spec/io_manipulator/LineIOSegmentManipulatorTests.cpp
-        test/unit/tcframe/spec/io_manipulator/LinesIOSegmentManipulatorTests.cpp
-        test/unit/tcframe/spec/io_manipulator/MockIOManipulator.hpp
-        test/unit/tcframe/spec/io_manipulator/RawLineIOSegmentManipulatorTests.cpp
-        test/unit/tcframe/spec/io_manipulator/RawLinesIOSegmentManipulatorTests.cpp
+        test/unit/tcframe/spec/io/RawLinesIOSegmentManipulatorTests.cpp
         test/unit/tcframe/spec/random/RandomTests.cpp
         test/unit/tcframe/spec/testcase/TestCaseTests.cpp
         test/unit/tcframe/spec/testcase/TestGroupTests.cpp

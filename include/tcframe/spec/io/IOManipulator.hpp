@@ -24,6 +24,12 @@ class IOManipulator {
 private:
     IOFormat ioFormat_;
 
+    GridIOSegmentManipulator gridIOSegmentManipulator;
+    LineIOSegmentManipulator lineIOSegmentManipulator;
+    LinesIOSegmentManipulator linesIOSegmentManipulator;
+    RawLineIOSegmentManipulator rawLineIOSegmentManipulator;
+    RawLinesIOSegmentManipulator rawLinesIOSegmentManipulator;
+
 public:
     virtual ~IOManipulator() {}
 
@@ -72,15 +78,15 @@ private:
     void print(const IOSegments& segments, ostream* out) {
         for (IOSegment* segment : segments) {
             if (segment->type() == IOSegmentType::GRID) {
-                GridIOSegmentManipulator::print((GridIOSegment*) segment, out);
+                gridIOSegmentManipulator.print((GridIOSegment*) segment, out);
             } else if (segment->type() == IOSegmentType::LINE) {
-                LineIOSegmentManipulator::print((LineIOSegment*) segment, out);
+                lineIOSegmentManipulator.print((LineIOSegment*) segment, out);
             } else if (segment->type() == IOSegmentType::LINES) {
-                LinesIOSegmentManipulator::print((LinesIOSegment*) segment, out);
+                linesIOSegmentManipulator.print((LinesIOSegment*) segment, out);
             } else if (segment->type() == IOSegmentType::RAW_LINE) {
-                RawLineIOSegmentManipulator::print((RawLineIOSegment*) segment, out);
+                rawLineIOSegmentManipulator.print((RawLineIOSegment*) segment, out);
             } else if (segment->type() == IOSegmentType::RAW_LINES) {
-                RawLinesIOSegmentManipulator::print((RawLinesIOSegment*) segment, out);
+                rawLinesIOSegmentManipulator.print((RawLinesIOSegment*) segment, out);
             }
         }
     }
@@ -89,15 +95,15 @@ private:
         string lastVariableName;
         for (IOSegment* segment : segments) {
             if (segment->type() == IOSegmentType::GRID) {
-                lastVariableName = GridIOSegmentManipulator::parse((GridIOSegment*) segment, in);
+                lastVariableName = gridIOSegmentManipulator.parse((GridIOSegment*) segment, in);
             } else if (segment->type() == IOSegmentType::LINE) {
-                lastVariableName = LineIOSegmentManipulator::parse((LineIOSegment*) segment, in);
+                lastVariableName = lineIOSegmentManipulator.parse((LineIOSegment*) segment, in);
             } else if (segment->type() == IOSegmentType::LINES) {
-                lastVariableName = LinesIOSegmentManipulator::parse((LinesIOSegment*) segment, in);
+                lastVariableName = linesIOSegmentManipulator.parse((LinesIOSegment*) segment, in);
             } else if (segment->type() == IOSegmentType::RAW_LINE) {
-                lastVariableName = RawLineIOSegmentManipulator::parse((RawLineIOSegment*) segment, in);
+                lastVariableName = rawLineIOSegmentManipulator.parse((RawLineIOSegment*) segment, in);
             } else if (segment->type() == IOSegmentType::RAW_LINES) {
-                lastVariableName = RawLinesIOSegmentManipulator::parse((RawLinesIOSegment*) segment, in);
+                lastVariableName = rawLinesIOSegmentManipulator.parse((RawLinesIOSegment*) segment, in);
             }
         }
         if (!lastVariableName.empty()) {

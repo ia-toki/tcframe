@@ -5,7 +5,7 @@
 
 #include "../evaluator/MockEvaluator.hpp"
 #include "../os/MockOperatingSystem.hpp"
-#include "../spec/io_manipulator/MockIOManipulator.hpp"
+#include "../spec/io/MockIOManipulator.hpp"
 #include "../spec/verifier/MockVerifier.hpp"
 #include "MockGeneratorLogger.hpp"
 #include "tcframe/generator/TestCaseGenerator.hpp"

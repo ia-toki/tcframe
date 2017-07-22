@@ -2,7 +2,7 @@
 
 #include "gmock/gmock.h"
 
-#include "tcframe/spec/io_manipulator/IOManipulator.hpp"
+#include "tcframe/spec/io/IOManipulator.hpp"
 
 namespace tcframe {
 

@@ -3,7 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "tcframe/spec/io.hpp"
+#include "LinesIOSegment.hpp"
 #include "tcframe/spec/variable.hpp"
 #include "tcframe/util.hpp"
 
@@ -16,9 +16,7 @@ namespace tcframe {
 
 class LinesIOSegmentManipulator {
 public:
-    LinesIOSegmentManipulator() = delete;
-
-    static string parse(LinesIOSegment* segment, istream* in) {
+    string parse(LinesIOSegment* segment, istream* in) {
         for (Variable* variable : segment->variables()) {
             if (variable->type() == VariableType::VECTOR) {
                 ((Vector*) variable)->clear();
@@ -62,7 +60,7 @@ public:
         return lastVariableName;
     }
 
-    static void print(LinesIOSegment* segment, ostream* out) {
+    void print(LinesIOSegment* segment, ostream* out) {
         checkVectorSizes(segment);
 
         int size = getSize(segment);

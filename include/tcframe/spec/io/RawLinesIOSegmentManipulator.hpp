@@ -3,7 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "tcframe/spec/io.hpp"
+#include "RawLinesIOSegment.hpp"
 #include "tcframe/spec/variable.hpp"
 #include "tcframe/util.hpp"
 
@@ -16,9 +16,7 @@ namespace tcframe {
 
 class RawLinesIOSegmentManipulator {
 public:
-    RawLinesIOSegmentManipulator() = delete;
-
-    static string parse(RawLinesIOSegment* segment, istream* in) {
+    string parse(RawLinesIOSegment* segment, istream* in) {
         string lastVariableName;
 
         Vector* variable = segment->variable();
@@ -37,7 +35,7 @@ public:
         return lastVariableName;
     }
 
-    static void print(RawLinesIOSegment* segment, ostream* out) {
+    void print(RawLinesIOSegment* segment, ostream* out) {
         checkVectorSize(segment);
         Vector* variable = segment->variable();
         for (int j = 0; j < variable->size(); j++) {

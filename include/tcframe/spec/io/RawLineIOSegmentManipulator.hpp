@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "tcframe/spec/io.hpp"
+#include "RawLineIOSegment.hpp"
 #include "tcframe/spec/variable.hpp"
 #include "tcframe/util.hpp"
 
@@ -14,9 +14,7 @@ namespace tcframe {
 
 class RawLineIOSegmentManipulator {
 public:
-    RawLineIOSegmentManipulator() = delete;
-
-    static string parse(RawLineIOSegment* segment, istream* in) {
+    string parse(RawLineIOSegment* segment, istream* in) {
         string lastVariableName = TokenFormatter::formatVariable(segment->variable()->name());
         segment->variable()->parseFrom(in);
         WhitespaceManipulator::parseNewline(in, lastVariableName);
@@ -24,7 +22,7 @@ public:
         return lastVariableName;
     }
 
-    static void print(RawLineIOSegment* segment, ostream* out) {
+    void print(RawLineIOSegment* segment, ostream* out) {
         segment->variable()->printTo(out);
         *out << endl;
     }
