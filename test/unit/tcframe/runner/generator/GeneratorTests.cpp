@@ -1,13 +1,13 @@
 #include "gmock/gmock.h"
-#include "../mock.hpp"
+#include "../../mock.hpp"
 
-#include "../os/MockOperatingSystem.hpp"
-#include "../spec/core/MockSeedSetter.hpp"
-#include "../spec/verifier/MockVerifier.hpp"
-#include "../util/TestUtils.hpp"
+#include "../../os/MockOperatingSystem.hpp"
+#include "../../spec/core/MockSeedSetter.hpp"
+#include "../../spec/verifier/MockVerifier.hpp"
+#include "../../util/TestUtils.hpp"
 #include "MockGeneratorLogger.hpp"
 #include "MockTestCaseGenerator.hpp"
-#include "tcframe/generator/Generator.hpp"
+#include "tcframe/runner/generator/Generator.hpp"
 
 using ::testing::_;
 using ::testing::Eq;

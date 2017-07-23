@@ -2,7 +2,7 @@
 
 #include "gmock/gmock.h"
 
-#include "tcframe/generator/Generator.hpp"
+#include "tcframe/runner/generator/Generator.hpp"
 
 namespace tcframe {
 

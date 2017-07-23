@@ -60,13 +60,6 @@ set(INCLUDE
         include/tcframe/evaluator/scorer/DiffScorer.hpp
         include/tcframe/evaluator/scorer/Scorer.hpp
         include/tcframe/evaluator/scorer/ScoringResult.hpp
-        include/tcframe/generator.hpp
-        include/tcframe/generator/DefaultGeneratorLogger.hpp
-        include/tcframe/generator/GenerationException.hpp
-        include/tcframe/generator/GenerationOptions.hpp
-        include/tcframe/generator/Generator.hpp
-        include/tcframe/generator/GeneratorLogger.hpp
-        include/tcframe/generator/TestCaseGenerator.hpp
         include/tcframe/grader.hpp
         include/tcframe/grader/BriefGraderLogger.hpp
         include/tcframe/grader/DefaultGraderLogger.hpp
@@ -90,6 +83,13 @@ set(INCLUDE
         include/tcframe/runner/aggregator/AggregatorRegistry.hpp
         include/tcframe/runner/aggregator/MinAggregator.hpp
         include/tcframe/runner/aggregator/SumAggregator.hpp
+        include/tcframe/runner/generator.hpp
+        include/tcframe/runner/generator/DefaultGeneratorLogger.hpp
+        include/tcframe/runner/generator/GenerationException.hpp
+        include/tcframe/runner/generator/GenerationOptions.hpp
+        include/tcframe/runner/generator/Generator.hpp
+        include/tcframe/runner/generator/GeneratorLogger.hpp
+        include/tcframe/runner/generator/TestCaseGenerator.hpp
         include/tcframe/runner/logger.hpp
         include/tcframe/runner/logger/RunnerLogger.hpp
         include/tcframe/runner/core.hpp
@@ -166,12 +166,6 @@ set(TEST_UNIT
         test/unit/tcframe/evaluator/communicator/MockCommunicator.hpp
         test/unit/tcframe/evaluator/scorer/CustomScorerTests.cpp
         test/unit/tcframe/evaluator/scorer/MockScorer.hpp
-        test/unit/tcframe/generator/DefaultGeneratorLoggerTests.cpp
-        test/unit/tcframe/generator/GeneratorTests.cpp
-        test/unit/tcframe/generator/MockGenerator.hpp
-        test/unit/tcframe/generator/MockGeneratorLogger.hpp
-        test/unit/tcframe/generator/MockTestCaseGenerator.hpp
-        test/unit/tcframe/generator/TestCaseGeneratorTests.cpp
         test/unit/tcframe/grader/BriefGraderLoggerTests.cpp
         test/unit/tcframe/grader/DefaultGraderLoggerTests.cpp
         test/unit/tcframe/grader/GraderTests.cpp
@@ -188,6 +182,12 @@ set(TEST_UNIT
         test/unit/tcframe/runner/aggregator/MockAggregator.hpp
         test/unit/tcframe/runner/aggregator/MockAggregatorRegistry.hpp
         test/unit/tcframe/runner/aggregator/SumAggregatorTests.cpp
+        test/unit/tcframe/runner/generator/DefaultGeneratorLoggerTests.cpp
+        test/unit/tcframe/runner/generator/GeneratorTests.cpp
+        test/unit/tcframe/runner/generator/MockGenerator.hpp
+        test/unit/tcframe/runner/generator/MockGeneratorLogger.hpp
+        test/unit/tcframe/runner/generator/MockTestCaseGenerator.hpp
+        test/unit/tcframe/runner/generator/TestCaseGeneratorTests.cpp
         test/unit/tcframe/runner/logger/MockRunnerLogger.hpp
         test/unit/tcframe/runner/logger/RunnerLoggerTests.cpp
         test/unit/tcframe/runner/core/ArgsParserTests.cpp

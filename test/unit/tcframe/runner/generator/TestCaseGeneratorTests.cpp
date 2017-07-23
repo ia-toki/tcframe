@@ -1,14 +1,14 @@
 #include "gmock/gmock.h"
-#include "../mock.hpp"
+#include "../../mock.hpp"
 
 #include <sstream>
 
-#include "../evaluator/MockEvaluator.hpp"
-#include "../os/MockOperatingSystem.hpp"
-#include "../spec/io/MockIOManipulator.hpp"
-#include "../spec/verifier/MockVerifier.hpp"
+#include "../../evaluator/MockEvaluator.hpp"
+#include "../../os/MockOperatingSystem.hpp"
+#include "../../spec/io/MockIOManipulator.hpp"
+#include "../../spec/verifier/MockVerifier.hpp"
 #include "MockGeneratorLogger.hpp"
-#include "tcframe/generator/TestCaseGenerator.hpp"
+#include "tcframe/runner/generator/TestCaseGenerator.hpp"
 
 using ::testing::_;
 using ::testing::AllOf;
