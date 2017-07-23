@@ -1,4 +1,5 @@
 #pragma once
 
+#include "tcframe/runner/aggregator.hpp"
 #include "tcframe/runner/core.hpp"
 #include "tcframe/runner/logger.hpp"

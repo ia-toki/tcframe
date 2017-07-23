@@ -1,6 +1,6 @@
 #include "gmock/gmock.h"
 
-#include "tcframe/aggregator/MinAggregator.hpp"
+#include "tcframe/runner/aggregator/MinAggregator.hpp"
 
 using ::testing::Eq;
 using ::testing::Test;

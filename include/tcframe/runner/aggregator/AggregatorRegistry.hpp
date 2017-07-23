@@ -1,8 +1,8 @@
 #pragma once
 
-#include "tcframe/aggregator/Aggregator.hpp"
-#include "tcframe/aggregator/MinAggregator.hpp"
-#include "tcframe/aggregator/SumAggregator.hpp"
+#include "Aggregator.hpp"
+#include "MinAggregator.hpp"
+#include "SumAggregator.hpp"
 
 namespace tcframe {
 

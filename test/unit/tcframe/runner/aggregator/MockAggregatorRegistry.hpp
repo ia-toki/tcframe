@@ -2,7 +2,7 @@
 
 #include "gmock/gmock.h"
 
-#include "tcframe/aggregator/AggregatorRegistry.hpp"
+#include "tcframe/runner/aggregator/AggregatorRegistry.hpp"
 
 namespace tcframe {
 

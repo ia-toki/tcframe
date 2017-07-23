@@ -42,11 +42,6 @@ include_directories("${source_dir}/googlemock/include")
 include_directories(include)
 
 set(INCLUDE
-        include/tcframe/aggregator.hpp
-        include/tcframe/aggregator/Aggregator.hpp
-        include/tcframe/aggregator/AggregatorRegistry.hpp
-        include/tcframe/aggregator/MinAggregator.hpp
-        include/tcframe/aggregator/SumAggregator.hpp
         include/tcframe/evaluator.hpp
         include/tcframe/evaluator/BatchEvaluator.hpp
         include/tcframe/evaluator/EvaluationOptions.hpp
@@ -90,6 +85,11 @@ set(INCLUDE
         include/tcframe/os/ExecutionRequest.hpp
         include/tcframe/os/OperatingSystem.hpp
         include/tcframe/runner.hpp
+        include/tcframe/runner/aggregator.hpp
+        include/tcframe/runner/aggregator/Aggregator.hpp
+        include/tcframe/runner/aggregator/AggregatorRegistry.hpp
+        include/tcframe/runner/aggregator/MinAggregator.hpp
+        include/tcframe/runner/aggregator/SumAggregator.hpp
         include/tcframe/runner/logger.hpp
         include/tcframe/runner/logger/RunnerLogger.hpp
         include/tcframe/runner/core.hpp
@@ -158,10 +158,6 @@ set(INCLUDE
 set(TEST_UNIT
         test/unit/tcframe/helper.hpp
         test/unit/tcframe/mock.hpp
-        test/unit/tcframe/aggregator/MinAggregatorTests.cpp
-        test/unit/tcframe/aggregator/MockAggregator.hpp
-        test/unit/tcframe/aggregator/MockAggregatorRegistry.hpp
-        test/unit/tcframe/aggregator/SumAggregatorTests.cpp
         test/unit/tcframe/evaluator/BatchEvaluatorTests.cpp
         test/unit/tcframe/evaluator/InteractiveEvaluatorTests.cpp
         test/unit/tcframe/evaluator/MockEvaluator.hpp
@@ -188,6 +184,10 @@ set(TEST_UNIT
         test/unit/tcframe/logger/MockLoggerEngine.hpp
         test/unit/tcframe/logger/SimpleLoggerEngineTests.cpp
         test/unit/tcframe/os/MockOperatingSystem.hpp
+        test/unit/tcframe/runner/aggregator/MinAggregatorTests.cpp
+        test/unit/tcframe/runner/aggregator/MockAggregator.hpp
+        test/unit/tcframe/runner/aggregator/MockAggregatorRegistry.hpp
+        test/unit/tcframe/runner/aggregator/SumAggregatorTests.cpp
         test/unit/tcframe/runner/logger/MockRunnerLogger.hpp
         test/unit/tcframe/runner/logger/RunnerLoggerTests.cpp
         test/unit/tcframe/runner/core/ArgsParserTests.cpp

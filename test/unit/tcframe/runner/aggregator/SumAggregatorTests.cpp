@@ -1,6 +1,6 @@
 #include "gmock/gmock.h"
 
-#include "tcframe/aggregator/SumAggregator.hpp"
+#include "tcframe/runner/aggregator/SumAggregator.hpp"
 
 using ::testing::Eq;
 using ::testing::Test;
