@@ -1,11 +1,11 @@
 #include "gmock/gmock.h"
 #include "../../mock.hpp"
 
-#include "BaseRunnerMainTests.hpp"
+#include "BaseRunnerTests.hpp"
 
 namespace tcframe {
 
-class RunnerMainTests : public BaseRunnerMainTests {
+class RunnerTests : public BaseRunnerTests {
 public:
     static int T;
 
@@ -43,31 +43,31 @@ protected:
         }
     };
 
-    RunnerMain<ProblemSpec> runner = BaseRunnerMainTests::createRunner(new TestSpec());
-    RunnerMain<ProblemSpecWithConfig> runnerWithConfig = BaseRunnerMainTests::createRunner(new TestSpecWithConfig());
-    RunnerMain<ProblemSpecWithSubtasks> runnerWithSubtasks = BaseRunnerMainTests::createRunner(new TestSpecWithSubtasks());
+    Runner<ProblemSpec> runner = BaseRunnerTests::createRunner(new TestSpec());
+    Runner<ProblemSpecWithConfig> runnerWithConfig = BaseRunnerTests::createRunner(new TestSpecWithConfig());
+    Runner<ProblemSpecWithSubtasks> runnerWithSubtasks = BaseRunnerTests::createRunner(new TestSpecWithSubtasks());
 
-    RunnerMain<ProblemSpec> createRunner(const string& specPath) {
-        return RunnerMain<ProblemSpec>(
+    Runner<ProblemSpec> createRunner(const string& specPath) {
+        return Runner<ProblemSpec>(
                 specPath, new TestSpec(), loggerEngine, &os, &runnerLoggerFactory, &graderLoggerFactory,
                 &generatorFactory, &graderFactory, &evaluatorRegistry, &aggregatorRegistry);
     }
 };
 
-int RunnerMainTests::T;
+int RunnerTests::T;
 
-TEST_F(RunnerMainTests, Run_SlugParsing_Failed) {
-    RunnerMain<ProblemSpec> badRunner = createRunner("/Users/fushar/january contest/c_slug slug/spec.cpp");
+TEST_F(RunnerTests, Run_SlugParsing_Failed) {
+    Runner<ProblemSpec> badRunner = createRunner("/Users/fushar/january contest/c_slug slug/spec.cpp");
 
     EXPECT_THAT(badRunner.run(1, new char*[1]{(char*) "./runner"}), Ne(0));
 }
 
-TEST_F(RunnerMainTests, Run_ArgsParsing_Failed) {
+TEST_F(RunnerTests, Run_ArgsParsing_Failed) {
     EXPECT_THAT(runner.run(2, new char*[2]{(char*) "./runner", (char*) "--blah"}), Ne(0));
 }
 
-TEST_F(RunnerMainTests, Run_Specification_Failed) {
-    RunnerMain<ProblemSpec> badRunner = BaseRunnerMainTests::createRunner(new BadTestSpec());
+TEST_F(RunnerTests, Run_Specification_Failed) {
+    Runner<ProblemSpec> badRunner = BaseRunnerTests::createRunner(new BadTestSpec());
 
     EXPECT_CALL(generator, generate(_, _)).Times(0);
     EXPECT_CALL(runnerLogger, logSpecificationFailure(vector<string>{"An error"}));
@@ -75,19 +75,19 @@ TEST_F(RunnerMainTests, Run_Specification_Failed) {
     EXPECT_THAT(badRunner.run(argc, argv), Ne(0));
 }
 
-TEST_F(RunnerMainTests, Run_Generation_Successful) {
+TEST_F(RunnerTests, Run_Generation_Successful) {
     ON_CALL(generator, generate(_, _)).WillByDefault(Return(true));
 
     EXPECT_THAT(runner.run(argc, argv), Eq(0));
 }
 
-TEST_F(RunnerMainTests, Run_Generation_Failed) {
+TEST_F(RunnerTests, Run_Generation_Failed) {
     ON_CALL(generator, generate(_, _)).WillByDefault(Return(false));
 
     EXPECT_THAT(runner.run(argc, argv), Ne(0));
 }
 
-TEST_F(RunnerMainTests, Run_Generation_UseDefaultOptions) {
+TEST_F(RunnerTests, Run_Generation_UseDefaultOptions) {
     EXPECT_CALL(generator, generate(_, GenerationOptionsBuilder("slug")
             .setSeed(RunnerDefaults::SEED)
             .setSolutionCommand(RunnerDefaults::SOLUTION_COMMAND)
@@ -98,7 +98,7 @@ TEST_F(RunnerMainTests, Run_Generation_UseDefaultOptions) {
     runner.run(argc, argv);
 }
 
-TEST_F(RunnerMainTests, Run_Generation_UseConfigOptions) {
+TEST_F(RunnerTests, Run_Generation_UseConfigOptions) {
     EXPECT_CALL(generator, generate(_, GenerationOptionsBuilder("slug")
             .setMultipleTestCasesCounter(&T)
             .setSeed(RunnerDefaults::SEED)
@@ -110,7 +110,7 @@ TEST_F(RunnerMainTests, Run_Generation_UseConfigOptions) {
     runnerWithConfig.run(argc, argv);
 }
 
-TEST_F(RunnerMainTests, Run_Generation_UseArgsOptions) {
+TEST_F(RunnerTests, Run_Generation_UseArgsOptions) {
     EXPECT_CALL(generator, generate(_, GenerationOptionsBuilder("slug")
             .setMultipleTestCasesCounter(&T)
             .setSeed(42)
@@ -127,7 +127,7 @@ TEST_F(RunnerMainTests, Run_Generation_UseArgsOptions) {
             nullptr});
 }
 
-TEST_F(RunnerMainTests, Run_Grading) {
+TEST_F(RunnerTests, Run_Grading) {
     EXPECT_CALL(grader, grade(_, _, _));
 
     int exitStatus = runner.run(2, new char*[3]{
@@ -138,7 +138,7 @@ TEST_F(RunnerMainTests, Run_Grading) {
     EXPECT_THAT(exitStatus, Eq(0));
 }
 
-TEST_F(RunnerMainTests, Run_Grading_UseDefaultOptions) {
+TEST_F(RunnerTests, Run_Grading_UseDefaultOptions) {
     EXPECT_CALL(grader, grade(_, _, GradingOptionsBuilder("slug")
             .setHasMultipleTestCases(false)
             .setTimeLimit(GradingConfig::DEFAULT_TIME_LIMIT)
@@ -153,7 +153,7 @@ TEST_F(RunnerMainTests, Run_Grading_UseDefaultOptions) {
             nullptr});
 }
 
-TEST_F(RunnerMainTests, Run_Grading_UseConfigOptions) {
+TEST_F(RunnerTests, Run_Grading_UseConfigOptions) {
     EXPECT_CALL(grader, grade(_, _, GradingOptionsBuilder("slug")
             .setHasMultipleTestCases(true)
             .setSolutionCommand(RunnerDefaults::SOLUTION_COMMAND)
@@ -168,7 +168,7 @@ TEST_F(RunnerMainTests, Run_Grading_UseConfigOptions) {
             nullptr});
 }
 
-TEST_F(RunnerMainTests, Run_Grading_UseArgsOptions) {
+TEST_F(RunnerTests, Run_Grading_UseArgsOptions) {
     EXPECT_CALL(grader, grade(_, _, GradingOptionsBuilder("slug")
             .setHasMultipleTestCases(true)
             .setSolutionCommand("\"java Solution\"")
@@ -187,7 +187,7 @@ TEST_F(RunnerMainTests, Run_Grading_UseArgsOptions) {
             nullptr});
 }
 
-TEST_F(RunnerMainTests, Run_Grading_UseArgsOptions_NoLimits) {
+TEST_F(RunnerTests, Run_Grading_UseArgsOptions_NoLimits) {
     EXPECT_CALL(grader, grade(_, _, GradingOptionsBuilder("slug")
             .setHasMultipleTestCases(true)
             .setSolutionCommand("\"java Solution\"")
@@ -204,7 +204,7 @@ TEST_F(RunnerMainTests, Run_Grading_UseArgsOptions_NoLimits) {
             nullptr});
 }
 
-TEST_F(RunnerMainTests, Run_Grading_DefaultLogger) {
+TEST_F(RunnerTests, Run_Grading_DefaultLogger) {
     EXPECT_CALL(graderLoggerFactory, create(_, false));
 
     runner.run(2, new char*[3]{
@@ -213,7 +213,7 @@ TEST_F(RunnerMainTests, Run_Grading_DefaultLogger) {
             nullptr});
 }
 
-TEST_F(RunnerMainTests, Run_Grading_BriefLogger) {
+TEST_F(RunnerTests, Run_Grading_BriefLogger) {
     EXPECT_CALL(graderLoggerFactory, create(_, true));
 
     runner.run(3, new char*[4]{
@@ -223,7 +223,7 @@ TEST_F(RunnerMainTests, Run_Grading_BriefLogger) {
             nullptr});
 }
 
-TEST_F(RunnerMainTests, Run_AggregatorRegistry) {
+TEST_F(RunnerTests, Run_AggregatorRegistry) {
     EXPECT_CALL(aggregatorRegistry, get(false));
     runner.run(2, new char*[3]{
             (char*) "./runner",
@@ -231,7 +231,7 @@ TEST_F(RunnerMainTests, Run_AggregatorRegistry) {
             nullptr});
 }
 
-TEST_F(RunnerMainTests, Run_AggregatorRegistry_WithSubtasks) {
+TEST_F(RunnerTests, Run_AggregatorRegistry_WithSubtasks) {
     EXPECT_CALL(aggregatorRegistry, get(true));
     runnerWithSubtasks.run(2, new char*[3]{
             (char*) "./runner",

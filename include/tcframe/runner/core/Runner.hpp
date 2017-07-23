@@ -28,7 +28,7 @@ struct RunnerDefaults {
 };
 
 template<typename TProblemSpec>
-class RunnerMain {
+class Runner {
 private:
     string specPath_;
 
@@ -45,7 +45,7 @@ private:
     AggregatorRegistry* aggregatorRegistry_;
 
 public:
-    RunnerMain(
+    Runner(
             const string& specPath,
             BaseTestSpec<TProblemSpec>* testSpec,
             LoggerEngine* loggerEngine,

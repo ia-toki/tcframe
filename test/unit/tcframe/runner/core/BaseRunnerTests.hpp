@@ -11,7 +11,7 @@
 #include "../../grader/MockGraderLoggerFactory.hpp"
 #include "../../os/MockOperatingSystem.hpp"
 #include "../logger/MockRunnerLogger.hpp"
-#include "tcframe/runner/main/RunnerMain.hpp"
+#include "tcframe/runner/core/Runner.hpp"
 
 using ::testing::_;
 using ::testing::Eq;
@@ -23,7 +23,7 @@ using ::testing::Truly;
 
 namespace tcframe {
 
-class BaseRunnerMainTests : public Test {
+class BaseRunnerTests : public Test {
 protected:
     class ProblemSpec : public BaseProblemSpec {
     protected:
@@ -63,8 +63,8 @@ protected:
     }
 
     template<typename TProblem>
-    RunnerMain<TProblem> createRunner(BaseTestSpec<TProblem>* testSpec) {
-        return RunnerMain<TProblem>(
+    Runner<TProblem> createRunner(BaseTestSpec<TProblem>* testSpec) {
+        return Runner<TProblem>(
                 specPath, testSpec, loggerEngine, &os,&runnerLoggerFactory, &graderLoggerFactory,
                 &generatorFactory, &graderFactory, &evaluatorRegistry, &aggregatorRegistry);
     }

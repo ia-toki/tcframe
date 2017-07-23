@@ -89,13 +89,14 @@ set(INCLUDE
         include/tcframe/os/ExecutionResult.hpp
         include/tcframe/os/ExecutionRequest.hpp
         include/tcframe/os/OperatingSystem.hpp
+        include/tcframe/runner.hpp
         include/tcframe/runner/logger.hpp
         include/tcframe/runner/logger/RunnerLogger.hpp
-        include/tcframe/runner/main.hpp
-        include/tcframe/runner/main/Args.hpp
-        include/tcframe/runner/main/ArgsParser.hpp
-        include/tcframe/runner/main/RunnerMain.hpp
-        include/tcframe/runner/main/SlugParser.hpp
+        include/tcframe/runner/core.hpp
+        include/tcframe/runner/core/Args.hpp
+        include/tcframe/runner/core/ArgsParser.hpp
+        include/tcframe/runner/core/Runner.hpp
+        include/tcframe/runner/core/SlugParser.hpp
         include/tcframe/spec.hpp
         include/tcframe/spec/constraint.hpp
         include/tcframe/spec/constraint/Constraint.hpp
@@ -189,12 +190,12 @@ set(TEST_UNIT
         test/unit/tcframe/os/MockOperatingSystem.hpp
         test/unit/tcframe/runner/logger/MockRunnerLogger.hpp
         test/unit/tcframe/runner/logger/RunnerLoggerTests.cpp
-        test/unit/tcframe/runner/main/ArgsParserTests.cpp
-        test/unit/tcframe/runner/main/BatchRunnerMainTests.cpp
-        test/unit/tcframe/runner/main/BaseRunnerMainTests.hpp
-        test/unit/tcframe/runner/main/InteractiveRunnerMainTests.cpp
-        test/unit/tcframe/runner/main/RunnerMainTests.cpp
-        test/unit/tcframe/runner/main/SlugParserTests.cpp
+        test/unit/tcframe/runner/core/ArgsParserTests.cpp
+        test/unit/tcframe/runner/core/BatchRunnerTests.cpp
+        test/unit/tcframe/runner/core/BaseRunnerTests.hpp
+        test/unit/tcframe/runner/core/InteractiveRunnerTests.cpp
+        test/unit/tcframe/runner/core/RunnerTests.cpp
+        test/unit/tcframe/runner/core/SlugParserTests.cpp
         test/unit/tcframe/spec/constraint/ConstraintSuiteTests.cpp
         test/unit/tcframe/spec/constraint/ConstraintSuiteBuilderTests.cpp
         test/unit/tcframe/spec/core/BaseTestSpecTests.cpp

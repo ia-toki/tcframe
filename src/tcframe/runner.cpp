@@ -1,11 +1,11 @@
-#include "tcframe/runner/main.hpp"
+#include "tcframe/runner.hpp"
 
 #include __TCFRAME_SPEC_FILE__
 
-using tcframe::RunnerMain;
+using tcframe::Runner;
 
 int main(int argc, char* argv[]) {
-    RunnerMain<ProblemSpec> runner(
+    Runner<ProblemSpec> runner(
             __TCFRAME_SPEC_FILE__,
             new TestSpec(),
             new SimpleLoggerEngine(),
