@@ -3,8 +3,8 @@
 
 #include <sstream>
 
-#include "../../evaluator/MockEvaluator.hpp"
 #include "../../os/MockOperatingSystem.hpp"
+#include "../../runner/evaluator/MockEvaluator.hpp"
 #include "../../spec/io/MockIOManipulator.hpp"
 #include "../../spec/verifier/MockVerifier.hpp"
 #include "MockGeneratorLogger.hpp"

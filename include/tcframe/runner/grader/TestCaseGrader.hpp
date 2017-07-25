@@ -4,7 +4,7 @@
 
 #include "GradingOptions.hpp"
 #include "GraderLogger.hpp"
-#include "tcframe/evaluator.hpp"
+#include "tcframe/runner/evaluator.hpp"
 #include "tcframe/util.hpp"
 #include "tcframe/verdict.hpp"
 

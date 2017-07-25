@@ -9,8 +9,8 @@
 #include "GenerationException.hpp"
 #include "GenerationOptions.hpp"
 #include "GeneratorLogger.hpp"
-#include "tcframe/evaluator.hpp"
 #include "tcframe/os.hpp"
+#include "tcframe/runner/evaluator.hpp"
 #include "tcframe/spec.hpp"
 #include "tcframe/verdict.hpp"
 

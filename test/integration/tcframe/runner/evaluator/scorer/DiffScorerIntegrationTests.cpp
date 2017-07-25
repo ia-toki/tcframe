@@ -1,6 +1,6 @@
 #include "gmock/gmock.h"
 
-#include "tcframe/evaluator/scorer/DiffScorer.hpp"
+#include "tcframe/runner/evaluator/scorer/DiffScorer.hpp"
 
 using ::testing::AllOf;
 using ::testing::Eq;
@@ -19,8 +19,8 @@ protected:
 TEST_F(DiffScorerIntegrationTests, Scoring_AC) {
     ScoringResult result = scorer.score(
             "",
-            "test-integration/evaluator/scorer/judge.out",
-            "test-integration/evaluator/scorer/diff/contestant_ac.out");
+            "test-integration/runner/evaluator/scorer/judge.out",
+            "test-integration/runner/evaluator/scorer/diff/contestant_ac.out");
     EXPECT_THAT(result.verdict(), Eq(Verdict(VerdictStatus::ac())));
     EXPECT_THAT(result.executionResult().standardError(), IsEmpty());
 }
@@ -28,8 +28,8 @@ TEST_F(DiffScorerIntegrationTests, Scoring_AC) {
 TEST_F(DiffScorerIntegrationTests, Scoring_WA) {
     ScoringResult result = scorer.score(
             "",
-            "test-integration/evaluator/scorer/judge.out",
-            "test-integration/evaluator/scorer/diff/contestant_wa.out");
+            "test-integration/runner/evaluator/scorer/judge.out",
+            "test-integration/runner/evaluator/scorer/diff/contestant_wa.out");
     EXPECT_THAT(result.verdict(), Eq(Verdict(VerdictStatus::wa())));
 
     EXPECT_THAT(result.executionResult().standardError(), AllOf(

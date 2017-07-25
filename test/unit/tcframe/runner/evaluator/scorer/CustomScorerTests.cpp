@@ -1,11 +1,11 @@
 #include "gmock/gmock.h"
-#include "../../mock.hpp"
+#include "../../../mock.hpp"
 
 #include <sstream>
 
-#include "../../os/MockOperatingSystem.hpp"
-#include "../../verdict/MockVerdictCreator.hpp"
-#include "tcframe/evaluator/scorer/CustomScorer.hpp"
+#include "../../../os/MockOperatingSystem.hpp"
+#include "../../../verdict/MockVerdictCreator.hpp"
+#include "tcframe/runner/evaluator/scorer/CustomScorer.hpp"
 
 using ::testing::_;
 using ::testing::Eq;

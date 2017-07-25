@@ -2,7 +2,7 @@
 
 #include <cstdlib>
 
-#include "tcframe/evaluator/scorer/CustomScorer.hpp"
+#include "tcframe/runner/evaluator/scorer/CustomScorer.hpp"
 
 using ::testing::AllOf;
 using ::testing::Eq;
@@ -17,21 +17,21 @@ protected:
     CustomScorer scorer = CustomScorer(
             new OperatingSystem(),
             new VerdictCreator(),
-            "test-integration/evaluator/scorer/custom/scorer");
+            "test-integration/runner/evaluator/scorer/custom/scorer");
 
     static void SetUpTestCase() {
         system(
                 "g++ -o "
-                "test-integration/evaluator/scorer/custom/scorer "
-                "test-integration/evaluator/scorer/custom/scorer.cpp");
+                "test-integration/runner/evaluator/scorer/custom/scorer "
+                "test-integration/runner/evaluator/scorer/custom/scorer.cpp");
     }
 };
 
 TEST_F(CustomScorerIntegrationTests, Scoring) {
     ScoringResult result = scorer.score(
-            "test-integration/evaluator/scorer/judge.in",
-            "test-integration/evaluator/scorer/judge.out",
-            "test-integration/evaluator/scorer/custom/contestant.out");
+            "test-integration/runner/evaluator/scorer/judge.in",
+            "test-integration/runner/evaluator/scorer/judge.out",
+            "test-integration/runner/evaluator/scorer/custom/contestant.out");
     EXPECT_THAT(result.verdict(), Eq(Verdict(VerdictStatus::ac())));
 }
 

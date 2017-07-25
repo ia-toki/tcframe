@@ -2,7 +2,7 @@
 
 #include "gmock/gmock.h"
 
-#include "tcframe/evaluator/scorer/Scorer.hpp"
+#include "tcframe/runner/evaluator/scorer/Scorer.hpp"
 
 namespace tcframe {
 

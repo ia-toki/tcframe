@@ -1,11 +1,11 @@
 #include "gmock/gmock.h"
 #include "../../mock.hpp"
 
-#include "../../evaluator/MockEvaluator.hpp"
-#include "../../evaluator/MockEvaluatorRegistry.hpp"
 #include "../../os/MockOperatingSystem.hpp"
 #include "../../runner/aggregator/MockAggregator.hpp"
 #include "../../runner/aggregator/MockAggregatorRegistry.hpp"
+#include "../../runner/evaluator/MockEvaluator.hpp"
+#include "../../runner/evaluator/MockEvaluatorRegistry.hpp"
 #include "../../runner/generator/MockGenerator.hpp"
 #include "../../runner/grader/MockGrader.hpp"
 #include "../../runner/grader/MockGraderLogger.hpp"

@@ -1,12 +1,12 @@
 #include "gmock/gmock.h"
-#include "../mock.hpp"
+#include "../../mock.hpp"
 
 #include <sstream>
 
-#include "../os/MockOperatingSystem.hpp"
-#include "../verdict/MockVerdictCreator.hpp"
+#include "../../os/MockOperatingSystem.hpp"
+#include "../../verdict/MockVerdictCreator.hpp"
 #include "scorer/MockScorer.hpp"
-#include "tcframe/evaluator/BatchEvaluator.hpp"
+#include "tcframe/runner/evaluator/BatchEvaluator.hpp"
 
 using ::testing::_;
 using ::testing::AllOf;

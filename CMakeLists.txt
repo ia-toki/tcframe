@@ -42,24 +42,6 @@ include_directories("${source_dir}/googlemock/include")
 include_directories(include)
 
 set(INCLUDE
-        include/tcframe/evaluator.hpp
-        include/tcframe/evaluator/BatchEvaluator.hpp
-        include/tcframe/evaluator/EvaluationOptions.hpp
-        include/tcframe/evaluator/EvaluationResult.hpp
-        include/tcframe/evaluator/Evaluator.hpp
-        include/tcframe/evaluator/EvaluatorConfig.hpp
-        include/tcframe/evaluator/EvaluatorHelperRegistry.hpp
-        include/tcframe/evaluator/EvaluatorRegistry.hpp
-        include/tcframe/evaluator/InteractiveEvaluator.hpp
-        include/tcframe/evaluator/GenerationResult.hpp
-        include/tcframe/evaluator/communicator.hpp
-        include/tcframe/evaluator/communicator/CommunicationResult.hpp
-        include/tcframe/evaluator/communicator/Communicator.hpp
-        include/tcframe/evaluator/scorer.hpp
-        include/tcframe/evaluator/scorer/CustomScorer.hpp
-        include/tcframe/evaluator/scorer/DiffScorer.hpp
-        include/tcframe/evaluator/scorer/Scorer.hpp
-        include/tcframe/evaluator/scorer/ScoringResult.hpp
         include/tcframe/logger.hpp
         include/tcframe/logger/BaseLogger.hpp
         include/tcframe/logger/DefaultBaseLogger.hpp
@@ -75,6 +57,24 @@ set(INCLUDE
         include/tcframe/runner/aggregator/AggregatorRegistry.hpp
         include/tcframe/runner/aggregator/MinAggregator.hpp
         include/tcframe/runner/aggregator/SumAggregator.hpp
+        include/tcframe/runner/evaluator.hpp
+        include/tcframe/runner/evaluator/BatchEvaluator.hpp
+        include/tcframe/runner/evaluator/EvaluationOptions.hpp
+        include/tcframe/runner/evaluator/EvaluationResult.hpp
+        include/tcframe/runner/evaluator/Evaluator.hpp
+        include/tcframe/runner/evaluator/EvaluatorConfig.hpp
+        include/tcframe/runner/evaluator/EvaluatorHelperRegistry.hpp
+        include/tcframe/runner/evaluator/EvaluatorRegistry.hpp
+        include/tcframe/runner/evaluator/InteractiveEvaluator.hpp
+        include/tcframe/runner/evaluator/GenerationResult.hpp
+        include/tcframe/runner/evaluator/communicator.hpp
+        include/tcframe/runner/evaluator/communicator/CommunicationResult.hpp
+        include/tcframe/runner/evaluator/communicator/Communicator.hpp
+        include/tcframe/runner/evaluator/scorer.hpp
+        include/tcframe/runner/evaluator/scorer/CustomScorer.hpp
+        include/tcframe/runner/evaluator/scorer/DiffScorer.hpp
+        include/tcframe/runner/evaluator/scorer/Scorer.hpp
+        include/tcframe/runner/evaluator/scorer/ScoringResult.hpp
         include/tcframe/runner/grader.hpp
         include/tcframe/runner/grader/BriefGraderLogger.hpp
         include/tcframe/runner/grader/DefaultGraderLogger.hpp
@@ -158,14 +158,6 @@ set(INCLUDE
 set(TEST_UNIT
         test/unit/tcframe/helper.hpp
         test/unit/tcframe/mock.hpp
-        test/unit/tcframe/evaluator/BatchEvaluatorTests.cpp
-        test/unit/tcframe/evaluator/InteractiveEvaluatorTests.cpp
-        test/unit/tcframe/evaluator/MockEvaluator.hpp
-        test/unit/tcframe/evaluator/MockEvaluatorRegistry.hpp
-        test/unit/tcframe/evaluator/communicator/CommunicatorTests.cpp
-        test/unit/tcframe/evaluator/communicator/MockCommunicator.hpp
-        test/unit/tcframe/evaluator/scorer/CustomScorerTests.cpp
-        test/unit/tcframe/evaluator/scorer/MockScorer.hpp
         test/unit/tcframe/logger/DefaultBaseLogggerTests.cpp
         test/unit/tcframe/logger/MockLoggerEngine.hpp
         test/unit/tcframe/logger/SimpleLoggerEngineTests.cpp
@@ -174,6 +166,14 @@ set(TEST_UNIT
         test/unit/tcframe/runner/aggregator/MockAggregator.hpp
         test/unit/tcframe/runner/aggregator/MockAggregatorRegistry.hpp
         test/unit/tcframe/runner/aggregator/SumAggregatorTests.cpp
+        test/unit/tcframe/runner/evaluator/BatchEvaluatorTests.cpp
+        test/unit/tcframe/runner/evaluator/InteractiveEvaluatorTests.cpp
+        test/unit/tcframe/runner/evaluator/MockEvaluator.hpp
+        test/unit/tcframe/runner/evaluator/MockEvaluatorRegistry.hpp
+        test/unit/tcframe/runner/evaluator/communicator/CommunicatorTests.cpp
+        test/unit/tcframe/runner/evaluator/communicator/MockCommunicator.hpp
+        test/unit/tcframe/runner/evaluator/scorer/CustomScorerTests.cpp
+        test/unit/tcframe/runner/evaluator/scorer/MockScorer.hpp
         test/unit/tcframe/runner/generator/DefaultGeneratorLoggerTests.cpp
         test/unit/tcframe/runner/generator/GeneratorTests.cpp
         test/unit/tcframe/runner/generator/MockGenerator.hpp
@@ -245,9 +245,9 @@ target_link_libraries(test_unit
 )
 
 set(TEST_INTEGRATION
-        test/integration/tcframe/evaluator/communicator/CommunicatorIntegrationTests.cpp
-        test/integration/tcframe/evaluator/scorer/CustomScorerIntegrationTests.cpp
-        test/integration/tcframe/evaluator/scorer/DiffScorerIntegrationTests.cpp
+        test/integration/tcframe/runner/evaluator/communicator/CommunicatorIntegrationTests.cpp
+        test/integration/tcframe/runner/evaluator/scorer/CustomScorerIntegrationTests.cpp
+        test/integration/tcframe/runner/evaluator/scorer/DiffScorerIntegrationTests.cpp
         test/integration/tcframe/os/OperatingSystemIntegrationTests.cpp
 )
 

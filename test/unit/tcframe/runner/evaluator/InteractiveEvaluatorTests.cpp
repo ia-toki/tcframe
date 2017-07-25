@@ -1,8 +1,8 @@
 #include "gmock/gmock.h"
-#include "../mock.hpp"
+#include "../../mock.hpp"
 
 #include "./communicator/MockCommunicator.hpp"
-#include "tcframe/evaluator/InteractiveEvaluator.hpp"
+#include "tcframe/runner/evaluator/InteractiveEvaluator.hpp"
 
 using ::testing::Eq;
 using ::testing::Return;
