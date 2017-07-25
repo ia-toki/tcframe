@@ -2,7 +2,7 @@
 
 #include "gmock/gmock.h"
 
-#include "tcframe/grader/TestCaseGrader.hpp"
+#include "tcframe/runner/grader/TestCaseGrader.hpp"
 
 namespace tcframe {
 

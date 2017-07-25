@@ -3,13 +3,13 @@
 
 #include "../../evaluator/MockEvaluator.hpp"
 #include "../../evaluator/MockEvaluatorRegistry.hpp"
-#include "../../grader/MockGrader.hpp"
-#include "../../grader/MockGraderLogger.hpp"
-#include "../../grader/MockGraderLoggerFactory.hpp"
 #include "../../os/MockOperatingSystem.hpp"
 #include "../../runner/aggregator/MockAggregator.hpp"
 #include "../../runner/aggregator/MockAggregatorRegistry.hpp"
 #include "../../runner/generator/MockGenerator.hpp"
+#include "../../runner/grader/MockGrader.hpp"
+#include "../../runner/grader/MockGraderLogger.hpp"
+#include "../../runner/grader/MockGraderLoggerFactory.hpp"
 #include "../logger/MockRunnerLogger.hpp"
 #include "tcframe/runner/core/Runner.hpp"
 

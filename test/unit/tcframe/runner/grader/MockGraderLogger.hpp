@@ -2,7 +2,7 @@
 
 #include "gmock/gmock.h"
 
-#include "tcframe/grader/GraderLogger.hpp"
+#include "tcframe/runner/grader/GraderLogger.hpp"
 
 namespace tcframe {
 

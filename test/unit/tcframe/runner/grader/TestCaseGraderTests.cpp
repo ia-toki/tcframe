@@ -1,10 +1,10 @@
 #include "gmock/gmock.h"
-#include "../mock.hpp"
+#include "../../mock.hpp"
 
-#include "../evaluator/MockEvaluator.hpp"
-#include "../util/TestUtils.hpp"
+#include "../../evaluator/MockEvaluator.hpp"
+#include "../../util/TestUtils.hpp"
 #include "MockGraderLogger.hpp"
-#include "tcframe/grader/TestCaseGrader.hpp"
+#include "tcframe/runner/grader/TestCaseGrader.hpp"
 
 using ::testing::_;
 using ::testing::Eq;
