@@ -6,3 +6,4 @@
 #include "tcframe/runner/generator.hpp"
 #include "tcframe/runner/grader.hpp"
 #include "tcframe/runner/logger.hpp"
+#include "tcframe/runner/verdict.hpp"

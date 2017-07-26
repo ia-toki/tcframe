@@ -5,8 +5,8 @@
 #include <tuple>
 
 #include "tcframe/os.hpp"
+#include "tcframe/runner/verdict.hpp"
 #include "tcframe/util.hpp"
-#include "tcframe/verdict.hpp"
 
 using std::map;
 using std::string;

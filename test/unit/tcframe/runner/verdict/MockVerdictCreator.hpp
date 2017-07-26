@@ -2,7 +2,7 @@
 
 #include "gmock/gmock.h"
 
-#include "tcframe/verdict/VerdictCreator.hpp"
+#include "tcframe/runner/verdict/VerdictCreator.hpp"
 
 namespace tcframe {
 

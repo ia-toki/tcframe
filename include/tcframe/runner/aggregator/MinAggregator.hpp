@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "Aggregator.hpp"
-#include "tcframe/verdict.hpp"
+#include "tcframe/runner/verdict.hpp"
 
 using std::max;
 using std::min;

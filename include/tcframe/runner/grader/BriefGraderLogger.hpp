@@ -4,7 +4,7 @@
 
 #include "GraderLogger.hpp"
 #include "tcframe/logger.hpp"
-#include "tcframe/verdict.hpp"
+#include "tcframe/runner/verdict.hpp"
 
 using std::map;
 

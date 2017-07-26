@@ -8,7 +8,7 @@
 #include "Scorer.hpp"
 #include "ScoringResult.hpp"
 #include "tcframe/os.hpp"
-#include "tcframe/verdict.hpp"
+#include "tcframe/runner/verdict.hpp"
 
 using std::istream;
 using std::runtime_error;

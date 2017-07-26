@@ -6,8 +6,8 @@
 #include "Scorer.hpp"
 #include "ScoringResult.hpp"
 #include "tcframe/os.hpp"
+#include "tcframe/runner/verdict.hpp"
 #include "tcframe/util.hpp"
-#include "tcframe/verdict.hpp"
 
 using std::istream;
 using std::string;

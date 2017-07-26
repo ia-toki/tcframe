@@ -57,6 +57,11 @@ set(INCLUDE
         include/tcframe/runner/aggregator/AggregatorRegistry.hpp
         include/tcframe/runner/aggregator/MinAggregator.hpp
         include/tcframe/runner/aggregator/SumAggregator.hpp
+        include/tcframe/runner/core.hpp
+        include/tcframe/runner/core/Args.hpp
+        include/tcframe/runner/core/ArgsParser.hpp
+        include/tcframe/runner/core/Runner.hpp
+        include/tcframe/runner/core/SlugParser.hpp
         include/tcframe/runner/evaluator.hpp
         include/tcframe/runner/evaluator/BatchEvaluator.hpp
         include/tcframe/runner/evaluator/EvaluationOptions.hpp
@@ -92,11 +97,10 @@ set(INCLUDE
         include/tcframe/runner/generator/TestCaseGenerator.hpp
         include/tcframe/runner/logger.hpp
         include/tcframe/runner/logger/RunnerLogger.hpp
-        include/tcframe/runner/core.hpp
-        include/tcframe/runner/core/Args.hpp
-        include/tcframe/runner/core/ArgsParser.hpp
-        include/tcframe/runner/core/Runner.hpp
-        include/tcframe/runner/core/SlugParser.hpp
+        include/tcframe/runner/verdict.hpp
+        include/tcframe/runner/verdict/Verdict.hpp
+        include/tcframe/runner/verdict/VerdictCreator.hpp
+        include/tcframe/runner/verdict/VerdictStatus.hpp
         include/tcframe/spec.hpp
         include/tcframe/spec/constraint.hpp
         include/tcframe/spec/constraint/Constraint.hpp
@@ -149,10 +153,6 @@ set(INCLUDE
         include/tcframe/util/NotImplementedException.hpp
         include/tcframe/util/StringUtils.hpp
         include/tcframe/util/optional.hpp
-        include/tcframe/verdict.hpp
-        include/tcframe/verdict/Verdict.hpp
-        include/tcframe/verdict/VerdictCreator.hpp
-        include/tcframe/verdict/VerdictStatus.hpp
 )
 
 set(TEST_UNIT
@@ -166,6 +166,12 @@ set(TEST_UNIT
         test/unit/tcframe/runner/aggregator/MockAggregator.hpp
         test/unit/tcframe/runner/aggregator/MockAggregatorRegistry.hpp
         test/unit/tcframe/runner/aggregator/SumAggregatorTests.cpp
+        test/unit/tcframe/runner/core/ArgsParserTests.cpp
+        test/unit/tcframe/runner/core/BatchRunnerTests.cpp
+        test/unit/tcframe/runner/core/BaseRunnerTests.hpp
+        test/unit/tcframe/runner/core/InteractiveRunnerTests.cpp
+        test/unit/tcframe/runner/core/RunnerTests.cpp
+        test/unit/tcframe/runner/core/SlugParserTests.cpp
         test/unit/tcframe/runner/evaluator/BatchEvaluatorTests.cpp
         test/unit/tcframe/runner/evaluator/InteractiveEvaluatorTests.cpp
         test/unit/tcframe/runner/evaluator/MockEvaluator.hpp
@@ -190,12 +196,9 @@ set(TEST_UNIT
         test/unit/tcframe/runner/grader/TestCaseGraderTests.cpp
         test/unit/tcframe/runner/logger/MockRunnerLogger.hpp
         test/unit/tcframe/runner/logger/RunnerLoggerTests.cpp
-        test/unit/tcframe/runner/core/ArgsParserTests.cpp
-        test/unit/tcframe/runner/core/BatchRunnerTests.cpp
-        test/unit/tcframe/runner/core/BaseRunnerTests.hpp
-        test/unit/tcframe/runner/core/InteractiveRunnerTests.cpp
-        test/unit/tcframe/runner/core/RunnerTests.cpp
-        test/unit/tcframe/runner/core/SlugParserTests.cpp
+        test/unit/tcframe/runner/verdict/MockVerdictCreator.hpp
+        test/unit/tcframe/runner/verdict/VerdictCreatorTests.cpp
+        test/unit/tcframe/runner/verdict/VerdictTests.cpp
         test/unit/tcframe/spec/constraint/ConstraintSuiteTests.cpp
         test/unit/tcframe/spec/constraint/ConstraintSuiteBuilderTests.cpp
         test/unit/tcframe/spec/core/BaseTestSpecTests.cpp
@@ -230,9 +233,6 @@ set(TEST_UNIT
         test/unit/tcframe/util/OptionalTests.cpp
         test/unit/tcframe/util/StringUtilsTests.cpp
         test/unit/tcframe/util/TestUtils.hpp
-        test/unit/tcframe/verdict/MockVerdictCreator.hpp
-        test/unit/tcframe/verdict/VerdictCreatorTests.cpp
-        test/unit/tcframe/verdict/VerdictTests.cpp
 )
 
 add_executable(test_unit ${INCLUDE} ${TEST_UNIT})

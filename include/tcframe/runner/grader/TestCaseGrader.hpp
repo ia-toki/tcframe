@@ -5,8 +5,8 @@
 #include "GradingOptions.hpp"
 #include "GraderLogger.hpp"
 #include "tcframe/runner/evaluator.hpp"
+#include "tcframe/runner/verdict.hpp"
 #include "tcframe/util.hpp"
-#include "tcframe/verdict.hpp"
 
 using std::string;
 

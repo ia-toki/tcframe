@@ -1,6 +1,6 @@
 #include "gmock/gmock.h"
 
-#include "tcframe/verdict/Verdict.hpp"
+#include "tcframe/runner/verdict/Verdict.hpp"
 
 using ::testing::Eq;
 using ::testing::Test;

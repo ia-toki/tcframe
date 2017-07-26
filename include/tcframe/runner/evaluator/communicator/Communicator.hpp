@@ -7,8 +7,8 @@
 #include "../EvaluationOptions.hpp"
 #include "CommunicationResult.hpp"
 #include "tcframe/os.hpp"
+#include "tcframe/runner/verdict.hpp"
 #include "tcframe/util.hpp"
-#include "tcframe/verdict.hpp"
 
 using std::runtime_error;
 using std::string;

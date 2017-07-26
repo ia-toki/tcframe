@@ -11,8 +11,8 @@
 #include "GeneratorLogger.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/runner/evaluator.hpp"
+#include "tcframe/runner/verdict.hpp"
 #include "tcframe/spec.hpp"
-#include "tcframe/verdict.hpp"
 
 using std::char_traits;
 using std::endl;

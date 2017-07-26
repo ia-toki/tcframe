@@ -4,7 +4,7 @@
 #include <sstream>
 
 #include "../../../os/MockOperatingSystem.hpp"
-#include "../../../verdict/MockVerdictCreator.hpp"
+#include "../../../runner/verdict/MockVerdictCreator.hpp"
 #include "tcframe/runner/evaluator/scorer/CustomScorer.hpp"
 
 using ::testing::_;

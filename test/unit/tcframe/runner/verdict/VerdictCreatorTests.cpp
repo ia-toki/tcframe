@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-#include "tcframe/verdict/VerdictCreator.hpp"
+#include "tcframe/runner/verdict/VerdictCreator.hpp"
 
 using ::testing::Eq;
 using ::testing::StrEq;
