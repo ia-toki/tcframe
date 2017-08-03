@@ -102,6 +102,10 @@ set(INCLUDE
         include/tcframe/runner/verdict/VerdictCreator.hpp
         include/tcframe/runner/verdict/VerdictStatus.hpp
         include/tcframe/spec.hpp
+        include/tcframe/spec/config.hpp
+        include/tcframe/spec/config/GradingConfig.hpp
+        include/tcframe/spec/config/MultipleTestCasesConfig.hpp
+        include/tcframe/spec/config/StyleConfig.hpp
         include/tcframe/spec/constraint.hpp
         include/tcframe/spec/constraint/Constraint.hpp
         include/tcframe/spec/constraint/ConstraintSuite.hpp
@@ -109,12 +113,9 @@ set(INCLUDE
         include/tcframe/spec/core.hpp
         include/tcframe/spec/core/BaseTestSpec.hpp
         include/tcframe/spec/core/BaseProblemSpec.hpp
-        include/tcframe/spec/core/GradingConfig.hpp
         include/tcframe/spec/core/Magic.hpp
-        include/tcframe/spec/core/MultipleTestCasesConfig.hpp
         include/tcframe/spec/core/SeedSetter.hpp
         include/tcframe/spec/core/Spec.hpp
-        include/tcframe/spec/core/StyleConfig.hpp
         include/tcframe/spec/io.hpp
         include/tcframe/spec/io/GridIOSegment.hpp
         include/tcframe/spec/io/GridIOSegmentManipulator.hpp

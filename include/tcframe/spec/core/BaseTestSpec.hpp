@@ -4,11 +4,9 @@
 #include <string>
 #include <vector>
 
-#include "GradingConfig.hpp"
-#include "MultipleTestCasesConfig.hpp"
 #include "SeedSetter.hpp"
 #include "Spec.hpp"
-#include "StyleConfig.hpp"
+#include "tcframe/spec/config.hpp"
 #include "tcframe/spec/random.hpp"
 #include "tcframe/util.hpp"
 

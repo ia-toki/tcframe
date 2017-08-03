@@ -2,9 +2,7 @@
 
 #include <vector>
 
-#include "GradingConfig.hpp"
-#include "MultipleTestCasesConfig.hpp"
-#include "StyleConfig.hpp"
+#include "tcframe/spec/config.hpp"
 #include "tcframe/spec/constraint.hpp"
 #include "tcframe/spec/io.hpp"
 #include "tcframe/util.hpp"
