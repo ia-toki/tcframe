@@ -20,12 +20,8 @@ public:
     MOCK_METHOD1(logMultipleTestCasesCombinationIntroduction, void(const string&));
     MOCK_METHOD0(logMultipleTestCasesCombinationSuccessfulResult, void());
     MOCK_METHOD0(logMultipleTestCasesCombinationFailedResult, void());
-    MOCK_METHOD1(logConstraintsVerificationFailure, void(const ConstraintsVerificationResult&));
-    MOCK_METHOD1(logMultipleTestCasesConstraintsVerificationFailure, void(
-            const MultipleTestCasesConstraintsVerificationResult&));
-    MOCK_METHOD0(logSampleTestCaseCheckFailure, void());
-    MOCK_METHOD0(logSampleTestCaseNoOutputNeededFailure, void());
-    MOCK_METHOD1(logSimpleFailure, void(const string&));
+    MOCK_METHOD1(logSimpleError, void(const runtime_error&));
+    MOCK_METHOD1(logFormattedError, void(const FormattedError&));
 };
 
 }

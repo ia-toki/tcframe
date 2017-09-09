@@ -29,12 +29,12 @@ protected:
 };
 
 TEST_F(InteractiveRunnerTests, Run_Generation_NoOutput) {
-    EXPECT_CALL(generator, generate(_, Property(&GenerationOptions::needsOutput, false)));
+    EXPECT_CALL(generator, generate(Property(&GenerationOptions::needsOutput, false)));
     runner.run(argc, argv);
 }
 
 TEST_F(InteractiveRunnerTests, Run_Generation_NoOutput_Redundant) {
-    EXPECT_CALL(generator, generate(_, Property(&GenerationOptions::needsOutput, false)));
+    EXPECT_CALL(generator, generate(Property(&GenerationOptions::needsOutput, false)));
     runnerWithRedundantNoOutput.run(argc, argv);
 }
 

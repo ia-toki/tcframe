@@ -42,6 +42,11 @@ include_directories("${source_dir}/googlemock/include")
 include_directories(include)
 
 set(INCLUDE
+        include/tcframe/driver.hpp
+        include/tcframe/driver/Driver.hpp
+        include/tcframe/driver/SlugParser.hpp
+        include/tcframe/driver/SpecDriver.hpp
+        include/tcframe/driver/TestCaseDriver.hpp
         include/tcframe/logger.hpp
         include/tcframe/logger/BaseLogger.hpp
         include/tcframe/logger/DefaultBaseLogger.hpp
@@ -51,17 +56,19 @@ set(INCLUDE
         include/tcframe/os/ExecutionResult.hpp
         include/tcframe/os/ExecutionRequest.hpp
         include/tcframe/os/OperatingSystem.hpp
+        include/tcframe/os/TestCasePathCreator.hpp
         include/tcframe/runner.hpp
         include/tcframe/runner/aggregator.hpp
         include/tcframe/runner/aggregator/Aggregator.hpp
         include/tcframe/runner/aggregator/AggregatorRegistry.hpp
         include/tcframe/runner/aggregator/MinAggregator.hpp
         include/tcframe/runner/aggregator/SumAggregator.hpp
+        include/tcframe/runner/client.hpp
+        include/tcframe/runner/client/SpecClient.hpp
         include/tcframe/runner/core.hpp
         include/tcframe/runner/core/Args.hpp
         include/tcframe/runner/core/ArgsParser.hpp
         include/tcframe/runner/core/Runner.hpp
-        include/tcframe/runner/core/SlugParser.hpp
         include/tcframe/runner/evaluator.hpp
         include/tcframe/runner/evaluator/BatchEvaluator.hpp
         include/tcframe/runner/evaluator/EvaluationOptions.hpp
@@ -116,6 +123,8 @@ set(INCLUDE
         include/tcframe/spec/core/Magic.hpp
         include/tcframe/spec/core/SeedSetter.hpp
         include/tcframe/spec/core/Spec.hpp
+        include/tcframe/spec/exception.hpp
+        include/tcframe/spec/exception/FormattedError.hpp
         include/tcframe/spec/io.hpp
         include/tcframe/spec/io/GridIOSegment.hpp
         include/tcframe/spec/io/GridIOSegmentManipulator.hpp
@@ -157,12 +166,19 @@ set(INCLUDE
 )
 
 set(TEST_UNIT
+        test/unit/tcframe/driver/MockDriver.hpp
+        test/unit/tcframe/driver/MockSpecDriver.hpp
+        test/unit/tcframe/driver/MockTestCaseDriver.hpp
+        test/unit/tcframe/driver/SpecDriverTests.cpp
+        test/unit/tcframe/driver/SlugParserTests.cpp
+        test/unit/tcframe/driver/TestCaseDriverTests.cpp
         test/unit/tcframe/helper.hpp
         test/unit/tcframe/mock.hpp
         test/unit/tcframe/logger/DefaultBaseLogggerTests.cpp
         test/unit/tcframe/logger/MockLoggerEngine.hpp
         test/unit/tcframe/logger/SimpleLoggerEngineTests.cpp
         test/unit/tcframe/os/MockOperatingSystem.hpp
+        test/unit/tcframe/os/TestCasePathCreatorTests.cpp
         test/unit/tcframe/runner/aggregator/MinAggregatorTests.cpp
         test/unit/tcframe/runner/aggregator/MockAggregator.hpp
         test/unit/tcframe/runner/aggregator/MockAggregatorRegistry.hpp
@@ -172,7 +188,8 @@ set(TEST_UNIT
         test/unit/tcframe/runner/core/BaseRunnerTests.hpp
         test/unit/tcframe/runner/core/InteractiveRunnerTests.cpp
         test/unit/tcframe/runner/core/RunnerTests.cpp
-        test/unit/tcframe/runner/core/SlugParserTests.cpp
+        test/unit/tcframe/runner/client/MockSpecClient.hpp
+        test/unit/tcframe/runner/client/SpecClientTests.cpp
         test/unit/tcframe/runner/evaluator/BatchEvaluatorTests.cpp
         test/unit/tcframe/runner/evaluator/InteractiveEvaluatorTests.cpp
         test/unit/tcframe/runner/evaluator/MockEvaluator.hpp

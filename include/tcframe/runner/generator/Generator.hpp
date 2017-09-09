@@ -1,21 +1,17 @@
 #pragma once
 
-#include <functional>
-#include <set>
 #include <sstream>
 #include <string>
-#include <vector>
 
 #include "GenerationOptions.hpp"
 #include "GeneratorLogger.hpp"
 #include "TestCaseGenerator.hpp"
 #include "tcframe/os.hpp"
+#include "tcframe/runner/client.hpp"
 #include "tcframe/spec/core.hpp"
+#include "tcframe/spec/exception.hpp"
 
-using std::function;
-using std::istringstream;
-using std::vector;
-using std::set;
+using std::ostringstream;
 using std::string;
 
 namespace tcframe {
@@ -23,8 +19,8 @@ namespace tcframe {
 class Generator {
 private:
     SeedSetter* seedSetter_;
+    SpecClient* specClient_;
     TestCaseGenerator* testCaseGenerator_;
-    Verifier* verifier_;
     OperatingSystem* os_;
     GeneratorLogger* logger_;
 
@@ -33,18 +29,20 @@ public:
 
     Generator(
             SeedSetter* seedSetter,
+            SpecClient* specClient,
             TestCaseGenerator* testCaseGenerator,
-            Verifier* verifier,
             OperatingSystem* os,
             GeneratorLogger* logger)
             : seedSetter_(seedSetter)
+            , specClient_(specClient)
             , testCaseGenerator_(testCaseGenerator)
-            , verifier_(verifier)
             , os_(os)
             , logger_(logger) {}
 
-    virtual bool generate(const TestSuite& testSuite, const GenerationOptions& options) {
+    virtual bool generate(const GenerationOptions& options) {
         logger_->logIntroduction();
+
+        TestSuite testSuite = specClient_->getTestSuite();
 
         seedSetter_->setSeed(options.seed());
 
@@ -80,18 +78,20 @@ private:
         string testGroupName = TestGroup::createName(options.slug(), testGroup.id());
         logger_->logMultipleTestCasesCombinationIntroduction(testGroupName);
 
-        *options.multipleTestCasesCounter() = (int) testGroup.testCases().size();
-
         try {
-            verify();
+            verify(testGroup);
             combine(testGroup, options);
         } catch (GenerationException& e) {
             logger_->logMultipleTestCasesCombinationFailedResult();
             e.callback()();
             return false;
+        } catch (FormattedError& e) {
+            logger_->logMultipleTestCasesCombinationFailedResult();
+            logger_->logFormattedError(e);
+            return false;
         } catch (runtime_error& e) {
             logger_->logMultipleTestCasesCombinationFailedResult();
-            logger_->logSimpleFailure(e.what());
+            logger_->logSimpleError(e);
             return false;
         }
 
@@ -99,19 +99,16 @@ private:
         return true;
     }
 
-    void verify() {
-        MultipleTestCasesConstraintsVerificationResult result = verifier_->verifyMultipleTestCasesConstraints();
-        if (!result.isValid()) {
-            throw GenerationException([=] {logger_->logMultipleTestCasesConstraintsVerificationFailure(result);});
-        }
+    void verify(const TestGroup& testGroup) {
+        specClient_->validateMultipleTestCasesInput((int) testGroup.testCases().size());
     }
 
     void combine(const TestGroup& testGroup, const GenerationOptions& options) {
         int testCaseCount = (int) testGroup.testCases().size();
 
         string testGroupName = TestGroup::createName(options.slug(), testGroup.id());
-        string testGroupIn = options.outputDir() + "/" + testGroupName + ".in";
-        string testGroupOut = options.outputDir() + "/" + testGroupName + ".out";
+        string testGroupIn = TestCasePathCreator::createInputPath(testGroupName, options.outputDir());
+        string testGroupOut = TestCasePathCreator::createOutputPath(testGroupName, options.outputDir());
         bool needsOutput = options.needsOutput();
 
         ostringstream sout;
@@ -137,7 +134,7 @@ private:
                 if (i > 1 && options.multipleTestCasesOutputPrefix()) {
                     string outputPrefix = options.multipleTestCasesOutputPrefix().value();
                     // Replace the prefix for the first tc, with the correct prefix for this tc
-                    string firstPrefix = StringUtils::interpolate(outputPrefix, 1);
+                    string firstPrefix = options.multipleTestCasesFirstOutputPrefix().value();
                     string correctPrefix = StringUtils::interpolate(outputPrefix, i);
                     sout2 << "printf \"%b\" \"" << escapeForBash(correctPrefix) << "\" >> " << testGroupOut << " && ";
                     sout2 << "tail -c +" << (firstPrefix.size() + 1) << " " << out << " >> " << testGroupOut;
@@ -171,12 +168,12 @@ public:
 
     virtual Generator* create(
             SeedSetter* seedSetter,
+            SpecClient* specClient,
             TestCaseGenerator* testCaseGenerator,
-            Verifier* verifier,
             OperatingSystem* os,
             GeneratorLogger* logger) {
 
-        return new Generator(seedSetter, testCaseGenerator, verifier, os, logger);
+        return new Generator(seedSetter, specClient, testCaseGenerator, os, logger);
     }
 };
 

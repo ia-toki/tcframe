@@ -11,12 +11,12 @@ public:
     MockGenerator()
             : Generator(nullptr, nullptr, nullptr, nullptr, nullptr) {}
 
-    MOCK_METHOD2(generate, bool(const TestSuite&, const GenerationOptions&));
+    MOCK_METHOD1(generate, bool(const GenerationOptions&));
 };
 
 class MockGeneratorFactory : public GeneratorFactory {
 public:
-    MOCK_METHOD5(create, Generator*(SeedSetter*, TestCaseGenerator*, Verifier*, OperatingSystem*, GeneratorLogger*));
+    MOCK_METHOD5(create, Generator*(SeedSetter*, SpecClient*, TestCaseGenerator*, OperatingSystem*, GeneratorLogger*));
 };
 
 }

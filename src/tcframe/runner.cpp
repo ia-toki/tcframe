@@ -2,12 +2,16 @@
 
 #include __TCFRAME_SPEC_FILE__
 
+using tcframe::Driver;
 using tcframe::Runner;
 
 int main(int argc, char* argv[]) {
-    Runner<ProblemSpec> runner(
+    Driver<ProblemSpec> driver(
             __TCFRAME_SPEC_FILE__,
-            new TestSpec(),
+            new TestSpec());
+
+    Runner<ProblemSpec> runner(
+            &driver,
             new SimpleLoggerEngine(),
             new OperatingSystem(),
             new RunnerLoggerFactory(),

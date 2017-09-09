@@ -38,7 +38,7 @@ public:
     TestSuite(const vector<TestGroup>& testGroups)
             : testGroups_(testGroups) {}
 
-    const vector<TestGroup> testGroups() const {
+    const vector<TestGroup>& testGroups() const {
         return testGroups_;
     }
 

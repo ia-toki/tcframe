@@ -2,6 +2,7 @@
 #include "../../mock.hpp"
 
 #include "../../runner/aggregator/MockAggregator.hpp"
+#include "../../runner/client/MockSpecClient.hpp"
 #include "../../util/TestUtils.hpp"
 #include "MockTestCaseGrader.hpp"
 #include "MockGraderLogger.hpp"
@@ -21,6 +22,7 @@ class GraderTests : public Test {
 protected:
     static int T;
 
+    MOCK(SpecClient) specClient;
     MOCK(TestCaseGrader) testCaseGrader;
     MOCK(Aggregator) aggregator;
     MOCK(GraderLogger) logger;
@@ -79,7 +81,7 @@ protected:
             .setHasMultipleTestCases(true)
             .build();
 
-    Grader grader = Grader(&testCaseGrader, &aggregator, &logger);
+    Grader grader = Grader(&specClient, &testCaseGrader, &aggregator, &logger);
 
     void SetUp() {
         ON_CALL(testCaseGrader, grade(stcA, _)).WillByDefault(Return(stcAVerdict));
@@ -97,6 +99,8 @@ protected:
 int GraderTests::T;
 
 TEST_F(GraderTests, Grading) {
+    ON_CALL(specClient, getTestSuite())
+            .WillByDefault(Return(testSuite));
     {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction("python Sol.py"));
@@ -114,10 +118,12 @@ TEST_F(GraderTests, Grading) {
                 map<int, Verdict>{{Subtask::MAIN_ID, mainSubtaskVerdict}},
                 mainSubtaskVerdict));
     }
-    grader.grade(testSuite, constraintSuite, options);
+    grader.grade(constraintSuite, options);
 }
 
 TEST_F(GraderTests, Grading_WithSubtasks) {
+    ON_CALL(specClient, getTestSuite())
+            .WillByDefault(Return(testSuiteWithSubtasks));
     {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction("python Sol.py"));
@@ -140,10 +146,12 @@ TEST_F(GraderTests, Grading_WithSubtasks) {
                 map<int, Verdict>{{1, subtask1Verdict}, {2, subtask2Verdict}},
                 verdict));
     }
-    grader.grade(testSuiteWithSubtasks, constraintSuiteWithSubtasks, options);
+    grader.grade(constraintSuiteWithSubtasks, options);
 }
 
 TEST_F(GraderTests, Grading_WithSubtasks_WithGlobalConstraints) {
+    ON_CALL(specClient, getTestSuite())
+            .WillByDefault(Return(testSuiteWithSubtasks));
     {
         InSequence sequence;
         EXPECT_CALL(aggregator, aggregate(_, _))
@@ -154,10 +162,12 @@ TEST_F(GraderTests, Grading_WithSubtasks_WithGlobalConstraints) {
                 map<int, Verdict>{{1, subtask1Verdict}, {2, subtask2Verdict}},
                 verdict));
     }
-    grader.grade(testSuiteWithSubtasks, constraintSuiteWithSubtasksWithGlobalConstraints, options);
+    grader.grade(constraintSuiteWithSubtasksWithGlobalConstraints, options);
 }
 
 TEST_F(GraderTests, Grading_WithSubtasks_MultipleTestCases) {
+    ON_CALL(specClient, getTestSuite())
+            .WillByDefault(Return(testSuiteWithSubtasks));
     {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction("python Sol.py"));
@@ -180,7 +190,7 @@ TEST_F(GraderTests, Grading_WithSubtasks_MultipleTestCases) {
                 map<int, Verdict>{{1, subtask1Verdict}, {2, subtask2Verdict}},
                 verdict));
     }
-    grader.grade(testSuiteWithSubtasks, constraintSuiteWithSubtasks, multipleTestCasesConfig);
+    grader.grade(constraintSuiteWithSubtasks, multipleTestCasesConfig);
 }
 
 }

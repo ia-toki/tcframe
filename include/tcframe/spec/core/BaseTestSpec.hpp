@@ -119,6 +119,7 @@ public:
         ConstraintSuite constraintSuite = TProblemSpec::buildConstraintSuite();
         TestSuite testSuite = buildTestSuite(slug, constraintSuite.getDefinedSubtaskIds());
         return Spec(
+                slug,
                 seedSetter,
                 ioFormat,
                 styleConfig,

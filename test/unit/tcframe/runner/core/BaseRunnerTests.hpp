@@ -2,6 +2,7 @@
 #include "../../mock.hpp"
 
 #include "../../os/MockOperatingSystem.hpp"
+#include "../../driver/MockDriver.hpp"
 #include "../../runner/aggregator/MockAggregator.hpp"
 #include "../../runner/aggregator/MockAggregatorRegistry.hpp"
 #include "../../runner/evaluator/MockEvaluator.hpp"
@@ -56,16 +57,18 @@ protected:
         ON_CALL(runnerLoggerFactory, create(_)).WillByDefault(Return(&runnerLogger));
         ON_CALL(graderLoggerFactory, create(_, _)).WillByDefault(Return(&graderLogger));
         ON_CALL(generatorFactory, create(_, _, _, _, _)).WillByDefault(Return(&generator));
-        ON_CALL(graderFactory, create(_, _, _)).WillByDefault(Return(&grader));
+        ON_CALL(graderFactory, create(_, _, _, _)).WillByDefault(Return(&grader));
         ON_CALL(evaluatorRegistry, get(_, _, _)).WillByDefault(Return(&evaluator));
         ON_CALL(aggregatorRegistry, get(_)).WillByDefault(Return(&aggregator));
         ON_CALL(os, execute(_)).WillByDefault(Return(ExecutionResult()));
     }
 
-    template<typename TProblem>
-    Runner<TProblem> createRunner(BaseTestSpec<TProblem>* testSpec) {
-        return Runner<TProblem>(
-                specPath, testSpec, loggerEngine, &os,&runnerLoggerFactory, &graderLoggerFactory,
+    template<typename TProblemSpec>
+    Runner<TProblemSpec> createRunner(BaseTestSpec<TProblemSpec>* testSpec) {
+        auto driver = new Driver<TProblemSpec>(specPath, testSpec);
+
+        return Runner<TProblemSpec>(
+                driver, loggerEngine, &os,&runnerLoggerFactory, &graderLoggerFactory,
                 &generatorFactory, &graderFactory, &evaluatorRegistry, &aggregatorRegistry);
     }
 

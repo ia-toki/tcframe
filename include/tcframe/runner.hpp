@@ -1,5 +1,8 @@
 #pragma once
 
+// TODO (fushar): In 2.0, this will be in a separate executable
+#include "tcframe/driver.hpp"
+
 #include "tcframe/runner/aggregator.hpp"
 #include "tcframe/runner/core.hpp"
 #include "tcframe/runner/evaluator.hpp"

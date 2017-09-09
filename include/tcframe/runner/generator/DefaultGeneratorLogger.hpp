@@ -1,15 +1,18 @@
 #pragma once
 
 #include <iostream>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
 #include "GeneratorLogger.hpp"
 #include "tcframe/logger.hpp"
 #include "tcframe/spec/constraint.hpp"
+#include "tcframe/spec/exception.hpp"
 #include "tcframe/spec/verifier.hpp"
 #include "tcframe/util.hpp"
 
+using std::runtime_error;
 using std::string;
 using std::vector;
 
@@ -61,46 +64,18 @@ public:
         engine_->logParagraph(2, "Reasons:");
     }
 
-    void logConstraintsVerificationFailure(const ConstraintsVerificationResult& result) {
-        for (const auto& entry : result.unsatisfiedConstraintDescriptionsBySubtaskId()) {
-            int subtaskId = entry.first;
-            const vector<string>& unsatisfiedConstraintDescriptions = entry.second;
+    void logSimpleError(const runtime_error& e) {
+        engine_->logListItem1(2, e.what());
+    }
 
-            if (subtaskId == Subtask::MAIN_ID) {
-                engine_->logListItem1(2, "Does not satisfy constraints, on:");
+    void logFormattedError(const FormattedError& e) {
+        for (auto p : e.messages()) {
+            if (p.first == 0) {
+                engine_->logListItem1(2, p.second);
             } else {
-                engine_->logListItem1(2, "Does not satisfy subtask " + StringUtils::toString(subtaskId) + ", on constraints:");
-            }
-
-            for (const string& unsatisfiedConstraintDescription : unsatisfiedConstraintDescriptions) {
-                engine_->logListItem2(3, unsatisfiedConstraintDescription);
+                engine_->logListItem2(3, p.second);
             }
         }
-        for (int subtaskId : result.satisfiedButNotAssignedSubtaskIds()) {
-            engine_->logListItem1(2, "Satisfies subtask " + StringUtils::toString(subtaskId) + " but is not assigned to it");
-        }
-    }
-
-    void logMultipleTestCasesConstraintsVerificationFailure(
-            const MultipleTestCasesConstraintsVerificationResult& result) {
-
-        engine_->logListItem1(2, "Does not satisfy constraints, on:");
-
-        for (const string& unsatisfiedConstraintDescription : result.unsatisfiedConstraintDescriptions()) {
-            engine_->logListItem2(3, unsatisfiedConstraintDescription);
-        }
-    }
-
-    void logSampleTestCaseCheckFailure() {
-        engine_->logListItem1(2, "Sample test case output does not match with actual output produced by the solution");
-    }
-
-    void logSampleTestCaseNoOutputNeededFailure() {
-        engine_->logListItem1(2, "Problem does not need test case outputs, but this sample test case has output");
-    }
-
-    void logSimpleFailure(const string& message) {
-        engine_->logListItem1(2, message);
     }
 };
 

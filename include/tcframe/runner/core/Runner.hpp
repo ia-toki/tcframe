@@ -4,9 +4,9 @@
 
 #include "Args.hpp"
 #include "ArgsParser.hpp"
-#include "SlugParser.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/runner/aggregator.hpp"
+#include "tcframe/runner/client.hpp"
 #include "tcframe/runner/evaluator.hpp"
 #include "tcframe/runner/generator.hpp"
 #include "tcframe/runner/grader.hpp"
@@ -30,9 +30,7 @@ struct RunnerDefaults {
 template<typename TProblemSpec>
 class Runner {
 private:
-    string specPath_;
-
-    BaseTestSpec<TProblemSpec>* testSpec_;
+    Driver<TProblemSpec>* driver_;
 
     LoggerEngine* loggerEngine_;
     OperatingSystem* os_;
@@ -46,8 +44,7 @@ private:
 
 public:
     Runner(
-            const string& specPath,
-            BaseTestSpec<TProblemSpec>* testSpec,
+            Driver<TProblemSpec>* driver,
             LoggerEngine* loggerEngine,
             OperatingSystem* os,
             RunnerLoggerFactory* runnerLoggerFactory,
@@ -56,8 +53,7 @@ public:
             GraderFactory* graderFactory,
             EvaluatorRegistry* evaluatorRegistry,
             AggregatorRegistry* aggregatorRegistry)
-            : specPath_(specPath)
-            , testSpec_(testSpec)
+            : driver_(driver)
             , loggerEngine_(loggerEngine)
             , os_(os)
             , runnerLoggerFactory_(runnerLoggerFactory)
@@ -71,15 +67,14 @@ public:
         auto runnerLogger = runnerLoggerFactory_->create(loggerEngine_);
 
         try {
-            string slug = parseSlug();
             Args args = parseArgs(argc, argv);
-            Spec spec = buildSpec(slug, runnerLogger);
+            Spec spec = buildSpec(runnerLogger);
 
             int result;
             if (args.command() == Args::Command::GENERATE) {
-                result = generate(slug, args, spec);
+                result = generate(args, spec);
             } else {
-                result = grade(slug, args, spec);
+                result = grade(args, spec);
             }
             cleanUp();
             return result;
@@ -89,15 +84,6 @@ public:
     }
 
 private:
-    string parseSlug() {
-        try {
-            return SlugParser::parse(specPath_);
-        } catch (runtime_error& e) {
-            cout << e.what() << endl;
-            throw;
-        }
-    }
-
     Args parseArgs(int argc, char* argv[]) {
         try {
             return ArgsParser::parse(argc, argv);
@@ -107,19 +93,19 @@ private:
         }
     }
 
-    Spec buildSpec(const string& slug, RunnerLogger* runnerLogger) {
+    Spec buildSpec(RunnerLogger* runnerLogger) {
         try {
-            return testSpec_->buildSpec(slug);
+            return driver_->buildSpec();
         } catch (runtime_error& e) {
             runnerLogger->logSpecificationFailure({e.what()});
             throw;
         }
     }
 
-    int generate(const string& slug, const Args& args, const Spec& spec) {
+    int generate(const Args& args, const Spec& spec) {
         const MultipleTestCasesConfig& multipleTestCasesConfig = spec.multipleTestCasesConfig();
 
-        GenerationOptionsBuilder optionsBuilder = GenerationOptionsBuilder(slug)
+        GenerationOptionsBuilder optionsBuilder = GenerationOptionsBuilder(spec.slug())
                 .setMultipleTestCasesCounter(multipleTestCasesConfig.counter())
                 .setMultipleTestCasesOutputPrefix(multipleTestCasesConfig.outputPrefix())
                 .setSeed(args.seed().value_or(unsigned(RunnerDefaults::SEED)))
@@ -135,22 +121,21 @@ private:
 
         GenerationOptions options = optionsBuilder.build();
 
-        auto ioManipulator = new IOManipulator(spec.ioFormat());
-        auto verifier = new Verifier(spec.constraintSuite());
         auto helperCommands = getHelperCommands(args, spec.styleConfig());
         auto evaluator = evaluatorRegistry_->get(spec.styleConfig().evaluationStyle(), os_, helperCommands);
         auto logger = new DefaultGeneratorLogger(loggerEngine_);
-        auto testCaseGenerator = new TestCaseGenerator(verifier, ioManipulator, os_, evaluator, logger);
-        auto generator = generatorFactory_->create(spec.seedSetter(), testCaseGenerator, verifier, os_, logger);
+        auto specClient = new SpecClient(driver_->getSpecDriver(spec), os_);
+        auto testCaseGenerator = new TestCaseGenerator(specClient, evaluator, logger);
+        auto generator = generatorFactory_->create(spec.seedSetter(), specClient, testCaseGenerator, os_, logger);
 
-        return generator->generate(spec.testSuite(), options) ? 0 : 1;
+        return generator->generate(options) ? 0 : 1;
     }
 
-    int grade(const string& slug, const Args& args, const Spec& spec) {
+    int grade(const Args& args, const Spec& spec) {
         const MultipleTestCasesConfig& multipleTestCasesConfig = spec.multipleTestCasesConfig();
         const GradingConfig& gradingConfig = spec.gradingConfig();
 
-        GradingOptionsBuilder optionsBuilder = GradingOptionsBuilder(slug)
+        GradingOptionsBuilder optionsBuilder = GradingOptionsBuilder(spec.slug())
                 .setHasMultipleTestCases((bool) multipleTestCasesConfig.counter())
                 .setSolutionCommand(args.solution().value_or(string(RunnerDefaults::SOLUTION_COMMAND)))
                 .setOutputDir(args.output().value_or(string(RunnerDefaults::OUTPUT_DIR)));
@@ -167,11 +152,12 @@ private:
         auto logger = graderLoggerFactory_->create(loggerEngine_, args.brief());
         auto helperCommands = getHelperCommands(args, spec.styleConfig());
         auto evaluator = evaluatorRegistry_->get(spec.styleConfig().evaluationStyle(), os_, helperCommands);
+        auto specClient = new SpecClient(driver_->getSpecDriver(spec), os_);
         auto testCaseGrader = new TestCaseGrader(evaluator, logger);
         auto aggregator = aggregatorRegistry_->get(spec.constraintSuite().hasSubtasks());
-        auto grader = graderFactory_->create(testCaseGrader, aggregator, logger);
+        auto grader = graderFactory_->create(specClient, testCaseGrader, aggregator, logger);
 
-        grader->grade(spec.testSuite(), spec.constraintSuite(), options);
+        grader->grade(spec.constraintSuite(), options);
         return 0;
     }
 

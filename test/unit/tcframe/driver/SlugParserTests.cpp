@@ -1,6 +1,6 @@
 #include "gmock/gmock.h"
 
-#include "tcframe/runner/core/SlugParser.hpp"
+#include "tcframe/driver/SlugParser.hpp"
 
 using ::testing::Eq;
 using ::testing::StrEq;

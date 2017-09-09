@@ -2,8 +2,8 @@
 #include "../../mock.hpp"
 
 #include "../../os/MockOperatingSystem.hpp"
+#include "../../runner/client/MockSpecClient.hpp"
 #include "../../spec/core/MockSeedSetter.hpp"
-#include "../../spec/verifier/MockVerifier.hpp"
 #include "../../util/TestUtils.hpp"
 #include "MockGeneratorLogger.hpp"
 #include "MockTestCaseGenerator.hpp"
@@ -14,16 +14,19 @@ using ::testing::Eq;
 using ::testing::InSequence;
 using ::testing::Return;
 using ::testing::Test;
+using ::testing::Throw;
 
 namespace tcframe {
 
-int T;
-
 class GeneratorTests : public Test {
+public:
+    static int T;
+
 protected:
+
     MOCK(SeedSetter) seedSetter;
+    MOCK(SpecClient) specClient;
     MOCK(TestCaseGenerator) testCaseGenerator;
-    MOCK(Verifier) verifier;
     MOCK(OperatingSystem) os;
     MOCK(GeneratorLogger) logger;
 
@@ -52,22 +55,19 @@ protected:
             .setMultipleTestCasesCounter(&T)
             .build();
 
-    GenerationOptions multipleTestCasesOptionsWithOutputPrefix = GenerationOptionsBuilder(multipleTestCasesOptions)
-            .setMultipleTestCasesCounter(&T)
-            .setMultipleTestCasesOutputPrefix("Case #%d: ")
-            .build();
-
-    Generator generator = Generator(&seedSetter, &testCaseGenerator, &verifier, &os, &logger);
+    Generator generator = Generator(&seedSetter, &specClient, &testCaseGenerator, &os, &logger);
 
     void SetUp() {
         ON_CALL(testCaseGenerator, generate(_, _))
                 .WillByDefault(Return(true));
-        ON_CALL(verifier, verifyMultipleTestCasesConstraints())
-                .WillByDefault(Return(MultipleTestCasesConstraintsVerificationResult({})));
     }
 };
 
-TEST_F(GeneratorTests, Generation_Successful) {
+int GeneratorTests::T;
+
+TEST_F(GeneratorTests, Generation) {
+    ON_CALL(specClient, getTestSuite())
+            .WillByDefault(Return(simpleTestSuite));
     {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction());
@@ -80,29 +80,35 @@ TEST_F(GeneratorTests, Generation_Successful) {
 
         EXPECT_CALL(logger, logSuccessfulResult());
     }
-    EXPECT_TRUE(generator.generate(simpleTestSuite, options));
+    EXPECT_TRUE(generator.generate(options));
 }
 
-TEST_F(GeneratorTests, Generation_Successful_MultipleTestGroups) {
+TEST_F(GeneratorTests, Generation_MultipleTestGroups) {
+    ON_CALL(specClient, getTestSuite())
+            .WillByDefault(Return(testSuite));
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestGroupIntroduction(TestGroup::SAMPLE_ID));
         EXPECT_CALL(logger, logTestGroupIntroduction(1));
         EXPECT_CALL(logger, logTestGroupIntroduction(2));
     }
-    EXPECT_TRUE(generator.generate(testSuite, options));
+    EXPECT_TRUE(generator.generate(options));
 }
 
 TEST_F(GeneratorTests, Generation_Failed) {
+    ON_CALL(specClient, getTestSuite())
+            .WillByDefault(Return(simpleTestSuite));
     ON_CALL(testCaseGenerator, generate(stc1, _))
             .WillByDefault(Return(false));
 
     EXPECT_CALL(logger, logFailedResult());
 
-    EXPECT_FALSE(generator.generate(simpleTestSuite, options));
+    EXPECT_FALSE(generator.generate(options));
 }
 
-TEST_F(GeneratorTests, Generation_MultipleTestCases_Successful) {
+TEST_F(GeneratorTests, Generation_MultipleTestCases) {
+    ON_CALL(specClient, getTestSuite())
+            .WillByDefault(Return(simpleTestSuite));
     {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction());
@@ -112,16 +118,17 @@ TEST_F(GeneratorTests, Generation_MultipleTestCases_Successful) {
         EXPECT_CALL(testCaseGenerator, generate(stc1, multipleTestCasesOptions));
         EXPECT_CALL(testCaseGenerator, generate(stc2, multipleTestCasesOptions));
         EXPECT_CALL(logger, logMultipleTestCasesCombinationIntroduction("foo_sample"));
-        EXPECT_CALL(verifier, verifyMultipleTestCasesConstraints());
+        EXPECT_CALL(specClient, validateMultipleTestCasesInput(2));
         EXPECT_CALL(logger, logMultipleTestCasesCombinationSuccessfulResult());
 
         EXPECT_CALL(logger, logSuccessfulResult());
     }
-    EXPECT_TRUE(generator.generate(simpleTestSuite, multipleTestCasesOptions));
-    EXPECT_THAT(T, Eq(2));
+    EXPECT_TRUE(generator.generate(multipleTestCasesOptions));
 }
 
-TEST_F(GeneratorTests, Generation_MultipleTestCases_Successful_MultipleTestGroups) {
+TEST_F(GeneratorTests, Generation_MultipleTestCases_MultipleTestGroups) {
+    ON_CALL(specClient, getTestSuite())
+            .WillByDefault(Return(testSuite));
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestGroupIntroduction(TestGroup::SAMPLE_ID));
@@ -131,27 +138,23 @@ TEST_F(GeneratorTests, Generation_MultipleTestCases_Successful_MultipleTestGroup
         EXPECT_CALL(logger, logTestGroupIntroduction(2));
         EXPECT_CALL(logger, logMultipleTestCasesCombinationIntroduction("foo_2"));
     }
-    EXPECT_TRUE(generator.generate(testSuite, multipleTestCasesOptions));
+    EXPECT_TRUE(generator.generate(multipleTestCasesOptions));
 }
 
 TEST_F(GeneratorTests, Generation_MultipleTestCases_Failed_Verification) {
+    ON_CALL(specClient, getTestSuite())
+            .WillByDefault(Return(simpleTestSuite));
     MultipleTestCasesConstraintsVerificationResult verificationResult({"T <= 20"});
-    ON_CALL(verifier, verifyMultipleTestCasesConstraints())
-            .WillByDefault(Return(verificationResult));
+    ON_CALL(specClient, validateMultipleTestCasesInput(_))
+            .WillByDefault(Throw(verificationResult.asFormattedError()));
     {
         InSequence sequence;
         EXPECT_CALL(logger, logMultipleTestCasesCombinationFailedResult());
-        EXPECT_CALL(logger, logMultipleTestCasesConstraintsVerificationFailure(verificationResult));
+        EXPECT_CALL(logger, logFormattedError(verificationResult.asFormattedError()));
 
         EXPECT_CALL(logger, logFailedResult());
     }
-    EXPECT_FALSE(generator.generate(simpleTestSuite, multipleTestCasesOptions));
-}
-
-TEST_F(GeneratorTests, Generation_MultipleTestCases_WithOutputPrefix_Successful) {
-    EXPECT_CALL(logger, logSuccessfulResult());
-    EXPECT_TRUE(generator.generate(simpleTestSuite, multipleTestCasesOptionsWithOutputPrefix));
-    EXPECT_THAT(T, Eq(2));
+    EXPECT_FALSE(generator.generate(multipleTestCasesOptions));
 }
 
 }

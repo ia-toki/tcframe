@@ -10,6 +10,7 @@
 #include "TestCaseGrader.hpp"
 #include "tcframe/os.hpp"
 #include "tcframe/runner/aggregator.hpp"
+#include "tcframe/runner/client.hpp"
 #include "tcframe/runner/verdict.hpp"
 #include "tcframe/spec.hpp"
 #include "tcframe/util.hpp"
@@ -23,6 +24,7 @@ namespace tcframe {
 
 class Grader {
 private:
+    SpecClient* specClient_;
     TestCaseGrader* testCaseGrader_;
     Aggregator* aggregator_;
     GraderLogger* logger_;
@@ -30,16 +32,16 @@ private:
 public:
     virtual ~Grader() {}
 
-    Grader(TestCaseGrader* testCaseGrader, Aggregator* aggregator, GraderLogger* logger)
-            : testCaseGrader_(testCaseGrader)
+    Grader(SpecClient* specClient, TestCaseGrader* testCaseGrader, Aggregator* aggregator, GraderLogger* logger)
+            : specClient_(specClient)
+            , testCaseGrader_(testCaseGrader)
             , aggregator_(aggregator)
             , logger_(logger) {}
 
-    virtual void grade(
-            const TestSuite& testSuite,
-            const ConstraintSuite& constraintSuite,
-            const GradingOptions& options) {
+    virtual void grade(const ConstraintSuite& constraintSuite, const GradingOptions& options) {
         logger_->logIntroduction(options.solutionCommand());
+
+        TestSuite testSuite = specClient_->getTestSuite();
 
         map<int, vector<Verdict>> verdictsBySubtaskId;
         for (const TestGroup& testGroup : testSuite.testGroups()) {
@@ -124,8 +126,12 @@ private:
 
 class GraderFactory {
 public:
-    virtual Grader* create(TestCaseGrader* testCaseGrader, Aggregator* aggregator, GraderLogger* logger) {
-        return new Grader(testCaseGrader, aggregator, logger);
+    virtual Grader* create(
+            SpecClient* specClient,
+            TestCaseGrader* testCaseGrader,
+            Aggregator* aggregator,
+            GraderLogger* logger) {
+        return new Grader(specClient, testCaseGrader, aggregator, logger);
     }
 };
 
