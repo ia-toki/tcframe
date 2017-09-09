@@ -73,7 +73,7 @@ TEST_F(OperatingSystemIntegrationTests, Execution_ExceededMemoryLimits) {
 
     EXPECT_FALSE(result.isSuccessful());
     EXPECT_FALSE(result.exitCode());
-    EXPECT_THAT(result.exitSignal(), Eq(optional<int>(SIGKILL)));
+    EXPECT_THAT(result.exitSignal(), Eq(optional<int>(SIGSEGV)));
 }
 
 #endif
