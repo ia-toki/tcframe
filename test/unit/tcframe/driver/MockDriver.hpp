@@ -12,8 +12,7 @@ public:
     MockDriver()
             : Driver<TProblemSpec>("", nullptr) {}
 
-    MOCK_METHOD0_T(getSpecDriver, SpecDriver*());
-    MOCK_METHOD0_T(buildSpec, Spec());
+    MOCK_METHOD0_T(buildSpec, pair<SpecYaml, SpecDriver*>());
 };
 
 }

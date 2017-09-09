@@ -29,22 +29,24 @@ public:
     EvaluatorRegistry(EvaluatorHelperRegistry* helperRegistry)
             : helperRegistry_(helperRegistry) {}
 
-    virtual Evaluator* get(EvaluationStyle style, OperatingSystem* os, const map<string, string>& helperCommands) {
-        switch (style) {
-            case EvaluationStyle::BATCH:
-                return getBatch(os, helperCommands);
-            case EvaluationStyle::INTERACTIVE:
-                return getInteractive(os, helperCommands);
+    virtual Evaluator* get(const string& slug, OperatingSystem* os, const map<string, string>& helperCommands) {
+        if (slug == "batch") {
+            return getBatch(os, helperCommands);
         }
+        if (slug == "interactive") {
+            return getInteractive(os, helperCommands);
+        }
+        return nullptr;
     }
 
-    virtual EvaluatorConfig getConfig(EvaluationStyle style) {
-        switch (style) {
-            case EvaluationStyle::BATCH:
-                return getBatchConfig();
-            case EvaluationStyle::INTERACTIVE:
-                return getInteractiveConfig();
+    virtual EvaluatorConfig getConfig(const string& slug) {
+        if (slug == "batch") {
+            return getBatchConfig();
         }
+        if (slug == "interactive") {
+            return getInteractiveConfig();
+        }
+        return EvaluatorConfig();
     }
 
 private:

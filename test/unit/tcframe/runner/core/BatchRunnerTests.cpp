@@ -27,19 +27,19 @@ protected:
 };
 
 TEST_F(BatchRunnerTests, Run_Generation_EvaluatorRegistry_NoCustomScorer) {
-    EXPECT_CALL(evaluatorRegistry, get(EvaluationStyle::BATCH, _, Truly(HelperKeyIs("scorer", ""))));
+    EXPECT_CALL(evaluatorRegistry, get("batch", _, Truly(HelperKeyIs("scorer", ""))));
     runner.run(argc, argv);
 }
 
 TEST_F(BatchRunnerTests, Run_Generation_EvaluatorRegistry_CustomScorer_Default) {
     EXPECT_CALL(evaluatorRegistry,
-                get(EvaluationStyle::BATCH, _,  Truly(HelperKeyIs("scorer", string(RunnerDefaults::SCORER_COMMAND)))));
+                get("batch", _,  Truly(HelperKeyIs("scorer", string(RunnerDefaults::SCORER_COMMAND)))));
 
     runnerWithCustomScorer.run(argc, argv);
 }
 
 TEST_F(BatchRunnerTests, Run_Generation_EvaluatorRegistry_CustomScorer_Args) {
-    EXPECT_CALL(evaluatorRegistry, get(EvaluationStyle::BATCH, _, Truly(HelperKeyIs("scorer", "\"java Scorer\""))));
+    EXPECT_CALL(evaluatorRegistry, get("batch", _, Truly(HelperKeyIs("scorer", "\"java Scorer\""))));
     runnerWithCustomScorer.run(2, new char*[3]{
             (char*) "./runner",
             (char*) "--scorer=\"java Scorer\"",
@@ -47,7 +47,7 @@ TEST_F(BatchRunnerTests, Run_Generation_EvaluatorRegistry_CustomScorer_Args) {
 }
 
 TEST_F(BatchRunnerTests, Run_Grading_EvaluatorRegistry_NoCustomScorer) {
-    EXPECT_CALL(evaluatorRegistry, get(EvaluationStyle::BATCH, _, Truly(HelperKeyIs("scorer", ""))));
+    EXPECT_CALL(evaluatorRegistry, get("batch", _, Truly(HelperKeyIs("scorer", ""))));
     runner.run(2, new char*[3]{
             (char*) "./runner",
             (char*) "grade",
@@ -56,7 +56,7 @@ TEST_F(BatchRunnerTests, Run_Grading_EvaluatorRegistry_NoCustomScorer) {
 
 TEST_F(BatchRunnerTests, Run_Grading_EvaluatorRegistry_CustomScorer_Default) {
     EXPECT_CALL(evaluatorRegistry,
-                get(EvaluationStyle::BATCH, _,  Truly(HelperKeyIs("scorer", string(RunnerDefaults::SCORER_COMMAND)))));
+                get("batch", _,  Truly(HelperKeyIs("scorer", string(RunnerDefaults::SCORER_COMMAND)))));
 
     runnerWithCustomScorer.run(2, new char*[3]{
             (char*) "./runner",
@@ -65,7 +65,7 @@ TEST_F(BatchRunnerTests, Run_Grading_EvaluatorRegistry_CustomScorer_Default) {
 }
 
 TEST_F(BatchRunnerTests, Run_Grading_EvaluatorRegistry_CustomScorer_Args) {
-    EXPECT_CALL(evaluatorRegistry, get(EvaluationStyle::BATCH, _, Truly(HelperKeyIs("scorer", "\"java Scorer\""))));
+    EXPECT_CALL(evaluatorRegistry, get("batch", _, Truly(HelperKeyIs("scorer", "\"java Scorer\""))));
     runnerWithCustomScorer.run(3, new char*[4]{
             (char*) "./runner",
             (char*) "./grade",

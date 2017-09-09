@@ -44,6 +44,23 @@ TEST_F(SpecClientTests, GetTestSuite) {
     EXPECT_THAT(client.getTestSuite(), Eq(testSuite));
 }
 
+TEST_F(SpecClientTests, SetSeed) {
+    EXPECT_CALL(specDriver, setSeed(42));
+    client.setSeed(42);
+}
+
+TEST_F(SpecClientTests, HasMultipleTestCases) {
+    ON_CALL(specDriver, hasMultipleTestCases())
+            .WillByDefault(Return(true));
+    EXPECT_TRUE(client.hasMultipleTestCases());
+}
+
+TEST_F(SpecClientTests, GetMultipleTestCasesOutputPrefix) {
+    ON_CALL(specDriver, getMultipleTestCasesOutputPrefix())
+            .WillByDefault(Return(optional<string>("Case #%d: ")));
+    EXPECT_THAT(client.getMultipleTestCasesOutputPrefix(), Eq(optional<string>("Case #%d: ")));
+}
+
 TEST_F(SpecClientTests, GenerateTestCaseInput) {
     {
         InSequence sequence;

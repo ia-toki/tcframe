@@ -5,9 +5,10 @@
 #include <vector>
 
 #include "SeedSetter.hpp"
-#include "Spec.hpp"
 #include "tcframe/spec/config.hpp"
+#include "tcframe/spec/core.hpp"
 #include "tcframe/spec/random.hpp"
+#include "tcframe/spec/testcase.hpp"
 #include "tcframe/util.hpp"
 
 using std::set;
@@ -110,23 +111,8 @@ public:
         return TestSuiteBuilder::build();
     }
 
-    virtual Spec buildSpec(const string& slug) {
-        SeedSetter* seedSetter = new SeedSetter([=] (unsigned seed) {rnd.setSeed(seed);});
-        IOFormat ioFormat = TProblemSpec::buildIOFormat();
-        StyleConfig styleConfig = TProblemSpec::buildStyleConfig();
-        GradingConfig gradingConfig = TProblemSpec::buildGradingConfig();
-        MultipleTestCasesConfig multipleTestCasesConfig = TProblemSpec::buildMultipleTestCasesConfig();
-        ConstraintSuite constraintSuite = TProblemSpec::buildConstraintSuite();
-        TestSuite testSuite = buildTestSuite(slug, constraintSuite.getDefinedSubtaskIds());
-        return Spec(
-                slug,
-                seedSetter,
-                ioFormat,
-                styleConfig,
-                gradingConfig,
-                multipleTestCasesConfig,
-                constraintSuite,
-                testSuite);
+    SeedSetter* buildSeedSetter() {
+        return new SeedSetter([=] (unsigned seed) {rnd.setSeed(seed);});
     }
 
 protected:

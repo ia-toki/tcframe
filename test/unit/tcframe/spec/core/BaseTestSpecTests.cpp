@@ -149,9 +149,9 @@ TEST_F(BaseTestSpecTests, TestSuite_WithGroups) {
             AllOf(Property(&TestGroup::id, 2), Property(&TestGroup::testCases, SizeIs(2)))));
 }
 
-TEST_F(BaseTestSpecTests, Spec_Invalid_UndefinedSubtaskIds) {
+TEST_F(BaseTestSpecTests, TestSuite_Invalid_UndefinedSubtaskIds) {
     try {
-        testSpecWithInvalidTestGroups.buildSpec("foo");
+        testSpecWithInvalidTestGroups.buildTestSuite("foo", {1, 2});
     } catch (runtime_error& e) {
         EXPECT_THAT(e.what(), StrEq("The following subtasks are referenced but not defined: {3, 5}"));
     }

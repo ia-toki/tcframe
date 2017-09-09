@@ -38,17 +38,18 @@ public:
             , aggregator_(aggregator)
             , logger_(logger) {}
 
-    virtual void grade(const ConstraintSuite& constraintSuite, const GradingOptions& options) {
+    virtual void grade(const GradingOptions& options) {
         logger_->logIntroduction(options.solutionCommand());
 
         TestSuite testSuite = specClient_->getTestSuite();
+        bool hasMultipleTestCases = specClient_->hasMultipleTestCases();
 
         map<int, vector<Verdict>> verdictsBySubtaskId;
         for (const TestGroup& testGroup : testSuite.testGroups()) {
-            gradeTestGroup(testGroup, options, verdictsBySubtaskId);
+            gradeTestGroup(testGroup, options, hasMultipleTestCases, verdictsBySubtaskId);
         }
 
-        map<int, Subtask> subtasksById = getSubtasksToGrade(constraintSuite);
+        map<int, double> subtaskPointsById = getSubtaskPoints(options);
         map<int, Verdict> subtaskVerdictsById;
         vector<Verdict> subtaskVerdicts;
 
@@ -56,8 +57,8 @@ public:
             int subtaskId = entry.first;
             const vector<Verdict>& verdicts = entry.second;
 
-            if (subtasksById.count(subtaskId)) {
-                Verdict subtaskVerdict = aggregator_->aggregate(verdicts, subtasksById[subtaskId].points());
+            if (subtaskPointsById.count(subtaskId)) {
+                Verdict subtaskVerdict = aggregator_->aggregate(verdicts, subtaskPointsById[subtaskId]);
                 subtaskVerdictsById[subtaskId] = subtaskVerdict;
                 subtaskVerdicts.push_back(subtaskVerdict);
             }
@@ -68,28 +69,27 @@ public:
     }
 
 private:
-    map<int, Subtask> getSubtasksToGrade(const ConstraintSuite& constraintSuite) {
-        map<int, Subtask> subtaskByIds;
-        for (const Subtask& subtask : constraintSuite.constraints()) {
-            subtaskByIds[subtask.id()] = subtask;
+    map<int, double> getSubtaskPoints(const GradingOptions& options) {
+        map<int, double> subtaskPointsByIds;
+        for (int id = 1; id <= options.subtaskPoints().size(); id++) {
+            subtaskPointsByIds[id] = options.subtaskPoints()[id - 1];
+        }
+        if (subtaskPointsByIds.empty()) {
+            subtaskPointsByIds[Subtask::MAIN_ID] = Subtask::MAIN_POINTS;
         }
 
-        // remove global constraints for problem with subtasks
-        if (subtaskByIds.size() > 1) {
-            subtaskByIds.erase(Subtask::MAIN_ID);
-        }
-
-        return subtaskByIds;
+        return subtaskPointsByIds;
     }
 
     void gradeTestGroup(
             const TestGroup& testGroup,
             const GradingOptions& options,
+            bool hasMultipleTestCases,
             map<int, vector<Verdict>>& verdictsBySubtaskId) {
 
         logger_->logTestGroupIntroduction(testGroup.id());
 
-        if (options.hasMultipleTestCases()) {
+        if (hasMultipleTestCases) {
             TestCase testCase = TestCaseBuilder()
                     .setName(TestGroup::createName(options.slug(), testGroup.id()))
                     .setSubtaskIds(testGroup.testCases()[0].subtaskIds())

@@ -29,18 +29,18 @@ protected:
 };
 
 TEST_F(InteractiveRunnerTests, Run_Generation_NoOutput) {
-    EXPECT_CALL(generator, generate(Property(&GenerationOptions::needsOutput, false)));
+    EXPECT_CALL(generator, generate(Property(&GenerationOptions::hasTcOutput, false)));
     runner.run(argc, argv);
 }
 
 TEST_F(InteractiveRunnerTests, Run_Generation_NoOutput_Redundant) {
-    EXPECT_CALL(generator, generate(Property(&GenerationOptions::needsOutput, false)));
+    EXPECT_CALL(generator, generate(Property(&GenerationOptions::hasTcOutput, false)));
     runnerWithRedundantNoOutput.run(argc, argv);
 }
 
 TEST_F(InteractiveRunnerTests, Run_Generation_EvaluatorRegistry_Communicator_Default) {
     EXPECT_CALL(evaluatorRegistry, get(
-            EvaluationStyle::INTERACTIVE,
+            "interactive",
             _,
             Truly(HelperKeyIs("communicator", RunnerDefaults::COMMUNICATOR_COMMAND))));
 
@@ -49,7 +49,7 @@ TEST_F(InteractiveRunnerTests, Run_Generation_EvaluatorRegistry_Communicator_Def
 
 TEST_F(InteractiveRunnerTests, Run_Generation_EvaluatorRegistry_Communicator_Args) {
     EXPECT_CALL(evaluatorRegistry, get(
-            EvaluationStyle::INTERACTIVE,
+            "interactive",
             _,
             Truly(HelperKeyIs("communicator",  "\"java Communicator\""))));
     
@@ -61,7 +61,7 @@ TEST_F(InteractiveRunnerTests, Run_Generation_EvaluatorRegistry_Communicator_Arg
 
 TEST_F(InteractiveRunnerTests, Run_Grading_EvaluatorRegistry_Communicator_Default) {
     EXPECT_CALL(evaluatorRegistry, get(
-            EvaluationStyle::INTERACTIVE,
+            "interactive",
             _,
             Truly(HelperKeyIs("communicator", RunnerDefaults::COMMUNICATOR_COMMAND))));
 
@@ -73,7 +73,7 @@ TEST_F(InteractiveRunnerTests, Run_Grading_EvaluatorRegistry_Communicator_Defaul
 
 TEST_F(InteractiveRunnerTests, Run_Grading_EvaluatorRegistry_Communicator_Args) {
     EXPECT_CALL(evaluatorRegistry, get(
-            EvaluationStyle::INTERACTIVE,
+            "interactive",
             _,
             Truly(HelperKeyIs("communicator", "\"java Communicator\""))));
 

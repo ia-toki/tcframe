@@ -2,6 +2,7 @@
 
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "tcframe/spec/core.hpp"
 #include "tcframe/util.hpp"
@@ -9,6 +10,7 @@
 using std::move;
 using std::string;
 using std::tie;
+using std::vector;
 
 namespace tcframe {
 
@@ -17,8 +19,7 @@ struct GradingOptions {
 
 private:
     string slug_;
-
-    bool hasMultipleTestCases_;
+    vector<double> subtaskPoints_;
     string solutionCommand_;
     string outputDir_;
     optional<int> timeLimit_;
@@ -29,8 +30,8 @@ public:
         return slug_;
     }
 
-    bool hasMultipleTestCases() const {
-        return hasMultipleTestCases_;
+    const vector<double>& subtaskPoints() const {
+        return subtaskPoints_;
     }
 
     const string& solutionCommand() const {
@@ -50,9 +51,8 @@ public:
     }
 
     bool operator==(const GradingOptions& o) const {
-        return tie(hasMultipleTestCases_, slug_, solutionCommand_, outputDir_, timeLimit_, memoryLimit_) ==
-                tie(o.hasMultipleTestCases_,o.slug_, o.solutionCommand_, o.outputDir_, o.timeLimit_,
-                    o.memoryLimit_);
+        return tie(slug_, solutionCommand_, outputDir_, timeLimit_, memoryLimit_) ==
+                tie(o.slug_, o.solutionCommand_, o.outputDir_, o.timeLimit_, o.memoryLimit_);
     }
 };
 
@@ -68,8 +68,8 @@ public:
         subject_.slug_ = slug;
     }
 
-    GradingOptionsBuilder& setHasMultipleTestCases(bool hasMultipleTestCases) {
-        subject_.hasMultipleTestCases_ = hasMultipleTestCases;
+    GradingOptionsBuilder& setSubtaskPoints(vector<double> subtaskPoints) {
+        subject_.subtaskPoints_ = subtaskPoints;
         return *this;
     }
 

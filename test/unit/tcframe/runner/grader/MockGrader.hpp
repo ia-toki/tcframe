@@ -11,7 +11,7 @@ public:
     MockGrader()
             : Grader(nullptr, nullptr, nullptr, nullptr) {}
 
-    MOCK_METHOD2(grade, void(const ConstraintSuite&, const GradingOptions&));
+    MOCK_METHOD1(grade, void(const GradingOptions&));
 };
 
 class MockGraderFactory : public GraderFactory {

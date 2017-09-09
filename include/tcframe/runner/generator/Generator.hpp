@@ -10,6 +10,7 @@
 #include "tcframe/runner/client.hpp"
 #include "tcframe/spec/core.hpp"
 #include "tcframe/spec/exception.hpp"
+#include "tcframe/util.hpp"
 
 using std::ostringstream;
 using std::string;
@@ -18,7 +19,6 @@ namespace tcframe {
 
 class Generator {
 private:
-    SeedSetter* seedSetter_;
     SpecClient* specClient_;
     TestCaseGenerator* testCaseGenerator_;
     OperatingSystem* os_;
@@ -28,13 +28,11 @@ public:
     virtual ~Generator() {}
 
     Generator(
-            SeedSetter* seedSetter,
             SpecClient* specClient,
             TestCaseGenerator* testCaseGenerator,
             OperatingSystem* os,
             GeneratorLogger* logger)
-            : seedSetter_(seedSetter)
-            , specClient_(specClient)
+            : specClient_(specClient)
             , testCaseGenerator_(testCaseGenerator)
             , os_(os)
             , logger_(logger) {}
@@ -43,14 +41,16 @@ public:
         logger_->logIntroduction();
 
         TestSuite testSuite = specClient_->getTestSuite();
+        bool hasMultipleTestCases = specClient_->hasMultipleTestCases();
+        optional<string> multipleTestCasesOutputPrefix = specClient_->getMultipleTestCasesOutputPrefix();
 
-        seedSetter_->setSeed(options.seed());
+        specClient_->setSeed(options.seed());
 
         os_->forceMakeDir(options.outputDir());
 
         bool successful = true;
         for (const TestGroup& testGroup : testSuite.testGroups()) {
-            successful &= generateTestGroup(testGroup, options);
+            successful &= generateTestGroup(testGroup, options, hasMultipleTestCases, multipleTestCasesOutputPrefix);
         }
         if (successful) {
             logger_->logSuccessfulResult();
@@ -61,26 +61,35 @@ public:
     }
 
 private:
-    bool generateTestGroup(const TestGroup& testGroup, const GenerationOptions& options) {
+    bool generateTestGroup(
+            const TestGroup& testGroup,
+            const GenerationOptions& options,
+            bool hasMultipleTestCases,
+            optional<string> multipleTestCasesOutputPrefix) {
+
         logger_->logTestGroupIntroduction(testGroup.id());
 
         bool successful = true;
         for (const TestCase& testCase : testGroup.testCases()) {
             successful &= testCaseGenerator_->generate(testCase, options);
         }
-        if (successful && options.multipleTestCasesCounter() != nullptr && !testGroup.testCases().empty()) {
-            return combineMultipleTestCases(testGroup, options);
+        if (successful && hasMultipleTestCases && !testGroup.testCases().empty()) {
+            return combineMultipleTestCases(testGroup, options, multipleTestCasesOutputPrefix);
         }
         return successful;
     }
 
-    bool combineMultipleTestCases(const TestGroup& testGroup, const GenerationOptions& options) {
+    bool combineMultipleTestCases(
+            const TestGroup& testGroup,
+            const GenerationOptions& options,
+            optional<string> multipleTestCasesOutputPrefix) {
+
         string testGroupName = TestGroup::createName(options.slug(), testGroup.id());
         logger_->logMultipleTestCasesCombinationIntroduction(testGroupName);
 
         try {
             verify(testGroup);
-            combine(testGroup, options);
+            combine(testGroup, options, multipleTestCasesOutputPrefix);
         } catch (GenerationException& e) {
             logger_->logMultipleTestCasesCombinationFailedResult();
             e.callback()();
@@ -103,19 +112,23 @@ private:
         specClient_->validateMultipleTestCasesInput((int) testGroup.testCases().size());
     }
 
-    void combine(const TestGroup& testGroup, const GenerationOptions& options) {
+    void combine(
+            const TestGroup& testGroup,
+            const GenerationOptions& options,
+            optional<string> multipleTestCasesOutputPrefix) {
+
         int testCaseCount = (int) testGroup.testCases().size();
 
         string testGroupName = TestGroup::createName(options.slug(), testGroup.id());
         string testGroupIn = TestCasePathCreator::createInputPath(testGroupName, options.outputDir());
         string testGroupOut = TestCasePathCreator::createOutputPath(testGroupName, options.outputDir());
-        bool needsOutput = options.needsOutput();
+        bool hasTcOutput = options.hasTcOutput();
 
         ostringstream sout;
 
         sout << "echo " << testCaseCount << " > " << testGroupIn;
 
-        if (needsOutput) {
+        if (hasTcOutput) {
             sout << " && touch " << testGroupOut;
         }
 
@@ -129,12 +142,12 @@ private:
             ostringstream sout2;
             sout2 << "tail -n +2 " << in << " >> " << testGroupIn;
 
-            if (needsOutput) {
+            if (hasTcOutput) {
                 sout2 << " && ";
-                if (i > 1 && options.multipleTestCasesOutputPrefix()) {
-                    string outputPrefix = options.multipleTestCasesOutputPrefix().value();
+                if (i > 1 && multipleTestCasesOutputPrefix) {
+                    string outputPrefix = multipleTestCasesOutputPrefix.value();
                     // Replace the prefix for the first tc, with the correct prefix for this tc
-                    string firstPrefix = options.multipleTestCasesFirstOutputPrefix().value();
+                    string firstPrefix = StringUtils::interpolate(outputPrefix, 1);
                     string correctPrefix = StringUtils::interpolate(outputPrefix, i);
                     sout2 << "printf \"%b\" \"" << escapeForBash(correctPrefix) << "\" >> " << testGroupOut << " && ";
                     sout2 << "tail -c +" << (firstPrefix.size() + 1) << " " << out << " >> " << testGroupOut;
@@ -167,13 +180,12 @@ public:
     virtual ~GeneratorFactory() {}
 
     virtual Generator* create(
-            SeedSetter* seedSetter,
             SpecClient* specClient,
             TestCaseGenerator* testCaseGenerator,
             OperatingSystem* os,
             GeneratorLogger* logger) {
 
-        return new Generator(seedSetter, specClient, testCaseGenerator, os, logger);
+        return new Generator(specClient, testCaseGenerator, os, logger);
     }
 };
 

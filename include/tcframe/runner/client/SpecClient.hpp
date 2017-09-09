@@ -27,6 +27,18 @@ public:
         return specDriver_->getTestSuite();
     }
 
+    virtual void setSeed(unsigned seed) {
+        specDriver_->setSeed(seed);
+    }
+
+    virtual bool hasMultipleTestCases() {
+        return specDriver_->hasMultipleTestCases();
+    }
+
+    virtual optional<string> getMultipleTestCasesOutputPrefix() {
+        return specDriver_->getMultipleTestCasesOutputPrefix();
+    }
+
     virtual void generateTestCaseInput(const string& testCaseName, const string& filename) {
         ostream* out = os_->openForWriting(filename);
         specDriver_->generateTestCaseInput(testCaseName, out);

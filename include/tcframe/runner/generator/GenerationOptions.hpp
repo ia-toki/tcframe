@@ -1,11 +1,9 @@
 #pragma once
 
-#include <functional>
 #include <string>
 #include <tuple>
 #include <utility>
 
-#include "tcframe/util.hpp"
 #include "tcframe/spec/core.hpp"
 
 using std::move;
@@ -19,30 +17,14 @@ struct GenerationOptions {
 
 private:
     string slug_;
-
-    int* multipleTestCasesCounter_;
-    optional<string> multipleTestCasesOutputPrefix_;
-    optional<string> multipleTestCasesFirstOutputPrefix_;
     unsigned seed_;
     string solutionCommand_;
     string outputDir_;
-    bool needsOutput_;
+    bool hasTcOutput_;
 
 public:
     const string& slug() const {
         return slug_;
-    }
-
-    int* multipleTestCasesCounter() const {
-        return multipleTestCasesCounter_;
-    }
-
-    const optional<string>& multipleTestCasesOutputPrefix() const {
-        return multipleTestCasesOutputPrefix_;
-    }
-
-    const optional<string>& multipleTestCasesFirstOutputPrefix() const {
-        return multipleTestCasesFirstOutputPrefix_;
     }
 
     unsigned int seed() const {
@@ -57,15 +39,13 @@ public:
         return outputDir_;
     }
 
-    bool needsOutput() const {
-        return needsOutput_;
+    bool hasTcOutput() const {
+        return hasTcOutput_;
     }
 
     bool operator==(const GenerationOptions& o) const {
-        return tie(slug_, multipleTestCasesCounter_, multipleTestCasesOutputPrefix_,
-                   seed_, solutionCommand_, outputDir_, needsOutput_) ==
-                tie(o.slug_, o.multipleTestCasesCounter_, o.multipleTestCasesOutputPrefix_,
-                    o.seed_, o.solutionCommand_, o.outputDir_, o.needsOutput_);
+        return tie(slug_, seed_, solutionCommand_, outputDir_, hasTcOutput_) ==
+                tie(o.slug_, o.seed_, o.solutionCommand_, o.outputDir_, o.hasTcOutput_);
     }
 };
 
@@ -79,32 +59,6 @@ public:
 
     GenerationOptionsBuilder(string slug) {
         subject_.slug_ = slug;
-        subject_.multipleTestCasesCounter_ = nullptr;
-    }
-
-    GenerationOptionsBuilder& setMultipleTestCasesCounter(optional<int*> counter) {
-        if (counter) {
-            setMultipleTestCasesCounter(counter.value());
-        }
-        return *this;
-    }
-
-    GenerationOptionsBuilder& setMultipleTestCasesCounter(int* counter) {
-        subject_.multipleTestCasesCounter_ = counter;
-        return *this;
-    }
-
-    GenerationOptionsBuilder& setMultipleTestCasesOutputPrefix(optional<string> outputPrefix) {
-        if (outputPrefix) {
-            setMultipleTestCasesOutputPrefix(outputPrefix.value());
-        }
-        return *this;
-    }
-
-    GenerationOptionsBuilder& setMultipleTestCasesOutputPrefix(string outputPrefix) {
-        subject_.multipleTestCasesOutputPrefix_ = outputPrefix;
-        subject_.multipleTestCasesFirstOutputPrefix_ = StringUtils::interpolate(outputPrefix, 1);
-        return *this;
     }
 
     GenerationOptionsBuilder& setSeed(unsigned seed) {
@@ -122,8 +76,8 @@ public:
         return *this;
     }
 
-    GenerationOptionsBuilder& setNeedsOutput(bool needsOutput) {
-        subject_.needsOutput_ = needsOutput;
+    GenerationOptionsBuilder& setHasTcOutput(bool hasTcOutput) {
+        subject_.hasTcOutput_ = hasTcOutput;
         return *this;
     }
 

@@ -64,26 +64,20 @@ protected:
             TestGroup(TestGroup::SAMPLE_ID, {stc1, stc2}),
             TestGroup(1, {tc1, tc2}),
             TestGroup(2, {tc3})});
-    ConstraintSuite constraintSuiteWithSubtasks = ConstraintSuite(
-            {Subtask(1, 40, {}), Subtask(2, 50, {})},
-            {});
-    ConstraintSuite constraintSuiteWithSubtasksWithGlobalConstraints = ConstraintSuite(
-            {Subtask(Subtask::MAIN_ID, {}), Subtask(1, {}), Subtask(2, {})},
-            {});
 
     GradingOptions options = GradingOptionsBuilder("foo")
-            .setHasMultipleTestCases(false)
             .setSolutionCommand("python Sol.py")
             .setOutputDir("dir")
             .build();
-
-    GradingOptions multipleTestCasesConfig = GradingOptionsBuilder(options)
-            .setHasMultipleTestCases(true)
+    GradingOptions optionsWithSubtasks = GradingOptionsBuilder(options)
+            .setSubtaskPoints({40, 50})
             .build();
 
     Grader grader = Grader(&specClient, &testCaseGrader, &aggregator, &logger);
 
     void SetUp() {
+        ON_CALL(specClient, hasMultipleTestCases())
+                .WillByDefault(Return(false));
         ON_CALL(testCaseGrader, grade(stcA, _)).WillByDefault(Return(stcAVerdict));
         ON_CALL(testCaseGrader, grade(stcB, _)).WillByDefault(Return(stcBVerdict));
         ON_CALL(testCaseGrader, grade(tcA, _)).WillByDefault(Return(tcAVerdict));
@@ -118,7 +112,7 @@ TEST_F(GraderTests, Grading) {
                 map<int, Verdict>{{Subtask::MAIN_ID, mainSubtaskVerdict}},
                 mainSubtaskVerdict));
     }
-    grader.grade(constraintSuite, options);
+    grader.grade(options);
 }
 
 TEST_F(GraderTests, Grading_WithSubtasks) {
@@ -146,39 +140,25 @@ TEST_F(GraderTests, Grading_WithSubtasks) {
                 map<int, Verdict>{{1, subtask1Verdict}, {2, subtask2Verdict}},
                 verdict));
     }
-    grader.grade(constraintSuiteWithSubtasks, options);
-}
-
-TEST_F(GraderTests, Grading_WithSubtasks_WithGlobalConstraints) {
-    ON_CALL(specClient, getTestSuite())
-            .WillByDefault(Return(testSuiteWithSubtasks));
-    {
-        InSequence sequence;
-        EXPECT_CALL(aggregator, aggregate(_, _))
-                .WillOnce(Return(subtask1Verdict))
-                .WillOnce(Return(subtask2Verdict));
-
-        EXPECT_CALL(logger, logResult(
-                map<int, Verdict>{{1, subtask1Verdict}, {2, subtask2Verdict}},
-                verdict));
-    }
-    grader.grade(constraintSuiteWithSubtasksWithGlobalConstraints, options);
+    grader.grade(optionsWithSubtasks);
 }
 
 TEST_F(GraderTests, Grading_WithSubtasks_MultipleTestCases) {
     ON_CALL(specClient, getTestSuite())
             .WillByDefault(Return(testSuiteWithSubtasks));
+    ON_CALL(specClient, hasMultipleTestCases())
+            .WillByDefault(Return(true));
     {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction("python Sol.py"));
         EXPECT_CALL(logger, logTestGroupIntroduction(TestGroup::SAMPLE_ID));
-        EXPECT_CALL(testCaseGrader, grade(TestUtils::newSampleTestCase("foo_sample", {1, 2}), multipleTestCasesConfig))
+        EXPECT_CALL(testCaseGrader, grade(TestUtils::newSampleTestCase("foo_sample", {1, 2}), options))
                 .WillOnce(Return(stc1Verdict));
         EXPECT_CALL(logger, logTestGroupIntroduction(1));
-        EXPECT_CALL(testCaseGrader, grade(TestUtils::newTestCase("foo_1", {1, 2}), multipleTestCasesConfig))
+        EXPECT_CALL(testCaseGrader, grade(TestUtils::newTestCase("foo_1", {1, 2}), options))
                 .WillOnce(Return(tc1Verdict));
         EXPECT_CALL(logger, logTestGroupIntroduction(2));
-        EXPECT_CALL(testCaseGrader, grade(TestUtils::newTestCase("foo_2", {2}), multipleTestCasesConfig))
+        EXPECT_CALL(testCaseGrader, grade(TestUtils::newTestCase("foo_2", {2}), options))
                 .WillOnce(Return(tc2Verdict));
 
         EXPECT_CALL(aggregator, aggregate(vector<Verdict>{stc1Verdict, tc1Verdict}, 40))
@@ -190,7 +170,7 @@ TEST_F(GraderTests, Grading_WithSubtasks_MultipleTestCases) {
                 map<int, Verdict>{{1, subtask1Verdict}, {2, subtask2Verdict}},
                 verdict));
     }
-    grader.grade(constraintSuiteWithSubtasks, multipleTestCasesConfig);
+    grader.grade(optionsWithSubtasks);
 }
 
 }

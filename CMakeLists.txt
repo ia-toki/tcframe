@@ -122,7 +122,7 @@ set(INCLUDE
         include/tcframe/spec/core/BaseProblemSpec.hpp
         include/tcframe/spec/core/Magic.hpp
         include/tcframe/spec/core/SeedSetter.hpp
-        include/tcframe/spec/core/Spec.hpp
+        include/tcframe/spec/core/SpecYaml.hpp
         include/tcframe/spec/exception.hpp
         include/tcframe/spec/exception/FormattedError.hpp
         include/tcframe/spec/io.hpp

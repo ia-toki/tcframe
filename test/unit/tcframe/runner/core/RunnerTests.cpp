@@ -1,5 +1,4 @@
 #include "gmock/gmock.h"
-#include "../../mock.hpp"
 
 #include "BaseRunnerTests.hpp"
 
@@ -28,20 +27,18 @@ protected:
 
     class ProblemSpecWithSubtasks : public ProblemSpec {
     protected:
-        void Subtask1() {}
-        void Subtask2() {}
+        void Subtask1() {
+            Points(70);
+        }
+
+        void Subtask2() {
+            Points(30);
+        }
     };
 
     class TestSpec : public BaseTestSpec<ProblemSpec> {};
     class TestSpecWithConfig : public BaseTestSpec<ProblemSpecWithConfig> {};
     class TestSpecWithSubtasks : public BaseTestSpec<ProblemSpecWithSubtasks> {};
-
-    class BadTestSpec : public BaseTestSpec<ProblemSpec> {
-    public:
-        Spec buildSpec(const string&) {
-            throw runtime_error("An error");
-        }
-    };
 
     Runner<ProblemSpec> runner = BaseRunnerTests::createRunner(new TestSpec());
     Runner<ProblemSpecWithConfig> runnerWithConfig = BaseRunnerTests::createRunner(new TestSpecWithConfig());
@@ -55,10 +52,16 @@ TEST_F(RunnerTests, Run_ArgsParsing_Failed) {
 }
 
 TEST_F(RunnerTests, Run_Specification_Failed) {
-    Runner<ProblemSpec> badRunner = BaseRunnerTests::createRunner(new BadTestSpec());
-
     EXPECT_CALL(generator, generate(_)).Times(0);
     EXPECT_CALL(runnerLogger, logSpecificationFailure(vector<string>{"An error"}));
+
+    MOCK(Driver<ProblemSpec>) driver;
+    ON_CALL(driver, buildSpec())
+            .WillByDefault(Throw(runtime_error("An error")));
+
+    Runner<ProblemSpec> badRunner(
+            &driver, loggerEngine, &os, &runnerLoggerFactory, &graderLoggerFactory,
+            &generatorFactory, &graderFactory, &evaluatorRegistry, &aggregatorRegistry);
 
     EXPECT_THAT(badRunner.run(argc, argv), Ne(0));
 }
@@ -80,7 +83,7 @@ TEST_F(RunnerTests, Run_Generation_UseDefaultOptions) {
             .setSeed(RunnerDefaults::SEED)
             .setSolutionCommand(RunnerDefaults::SOLUTION_COMMAND)
             .setOutputDir(RunnerDefaults::OUTPUT_DIR)
-            .setNeedsOutput(StyleConfig::DEFAULT_NEEDS_OUTPUT)
+            .setHasTcOutput(StyleConfig::DEFAULT_HAS_TC_OUTPUT)
             .build()));
 
     runner.run(argc, argv);
@@ -88,11 +91,10 @@ TEST_F(RunnerTests, Run_Generation_UseDefaultOptions) {
 
 TEST_F(RunnerTests, Run_Generation_UseConfigOptions) {
     EXPECT_CALL(generator, generate(GenerationOptionsBuilder("slug")
-            .setMultipleTestCasesCounter(&T)
             .setSeed(RunnerDefaults::SEED)
             .setSolutionCommand(RunnerDefaults::SOLUTION_COMMAND)
             .setOutputDir(RunnerDefaults::OUTPUT_DIR)
-            .setNeedsOutput(false)
+            .setHasTcOutput(false)
             .build()));
 
     runnerWithConfig.run(argc, argv);
@@ -100,11 +102,10 @@ TEST_F(RunnerTests, Run_Generation_UseConfigOptions) {
 
 TEST_F(RunnerTests, Run_Generation_UseArgsOptions) {
     EXPECT_CALL(generator, generate(GenerationOptionsBuilder("slug")
-            .setMultipleTestCasesCounter(&T)
             .setSeed(42)
             .setSolutionCommand("\"java Solution\"")
             .setOutputDir("testdata")
-            .setNeedsOutput(false)
+            .setHasTcOutput(false)
             .build()));
 
     runnerWithConfig.run(4, new char*[5]{
@@ -116,7 +117,7 @@ TEST_F(RunnerTests, Run_Generation_UseArgsOptions) {
 }
 
 TEST_F(RunnerTests, Run_Grading) {
-    EXPECT_CALL(grader, grade(_, _));
+    EXPECT_CALL(grader, grade(_));
 
     int exitStatus = runner.run(2, new char*[3]{
             (char*) "./runner",
@@ -127,8 +128,7 @@ TEST_F(RunnerTests, Run_Grading) {
 }
 
 TEST_F(RunnerTests, Run_Grading_UseDefaultOptions) {
-    EXPECT_CALL(grader, grade(_, GradingOptionsBuilder("slug")
-            .setHasMultipleTestCases(false)
+    EXPECT_CALL(grader, grade(GradingOptionsBuilder("slug")
             .setTimeLimit(GradingConfig::DEFAULT_TIME_LIMIT)
             .setMemoryLimit(GradingConfig::DEFAULT_MEMORY_LIMIT)
             .setSolutionCommand(RunnerDefaults::SOLUTION_COMMAND)
@@ -142,8 +142,7 @@ TEST_F(RunnerTests, Run_Grading_UseDefaultOptions) {
 }
 
 TEST_F(RunnerTests, Run_Grading_UseConfigOptions) {
-    EXPECT_CALL(grader, grade(_, GradingOptionsBuilder("slug")
-            .setHasMultipleTestCases(true)
+    EXPECT_CALL(grader, grade(GradingOptionsBuilder("slug")
             .setSolutionCommand(RunnerDefaults::SOLUTION_COMMAND)
             .setOutputDir(RunnerDefaults::OUTPUT_DIR)
             .setTimeLimit(3)
@@ -157,8 +156,7 @@ TEST_F(RunnerTests, Run_Grading_UseConfigOptions) {
 }
 
 TEST_F(RunnerTests, Run_Grading_UseArgsOptions) {
-    EXPECT_CALL(grader, grade(_, GradingOptionsBuilder("slug")
-            .setHasMultipleTestCases(true)
+    EXPECT_CALL(grader, grade(GradingOptionsBuilder("slug")
             .setSolutionCommand("\"java Solution\"")
             .setOutputDir("testdata")
             .setTimeLimit(4)
@@ -176,8 +174,7 @@ TEST_F(RunnerTests, Run_Grading_UseArgsOptions) {
 }
 
 TEST_F(RunnerTests, Run_Grading_UseArgsOptions_NoLimits) {
-    EXPECT_CALL(grader, grade(_, GradingOptionsBuilder("slug")
-            .setHasMultipleTestCases(true)
+    EXPECT_CALL(grader, grade(GradingOptionsBuilder("slug")
             .setSolutionCommand("\"java Solution\"")
             .setOutputDir("testdata")
             .build()));
@@ -189,6 +186,21 @@ TEST_F(RunnerTests, Run_Grading_UseArgsOptions_NoLimits) {
             (char*) "--output=testdata",
             (char*) "--no-time-limit",
             (char*) "--no-memory-limit",
+            nullptr});
+}
+
+TEST_F(RunnerTests, Run_Grading_WithSubtasks) {
+    EXPECT_CALL(grader, grade(GradingOptionsBuilder("slug")
+            .setSubtaskPoints({70, 30})
+            .setTimeLimit(GradingConfig::DEFAULT_TIME_LIMIT)
+            .setMemoryLimit(GradingConfig::DEFAULT_MEMORY_LIMIT)
+            .setSolutionCommand(RunnerDefaults::SOLUTION_COMMAND)
+            .setOutputDir(RunnerDefaults::OUTPUT_DIR)
+            .build()));
+
+    runnerWithSubtasks.run(2, new char*[3]{
+            (char*) "./runner",
+            (char*) "grade",
             nullptr});
 }
 

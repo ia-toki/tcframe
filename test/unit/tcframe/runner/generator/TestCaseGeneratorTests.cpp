@@ -47,10 +47,10 @@ protected:
             .setSeed(0)
             .setSolutionCommand("python Sol.py")
             .setOutputDir("dir")
-            .setNeedsOutput(true)
+            .setHasTcOutput(true)
             .build();
     GenerationOptions noOutputOptions = GenerationOptionsBuilder(options)
-            .setNeedsOutput(false)
+            .setHasTcOutput(false)
             .build();
     EvaluationOptions evaluationOptions = EvaluationOptionsBuilder()
             .setSolutionCommand("python Sol.py")

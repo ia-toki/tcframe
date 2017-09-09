@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ostream>
+#include <stdexcept>
 #include <string>
 
 #include "GenerationException.hpp"
@@ -11,7 +11,7 @@
 #include "tcframe/runner/verdict.hpp"
 #include "tcframe/spec/testcase.hpp"
 
-using std::ostream;
+using std::runtime_error;
 using std::string;
 
 namespace tcframe {
@@ -72,7 +72,7 @@ private:
             const string& outputFilename,
             const GenerationOptions& options) {
 
-        if (!options.needsOutput()) {
+        if (!options.hasTcOutput()) {
             return;
         }
 
@@ -95,7 +95,7 @@ private:
             const GenerationOptions& options) {
 
         validateSampleOutput(testCase, inputFilename, outputFilename, options);
-        if (options.needsOutput()) {
+        if (options.hasTcOutput()) {
             validateSolutionOutput(outputFilename);
         }
     }
@@ -115,7 +115,7 @@ private:
             return;
         }
 
-        if (!options.needsOutput()) {
+        if (!options.hasTcOutput()) {
             throw runtime_error("Problem does not need test case outputs, but this sample test case has output");
         }
 

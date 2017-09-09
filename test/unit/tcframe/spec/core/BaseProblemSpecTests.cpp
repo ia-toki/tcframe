@@ -135,8 +135,8 @@ protected:
 
 TEST_F(BaseProblemSpecTests, StyleConfig) {
     StyleConfig config = ProblemSpecWithStyleConfig().buildStyleConfig();
-    EXPECT_TRUE(config.needsCustomScorer());
-    EXPECT_FALSE(config.needsOutput());
+    EXPECT_TRUE(config.hasScorer());
+    EXPECT_FALSE(config.hasTcOutput());
 }
 
 TEST_F(BaseProblemSpecTests, MultipleTestCasesConfig) {

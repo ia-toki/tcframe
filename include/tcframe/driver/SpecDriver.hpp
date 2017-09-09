@@ -20,6 +20,8 @@ namespace tcframe {
 class SpecDriver {
 private:
     TestCaseDriver* testCaseDriver_;
+    SeedSetter* seedSetter_;
+    MultipleTestCasesConfig multipleTestCasesConfig_;
     TestSuite testSuite_;
 
     map<string, TestCase> testCasesByName_;
@@ -29,8 +31,12 @@ public:
 
     SpecDriver(
             TestCaseDriver* testCaseDriver,
+            SeedSetter* seedSetter,
+            const MultipleTestCasesConfig& multipleTestCasesConfig,
             const TestSuite& testSuite)
             : testCaseDriver_(testCaseDriver)
+            , seedSetter_(seedSetter)
+            , multipleTestCasesConfig_(multipleTestCasesConfig)
             , testSuite_(testSuite) {
 
         for (auto& testGroup : testSuite_.testGroups()) {
@@ -42,6 +48,18 @@ public:
 
     virtual TestSuite getTestSuite() {
         return testSuite_;
+    }
+
+    virtual void setSeed(unsigned seed) {
+        seedSetter_->setSeed(seed);
+    }
+
+    virtual bool hasMultipleTestCases() {
+        return multipleTestCasesConfig_.counter();
+    }
+
+    virtual optional<string> getMultipleTestCasesOutputPrefix() {
+        return multipleTestCasesConfig_.outputPrefix();
     }
 
     virtual void generateTestCaseInput(const string& testCaseName, ostream* out) {

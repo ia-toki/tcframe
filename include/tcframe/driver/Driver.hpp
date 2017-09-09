@@ -2,6 +2,7 @@
 
 #include <ostream>
 #include <string>
+#include <utility>
 
 #include "SlugParser.hpp"
 #include "SpecDriver.hpp"
@@ -9,7 +10,9 @@
 #include "tcframe/spec.hpp"
 
 using std::endl;
+using std::make_pair;
 using std::ostream;
+using std::pair;
 using std::string;
 
 namespace tcframe {
@@ -30,19 +33,51 @@ public:
             , testSpec_(testSpec) {}
 
     // TODO (fushar): In 2.0, replace this with entry point
-    virtual SpecDriver* getSpecDriver(const Spec& spec) {
+    virtual pair<SpecYaml, SpecDriver*> buildSpec() {
+        SpecYaml spec;
+        spec.slug = SlugParser::parse(specPath_);
+
+        ConstraintSuite constraintSuite = testSpec_->TProblemSpec::buildConstraintSuite();
+        if (constraintSuite.hasSubtasks()) {
+            for (const Subtask& subtask : constraintSuite.constraints()) {
+                if (subtask.id() != Subtask::MAIN_ID) {
+                    SubtaskYaml subtaskYaml;
+                    subtaskYaml.points = subtask.points();
+                    spec.subtasks.push_back(subtaskYaml);
+                }
+            }
+        }
+
+        StyleConfig styleConfig = testSpec_->TProblemSpec::buildStyleConfig();
+        switch (styleConfig.evaluationStyle()) {
+            case EvaluationStyle::BATCH:
+                spec.evaluator.slug = "batch";
+                break;
+            case EvaluationStyle::INTERACTIVE:
+                spec.evaluator.slug = "interactive";
+                break;
+        }
+        spec.evaluator.has_tc_output = styleConfig.hasTcOutput();
+        spec.evaluator.has_scorer = styleConfig.hasScorer();
+
+        GradingConfig gradingConfig = testSpec_->TProblemSpec::buildGradingConfig();
+        spec.limits.time_s = gradingConfig.timeLimit() ;
+        spec.limits.memory_mb = gradingConfig.memoryLimit();
+
+        IOFormat ioFormat = testSpec_->TProblemSpec::buildIOFormat();
+        MultipleTestCasesConfig multipleTestCasesConfig = testSpec_->TProblemSpec::buildMultipleTestCasesConfig();
+
         auto testCaseDriver = new TestCaseDriver(
-                new IOManipulator(spec.ioFormat()),
-                new Verifier(spec.constraintSuite()),
-                spec.multipleTestCasesConfig());
+                new IOManipulator(ioFormat),
+                new Verifier(constraintSuite),
+                multipleTestCasesConfig);
 
-        return new SpecDriver(testCaseDriver, spec.testSuite());
-    }
+        TestSuite testSuite = testSpec_->buildTestSuite(spec.slug, constraintSuite.getDefinedSubtaskIds());
+        SeedSetter* seedSetter = testSpec_->buildSeedSetter();
 
-    // TODO (fushar): In 2.0, replace this with YAML file
-    virtual Spec buildSpec() {
-        string slug = SlugParser::parse(specPath_);
-        return testSpec_->buildSpec(slug);
+        auto specDriver = new SpecDriver(testCaseDriver, seedSetter, multipleTestCasesConfig, testSuite);
+
+        return make_pair(spec, specDriver);
     }
 };
 

@@ -19,12 +19,8 @@ using ::testing::Throw;
 namespace tcframe {
 
 class GeneratorTests : public Test {
-public:
-    static int T;
-
 protected:
 
-    MOCK(SeedSetter) seedSetter;
     MOCK(SpecClient) specClient;
     MOCK(TestCaseGenerator) testCaseGenerator;
     MOCK(OperatingSystem) os;
@@ -48,22 +44,20 @@ protected:
             .setSeed(42)
             .setSolutionCommand("python Sol.py")
             .setOutputDir("dir")
-            .setNeedsOutput(true)
+            .setHasTcOutput(true)
             .build();
 
-    GenerationOptions multipleTestCasesOptions = GenerationOptionsBuilder(options)
-            .setMultipleTestCasesCounter(&T)
-            .build();
-
-    Generator generator = Generator(&seedSetter, &specClient, &testCaseGenerator, &os, &logger);
+    Generator generator = Generator(&specClient, &testCaseGenerator, &os, &logger);
 
     void SetUp() {
+        ON_CALL(specClient, hasMultipleTestCases())
+                .WillByDefault(Return(false));
+        ON_CALL(specClient, getMultipleTestCasesOutputPrefix())
+                .WillByDefault(Return(optional<string>()));
         ON_CALL(testCaseGenerator, generate(_, _))
                 .WillByDefault(Return(true));
     }
 };
-
-int GeneratorTests::T;
 
 TEST_F(GeneratorTests, Generation) {
     ON_CALL(specClient, getTestSuite())
@@ -71,7 +65,7 @@ TEST_F(GeneratorTests, Generation) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction());
-        EXPECT_CALL(seedSetter, setSeed(42));
+        EXPECT_CALL(specClient, setSeed(42));
         EXPECT_CALL(os, forceMakeDir("dir"));
 
         EXPECT_CALL(logger, logTestGroupIntroduction(TestGroup::SAMPLE_ID));
@@ -109,26 +103,30 @@ TEST_F(GeneratorTests, Generation_Failed) {
 TEST_F(GeneratorTests, Generation_MultipleTestCases) {
     ON_CALL(specClient, getTestSuite())
             .WillByDefault(Return(simpleTestSuite));
+    ON_CALL(specClient, hasMultipleTestCases())
+            .WillByDefault(Return(true));
     {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction());
         EXPECT_CALL(os, forceMakeDir("dir"));
 
         EXPECT_CALL(logger, logTestGroupIntroduction(TestGroup::SAMPLE_ID));
-        EXPECT_CALL(testCaseGenerator, generate(stc1, multipleTestCasesOptions));
-        EXPECT_CALL(testCaseGenerator, generate(stc2, multipleTestCasesOptions));
+        EXPECT_CALL(testCaseGenerator, generate(stc1, options));
+        EXPECT_CALL(testCaseGenerator, generate(stc2, options));
         EXPECT_CALL(logger, logMultipleTestCasesCombinationIntroduction("foo_sample"));
         EXPECT_CALL(specClient, validateMultipleTestCasesInput(2));
         EXPECT_CALL(logger, logMultipleTestCasesCombinationSuccessfulResult());
 
         EXPECT_CALL(logger, logSuccessfulResult());
     }
-    EXPECT_TRUE(generator.generate(multipleTestCasesOptions));
+    EXPECT_TRUE(generator.generate(options));
 }
 
 TEST_F(GeneratorTests, Generation_MultipleTestCases_MultipleTestGroups) {
     ON_CALL(specClient, getTestSuite())
             .WillByDefault(Return(testSuite));
+    ON_CALL(specClient, hasMultipleTestCases())
+            .WillByDefault(Return(true));
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestGroupIntroduction(TestGroup::SAMPLE_ID));
@@ -138,12 +136,14 @@ TEST_F(GeneratorTests, Generation_MultipleTestCases_MultipleTestGroups) {
         EXPECT_CALL(logger, logTestGroupIntroduction(2));
         EXPECT_CALL(logger, logMultipleTestCasesCombinationIntroduction("foo_2"));
     }
-    EXPECT_TRUE(generator.generate(multipleTestCasesOptions));
+    EXPECT_TRUE(generator.generate(options));
 }
 
 TEST_F(GeneratorTests, Generation_MultipleTestCases_Failed_Verification) {
     ON_CALL(specClient, getTestSuite())
             .WillByDefault(Return(simpleTestSuite));
+    ON_CALL(specClient, hasMultipleTestCases())
+            .WillByDefault(Return(true));
     MultipleTestCasesConstraintsVerificationResult verificationResult({"T <= 20"});
     ON_CALL(specClient, validateMultipleTestCasesInput(_))
             .WillByDefault(Throw(verificationResult.asFormattedError()));
@@ -154,7 +154,7 @@ TEST_F(GeneratorTests, Generation_MultipleTestCases_Failed_Verification) {
 
         EXPECT_CALL(logger, logFailedResult());
     }
-    EXPECT_FALSE(generator.generate(multipleTestCasesOptions));
+    EXPECT_FALSE(generator.generate(options));
 }
 
 }

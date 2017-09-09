@@ -18,30 +18,30 @@ struct StyleConfig {
 
 public:
     static const EvaluationStyle DEFAULT_EVALUATION_STYLE = EvaluationStyle::BATCH;
-    static const bool DEFAULT_NEEDS_OUTPUT = true;
-    static const bool DEFAULT_NEEDS_CUSTOM_SCORER = false;
+    static const bool DEFAULT_HAS_TC_OUTPUT = true;
+    static const bool DEFAULT_HAS_SCORER = false;
 
 private:
     EvaluationStyle evaluationStyle_;
-    bool needsCustomScorer_;
-    bool needsOutput_;
+    bool hasScorer_;
+    bool hasTcOutput_;
 
 public:
     EvaluationStyle evaluationStyle() const {
         return evaluationStyle_;
     }
 
-    bool needsCustomScorer() const {
-        return needsCustomScorer_;
+    bool hasScorer() const {
+        return hasScorer_;
     }
 
-    bool needsOutput() const {
-        return needsOutput_;
+    bool hasTcOutput() const {
+        return hasTcOutput_;
     }
 
     bool operator==(const StyleConfig& o) const {
-        return tie(evaluationStyle_, needsCustomScorer_, needsOutput_)
-               == tie(o.evaluationStyle_, o.needsCustomScorer_, o.needsOutput_);
+        return tie(evaluationStyle_, hasScorer_, hasTcOutput_)
+               == tie(o.evaluationStyle_, o.hasScorer_, o.hasTcOutput_);
     }
 };
 
@@ -52,8 +52,8 @@ private:
 public:
     StyleConfigBuilder() {
         subject_.evaluationStyle_ = StyleConfig::DEFAULT_EVALUATION_STYLE;
-        subject_.needsOutput_ = StyleConfig::DEFAULT_NEEDS_OUTPUT;
-        subject_.needsCustomScorer_ = StyleConfig::DEFAULT_NEEDS_CUSTOM_SCORER;
+        subject_.hasTcOutput_ = StyleConfig::DEFAULT_HAS_TC_OUTPUT;
+        subject_.hasScorer_ = StyleConfig::DEFAULT_HAS_SCORER;
     }
 
     StyleConfigBuilder& BatchEvaluator() {
@@ -67,12 +67,12 @@ public:
     }
 
     StyleConfigBuilder& CustomScorer() {
-        subject_.needsCustomScorer_ = true;
+        subject_.hasScorer_ = true;
         return *this;
     }
 
     StyleConfigBuilder& NoOutput() {
-        subject_.needsOutput_ = false;
+        subject_.hasTcOutput_ = false;
         return *this;
     }
 

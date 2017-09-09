@@ -20,6 +20,7 @@ using ::testing::Ne;
 using ::testing::Property;
 using ::testing::Return;
 using ::testing::Test;
+using ::testing::Throw;
 using ::testing::Truly;
 
 namespace tcframe {
@@ -56,7 +57,7 @@ protected:
     void SetUp() {
         ON_CALL(runnerLoggerFactory, create(_)).WillByDefault(Return(&runnerLogger));
         ON_CALL(graderLoggerFactory, create(_, _)).WillByDefault(Return(&graderLogger));
-        ON_CALL(generatorFactory, create(_, _, _, _, _)).WillByDefault(Return(&generator));
+        ON_CALL(generatorFactory, create(_, _, _, _)).WillByDefault(Return(&generator));
         ON_CALL(graderFactory, create(_, _, _, _)).WillByDefault(Return(&grader));
         ON_CALL(evaluatorRegistry, get(_, _, _)).WillByDefault(Return(&evaluator));
         ON_CALL(aggregatorRegistry, get(_)).WillByDefault(Return(&aggregator));
@@ -68,7 +69,7 @@ protected:
         auto driver = new Driver<TProblemSpec>(specPath, testSpec);
 
         return Runner<TProblemSpec>(
-                driver, loggerEngine, &os,&runnerLoggerFactory, &graderLoggerFactory,
+                driver, loggerEngine, &os, &runnerLoggerFactory, &graderLoggerFactory,
                 &generatorFactory, &graderFactory, &evaluatorRegistry, &aggregatorRegistry);
     }
 
