@@ -3,7 +3,7 @@
 #include <sstream>
 #include <streambuf>
 
-#include "tcframe/logger/SimpleLoggerEngine.hpp"
+#include "tcframe/runner/logger/SimpleLoggerEngine.hpp"
 
 using ::testing::Eq;
 using ::testing::Test;

@@ -6,7 +6,7 @@
 #include <sys/signal.h>
 
 #include "Verdict.hpp"
-#include "tcframe/os.hpp"
+#include "tcframe/runner/os.hpp"
 #include "tcframe/util.hpp"
 
 using std::getline;

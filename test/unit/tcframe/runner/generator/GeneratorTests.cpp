@@ -1,9 +1,8 @@
 #include "gmock/gmock.h"
 #include "../../mock.hpp"
 
-#include "../../os/MockOperatingSystem.hpp"
-#include "../../runner/client/MockSpecClient.hpp"
-#include "../../spec/core/MockSeedSetter.hpp"
+#include "../client/MockSpecClient.hpp"
+#include "../os/MockOperatingSystem.hpp"
 #include "../../util/TestUtils.hpp"
 #include "MockGeneratorLogger.hpp"
 #include "MockTestCaseGenerator.hpp"

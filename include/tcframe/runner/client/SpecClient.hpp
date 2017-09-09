@@ -3,7 +3,7 @@
 #include <string>
 
 #include "tcframe/driver.hpp"
-#include "tcframe/os.hpp"
+#include "tcframe/runner/os.hpp"
 #include "tcframe/spec/testcase.hpp"
 
 using std::string;

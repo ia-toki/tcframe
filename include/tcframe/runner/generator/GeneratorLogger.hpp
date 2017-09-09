@@ -5,7 +5,7 @@
 #include <utility>
 #include <vector>
 
-#include "tcframe/logger.hpp"
+#include "tcframe/runner/logger.hpp"
 #include "tcframe/spec/constraint.hpp"
 #include "tcframe/spec/exception.hpp"
 #include "tcframe/spec/verifier.hpp"

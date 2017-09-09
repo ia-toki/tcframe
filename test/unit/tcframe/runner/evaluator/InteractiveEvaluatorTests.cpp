@@ -1,7 +1,7 @@
 #include "gmock/gmock.h"
 #include "../../mock.hpp"
 
-#include "./communicator/MockCommunicator.hpp"
+#include "communicator/MockCommunicator.hpp"
 #include "tcframe/runner/evaluator/InteractiveEvaluator.hpp"
 
 using ::testing::Eq;

@@ -6,7 +6,7 @@
 #include "GenerationOptions.hpp"
 #include "GeneratorLogger.hpp"
 #include "TestCaseGenerator.hpp"
-#include "tcframe/os.hpp"
+#include "tcframe/runner/os.hpp"
 #include "tcframe/runner/client.hpp"
 #include "tcframe/spec/core.hpp"
 #include "tcframe/spec/exception.hpp"

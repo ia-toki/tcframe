@@ -2,7 +2,7 @@
 
 #include <cstdlib>
 
-#include "tcframe/os/OperatingSystem.hpp"
+#include "tcframe/runner/os/OperatingSystem.hpp"
 #include "tcframe/util.hpp"
 
 using ::testing::Eq;

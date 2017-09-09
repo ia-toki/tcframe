@@ -1,8 +1,8 @@
 #include "gmock/gmock.h"
-#include "../mock.hpp"
+#include "../../mock.hpp"
 
 #include "MockLoggerEngine.hpp"
-#include "tcframe/logger/DefaultBaseLogger.hpp"
+#include "tcframe/runner/logger/DefaultBaseLogger.hpp"
 
 using ::testing::InSequence;
 using ::testing::Test;

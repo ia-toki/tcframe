@@ -1,7 +1,6 @@
 #include "gmock/gmock.h"
-#include "../mock.hpp"
 
-#include "tcframe/os/TestCasePathCreator.hpp"
+#include "tcframe/runner/os/TestCasePathCreator.hpp"
 
 using ::testing::Eq;
 using ::testing::Test;

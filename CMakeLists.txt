@@ -47,16 +47,6 @@ set(INCLUDE
         include/tcframe/driver/SlugParser.hpp
         include/tcframe/driver/SpecDriver.hpp
         include/tcframe/driver/TestCaseDriver.hpp
-        include/tcframe/logger.hpp
-        include/tcframe/logger/BaseLogger.hpp
-        include/tcframe/logger/DefaultBaseLogger.hpp
-        include/tcframe/logger/LoggerEngine.hpp
-        include/tcframe/logger/SimpleLoggerEngine.hpp
-        include/tcframe/os.hpp
-        include/tcframe/os/ExecutionResult.hpp
-        include/tcframe/os/ExecutionRequest.hpp
-        include/tcframe/os/OperatingSystem.hpp
-        include/tcframe/os/TestCasePathCreator.hpp
         include/tcframe/runner.hpp
         include/tcframe/runner/aggregator.hpp
         include/tcframe/runner/aggregator/Aggregator.hpp
@@ -103,7 +93,16 @@ set(INCLUDE
         include/tcframe/runner/generator/GeneratorLogger.hpp
         include/tcframe/runner/generator/TestCaseGenerator.hpp
         include/tcframe/runner/logger.hpp
+        include/tcframe/runner/logger/BaseLogger.hpp
+        include/tcframe/runner/logger/DefaultBaseLogger.hpp
+        include/tcframe/runner/logger/LoggerEngine.hpp
         include/tcframe/runner/logger/RunnerLogger.hpp
+        include/tcframe/runner/logger/SimpleLoggerEngine.hpp
+        include/tcframe/runner/os.hpp
+        include/tcframe/runner/os/ExecutionResult.hpp
+        include/tcframe/runner/os/ExecutionRequest.hpp
+        include/tcframe/runner/os/OperatingSystem.hpp
+        include/tcframe/runner/os/TestCasePathCreator.hpp
         include/tcframe/runner/verdict.hpp
         include/tcframe/runner/verdict/Verdict.hpp
         include/tcframe/runner/verdict/VerdictCreator.hpp
@@ -174,11 +173,6 @@ set(TEST_UNIT
         test/unit/tcframe/driver/TestCaseDriverTests.cpp
         test/unit/tcframe/helper.hpp
         test/unit/tcframe/mock.hpp
-        test/unit/tcframe/logger/DefaultBaseLogggerTests.cpp
-        test/unit/tcframe/logger/MockLoggerEngine.hpp
-        test/unit/tcframe/logger/SimpleLoggerEngineTests.cpp
-        test/unit/tcframe/os/MockOperatingSystem.hpp
-        test/unit/tcframe/os/TestCasePathCreatorTests.cpp
         test/unit/tcframe/runner/aggregator/MinAggregatorTests.cpp
         test/unit/tcframe/runner/aggregator/MockAggregator.hpp
         test/unit/tcframe/runner/aggregator/MockAggregatorRegistry.hpp
@@ -212,8 +206,13 @@ set(TEST_UNIT
         test/unit/tcframe/runner/grader/MockGraderLoggerFactory.hpp
         test/unit/tcframe/runner/grader/MockTestCaseGrader.hpp
         test/unit/tcframe/runner/grader/TestCaseGraderTests.cpp
+        test/unit/tcframe/runner/logger/DefaultBaseLogggerTests.cpp
         test/unit/tcframe/runner/logger/MockRunnerLogger.hpp
+        test/unit/tcframe/runner/logger/MockLoggerEngine.hpp
         test/unit/tcframe/runner/logger/RunnerLoggerTests.cpp
+        test/unit/tcframe/runner/logger/SimpleLoggerEngineTests.cpp
+        test/unit/tcframe/runner/os/MockOperatingSystem.hpp
+        test/unit/tcframe/runner/os/TestCasePathCreatorTests.cpp
         test/unit/tcframe/runner/verdict/MockVerdictCreator.hpp
         test/unit/tcframe/runner/verdict/VerdictCreatorTests.cpp
         test/unit/tcframe/runner/verdict/VerdictTests.cpp
@@ -266,7 +265,7 @@ set(TEST_INTEGRATION
         test/integration/tcframe/runner/evaluator/communicator/CommunicatorIntegrationTests.cpp
         test/integration/tcframe/runner/evaluator/scorer/CustomScorerIntegrationTests.cpp
         test/integration/tcframe/runner/evaluator/scorer/DiffScorerIntegrationTests.cpp
-        test/integration/tcframe/os/OperatingSystemIntegrationTests.cpp
+        test/integration/tcframe/runner/os/OperatingSystemIntegrationTests.cpp
 )
 
 add_executable(test_integration ${INCLUDE} ${TEST_INTEGRATION})

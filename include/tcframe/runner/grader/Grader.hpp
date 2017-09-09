@@ -8,7 +8,7 @@
 #include "GradingOptions.hpp"
 #include "GraderLogger.hpp"
 #include "TestCaseGrader.hpp"
-#include "tcframe/os.hpp"
+#include "tcframe/runner/os.hpp"
 #include "tcframe/runner/aggregator.hpp"
 #include "tcframe/runner/client.hpp"
 #include "tcframe/runner/verdict.hpp"

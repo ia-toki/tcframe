@@ -3,8 +3,8 @@
 
 #include <sstream>
 
-#include "../../runner/client/MockSpecClient.hpp"
-#include "../../runner/evaluator/MockEvaluator.hpp"
+#include "../client/MockSpecClient.hpp"
+#include "../evaluator/MockEvaluator.hpp"
 #include "MockGeneratorLogger.hpp"
 #include "tcframe/runner/generator/TestCaseGenerator.hpp"
 

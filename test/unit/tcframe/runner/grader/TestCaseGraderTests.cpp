@@ -1,8 +1,8 @@
 #include "gmock/gmock.h"
 #include "../../mock.hpp"
 
-#include "../../runner/evaluator/MockEvaluator.hpp"
 #include "../../util/TestUtils.hpp"
+#include "../evaluator/MockEvaluator.hpp"
 #include "MockGraderLogger.hpp"
 #include "tcframe/runner/grader/TestCaseGrader.hpp"
 

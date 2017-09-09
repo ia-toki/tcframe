@@ -3,7 +3,7 @@
 #include "BriefGraderLogger.hpp"
 #include "DefaultGraderLogger.hpp"
 #include "GraderLogger.hpp"
-#include "tcframe/logger.hpp"
+#include "tcframe/runner/logger.hpp"
 
 namespace tcframe {
 

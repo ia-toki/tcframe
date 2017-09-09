@@ -2,7 +2,7 @@
 
 #include <map>
 
-#include "tcframe/logger.hpp"
+#include "tcframe/runner/logger.hpp"
 #include "tcframe/runner/verdict.hpp"
 #include "tcframe/util.hpp"
 

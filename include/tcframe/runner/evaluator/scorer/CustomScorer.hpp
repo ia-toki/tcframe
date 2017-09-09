@@ -7,7 +7,7 @@
 
 #include "Scorer.hpp"
 #include "ScoringResult.hpp"
-#include "tcframe/os.hpp"
+#include "tcframe/runner/os.hpp"
 #include "tcframe/runner/verdict.hpp"
 
 using std::istream;

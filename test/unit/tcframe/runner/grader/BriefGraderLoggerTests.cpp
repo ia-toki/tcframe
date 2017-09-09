@@ -1,7 +1,7 @@
 #include "gmock/gmock.h"
 #include "../../mock.hpp"
 
-#include "../../logger/MockLoggerEngine.hpp"
+#include "../logger/MockLoggerEngine.hpp"
 #include "tcframe/runner/grader/BriefGraderLogger.hpp"
 
 using ::testing::InSequence;

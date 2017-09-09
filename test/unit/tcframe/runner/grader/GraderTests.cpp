@@ -1,9 +1,9 @@
 #include "gmock/gmock.h"
 #include "../../mock.hpp"
 
-#include "../../runner/aggregator/MockAggregator.hpp"
-#include "../../runner/client/MockSpecClient.hpp"
 #include "../../util/TestUtils.hpp"
+#include "../aggregator/MockAggregator.hpp"
+#include "../client/MockSpecClient.hpp"
 #include "MockTestCaseGrader.hpp"
 #include "MockGraderLogger.hpp"
 #include "tcframe/runner/grader/Grader.hpp"

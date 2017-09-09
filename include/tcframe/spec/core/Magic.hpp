@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 
-#include "tcframe/logger.hpp"
 #include "tcframe/spec/io.hpp"
 #include "tcframe/spec/variable.hpp"
 #include "tcframe/util.hpp"

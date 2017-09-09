@@ -5,7 +5,7 @@
 
 #include "../../util/TestUtils.hpp"
 #include "../../driver/MockSpecDriver.hpp"
-#include "../../os/MockOperatingSystem.hpp"
+#include "../os/MockOperatingSystem.hpp"
 #include "tcframe/runner/client/SpecClient.hpp"
 
 using ::testing::_;

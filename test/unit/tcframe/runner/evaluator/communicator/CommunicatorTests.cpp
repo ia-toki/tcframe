@@ -3,8 +3,8 @@
 
 #include <sstream>
 
-#include "../../../os/MockOperatingSystem.hpp"
-#include "../../../runner/verdict/MockVerdictCreator.hpp"
+#include "../../os/MockOperatingSystem.hpp"
+#include "../../verdict/MockVerdictCreator.hpp"
 #include "tcframe/runner/evaluator/communicator/Communicator.hpp"
 
 using ::testing::_;
