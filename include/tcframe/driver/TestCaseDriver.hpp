@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <string>
 
+#include "RawIOManipulator.hpp"
 #include "tcframe/spec/config.hpp"
 #include "tcframe/spec/exception.hpp"
 #include "tcframe/spec/io.hpp"
@@ -22,6 +23,7 @@ namespace tcframe {
 
 class TestCaseDriver {
 private:
+    RawIOManipulator* rawIOManipulator_;
     IOManipulator* ioManipulator_;
     Verifier* verifier_;
     MultipleTestCasesConfig multipleTestCasesConfig_;
@@ -30,10 +32,12 @@ public:
     virtual ~TestCaseDriver() {}
 
     TestCaseDriver(
+            RawIOManipulator* rawIOManipulator,
             IOManipulator* ioManipulator,
             Verifier* verifier,
             const MultipleTestCasesConfig& multipleTestCasesConfig)
             : ioManipulator_(ioManipulator)
+            , rawIOManipulator_(rawIOManipulator)
             , verifier_(verifier)
             , multipleTestCasesConfig_(multipleTestCasesConfig) {}
 
@@ -83,12 +87,12 @@ private:
     void writeInput(const TestCase& testCase, ostream* out) {
         if (multipleTestCasesConfig_.counter()) {
             int testCaseId = 1;
-            *out << testCaseId << endl;
+            rawIOManipulator_->printLine(out, StringUtils::toString(testCaseId));
         }
 
         if (testCase.data()->type() == TestCaseDataType::SAMPLE) {
             auto data = (SampleTestCaseData*) testCase.data();
-            *out << data->input();
+            rawIOManipulator_->print(out, data->input());
         } else {
             ioManipulator_->printInput(out);
         }
@@ -103,11 +107,11 @@ private:
     void writeSampleOutput(const TestCase& testCase, ostream* out) {
         if (multipleTestCasesConfig_.counter() && multipleTestCasesConfig_.outputPrefix()) {
             string firstOutputPrefix = StringUtils::interpolate(multipleTestCasesConfig_.outputPrefix().value(), 1);
-            *out << firstOutputPrefix;
+            rawIOManipulator_->print(out, firstOutputPrefix);
         }
 
         auto data = (SampleTestCaseData*) testCase.data();
-        *out << data->output().value();
+        rawIOManipulator_->print(out, data->output().value());
     }
 
     void applyOutput(istream* in) {

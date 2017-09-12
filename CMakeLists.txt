@@ -44,6 +44,7 @@ include_directories(include)
 set(INCLUDE
         include/tcframe/driver.hpp
         include/tcframe/driver/Driver.hpp
+        include/tcframe/driver/RawIOManipulator.hpp
         include/tcframe/driver/SlugParser.hpp
         include/tcframe/driver/SpecDriver.hpp
         include/tcframe/driver/TestCaseDriver.hpp
@@ -166,6 +167,7 @@ set(INCLUDE
 
 set(TEST_UNIT
         test/unit/tcframe/driver/MockDriver.hpp
+        test/unit/tcframe/driver/MockRawIOManipulator.hpp
         test/unit/tcframe/driver/MockSpecDriver.hpp
         test/unit/tcframe/driver/MockTestCaseDriver.hpp
         test/unit/tcframe/driver/SpecDriverTests.cpp

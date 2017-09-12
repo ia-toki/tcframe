@@ -9,7 +9,7 @@ namespace tcframe {
 class MockTestCaseDriver : public TestCaseDriver {
 public:
     MockTestCaseDriver()
-            : TestCaseDriver(nullptr, nullptr, MultipleTestCasesConfig()) {}
+            : TestCaseDriver(nullptr, nullptr, nullptr, MultipleTestCasesConfig()) {}
 
     MOCK_METHOD2(generateInput, void(const TestCase&, ostream*));
     MOCK_METHOD2(generateSampleOutput, void(const TestCase&, ostream*));

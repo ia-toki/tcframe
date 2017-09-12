@@ -4,6 +4,7 @@
 #include <sstream>
 #include <streambuf>
 
+#include "MockRawIOManipulator.hpp"
 #include "../spec/io/MockIOManipulator.hpp"
 #include "../spec/verifier/MockVerifier.hpp"
 #include "tcframe/driver/TestCaseDriver.hpp"
@@ -28,6 +29,7 @@ public:
     static int N;
 
 protected:
+    MOCK(RawIOManipulator) rawIOManipulator;
     MOCK(IOManipulator) ioManipulator;
     MOCK(Verifier) verifier;
 
@@ -50,12 +52,14 @@ protected:
             .OutputPrefix("Case #%d: ")
             .build();
 
+    ostream* out = new ostringstream();
+
     TestCaseDriver driver = createDriver(MultipleTestCasesConfig());
     TestCaseDriver driverWithMultipleTestCases = createDriver(multipleTestCasesConfig);
     TestCaseDriver driverWithMultipleTestCasesWithOutputPrefix = createDriver(multipleTestCasesConfigWithOutputPrefix);
 
     TestCaseDriver createDriver(const MultipleTestCasesConfig& multipleTestCasesConfig) {
-        return {&ioManipulator, &verifier, multipleTestCasesConfig};
+        return {&rawIOManipulator, &ioManipulator, &verifier, multipleTestCasesConfig};
     }
 
     void SetUp() {
@@ -81,25 +85,23 @@ int TestCaseDriverTests::T;
 int TestCaseDriverTests::N;
 
 TEST_F(TestCaseDriverTests, GenerateInput_Sample) {
-    ostringstream out;
     {
         InSequence sequence;
         EXPECT_CALL(ioManipulator, parseInput(Truly(InputStreamContentIs("42\n"))));
         EXPECT_CALL(verifier, verifyConstraints(set<int>{1, 2}));
+        EXPECT_CALL(rawIOManipulator, print(out, "42\n"));
     }
-    driver.generateInput(sampleTestCase, &out);
-    EXPECT_THAT(out.str(), Eq("42\n"));
+    driver.generateInput(sampleTestCase, out);
 }
 
 TEST_F(TestCaseDriverTests, GenerateInput_Official) {
-    ostringstream out;
     {
         InSequence sequence;
         EXPECT_CALL(verifier, verifyConstraints(set<int>{1, 2}));
-        EXPECT_CALL(ioManipulator, printInput(&out));
+        EXPECT_CALL(ioManipulator, printInput(out));
     }
     N = 0;
-    driver.generateInput(officialTestCase, &out);
+    driver.generateInput(officialTestCase, out);
     EXPECT_THAT(N, Eq(42));
 }
 
@@ -107,9 +109,8 @@ TEST_F(TestCaseDriverTests, GenerateInput_Failed_Verification) {
     ConstraintsVerificationResult failedResult({}, {1});
     ON_CALL(verifier, verifyConstraints(_))
             .WillByDefault(Return(failedResult));
-    ostringstream out;
     try {
-        driver.generateInput(officialTestCase, &out);
+        driver.generateInput(officialTestCase, out);
         FAIL();
     } catch (FormattedError& e) {
         EXPECT_THAT(e, Eq(failedResult.asFormattedError()));
@@ -117,10 +118,12 @@ TEST_F(TestCaseDriverTests, GenerateInput_Failed_Verification) {
 }
 
 TEST_F(TestCaseDriverTests, GenerateSampleOutput) {
-    ostringstream out;
-    EXPECT_CALL(ioManipulator, parseOutput(Truly(InputStreamContentIs("yes\n"))));
-    driver.generateSampleOutput(sampleTestCase, &out);
-    EXPECT_THAT(out.str(), Eq("yes\n"));
+    {
+        InSequence sequence;
+        EXPECT_CALL(ioManipulator, parseOutput(Truly(InputStreamContentIs("yes\n"))));
+        EXPECT_CALL(rawIOManipulator, print(out, "yes\n"));
+    }
+    driver.generateSampleOutput(sampleTestCase, out);
 }
 
 TEST_F(TestCaseDriverTests, ValidateOutput) {
@@ -130,34 +133,35 @@ TEST_F(TestCaseDriverTests, ValidateOutput) {
 }
 
 TEST_F(TestCaseDriverTests, GenerateInput_MultipleTestCases_Sample) {
-    ostringstream out;
     {
         InSequence sequence;
         EXPECT_CALL(ioManipulator, parseInput(Truly(InputStreamContentIs("42\n"))));
         EXPECT_CALL(verifier, verifyConstraints(set<int>{1, 2}));
+        EXPECT_CALL(rawIOManipulator, printLine(out, "1"));
+        EXPECT_CALL(rawIOManipulator, print(out, "42\n"));
     }
-    driverWithMultipleTestCases.generateInput(sampleTestCase, &out);
-    EXPECT_THAT(out.str(), Eq("1\n42\n"));
+    driverWithMultipleTestCases.generateInput(sampleTestCase, out);
 }
 
 TEST_F(TestCaseDriverTests, GenerateInput_MultipleTestCases_Official) {
-    ostringstream out;
     {
         InSequence sequence;
         EXPECT_CALL(verifier, verifyConstraints(set<int>{1, 2}));
-        EXPECT_CALL(ioManipulator, printInput(&out));
+        EXPECT_CALL(rawIOManipulator, printLine(out, "1"));
+        EXPECT_CALL(ioManipulator, printInput(out));
     }
     N = 0;
-    driverWithMultipleTestCases.generateInput(officialTestCase, &out);
+    driverWithMultipleTestCases.generateInput(officialTestCase, out);
     EXPECT_THAT(N, Eq(42));
-    EXPECT_THAT(out.str(), Eq("1\n"));
 }
 
 TEST_F(TestCaseDriverTests, GenerateSampleOutput_MultipleTestCases) {
-    ostringstream out;
-    EXPECT_CALL(ioManipulator, parseOutput(Truly(InputStreamContentIs("yes\n"))));
-    driverWithMultipleTestCases.generateSampleOutput(sampleTestCase, &out);
-    EXPECT_THAT(out.str(), Eq("yes\n"));
+    {
+        InSequence sequence;
+        EXPECT_CALL(ioManipulator, parseOutput(Truly(InputStreamContentIs("yes\n"))));
+        EXPECT_CALL(rawIOManipulator, print(out, "yes\n"));
+    }
+    driverWithMultipleTestCases.generateSampleOutput(sampleTestCase, out);
 }
 
 TEST_F(TestCaseDriverTests, ValidateOutput_MultipleTestCases) {
@@ -167,10 +171,13 @@ TEST_F(TestCaseDriverTests, ValidateOutput_MultipleTestCases) {
 }
 
 TEST_F(TestCaseDriverTests, GenerateSampleOutput_MultipleTestCases_WithOutputPrefix) {
-    ostringstream out;
-    EXPECT_CALL(ioManipulator, parseOutput(Truly(InputStreamContentIs("yes\n"))));
-    driverWithMultipleTestCasesWithOutputPrefix.generateSampleOutput(sampleTestCase, &out);
-    EXPECT_THAT(out.str(), Eq("Case #1: yes\n"));
+    {
+        InSequence sequence;
+        EXPECT_CALL(ioManipulator, parseOutput(Truly(InputStreamContentIs("yes\n"))));
+        EXPECT_CALL(rawIOManipulator, print(out, "Case #1: "));
+        EXPECT_CALL(rawIOManipulator, print(out, "yes\n"));
+    }
+    driverWithMultipleTestCasesWithOutputPrefix.generateSampleOutput(sampleTestCase, out);
 }
 
 TEST_F(TestCaseDriverTests, ValidateOutput_MultipleTestCases_WithOutputPrefix) {

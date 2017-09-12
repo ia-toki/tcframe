@@ -68,6 +68,7 @@ public:
         MultipleTestCasesConfig multipleTestCasesConfig = testSpec_->TProblemSpec::buildMultipleTestCasesConfig();
 
         auto testCaseDriver = new TestCaseDriver(
+                new RawIOManipulator(),
                 new IOManipulator(ioFormat),
                 new Verifier(constraintSuite),
                 multipleTestCasesConfig);
