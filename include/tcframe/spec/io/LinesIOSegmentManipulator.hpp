@@ -73,7 +73,7 @@ public:
                     }
                     ((Vector*) variable)->printElementTo(j, out);
                 } else {
-                    if (((Matrix*) variable)->columns(j) > 0) {
+                    if (i > 0 && ((Matrix*) variable)->columns(j) > 0) {
                         *out << ' ';
                     }
                     ((Matrix*) variable)->printRowTo(j, out);
