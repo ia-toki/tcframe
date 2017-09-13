@@ -49,8 +49,16 @@ protected:
             LINE(A, B, C % SIZE(3), D);
         }
 
-        void testInvalid() {
+        void testInvalid_UnsupportedType() {
             LINE(bogus);
+        }
+
+        void testInvalid_UnsupportedVectorSize() {
+            LINE(C) % SIZE(3);
+        }
+
+        void testInvalid_UnsupportedMatrixSize() {
+            LINE(C) % SIZE(2, 3);
         }
     };
 
@@ -87,8 +95,16 @@ protected:
             RAW_LINE(S);
         }
 
-        void testInvalid() {
+        void testInvalid_UnsupportedType() {
             RAW_LINE(bogus);
+        }
+
+        void testInvalid_UnsupportedVectorSize() {
+            RAW_LINE(S) % SIZE(3);
+        }
+
+        void testInvalid_UnsupportedMatrixSize() {
+            RAW_LINE(S) % SIZE(2, 3);
         }
     };
 
@@ -190,16 +206,42 @@ TEST_F(MagicTests, LINE_Valid) {
     EXPECT_THAT(ioFormat, Eq(builder.build()));
 }
 
-TEST_F(MagicTests, LINE_Invalid) {
+TEST_F(MagicTests, LINE_Invalid_UnsupportedType) {
     LINE_Tester tester;
     tester.prepareForInputFormat();
 
     try {
-        tester.testInvalid();
+        tester.testInvalid_UnsupportedType();
         tester.build();
         FAIL();
     } catch (runtime_error& e) {
         EXPECT_THAT(e.what(), StrEq("The type of variable 'bogus' is not supported for a line segment"));
+    }
+}
+
+TEST_F(MagicTests, LINE_Invalid_UnsupportedVectorSize) {
+    LINE_Tester tester;
+    tester.prepareForInputFormat();
+
+    try {
+        tester.testInvalid_UnsupportedVectorSize();
+        tester.build();
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Specifying size is not allowed after a line segment"));
+    }
+}
+
+TEST_F(MagicTests, LINE_Invalid_UnsupportedMatrixSize) {
+    LINE_Tester tester;
+    tester.prepareForInputFormat();
+
+    try {
+        tester.testInvalid_UnsupportedVectorSize();
+        tester.build();
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Specifying size is not allowed after a line segment"));
     }
 }
 
@@ -261,16 +303,42 @@ TEST_F(MagicTests, RAW_LINE_Valid) {
     EXPECT_THAT(ioFormat, Eq(builder.build()));
 }
 
-TEST_F(MagicTests, RAW_LINE_Invalid) {
+TEST_F(MagicTests, RAW_LINE_Invalid_UnsupportedType) {
     RAW_LINE_Tester tester;
     tester.prepareForInputFormat();
 
     try {
-        tester.testInvalid();
+        tester.testInvalid_UnsupportedType();
         tester.build();
         FAIL();
     } catch (runtime_error& e) {
         EXPECT_THAT(e.what(), StrEq("The type of variable 'bogus' is not supported for a raw line segment"));
+    }
+}
+
+TEST_F(MagicTests, RAW_LINE_Invalid_UnsupportedVectorSize) {
+    RAW_LINE_Tester tester;
+    tester.prepareForInputFormat();
+
+    try {
+        tester.testInvalid_UnsupportedVectorSize();
+        tester.build();
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Specifying size is not allowed after a raw line segment"));
+    }
+}
+
+TEST_F(MagicTests, RAW_LINE_Invalid_UnsupportedMatrixSize) {
+    RAW_LINE_Tester tester;
+    tester.prepareForInputFormat();
+
+    try {
+        tester.testInvalid_UnsupportedVectorSize();
+        tester.build();
+        FAIL();
+    } catch (runtime_error& e) {
+        EXPECT_THAT(e.what(), StrEq("Specifying size is not allowed after a raw line segment"));
     }
 }
 
