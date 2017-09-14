@@ -87,6 +87,10 @@ private:
             bool hasMultipleTestCases,
             map<int, vector<Verdict>>& verdictsBySubtaskId) {
 
+        if (hasMultipleTestCases && testGroup.testCases().empty()) {
+            return;
+        }
+
         logger_->logTestGroupIntroduction(testGroup.id());
 
         if (hasMultipleTestCases) {
