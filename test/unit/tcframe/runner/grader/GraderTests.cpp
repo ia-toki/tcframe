@@ -56,9 +56,6 @@ protected:
     TestSuite testSuite = TestSuite({
             TestGroup(TestGroup::SAMPLE_ID, {stcA, stcB}),
             TestGroup(TestGroup::MAIN_ID, {tcA, tcB})});
-    ConstraintSuite constraintSuite = ConstraintSuite(
-            {Subtask(Subtask::MAIN_ID, Subtask::MAIN_POINTS, {})},
-            {});
 
     TestSuite testSuiteWithSubtasks = TestSuite({
             TestGroup(TestGroup::SAMPLE_ID, {stc1, stc2}),
@@ -106,6 +103,31 @@ TEST_F(GraderTests, Grading) {
         EXPECT_CALL(testCaseGrader, grade(tcB, options));
 
         EXPECT_CALL(aggregator, aggregate(vector<Verdict>{tcAVerdict, tcBVerdict}, Subtask::MAIN_POINTS))
+                .WillOnce(Return(mainSubtaskVerdict));
+
+        EXPECT_CALL(logger, logResult(
+                map<int, Verdict>{{Subtask::MAIN_ID, mainSubtaskVerdict}},
+                mainSubtaskVerdict));
+    }
+    grader.grade(options);
+}
+
+TEST_F(GraderTests, Grading_MultipleTestCases) {
+    ON_CALL(specClient, getTestSuite())
+            .WillByDefault(Return(testSuite));
+    ON_CALL(specClient, hasMultipleTestCases())
+            .WillByDefault(Return(true));
+    {
+        InSequence sequence;
+        EXPECT_CALL(logger, logIntroduction("python Sol.py"));
+        EXPECT_CALL(logger, logTestGroupIntroduction(TestGroup::SAMPLE_ID));
+        EXPECT_CALL(testCaseGrader, grade(TestUtils::newSampleTestCase("foo_sample"), options))
+                .WillOnce(Return(stc1Verdict));
+        EXPECT_CALL(logger, logTestGroupIntroduction(TestGroup::MAIN_ID));
+        EXPECT_CALL(testCaseGrader, grade(TestUtils::newTestCase("foo"), options))
+                .WillOnce(Return(tc1Verdict));
+
+        EXPECT_CALL(aggregator, aggregate(vector<Verdict>{tc1Verdict}, Subtask::MAIN_POINTS))
                 .WillOnce(Return(mainSubtaskVerdict));
 
         EXPECT_CALL(logger, logResult(
