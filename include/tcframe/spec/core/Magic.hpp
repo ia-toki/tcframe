@@ -17,9 +17,9 @@ using std::vector;
 #define CONS(predicate) addConstraint([=] {return predicate;}, #predicate)
 #define CASE(...) addOfficialTestCase([=] {__VA_ARGS__;}, #__VA_ARGS__)
 #define EMPTY_LINE() MagicLineIOSegmentBuilder(newLineIOSegment(), "")
-#define LINE(...) MagicLineIOSegmentBuilder(newLineIOSegment(), #__VA_ARGS__), __VA_ARGS__
+#define LINE(...) (MagicLineIOSegmentBuilder(newLineIOSegment(), #__VA_ARGS__), __VA_ARGS__)
 #define LINES(...) (MagicLinesIOSegmentBuilder(newLinesIOSegment(), #__VA_ARGS__), __VA_ARGS__)
-#define RAW_LINE(...) MagicRawLineIOSegmentBuilder(newRawLineIOSegment(), #__VA_ARGS__), __VA_ARGS__
+#define RAW_LINE(...) (MagicRawLineIOSegmentBuilder(newRawLineIOSegment(), #__VA_ARGS__), __VA_ARGS__)
 #define RAW_LINES(...) (MagicRawLinesIOSegmentBuilder(newRawLinesIOSegment(), #__VA_ARGS__), __VA_ARGS__)
 #define GRID(...) (MagicGridIOSegmentBuilder(newGridIOSegment(), #__VA_ARGS__), __VA_ARGS__)
 
@@ -120,6 +120,14 @@ public:
                 "The type of variable " + TokenFormatter::formatVariable(extractor_.nextName())
                 + " is not supported for a line segment");
     }
+
+    MagicLineIOSegmentBuilder& operator%(VectorSize) {
+        throw runtime_error("Specifying size is not allowed after a line segment");
+    }
+
+    MagicLineIOSegmentBuilder& operator%(MatrixSize) {
+        throw runtime_error("Specifying size is not allowed after a line segment");
+    }
 };
 
 class MagicLinesIOSegmentBuilder {
@@ -177,6 +185,14 @@ public:
         throw runtime_error(
                 "The type of variable " + TokenFormatter::formatVariable(extractor_.nextName())
                 + " is not supported for a raw line segment");
+    }
+
+    MagicRawLineIOSegmentBuilder& operator%(VectorSize) {
+        throw runtime_error("Specifying size is not allowed after a raw line segment");
+    }
+
+    MagicRawLineIOSegmentBuilder& operator%(MatrixSize) {
+        throw runtime_error("Specifying size is not allowed after a raw line segment");
     }
 };
 
