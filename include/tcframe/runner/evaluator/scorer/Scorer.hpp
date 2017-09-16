@@ -12,7 +12,7 @@ class Scorer {
 public:
     static constexpr const char* SCORING_OUT_FILENAME = "__tcframe_scoring.out";
 
-    virtual ~Scorer() {}
+    virtual ~Scorer() = default;
 
     virtual ScoringResult score(
             const string& inputFilename,

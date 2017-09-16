@@ -20,11 +20,11 @@ public:
 private:
     Command command_;
 
-    bool brief_;
+    bool brief_ = false;
     optional<string> communicator_;
     optional<int> memoryLimit_;
-    bool noMemoryLimit_;
-    bool noTimeLimit_;
+    bool noMemoryLimit_ = false;
+    bool noTimeLimit_ = false;
     optional<string> scorer_;
     optional<unsigned> seed_;
     optional<string> solution_;
@@ -32,11 +32,6 @@ private:
     optional<string> output_;
 
 public:
-    Args()
-            : brief_(false)
-            , noMemoryLimit_(false)
-            , noTimeLimit_(false) {}
-
     Command command() const {
         return command_;
     }

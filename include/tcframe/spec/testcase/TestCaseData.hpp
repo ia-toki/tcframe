@@ -9,7 +9,7 @@ enum class TestCaseDataType {
 
 struct TestCaseData {
 public:
-    virtual ~TestCaseData() {}
+    virtual ~TestCaseData() = default;
 
     virtual TestCaseDataType type() const = 0;
 

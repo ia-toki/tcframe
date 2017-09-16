@@ -124,8 +124,8 @@ protected:
 
 TEST_F(BaseTestSpecTests, Lifecycle) {
     TestSuite testSuite = testSpecWithLifecycle.buildTestSuite("foo", {});
-    OfficialTestCaseData* tc1 = (OfficialTestCaseData*) testSuite.testGroups()[1].testCases()[0].data();
-    OfficialTestCaseData* tc2 = (OfficialTestCaseData*) testSuite.testGroups()[1].testCases()[1].data();
+    auto tc1 = (OfficialTestCaseData*) testSuite.testGroups()[1].testCases()[0].data();
+    auto tc2 = (OfficialTestCaseData*) testSuite.testGroups()[1].testCases()[1].data();
 
     tc1->closure()();
     EXPECT_THAT(testSpecWithLifecycle.V, Eq(vector<int>{1, 0}));

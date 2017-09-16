@@ -13,11 +13,11 @@ namespace tcframe {
 
 class SumAggregator : public Aggregator {
 public:
-    virtual ~SumAggregator() {}
+    virtual ~SumAggregator() = default;
 
     Verdict aggregate(const vector<Verdict>& verdicts, double points) {
         if (verdicts.empty()) {
-            return Verdict(VerdictStatus::ac(), points);
+            return {VerdictStatus::ac(), points};
         }
 
         VerdictStatus aggregatedStatus = VerdictStatus::ac();
@@ -30,7 +30,7 @@ public:
                 aggregatedPoints += verdict.points().value();
             }
         }
-        return Verdict(aggregatedStatus, aggregatedPoints);
+        return {aggregatedStatus, aggregatedPoints};
     }
 };
 

@@ -1,10 +1,12 @@
 #pragma once
 
 #include <functional>
+#include <utility>
 
 #include "TestCaseData.hpp"
 
 using std::function;
+using std::move;
 
 namespace tcframe {
 
@@ -13,10 +15,10 @@ private:
     function<void()> closure_;
 
 public:
-    virtual ~OfficialTestCaseData() {}
+    virtual ~OfficialTestCaseData() = default;
 
-    OfficialTestCaseData(const function<void()>& closure)
-            : closure_(closure) {}
+    explicit OfficialTestCaseData(function<void()> closure)
+            : closure_(move(closure)) {}
 
     TestCaseDataType type() const {
         return TestCaseDataType::OFFICIAL;

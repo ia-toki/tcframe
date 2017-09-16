@@ -3,11 +3,13 @@
 #include <functional>
 #include <stdexcept>
 #include <tuple>
+#include <utility>
 
 #include "IOSegment.hpp"
 #include "tcframe/spec/variable.hpp"
 
 using std::function;
+using std::move;
 using std::make_tuple;
 using std::runtime_error;
 using std::tie;
@@ -23,7 +25,7 @@ private:
     function<int()> columns_;
 
 public:
-    virtual ~GridIOSegment() {}
+    virtual ~GridIOSegment() = default;
 
     GridIOSegment()
             : variable_(nullptr)
@@ -65,12 +67,9 @@ public:
 
 class GridIOSegmentBuilder : public IOSegmentBuilder {
 private:
-    GridIOSegment* subject_;
+    GridIOSegment* subject_ = new GridIOSegment();
 
 public:
-    GridIOSegmentBuilder()
-            : subject_(new GridIOSegment()) {}
-
     GridIOSegmentBuilder& addMatrixVariable(Matrix* variable) {
         checkMatrix();
         subject_->variable_ = variable;
@@ -78,14 +77,14 @@ public:
     }
 
     GridIOSegmentBuilder& setSize(function<int()> rows, function<int()> columns) {
-        subject_->rows_ = rows;
-        subject_->columns_ = columns;
+        subject_->rows_ = move(rows);
+        subject_->columns_ = move(columns);
         return *this;
     }
 
     GridIOSegment* build() {
         checkState();
-        return subject_;
+        return move(subject_);
     }
 
 private:

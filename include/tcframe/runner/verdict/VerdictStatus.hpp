@@ -2,7 +2,9 @@
 
 #include <string>
 #include <tuple>
+#include <utility>
 
+using std::move;
 using std::string;
 using std::tie;
 
@@ -14,35 +16,35 @@ private:
     string name_;
     int priority_;
 
-    VerdictStatus(const string& code, const string& name, int priority)
-            : code_(code)
-            , name_(name)
+    VerdictStatus(string code, string name, int priority)
+            : code_(move(code))
+            , name_(move(name))
             , priority_(priority) {}
 public:
-    VerdictStatus() {}
+    VerdictStatus() = default;
 
     static VerdictStatus ac() {
-        return VerdictStatus("AC", "Accepted", 0);
+        return {"AC", "Accepted", 0};
     }
 
     static VerdictStatus ok() {
-        return VerdictStatus("OK", "OK", 1);
+        return {"OK", "OK", 1};
     }
 
     static VerdictStatus wa() {
-        return VerdictStatus("WA", "Wrong Answer", 2);
+        return {"WA", "Wrong Answer", 2};
     }
 
     static VerdictStatus rte() {
-        return VerdictStatus("RTE", "Runtime Error", 3);
+        return {"RTE", "Runtime Error", 3};
     }
 
     static VerdictStatus tle() {
-        return VerdictStatus("TLE", "Time Limit Exceeded", 4);
+        return {"TLE", "Time Limit Exceeded", 4};
     }
 
     static VerdictStatus err() {
-        return VerdictStatus("ERR", "Internal Error", 99);
+        return {"ERR", "Internal Error", 99};
     }
 
     const string& code() const {

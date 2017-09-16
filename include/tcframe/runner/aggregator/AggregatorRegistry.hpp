@@ -8,7 +8,7 @@ namespace tcframe {
 
 class AggregatorRegistry {
 public:
-    virtual ~AggregatorRegistry() {}
+    virtual ~AggregatorRegistry() = default;
 
     virtual Aggregator* get(bool hasSubtasks) {
         if (hasSubtasks) {

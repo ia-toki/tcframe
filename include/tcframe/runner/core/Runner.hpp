@@ -71,7 +71,7 @@ public:
         try {
             Args args = parseArgs(argc, argv);
             pair<SpecYaml, SpecDriver*> spec = buildSpec(runnerLogger);
-            SpecClient* specClient = new SpecClient(spec.second, os_);
+            auto specClient = new SpecClient(spec.second, os_);
 
             int result;
             if (args.command() == Args::Command::GENERATE) {
@@ -106,7 +106,7 @@ private:
     }
 
     int generate(const Args& args, const SpecYaml& spec, SpecClient* specClient) {
-        GenerationOptionsBuilder optionsBuilder = GenerationOptionsBuilder(spec.slug)
+        auto optionsBuilder = GenerationOptionsBuilder(spec.slug)
                 .setSeed(args.seed().value_or(unsigned(RunnerDefaults::SEED)))
                 .setSolutionCommand(args.solution().value_or(string(RunnerDefaults::SOLUTION_COMMAND)))
                 .setOutputDir(args.output().value_or(string(RunnerDefaults::OUTPUT_DIR)));
@@ -130,7 +130,7 @@ private:
     }
 
     int grade(const Args& args, const SpecYaml& spec, SpecClient* specClient) {
-        GradingOptionsBuilder optionsBuilder = GradingOptionsBuilder(spec.slug)
+        auto optionsBuilder = GradingOptionsBuilder(spec.slug)
                 .setSolutionCommand(args.solution().value_or(string(RunnerDefaults::SOLUTION_COMMAND)))
                 .setOutputDir(args.output().value_or(string(RunnerDefaults::OUTPUT_DIR)));
 

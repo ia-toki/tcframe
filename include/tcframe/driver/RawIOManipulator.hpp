@@ -11,7 +11,7 @@ namespace tcframe {
 
 class RawIOManipulator {
 public:
-    virtual ~RawIOManipulator() {}
+    virtual ~RawIOManipulator() = default;
 
     virtual void print(ostream* out, const string& data) {
         *out << data;

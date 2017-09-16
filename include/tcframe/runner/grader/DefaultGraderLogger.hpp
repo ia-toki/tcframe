@@ -13,9 +13,9 @@ namespace tcframe {
 
 class DefaultGraderLogger : public GraderLogger, public DefaultBaseLogger {
 public:
-    virtual ~DefaultGraderLogger() {}
+    virtual ~DefaultGraderLogger() = default;
 
-    DefaultGraderLogger(LoggerEngine* engine)
+    explicit DefaultGraderLogger(LoggerEngine* engine)
             : DefaultBaseLogger(engine) {}
 
     void logIntroduction(const string& solutionCommand) {

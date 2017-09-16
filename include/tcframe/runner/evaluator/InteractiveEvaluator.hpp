@@ -16,16 +16,14 @@ private:
     Communicator* communicator_;
 
 public:
-    virtual ~InteractiveEvaluator() {}
+    virtual ~InteractiveEvaluator() = default;
 
-    InteractiveEvaluator(Communicator* communicator)
+    explicit InteractiveEvaluator(Communicator* communicator)
             : communicator_(communicator) {}
 
     EvaluationResult evaluate(const string& inputFilename, const string&, const EvaluationOptions& options) {
         CommunicationResult communicationResult = communicator_->communicate(inputFilename, options);
-        return EvaluationResult(
-                communicationResult.verdict(),
-                {{"communicator", communicationResult.executionResult()}});
+        return {communicationResult.verdict(), {{"communicator", communicationResult.executionResult()}}};
     }
 };
 

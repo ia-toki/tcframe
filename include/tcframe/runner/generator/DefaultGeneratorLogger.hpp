@@ -20,9 +20,9 @@ namespace tcframe {
 
 class DefaultGeneratorLogger : public GeneratorLogger, public DefaultBaseLogger {
 public:
-    virtual ~DefaultGeneratorLogger() {}
+    virtual ~DefaultGeneratorLogger() = default;
 
-    DefaultGeneratorLogger(LoggerEngine* engine)
+    explicit DefaultGeneratorLogger(LoggerEngine* engine)
             : DefaultBaseLogger(engine) {}
 
     void logIntroduction() {

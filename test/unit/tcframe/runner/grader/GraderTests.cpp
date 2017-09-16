@@ -38,20 +38,20 @@ protected:
     TestCase tc2 = TestUtils::newTestCase("foo_2_1", {1, 2});
     TestCase tc3 = TestUtils::newTestCase("foo_3_1", {2});
 
-    Verdict stcAVerdict = Verdict(VerdictStatus::ac(), 1);
-    Verdict stcBVerdict = Verdict(VerdictStatus::ac(), 2);
-    Verdict tcAVerdict = Verdict(VerdictStatus::ac(), 3);
-    Verdict tcBVerdict = Verdict(VerdictStatus::ac(), 4);
-    Verdict stc1Verdict = Verdict(VerdictStatus::ac(), 5);
-    Verdict stc2Verdict = Verdict(VerdictStatus::ac(), 6);
-    Verdict tc1Verdict = Verdict(VerdictStatus::ac(), 7);
-    Verdict tc2Verdict = Verdict(VerdictStatus::ac(), 8);
-    Verdict tc3Verdict = Verdict(VerdictStatus::ac(), 9);
+    Verdict stcAVerdict = {VerdictStatus::ac(), 1};
+    Verdict stcBVerdict = {VerdictStatus::ac(), 2};
+    Verdict tcAVerdict = {VerdictStatus::ac(), 3};
+    Verdict tcBVerdict = {VerdictStatus::ac(), 4};
+    Verdict stc1Verdict = {VerdictStatus::ac(), 5};
+    Verdict stc2Verdict = {VerdictStatus::ac(), 6};
+    Verdict tc1Verdict = {VerdictStatus::ac(), 7};
+    Verdict tc2Verdict = {VerdictStatus::ac(), 8};
+    Verdict tc3Verdict = {VerdictStatus::ac(), 9};
 
-    Verdict mainSubtaskVerdict = Verdict(VerdictStatus::ac(), Subtask::MAIN_POINTS);
-    Verdict subtask1Verdict = Verdict(VerdictStatus::wa(), 40);
-    Verdict subtask2Verdict = Verdict(VerdictStatus::tle(), 50);
-    Verdict verdict = Verdict(VerdictStatus::tle(), 90);
+    Verdict mainSubtaskVerdict = {VerdictStatus::ac(), Subtask::MAIN_POINTS};
+    Verdict subtask1Verdict = {VerdictStatus::wa(), 40};
+    Verdict subtask2Verdict = {VerdictStatus::tle(), 50};
+    Verdict verdict = {VerdictStatus::tle(), 90};
 
     TestSuite testSuite = TestSuite({
             TestGroup(TestGroup::SAMPLE_ID, {stcA, stcB}),
@@ -74,7 +74,7 @@ protected:
             .setSubtaskPoints({40, 50})
             .build();
 
-    Grader grader = Grader(&specClient, &testCaseGrader, &aggregator, &logger);
+    Grader grader = {&specClient, &testCaseGrader, &aggregator, &logger};
 
     void SetUp() {
         ON_CALL(specClient, hasMultipleTestCases())
@@ -172,13 +172,13 @@ TEST_F(GraderTests, Grading_WithSubtasks) {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction("python Sol.py"));
         EXPECT_CALL(logger, logTestGroupIntroduction(TestGroup::SAMPLE_ID));
-        EXPECT_CALL(testCaseGrader, grade(stc1, options));
-        EXPECT_CALL(testCaseGrader, grade(stc2, options));
+        EXPECT_CALL(testCaseGrader, grade(stc1, optionsWithSubtasks));
+        EXPECT_CALL(testCaseGrader, grade(stc2, optionsWithSubtasks));
         EXPECT_CALL(logger, logTestGroupIntroduction(1));
-        EXPECT_CALL(testCaseGrader, grade(tc1, options));
-        EXPECT_CALL(testCaseGrader, grade(tc2, options));
+        EXPECT_CALL(testCaseGrader, grade(tc1, optionsWithSubtasks));
+        EXPECT_CALL(testCaseGrader, grade(tc2, optionsWithSubtasks));
         EXPECT_CALL(logger, logTestGroupIntroduction(2));
-        EXPECT_CALL(testCaseGrader, grade(tc3, options));
+        EXPECT_CALL(testCaseGrader, grade(tc3, optionsWithSubtasks));
 
         EXPECT_CALL(aggregator, aggregate(vector<Verdict>{stc1Verdict, tc1Verdict, tc2Verdict}, 40))
                 .WillOnce(Return(subtask1Verdict));
@@ -202,13 +202,13 @@ TEST_F(GraderTests, Grading_WithSubtasks_MultipleTestCases) {
         InSequence sequence;
         EXPECT_CALL(logger, logIntroduction("python Sol.py"));
         EXPECT_CALL(logger, logTestGroupIntroduction(TestGroup::SAMPLE_ID));
-        EXPECT_CALL(testCaseGrader, grade(TestUtils::newSampleTestCase("foo_sample", {1, 2}), options))
+        EXPECT_CALL(testCaseGrader, grade(TestUtils::newSampleTestCase("foo_sample", {1, 2}), optionsWithSubtasks))
                 .WillOnce(Return(stc1Verdict));
         EXPECT_CALL(logger, logTestGroupIntroduction(1));
-        EXPECT_CALL(testCaseGrader, grade(TestUtils::newTestCase("foo_1", {1, 2}), options))
+        EXPECT_CALL(testCaseGrader, grade(TestUtils::newTestCase("foo_1", {1, 2}), optionsWithSubtasks))
                 .WillOnce(Return(tc1Verdict));
         EXPECT_CALL(logger, logTestGroupIntroduction(2));
-        EXPECT_CALL(testCaseGrader, grade(TestUtils::newTestCase("foo_2", {2}), options))
+        EXPECT_CALL(testCaseGrader, grade(TestUtils::newTestCase("foo_2", {2}), optionsWithSubtasks))
                 .WillOnce(Return(tc2Verdict));
 
         EXPECT_CALL(aggregator, aggregate(vector<Verdict>{stc1Verdict, tc1Verdict}, 40))

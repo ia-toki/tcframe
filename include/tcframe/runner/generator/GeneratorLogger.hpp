@@ -19,7 +19,7 @@ namespace tcframe {
 
 class GeneratorLogger : public virtual BaseLogger {
 public:
-    virtual ~GeneratorLogger() {}
+    virtual ~GeneratorLogger() = default;
 
     virtual void logIntroduction() = 0;
     virtual void logSuccessfulResult() = 0;

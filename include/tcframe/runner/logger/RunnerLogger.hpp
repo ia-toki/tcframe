@@ -15,9 +15,9 @@ private:
     LoggerEngine* engine_;
 
 public:
-    virtual ~RunnerLogger() {}
+    virtual ~RunnerLogger() = default;
 
-    RunnerLogger(LoggerEngine* engine)
+    explicit RunnerLogger(LoggerEngine* engine)
             : engine_(engine) {}
 
     virtual void logSpecificationFailure(const vector<string>& messages) {
@@ -31,7 +31,7 @@ public:
 
 class RunnerLoggerFactory {
 public:
-    virtual ~RunnerLoggerFactory() {}
+    virtual ~RunnerLoggerFactory() = default;
 
     virtual RunnerLogger* create(LoggerEngine* engine) {
         return new RunnerLogger(engine);

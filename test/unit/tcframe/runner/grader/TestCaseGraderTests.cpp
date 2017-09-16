@@ -33,7 +33,7 @@ protected:
             .setMemoryLimit(128)
             .build();
 
-    TestCaseGrader grader = TestCaseGrader(&evaluator, &logger);
+    TestCaseGrader grader = {&evaluator, &logger};
 };
 
 TEST_F(TestCaseGraderTests, Grading_AC) {

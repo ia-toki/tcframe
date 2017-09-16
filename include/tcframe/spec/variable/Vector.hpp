@@ -16,9 +16,9 @@ namespace tcframe {
 
 class Vector : public Variable {
 public:
-    virtual ~Vector() {}
+    virtual ~Vector() = default;
 
-    Vector(const string& name)
+    explicit Vector(string name)
             : Variable(name, VariableType::VECTOR) {}
 
     virtual int size() const = 0;
@@ -30,10 +30,10 @@ public:
     virtual void parseAndAddElementFrom(istream* in) = 0;
 
     template<typename T, typename = ScalarCompatible<T>>
-    static Vector* create(vector<T>& var, const string& name);
+    static Vector* create(vector<T>& var, string name);
 
     template<typename = void>
-    static Vector* createRaw(vector<string>& var, const string& name);
+    static Vector* createRaw(vector<string>& var, string name);
 };
 
 template<typename T, typename = ScalarCompatible<T>>
@@ -42,9 +42,9 @@ private:
     vector<T>* var_;
 
 public:
-    virtual ~VectorImpl() {}
+    virtual ~VectorImpl() = default;
 
-    VectorImpl(vector<T>& var, const string& name)
+    VectorImpl(vector<T>& var, string name)
             : Vector(name)
             , var_(&var) {}
 
@@ -72,10 +72,7 @@ public:
     }
 
     void parseFrom(istream* in) {
-        for (int i = 0; ; i++) {
-            if (WhitespaceManipulator::canParseNewline(in)) {
-                break;
-            }
+        for (int i = 0; !WhitespaceManipulator::canParseNewline(in); i++) {
             if (i > 0) {
                 WhitespaceManipulator::parseSpaceAfterMissingNewline(
                         in,
@@ -107,9 +104,9 @@ private:
     vector<string>* var_;
 
 public:
-    virtual ~RawVectorImpl() {}
+    virtual ~RawVectorImpl() = default;
 
-    RawVectorImpl(vector<string>& var, const string& name)
+    RawVectorImpl(vector<string>& var, string name)
             : VectorImpl(var, name)
             , var_(&var) {}
 
@@ -122,12 +119,12 @@ public:
 };
 
 template<typename T, typename>
-Vector* Vector::create(vector<T>& var, const string& name) {
+Vector* Vector::create(vector<T>& var, string name) {
     return new VectorImpl<T>(var, name);
 }
 
 template<typename>
-Vector* Vector::createRaw(vector<string>& var, const string& name) {
+Vector* Vector::createRaw(vector<string>& var, string name) {
     return new RawVectorImpl(var, name);
 }
 

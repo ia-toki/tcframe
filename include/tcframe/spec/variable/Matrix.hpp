@@ -19,9 +19,9 @@ namespace tcframe {
 
 class Matrix : public Variable {
 public:
-    virtual ~Matrix() {}
+    virtual ~Matrix() = default;
 
-    Matrix(const string& name)
+    explicit Matrix(string name)
             : Variable(name, VariableType::MATRIX) {}
 
     virtual int rows() const = 0;
@@ -33,7 +33,7 @@ public:
     virtual void parseAndAddRowFrom(istream* in, int rowIndex) = 0;
 
     template<typename T, typename = ScalarCompatible<T>>
-    static Matrix* create(vector<vector<T>>& var, const string& name);
+    static Matrix* create(vector<vector<T>>& var, string name);
 };
 
 template<typename T, typename = ScalarCompatible<T>>
@@ -43,9 +43,9 @@ private:
     bool hasSpaces_;
 
 public:
-    virtual ~MatrixImpl() {}
+    virtual ~MatrixImpl() = default;
 
-    MatrixImpl(vector<vector<T>>& var, const string& name)
+    MatrixImpl(vector<vector<T>>& var, string name)
             : Matrix(name)
             , var_(&var)
             , hasSpaces_(!is_same<T, char>::value) {}
@@ -97,10 +97,7 @@ public:
     virtual void parseAndAddRowFrom(istream* in, int rowIndex) {
         vector<T> row;
         int c;
-        for (c = 0; ; c++) {
-            if (WhitespaceManipulator::canParseNewline(in)) {
-                break;
-            }
+        for (c = 0; !WhitespaceManipulator::canParseNewline(in); c++) {
             if (c > 0 && hasSpaces_) {
                 WhitespaceManipulator::parseSpaceAfterMissingNewline(
                         in,
@@ -115,7 +112,7 @@ public:
 };
 
 template<typename T, typename>
-Matrix* Matrix::create(vector<vector<T>>& var, const string& name) {
+Matrix* Matrix::create(vector<vector<T>>& var, string name) {
     return new MatrixImpl<T>(var, name);
 }
 

@@ -8,6 +8,7 @@
 
 #include "tcframe/spec/exception.hpp"
 
+using std::move;
 using std::pair;
 using std::set;
 using std::string;
@@ -21,10 +22,10 @@ private:
     set<string> unsatisfiedConstraintDescriptions_;
 
 public:
-    MultipleTestCasesConstraintsVerificationResult(const set<string>& unsatisfiedConstraintDescriptions)
-            : unsatisfiedConstraintDescriptions_(unsatisfiedConstraintDescriptions) {}
+    explicit MultipleTestCasesConstraintsVerificationResult(set<string> unsatisfiedConstraintDescriptions)
+            : unsatisfiedConstraintDescriptions_(move(unsatisfiedConstraintDescriptions)) {}
 
-    MultipleTestCasesConstraintsVerificationResult() {}
+    MultipleTestCasesConstraintsVerificationResult() = default;
 
     const set<string>& unsatisfiedConstraintDescriptions() const {
         return unsatisfiedConstraintDescriptions_;

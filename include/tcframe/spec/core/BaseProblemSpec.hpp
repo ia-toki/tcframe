@@ -5,7 +5,6 @@
 #include "tcframe/spec/config.hpp"
 #include "tcframe/spec/constraint.hpp"
 #include "tcframe/spec/io.hpp"
-#include "tcframe/util.hpp"
 
 using std::vector;
 
@@ -53,7 +52,7 @@ private:
             &BaseProblemSpec::Subtask25};
 
 public:
-    virtual ~BaseProblemSpec() {}
+    virtual ~BaseProblemSpec() = default;
 
     IOFormat buildIOFormat() {
         IOFormatBuilder::prepareForInputFormat();

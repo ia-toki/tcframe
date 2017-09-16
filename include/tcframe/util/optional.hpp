@@ -14,7 +14,7 @@ public:
     optional()
             : val(nullptr) {}
 
-    optional(T value)
+    explicit optional(T value)
             : val(new T(value)) {}
 
     const T& value() const {

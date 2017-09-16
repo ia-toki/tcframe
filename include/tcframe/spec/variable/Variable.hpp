@@ -5,6 +5,7 @@
 #include <string>
 #include <tuple>
 #include <type_traits>
+#include <utility>
 
 #include "WhitespaceManipulator.hpp"
 
@@ -14,6 +15,7 @@ using std::is_arithmetic;
 using std::is_reference;
 using std::is_same;
 using std::istream;
+using std::move;
 using std::ostream;
 using std::runtime_error;
 using std::string;
@@ -39,7 +41,7 @@ private:
     VariableType type_;
 
 public:
-    virtual ~Variable() {}
+    virtual ~Variable() = default;
 
     const string& name() const {
         return name_;
@@ -82,8 +84,8 @@ public:
     }
 
 protected:
-    Variable(const string& name, VariableType type)
-            : name_(name)
+    Variable(string name, VariableType type)
+            : name_(move(name))
             , type_(type) {}
 };
 

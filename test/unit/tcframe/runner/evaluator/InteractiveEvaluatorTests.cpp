@@ -19,8 +19,8 @@ protected:
 
 TEST_F(InteractiveEvaluatorTests, Evaluation) {
     Verdict verdict(VerdictStatus::wa());
-    ExecutionResult executionResult = ExecutionResultBuilder().setStandardError("WA").build();
-    EvaluationOptions options = EvaluationOptionsBuilder().setSolutionCommand("\"python Sol.py\"").build();
+    auto executionResult = ExecutionResultBuilder().setStandardError("WA").build();
+    auto options = EvaluationOptionsBuilder().setSolutionCommand("\"python Sol.py\"").build();
 
     EXPECT_CALL(communicator, communicate("1.in", options))
                 .WillOnce(Return(CommunicationResult(verdict, executionResult)));

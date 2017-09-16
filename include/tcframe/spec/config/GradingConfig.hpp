@@ -38,7 +38,7 @@ private:
     GradingConfig subject_;
 
 public:
-    GradingConfigBuilder() {
+    explicit GradingConfigBuilder() {
         subject_.timeLimit_ = GradingConfig::DEFAULT_TIME_LIMIT;
         subject_.memoryLimit_ = GradingConfig::DEFAULT_MEMORY_LIMIT;
     }

@@ -19,9 +19,9 @@ private:
     OperatingSystem* os_;
 
 public:
-    virtual ~DiffScorer() {}
+    virtual ~DiffScorer() = default;
 
-    DiffScorer(OperatingSystem* os)
+    explicit DiffScorer(OperatingSystem* os)
             : os_(os) {}
 
     ScoringResult score(const string&, const string& outputFilename, const string& evaluationFilename) {
@@ -54,12 +54,11 @@ public:
         }
 
         // TODO(fushar): Figure out how to directly output the diff to the standard error.
-        ExecutionResult newExecutionResult = ExecutionResultBuilder()
-                .from(executionResult)
+        auto newExecutionResult = ExecutionResultBuilder(executionResult)
                 .setStandardError(diff)
                 .build();
 
-        return ScoringResult(verdict, newExecutionResult);
+        return {verdict, newExecutionResult};
     }
 };
 

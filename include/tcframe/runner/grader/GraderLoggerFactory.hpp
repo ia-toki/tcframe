@@ -9,7 +9,7 @@ namespace tcframe {
 
 class GraderLoggerFactory {
 public:
-    virtual ~GraderLoggerFactory() {}
+    virtual ~GraderLoggerFactory() = default;
 
     virtual GraderLogger* create(LoggerEngine* engine, bool brief) {
         if (brief) {

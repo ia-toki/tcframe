@@ -75,7 +75,7 @@ private:
             &BaseTestSpec::TestGroup25};
 
 public:
-    virtual ~BaseTestSpec() {}
+    virtual ~BaseTestSpec() = default;
 
     TestSuite buildTestSuite(const string& slug, const set<int>& definedSubtaskIds) {
         TestSuiteBuilder::setSlug(slug);

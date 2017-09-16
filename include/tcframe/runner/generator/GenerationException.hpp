@@ -2,9 +2,11 @@
 
 #include <exception>
 #include <functional>
+#include <utility>
 
 using std::exception;
 using std::function;
+using std::move;
 
 namespace tcframe {
 
@@ -13,10 +15,10 @@ private:
     function<void()> callback_;
 
 public:
-    ~GenerationException() noexcept {}
+    ~GenerationException() noexcept = default;
 
-    GenerationException(const function<void()>& callback)
-            : callback_(callback) {}
+    explicit GenerationException(function<void()> callback)
+            : callback_(move(callback)) {}
 
     const function<void()>& callback() const {
         return callback_;

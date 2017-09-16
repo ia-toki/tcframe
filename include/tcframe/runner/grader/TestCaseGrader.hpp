@@ -5,6 +5,7 @@
 #include "GradingOptions.hpp"
 #include "GraderLogger.hpp"
 #include "tcframe/runner/evaluator.hpp"
+#include "tcframe/runner/os.hpp"
 #include "tcframe/runner/verdict.hpp"
 #include "tcframe/util.hpp"
 
@@ -18,7 +19,7 @@ private:
     GraderLogger* logger_;
 
 public:
-    virtual ~TestCaseGrader() {}
+    virtual ~TestCaseGrader() = default;
 
     TestCaseGrader(Evaluator* evaluator, GraderLogger* logger)
             : evaluator_(evaluator)
@@ -40,15 +41,15 @@ public:
 
 private:
     EvaluationResult evaluate(const TestCase& testCase, const GradingOptions& options) {
-        string inputFilename = options.outputDir() + "/" + testCase.name() + ".in";
-        string outputFilename = options.outputDir() + "/" + testCase.name() + ".out";
-        EvaluationOptions evaluationConfig = EvaluationOptionsBuilder()
+        string inputFilename = TestCasePathCreator::createInputPath(testCase.name(), options.outputDir());
+        string outputFilename = TestCasePathCreator::createOutputPath(testCase.name(), options.outputDir());
+        auto evaluationOptions = EvaluationOptionsBuilder()
                 .setSolutionCommand(options.solutionCommand())
                 .setTimeLimit(options.timeLimit())
                 .setMemoryLimit(options.memoryLimit())
                 .build();
 
-        return evaluator_->evaluate(inputFilename, outputFilename, evaluationConfig);
+        return evaluator_->evaluate(inputFilename, outputFilename, evaluationOptions);
     }
 };
 

@@ -23,7 +23,7 @@ private:
 
 public:
     ExecutionResult()
-            : exitCode_(optional<int>(0)) {}
+            : exitCode_({0}) {}
 
     const optional<int>& exitCode() const {
         return exitCode_;
@@ -52,25 +52,26 @@ private:
     ExecutionResult subject_;
 
 public:
-    ExecutionResultBuilder& from(ExecutionResult other) {
-        subject_ = other;
-        return *this;
+    ExecutionResultBuilder() = default;
+
+    explicit ExecutionResultBuilder(ExecutionResult other) {
+        subject_ = move(other);
     }
 
     ExecutionResultBuilder& setExitCode(int exitCode) {
         subject_.exitCode_ = optional<int>(exitCode);
-        subject_.exitSignal_ = optional<int>();
+        subject_.exitSignal_ = {};
         return *this;
     }
 
     ExecutionResultBuilder& setExitSignal(int exitSignal) {
-        subject_.exitCode_ = optional<int>();
+        subject_.exitCode_ = {};
         subject_.exitSignal_ = optional<int>(exitSignal);
         return *this;
     }
 
     ExecutionResultBuilder& setStandardError(string standardError) {
-        subject_.standardError_ = standardError;
+        subject_.standardError_ = move(standardError);
         return *this;
     }
 

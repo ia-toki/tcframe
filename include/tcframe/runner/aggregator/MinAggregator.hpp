@@ -14,7 +14,7 @@ namespace tcframe {
 
 class MinAggregator : public Aggregator {
 public:
-    virtual ~MinAggregator() {}
+    virtual ~MinAggregator() = default;
 
     Verdict aggregate(const vector<Verdict>& verdicts, double points) {
         VerdictStatus aggregatedStatus = VerdictStatus::ac();
@@ -28,7 +28,7 @@ public:
                 aggregatedPoints = 0;
             }
         }
-        return Verdict(aggregatedStatus, aggregatedPoints);
+        return {aggregatedStatus, aggregatedPoints};
     }
 };
 

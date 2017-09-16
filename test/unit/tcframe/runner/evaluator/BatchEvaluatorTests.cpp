@@ -32,7 +32,7 @@ protected:
             .setMemoryLimit(128)
             .build();
 
-    BatchEvaluator evaluator = BatchEvaluator(&os, &verdictCreator, &scorer);
+    BatchEvaluator evaluator = {&os, &verdictCreator, &scorer};
 
     void SetUp() {
         ON_CALL(os, execute(_))
@@ -45,7 +45,7 @@ protected:
 };
 
 TEST_F(BatchEvaluatorTests, Evaluation_AC) {
-    ExecutionRequest executionRequest = ExecutionRequestBuilder()
+    auto executionRequest = ExecutionRequestBuilder()
             .setCommand("python Sol.py")
             .setInputFilename("dir/foo_1.in")
             .setOutputFilename(Evaluator::EVALUATION_OUT_FILENAME)

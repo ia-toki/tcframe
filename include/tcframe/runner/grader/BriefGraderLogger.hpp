@@ -15,9 +15,9 @@ private:
     LoggerEngine* engine_;
 
 public:
-    virtual ~BriefGraderLogger() {}
+    virtual ~BriefGraderLogger() = default;
 
-    BriefGraderLogger(LoggerEngine* engine)
+    explicit BriefGraderLogger(LoggerEngine* engine)
             : engine_(engine) {}
 
     void logTestGroupIntroduction(int) {}
@@ -30,7 +30,7 @@ public:
         engine_->logParagraph(0, verdict.toBriefString());
 
         if (subtaskVerdicts.size() > 1) {
-            for (auto entry : subtaskVerdicts) {
+            for (const auto& entry : subtaskVerdicts) {
                 engine_->logParagraph(0, entry.second.toBriefString());
             }
         }

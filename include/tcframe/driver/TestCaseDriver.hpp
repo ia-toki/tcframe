@@ -4,6 +4,7 @@
 #include <ostream>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 #include "RawIOManipulator.hpp"
 #include "tcframe/spec/config.hpp"
@@ -15,6 +16,7 @@
 
 using std::endl;
 using std::istream;
+using std::move;
 using std::ostream;
 using std::runtime_error;
 using std::string;
@@ -29,17 +31,17 @@ private:
     MultipleTestCasesConfig multipleTestCasesConfig_;
 
 public:
-    virtual ~TestCaseDriver() {}
+    virtual ~TestCaseDriver() = default;
 
     TestCaseDriver(
             RawIOManipulator* rawIOManipulator,
             IOManipulator* ioManipulator,
             Verifier* verifier,
-            const MultipleTestCasesConfig& multipleTestCasesConfig)
+            MultipleTestCasesConfig multipleTestCasesConfig)
             : ioManipulator_(ioManipulator)
             , rawIOManipulator_(rawIOManipulator)
             , verifier_(verifier)
-            , multipleTestCasesConfig_(multipleTestCasesConfig) {}
+            , multipleTestCasesConfig_(move(multipleTestCasesConfig)) {}
 
     virtual void generateInput(const TestCase& testCase, ostream* out) {
         applyInput(testCase);
@@ -86,8 +88,8 @@ private:
 
     void writeInput(const TestCase& testCase, ostream* out) {
         if (multipleTestCasesConfig_.counter()) {
-            int testCaseId = 1;
-            rawIOManipulator_->printLine(out, StringUtils::toString(testCaseId));
+            int testCaseCount = 1;
+            rawIOManipulator_->printLine(out, StringUtils::toString(testCaseCount));
         }
 
         if (testCase.data()->type() == TestCaseDataType::SAMPLE) {

@@ -91,7 +91,7 @@ TEST_F(IOManipulatorTests, Parsing_Failed_MissingEof_Empty) {
     ioFormatBuilder.prepareForInputFormat();
     IOFormat ioFormat = ioFormatBuilder.build();
 
-    IOManipulator* manipulatorEmpty = new IOManipulator(ioFormat);
+    auto manipulatorEmpty = new IOManipulator(ioFormat);
 
     istringstream in("123\n42\n7\n5 6\n7 8\nbogus");
     try {
@@ -109,7 +109,7 @@ TEST_F(IOManipulatorTests, Parsing_Failed_MissingEof_WithScalarLast) {
             .addScalarVariable(Scalar::create(A, "A"));
     IOFormat ioFormat = ioFormatBuilder.build();
 
-    IOManipulator* manipulatorWithScalarLast = new IOManipulator(ioFormat);
+    auto manipulatorWithScalarLast = new IOManipulator(ioFormat);
 
     istringstream in("123\n42\n7\n5 6\n7 8\nbogus");
     try {
@@ -130,7 +130,7 @@ TEST_F(IOManipulatorTests, Parsing_Failed_MissingEof_WithVectorLast) {
             .setSize([] {return 2;});
     IOFormat ioFormat = ioFormatBuilder.build();
 
-    IOManipulator* manipulatorWithVectorLast = new IOManipulator(ioFormat);
+    auto manipulatorWithVectorLast = new IOManipulator(ioFormat);
 
     istringstream in("123\n42\n7\n5 6\n7 8\nbogus");
     try {

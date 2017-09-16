@@ -3,12 +3,14 @@
 #include <map>
 #include <string>
 #include <tuple>
+#include <utility>
 
 #include "tcframe/runner/os.hpp"
 #include "tcframe/runner/verdict.hpp"
 #include "tcframe/util.hpp"
 
 using std::map;
+using std::move;
 using std::string;
 using std::tie;
 
@@ -20,9 +22,9 @@ private:
     map<string, ExecutionResult> executionResults_;
 
 public:
-    EvaluationResult(const Verdict& verdict, const map<string, ExecutionResult>& executionResults)
-            : verdict_(verdict)
-            , executionResults_(executionResults) {}
+    EvaluationResult(Verdict verdict, map<string, ExecutionResult> executionResults)
+            : verdict_(move(verdict))
+            , executionResults_(move(executionResults)) {}
 
     const Verdict& verdict() const {
         return verdict_;

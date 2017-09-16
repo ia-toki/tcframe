@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <string>
 #include <tuple>
+#include <utility>
 #include <vector>
 
 #include "OfficialTestCaseData.hpp"
@@ -17,6 +18,7 @@
 
 using std::inserter;
 using std::function;
+using std::move;
 using std::runtime_error;
 using std::set;
 using std::set_difference;
@@ -33,10 +35,10 @@ private:
     vector<TestGroup> testGroups_;
 
 public:
-    TestSuite() {}
+    TestSuite() = default;
 
-    TestSuite(const vector<TestGroup>& testGroups)
-            : testGroups_(testGroups) {}
+    explicit TestSuite(vector<TestGroup> testGroups)
+            : testGroups_(move(testGroups)) {}
 
     const vector<TestGroup>& testGroups() const {
         return testGroups_;
@@ -51,51 +53,41 @@ class TestSuiteBuilder {
 private:
     string slug_;
     set<int> definedSubtaskIds_;
-    function<void()> beforeClosure_;
-    function<void()> afterClosure_;
+    function<void()> beforeClosure_ = []{};
+    function<void()> afterClosure_ = []{};
 
-    set<int>* curSubtaskIds_;
+    set<int>* curSubtaskIds_ = nullptr;
 
-    int curOfficialTestGroupId_;
-    bool hasCurOfficialTestGroup_;
-    set<int> curOfficialSubtaskIds_;
+    int curOfficialTestGroupId_ = TestGroup::MAIN_ID;
+    bool hasCurOfficialTestGroup_ = false;
+    set<int> curOfficialSubtaskIds_ = {Subtask::MAIN_ID};
     vector<TestGroup> curOfficialTestGroups_;
     vector<TestCase> curOfficialTestCases_;
 
-    bool hasCurSampleTestCase_;
-    set<int> curSampleSubtaskIds_;
+    bool hasCurSampleTestCase_ = false;
+    set<int> curSampleSubtaskIds_ = {Subtask::MAIN_ID};
     vector<TestCase> curSampleTestCases_;
     optional<vector<string>> curSampleInputLines_;
     optional<vector<string>> curSampleOutputLines_;
 
 public:
-    TestSuiteBuilder()
-            : beforeClosure_([]{})
-            , afterClosure_([]{})
-            , curSampleSubtaskIds_({Subtask::MAIN_ID})
-            , curOfficialSubtaskIds_({Subtask::MAIN_ID})
-            , curOfficialTestGroupId_(TestGroup::MAIN_ID)
-            , hasCurOfficialTestGroup_(false)
-            , hasCurSampleTestCase_(false) {
-    }
-
     TestSuiteBuilder& setSlug(string slug) {
-        slug_ = slug;
+        slug_ = move(slug);
         return *this;
     }
 
     TestSuiteBuilder& setDefinedSubtaskIds(set<int> definedSubtaskIds) {
-        definedSubtaskIds_ = definedSubtaskIds;
+        definedSubtaskIds_ = move(definedSubtaskIds);
         return *this;
     }
 
     TestSuiteBuilder& setBeforeClosure(function<void()> beforeClosure) {
-        beforeClosure_ = beforeClosure;
+        beforeClosure_ = move(beforeClosure);
         return *this;
     }
 
     TestSuiteBuilder& setAfterClosure(function<void()> afterClosure) {
-        afterClosure_ = afterClosure;
+        afterClosure_ = move(afterClosure);
         return *this;
     }
 
@@ -107,8 +99,8 @@ public:
         hasCurSampleTestCase_ = true;
         curSampleSubtaskIds_ = {};
         curSubtaskIds_ = &curSampleSubtaskIds_;
-        curSampleInputLines_ = optional<vector<string>>();
-        curSampleOutputLines_ = optional<vector<string>>();
+        curSampleInputLines_ = {};
+        curSampleOutputLines_ = {};
 
         return *this;
     }
@@ -149,12 +141,12 @@ public:
     }
 
     TestSuiteBuilder& Input(vector<string> lines) {
-        curSampleInputLines_ = optional<vector<string>>(lines);
+        curSampleInputLines_ = optional<vector<string>>(move(lines));
         return *this;
     }
 
     TestSuiteBuilder& Output(vector<string> lines) {
-        curSampleOutputLines_ = optional<vector<string>>(lines);
+        curSampleOutputLines_ = optional<vector<string>>(move(lines));
         return *this;
     }
 
@@ -167,7 +159,7 @@ public:
                         TestGroup::createName(slug_, curOfficialTestGroupId_),
                         (int) curOfficialTestCases_.size() + 1))
                 .setSubtaskIds(curOfficialSubtaskIds_)
-                .setDescription(description)
+                .setDescription(move(description))
                 .setData(new OfficialTestCaseData([=]{
                     beforeClosure_();
                     clozure();
@@ -186,8 +178,8 @@ public:
         }
 
         vector<TestGroup> testGroups;
-        testGroups.push_back(TestGroup(TestGroup::SAMPLE_ID, curSampleTestCases_));
-        for (TestGroup testGroup : curOfficialTestGroups_) {
+        testGroups.emplace_back(TestGroup::SAMPLE_ID, curSampleTestCases_);
+        for (auto testGroup : curOfficialTestGroups_) {
             testGroups.push_back(testGroup);
         }
 
@@ -227,7 +219,7 @@ private:
     }
 
     void addCurrentOfficialTestGroup() {
-        curOfficialTestGroups_.push_back(TestGroup(curOfficialTestGroupId_, curOfficialTestCases_));
+        curOfficialTestGroups_.emplace_back(curOfficialTestGroupId_, curOfficialTestCases_);
     }
 };
 

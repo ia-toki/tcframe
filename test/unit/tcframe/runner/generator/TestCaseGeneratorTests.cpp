@@ -2,6 +2,7 @@
 #include "../../mock.hpp"
 
 #include <sstream>
+#include <utility>
 
 #include "../client/MockSpecClient.hpp"
 #include "../evaluator/MockEvaluator.hpp"
@@ -17,6 +18,7 @@ using ::testing::Throw;
 using ::testing::Truly;
 
 using std::istringstream;
+using std::move;
 using std::ostringstream;
 
 namespace tcframe {
@@ -56,7 +58,7 @@ protected:
             .setSolutionCommand("python Sol.py")
             .build();
 
-    TestCaseGenerator generator = TestCaseGenerator(&specClient, &evaluator, &logger);
+    TestCaseGenerator generator = {&specClient, &evaluator, &logger};
 
     void SetUp() {
         ON_CALL(evaluator, generate(_, _, _))
@@ -68,8 +70,8 @@ protected:
     struct SimpleErrorMessageIs {
         string message_;
 
-        explicit SimpleErrorMessageIs(const string& message)
-                : message_(message) {}
+        explicit SimpleErrorMessageIs(string message)
+                : message_(move(message)) {}
 
         bool operator()(const runtime_error& e) const {
             return message_ == e.what();
@@ -94,8 +96,8 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample) {
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Sample_Failed_Check) {
-    Verdict verdict = Verdict(VerdictStatus::wa());
-    ExecutionResult scoringExecutionResult = ExecutionResultBuilder()
+    Verdict verdict(VerdictStatus::wa());
+    auto scoringExecutionResult = ExecutionResultBuilder()
             .setExitCode(1)
             .setStandardError("diff")
             .build();
@@ -186,7 +188,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Failed_InputGeneration) {
 
 TEST_F(TestCaseGeneratorTests, Generation_Failed_OutputGeneration) {
     Verdict verdict(VerdictStatus::rte());
-    ExecutionResult executionResult = ExecutionResultBuilder().setExitCode(1).build();
+    auto executionResult = ExecutionResultBuilder().setExitCode(1).build();
     ON_CALL(evaluator, generate(_, _, _))
             .WillByDefault(Return(GenerationResult(optional<Verdict>(verdict), executionResult)));
     {

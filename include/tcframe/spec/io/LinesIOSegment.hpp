@@ -3,12 +3,14 @@
 #include <functional>
 #include <stdexcept>
 #include <tuple>
+#include <utility>
 #include <vector>
 
 #include "IOSegment.hpp"
 #include "tcframe/spec/variable.hpp"
 
 using std::function;
+using std::move;
 using std::runtime_error;
 using std::tie;
 using std::vector;
@@ -23,7 +25,7 @@ private:
     function<int()> size_;
 
 public:
-    virtual ~LinesIOSegment() {}
+    virtual ~LinesIOSegment() = default;
 
     IOSegmentType type() const {
         return IOSegmentType::LINES;
@@ -59,11 +61,10 @@ public:
 
 class LinesIOSegmentBuilder : public IOSegmentBuilder {
 private:
-    LinesIOSegment *subject_;
+    LinesIOSegment *subject_ = new LinesIOSegment();
 
 public:
-    LinesIOSegmentBuilder()
-            : subject_(new LinesIOSegment()) {
+    LinesIOSegmentBuilder() {
         subject_->size_ = [] {return NO_SIZE;};
     }
 
@@ -80,13 +81,13 @@ public:
     }
 
     LinesIOSegmentBuilder& setSize(function<int()> size) {
-        subject_->size_ = size;
+        subject_->size_ = move(size);
         return *this;
     }
 
     LinesIOSegment* build() {
         checkState();
-        return subject_;
+        return move(subject_);
     }
 
 private:

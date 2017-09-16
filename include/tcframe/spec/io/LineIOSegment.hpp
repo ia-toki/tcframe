@@ -3,12 +3,14 @@
 #include <functional>
 #include <stdexcept>
 #include <tuple>
+#include <utility>
 #include <vector>
 
 #include "IOSegment.hpp"
 #include "tcframe/spec/variable.hpp"
 
 using std::function;
+using std::move;
 using std::runtime_error;
 using std::tie;
 using std::vector;
@@ -21,11 +23,11 @@ private:
     function<int()> size_;
 
 public:
-    LineIOSegmentVariable(Variable* variable, const function<int()>& size)
+    LineIOSegmentVariable(Variable* variable, function<int()> size)
             : variable_(variable)
-            , size_(size) {}
+            , size_(move(size)) {}
 
-    LineIOSegmentVariable(Variable* variable)
+    explicit LineIOSegmentVariable(Variable* variable)
             : variable_(variable)
             , size_([] {return NO_SIZE;}) {
     }
@@ -50,7 +52,7 @@ private:
     vector<LineIOSegmentVariable> variables_;
 
 public:
-    virtual ~LineIOSegment() {}
+    virtual ~LineIOSegment() = default;
 
     IOSegmentType type() const {
         return IOSegmentType::LINE;
@@ -71,30 +73,26 @@ public:
 
 class LineIOSegmentBuilder : public IOSegmentBuilder {
 private:
-    LineIOSegment* subject_;
-    bool hasVectorWithoutSize_;
+    LineIOSegment* subject_ = new LineIOSegment();
+    bool hasVectorWithoutSize_ = false;
 
 public:
-    LineIOSegmentBuilder()
-            : subject_(new LineIOSegment())
-            , hasVectorWithoutSize_(false) {}
-
     LineIOSegmentBuilder& addScalarVariable(Scalar* variable) {
         checkVectorWithoutSize();
-        subject_->variables_.push_back(LineIOSegmentVariable(variable));
+        subject_->variables_.emplace_back(variable);
         return *this;
     }
 
     LineIOSegmentBuilder& addVectorVariable(Vector* variable) {
         checkVectorWithoutSize();
         hasVectorWithoutSize_ = true;
-        subject_->variables_.push_back(LineIOSegmentVariable(variable));
+        subject_->variables_.emplace_back(variable);
         return *this;
     }
 
     LineIOSegmentBuilder& addVectorVariable(Vector* variable, function<int()> size) {
         checkVectorWithoutSize();
-        subject_->variables_.push_back(LineIOSegmentVariable(variable, size));
+        subject_->variables_.emplace_back(variable, size);
         return *this;
     }
 

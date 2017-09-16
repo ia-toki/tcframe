@@ -14,10 +14,10 @@ namespace tcframe {
 
 class CustomScorerIntegrationTests : public Test {
 protected:
-    CustomScorer scorer = CustomScorer(
+    CustomScorer scorer = {
             new OperatingSystem(),
             new VerdictCreator(),
-            "test-integration/runner/evaluator/scorer/custom/scorer");
+            "test-integration/runner/evaluator/scorer/custom/scorer"};
 
     static void SetUpTestCase() {
         system(

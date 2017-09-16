@@ -3,6 +3,7 @@
 #include <istream>
 #include <ostream>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "GridIOSegmentManipulator.hpp"
@@ -14,6 +15,7 @@
 #include "tcframe/spec/variable.hpp"
 
 using std::istream;
+using std::move;
 using std::ostream;
 using std::string;
 using std::vector;
@@ -31,10 +33,10 @@ private:
     RawLinesIOSegmentManipulator rawLinesIOSegmentManipulator;
 
 public:
-    virtual ~IOManipulator() {}
+    virtual ~IOManipulator() = default;
 
-    IOManipulator(const IOFormat& ioFormat)
-            : ioFormat_(ioFormat) {}
+    explicit IOManipulator(IOFormat ioFormat)
+            : ioFormat_(move(ioFormat)) {}
 
     virtual void printInput(ostream* out) {
         print(ioFormat_.inputFormat(), out);

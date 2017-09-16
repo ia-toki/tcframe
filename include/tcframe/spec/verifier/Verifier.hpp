@@ -21,9 +21,9 @@ private:
     ConstraintSuite constraintSuite_;
 
 public:
-    virtual ~Verifier() {}
+    virtual ~Verifier() = default;
 
-    Verifier(const ConstraintSuite& constraintSuite)
+    explicit Verifier(ConstraintSuite constraintSuite)
             : constraintSuite_(move(constraintSuite)) {}
 
     virtual ConstraintsVerificationResult verifyConstraints(const set<int>& subtaskIds) {
@@ -48,7 +48,7 @@ public:
                 }
             }
         }
-        return ConstraintsVerificationResult(unsatisfiedConstraintDescriptionsBySubtaskId, satisfiedButNotAssignedSubtaskIds);
+        return {unsatisfiedConstraintDescriptionsBySubtaskId, satisfiedButNotAssignedSubtaskIds};
     }
 
     virtual MultipleTestCasesConstraintsVerificationResult verifyMultipleTestCasesConstraints() {

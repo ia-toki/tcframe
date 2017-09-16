@@ -13,10 +13,10 @@ namespace tcframe {
 
 class CommunicatorIntegrationTests : public Test {
 protected:
-    Communicator communicator = Communicator(
+    Communicator communicator = {
             new OperatingSystem(),
             new VerdictCreator(),
-            "test-integration/runner/evaluator/communicator/communicator");
+            "test-integration/runner/evaluator/communicator/communicator"};
 
     static void SetUpTestCase() {
         system(
@@ -32,7 +32,7 @@ TEST_F(CommunicatorIntegrationTests, Communication) {
             "test-integration/runner/evaluator/communicator/contestant "
             "test-integration/runner/evaluator/communicator/contestant.cpp");
 
-    EvaluationOptions options = EvaluationOptionsBuilder()
+    auto options = EvaluationOptionsBuilder()
             .setSolutionCommand("test-integration/runner/evaluator/communicator/contestant")
             .build();
     CommunicationResult result = communicator.communicate(

@@ -25,7 +25,7 @@ private:
     GeneratorLogger* logger_;
 
 public:
-    virtual ~Generator() {}
+    virtual ~Generator() = default;
 
     Generator(
             SpecClient* specClient,
@@ -136,8 +136,8 @@ private:
 
         for (int i = 1; i <= testCaseCount; i++) {
             string testCaseName = TestCase::createName(testGroupName, i);
-            string in = options.outputDir() + "/" + testCaseName + ".in";
-            string out = options.outputDir() + "/" + testCaseName + ".out";
+            string in = TestCasePathCreator::createInputPath(testCaseName, options.outputDir());
+            string out = TestCasePathCreator::createOutputPath(testCaseName, options.outputDir());
 
             ostringstream sout2;
             sout2 << "tail -n +2 " << in << " >> " << testGroupIn;
@@ -177,7 +177,7 @@ private:
 
 class GeneratorFactory {
 public:
-    virtual ~GeneratorFactory() {}
+    virtual ~GeneratorFactory() = default;
 
     virtual Generator* create(
             SpecClient* specClient,

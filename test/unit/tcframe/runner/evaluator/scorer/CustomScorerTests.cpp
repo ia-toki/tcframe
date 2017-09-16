@@ -23,7 +23,7 @@ protected:
     MOCK(VerdictCreator) verdictCreator;
     string scorerCommand = "./scorer";
 
-    CustomScorer scorer = CustomScorer(&os, &verdictCreator, scorerCommand);
+    CustomScorer scorer = {&os, &verdictCreator, scorerCommand};
 
     void SetUp() {
         ON_CALL(os, execute(_)).WillByDefault(Return(ExecutionResult()));
@@ -38,7 +38,7 @@ TEST_F(CustomScorerTests, Scoring_Successful) {
 }
 
 TEST_F(CustomScorerTests, Scoring_Crashed) {
-    ExecutionResult executionResult = ExecutionResultBuilder()
+    auto executionResult = ExecutionResultBuilder()
             .setExitCode(1)
             .setStandardError("crashed")
             .build();

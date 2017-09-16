@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <string>
 #include <sys/signal.h>
+#include <utility>
 
 #include "../EvaluationOptions.hpp"
 #include "CommunicationResult.hpp"
@@ -10,6 +11,7 @@
 #include "tcframe/runner/verdict.hpp"
 #include "tcframe/util.hpp"
 
+using std::move;
 using std::runtime_error;
 using std::string;
 
@@ -24,12 +26,12 @@ private:
     string communicatorCommand_;
 
 public:
-    virtual ~Communicator() {}
+    virtual ~Communicator() = default;
 
-    Communicator(OperatingSystem* os, VerdictCreator* verdictCreator, const string& communicatorCommand)
+    Communicator(OperatingSystem* os, VerdictCreator* verdictCreator, string communicatorCommand)
             : os_(os)
             , verdictCreator_(verdictCreator)
-            , communicatorCommand_(communicatorCommand) {}
+            , communicatorCommand_(move(communicatorCommand)) {}
 
     virtual CommunicationResult communicate(const string& inputFilename, const EvaluationOptions& options) {
         string communicationCommand = string()
@@ -39,7 +41,7 @@ public:
                 + " | "
                 + options.solutionCommand() + " > " + COMMUNICATION_PIPE_FILENAME;
 
-        ExecutionRequestBuilder request = ExecutionRequestBuilder()
+        auto request = ExecutionRequestBuilder()
                 .setCommand(communicationCommand);
 
         if (options.timeLimit()) {
@@ -63,21 +65,19 @@ public:
                 executionResult = ignoreStderr(executionResult);
             } catch (runtime_error& e) {
                 verdict = Verdict(VerdictStatus::err());
-                executionResult = ExecutionResultBuilder()
-                        .from(executionResult)
+                executionResult = ExecutionResultBuilder(executionResult)
                         .setStandardError(e.what())
                         .build();
             }
         }
 
-        return CommunicationResult(verdict, executionResult);
+        return {verdict, executionResult};
     }
 
 private:
     static ExecutionResult ignoreSIGPIPE(const ExecutionResult& executionResult) {
         if (executionResult.exitSignal() == optional<int>(SIGPIPE)) {
-            return ExecutionResultBuilder()
-                    .from(executionResult)
+            return ExecutionResultBuilder(executionResult)
                     .setExitCode(0)
                     .build();
         }
@@ -85,8 +85,7 @@ private:
     }
 
     static ExecutionResult ignoreStderr(const ExecutionResult& executionResult) {
-        return ExecutionResultBuilder()
-                .from(executionResult)
+        return ExecutionResultBuilder(executionResult)
                 .setStandardError("")
                 .build();
     }

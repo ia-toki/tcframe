@@ -20,7 +20,7 @@ private:
     Scalar* variable_;
 
 public:
-    virtual ~RawLineIOSegment() {}
+    virtual ~RawLineIOSegment() = default;
 
     IOSegmentType type() const {
         return IOSegmentType::RAW_LINE;
@@ -41,12 +41,9 @@ public:
 
 class RawLineIOSegmentBuilder : public IOSegmentBuilder {
 private:
-    RawLineIOSegment* subject_;
+    RawLineIOSegment* subject_ = new RawLineIOSegment();
 
 public:
-    RawLineIOSegmentBuilder()
-            : subject_(new RawLineIOSegment()) {}
-
     RawLineIOSegmentBuilder& addScalarVariable(Scalar* variable) {
         checkVariable();
         subject_->variable_ = variable;

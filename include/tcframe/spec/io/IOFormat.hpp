@@ -73,13 +73,10 @@ private:
 class IOFormatBuilder {
 private:
     IOFormat subject_;
-    IOSegments* currentFormat_;
-    IOSegmentBuilder* lastBuilder_;
+    IOSegments* currentFormat_ = nullptr;
+    IOSegmentBuilder* lastBuilder_ = nullptr;
 
 public:
-    IOFormatBuilder()
-            : lastBuilder_(nullptr) {}
-
     void prepareForInputFormat() {
         addLastSegment();
         currentFormat_ = &subject_.inputFormat_;

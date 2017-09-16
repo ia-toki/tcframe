@@ -27,7 +27,7 @@ protected:
     istream* in = new istringstream();
     ostream* out = new ostringstream();
 
-    SpecClient client = SpecClient(&specDriver, &os);
+    SpecClient client = {&specDriver, &os};
 
     void SetUp() {
         ON_CALL(os, openForReading(_))

@@ -17,7 +17,7 @@ class Evaluator {
 public:
     static constexpr const char* EVALUATION_OUT_FILENAME = "__tcframe_evaluation.out";
 
-    virtual ~Evaluator() {}
+    virtual ~Evaluator() = default;
 
     virtual EvaluationResult evaluate(
             const string& inputFilename,

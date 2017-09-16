@@ -14,7 +14,7 @@ namespace tcframe {
 
 class SimpleLoggerEngine : public LoggerEngine {
 public:
-    virtual ~SimpleLoggerEngine() {}
+    virtual ~SimpleLoggerEngine() = default;
 
     void logHeading(const string& message) {
         cout << endl;

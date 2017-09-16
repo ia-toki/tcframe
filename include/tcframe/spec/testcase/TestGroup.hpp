@@ -2,10 +2,12 @@
 
 #include <ostream>
 #include <tuple>
+#include <utility>
 #include <vector>
 
 #include "TestCase.hpp"
 
+using std::move;
 using std::tie;
 using std::vector;
 
@@ -22,9 +24,9 @@ private:
     vector<TestCase> testCases_;
 
 public:
-    TestGroup(int id, const vector<TestCase>& testCases)
+    TestGroup(int id, vector<TestCase> testCases)
             : id_(id)
-            , testCases_(testCases) {}
+            , testCases_(move(testCases)) {}
 
     int id() const {
         return id_;

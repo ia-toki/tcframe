@@ -16,19 +16,19 @@ namespace tcframe {
 
 class Scalar : public Variable {
 public:
-    virtual ~Scalar() {}
+    virtual ~Scalar() = default;
 
-    Scalar(const string& name)
+    explicit Scalar(string name)
             : Variable(name, VariableType::SCALAR) {}
 
     virtual void printTo(ostream* out) = 0;
     virtual void parseFrom(istream* in) = 0;
 
     template<typename T, typename = ScalarCompatible<T>>
-    static Scalar* create(T& var, const string& name);
+    static Scalar* create(T& var, string name);
 
     template<typename = void>
-    static Scalar* createRaw(string& var, const string& name);
+    static Scalar* createRaw(string& var, string name);
 };
 
 template<typename T, typename = ScalarCompatible<T>>
@@ -37,9 +37,9 @@ private:
     T* var_;
 
 public:
-    virtual ~ScalarImpl() {}
+    virtual ~ScalarImpl() = default;
 
-    ScalarImpl(T& var, const string& name)
+    ScalarImpl(T& var, string name)
             : Scalar(name)
             , var_(&var) {}
 
@@ -57,9 +57,9 @@ private:
     string* var_;
 
 public:
-    virtual ~RawScalarImpl() {}
+    virtual ~RawScalarImpl() = default;
 
-    RawScalarImpl(string& var, const string& name)
+    RawScalarImpl(string& var, string name)
             : ScalarImpl(var, name)
             , var_(&var) {}
 
@@ -69,12 +69,12 @@ public:
 };
 
 template<typename T, typename>
-Scalar* Scalar::create(T& var, const string& name) {
+Scalar* Scalar::create(T& var, string name) {
     return new ScalarImpl<T>(var, name);
 }
 
 template<typename>
-Scalar* Scalar::createRaw(string& var, const string& name) {
+Scalar* Scalar::createRaw(string& var, string name) {
     return new RawScalarImpl(var, name);
 }
 

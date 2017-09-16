@@ -72,9 +72,10 @@ public:
 private:
     static void checkVectorSize(Vector* vektor, int size) {
         if (size != NO_SIZE && vektor->size() != size) {
-            throw runtime_error("Number of elements of vector " + TokenFormatter::formatVariable(vektor->name())
-                                + " unsatisfied. Expected: " + StringUtils::toString(size) + ", actual: "
-                                + StringUtils::toString(vektor->size()));
+            throw runtime_error(
+                    "Number of elements of vector " + TokenFormatter::formatVariable(vektor->name())
+                    + " unsatisfied. Expected: " + StringUtils::toString(size) + ", actual: "
+                    + StringUtils::toString(vektor->size()));
         }
     }
 

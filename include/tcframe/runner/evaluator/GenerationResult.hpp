@@ -1,11 +1,13 @@
 #pragma once
 
 #include <tuple>
+#include <utility>
 
 #include "tcframe/runner/os.hpp"
 #include "tcframe/runner/verdict.hpp"
 #include "tcframe/util.hpp"
 
+using std::move;
 using std::tie;
 
 namespace tcframe {
@@ -16,9 +18,9 @@ private:
     ExecutionResult executionResult_;
 
 public:
-    GenerationResult(const optional<Verdict>& verdict, const ExecutionResult& executionResult)
-            : verdict_(verdict)
-            , executionResult_(executionResult) {}
+    GenerationResult(optional<Verdict> verdict, ExecutionResult executionResult)
+            : verdict_(move(verdict))
+            , executionResult_(move(executionResult)) {}
 
     const optional<Verdict>& verdict() const {
         return verdict_;

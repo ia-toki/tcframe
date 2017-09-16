@@ -18,7 +18,7 @@ namespace tcframe {
 
 class VerdictCreator {
 public:
-    virtual ~VerdictCreator() {}
+    virtual ~VerdictCreator() = default;
 
     virtual Verdict fromStream(istream* in) {
         Verdict builder;
@@ -40,7 +40,7 @@ public:
             string pointsString = StringUtils::split(secondLine, ' ')[0];
             optional<double> points = StringUtils::toNumber<double>(pointsString);
             if (points) {
-                return Verdict(VerdictStatus::ok(), points.value());
+                return {VerdictStatus::ok(), points.value()};
             }
             throw runtime_error("Unknown points format: " + pointsString);
         }
@@ -54,7 +54,7 @@ public:
         } else if (!executionResult.isSuccessful()) {
             return optional<Verdict>(Verdict(VerdictStatus::rte()));
         }
-        return optional<Verdict>();
+        return {};
     }
 };
 

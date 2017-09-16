@@ -1,8 +1,10 @@
 #pragma once
 
 #include <functional>
+#include <utility>
 
 using std::function;
+using std::move;
 
 namespace tcframe {
 
@@ -11,10 +13,10 @@ private:
     function<void(unsigned)> setter_;
 
 public:
-    virtual ~SeedSetter() {}
+    virtual ~SeedSetter() = default;
 
-    SeedSetter(const function<void(unsigned)>& setter)
-            : setter_(setter) {}
+    explicit SeedSetter(function<void(unsigned)> setter)
+            : setter_(move(setter)) {}
 
     virtual void setSeed(unsigned seed) {
         setter_(seed);

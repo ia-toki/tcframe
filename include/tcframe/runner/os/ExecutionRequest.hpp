@@ -55,17 +55,17 @@ private:
 
 public:
     ExecutionRequestBuilder& setCommand(string command) {
-        subject_.command_ = command;
+        subject_.command_ = move(command);
         return *this;
     }
 
     ExecutionRequestBuilder& setInputFilename(string inputFilename) {
-        subject_.inputFilename_ = optional<string>(inputFilename);
+        subject_.inputFilename_ = optional<string>(move(inputFilename));
         return *this;
     }
 
     ExecutionRequestBuilder& setOutputFilename(string outputFilename) {
-        subject_.outputFilename_ = optional<string>(outputFilename);
+        subject_.outputFilename_ = optional<string>(move(outputFilename));
         return *this;
     }
 

@@ -11,6 +11,7 @@
 
 using std::endl;
 using std::make_pair;
+using std::move;
 using std::ostream;
 using std::pair;
 using std::string;
@@ -24,12 +25,12 @@ private:
     BaseTestSpec<TProblemSpec>* testSpec_;
 
 public:
-    virtual ~Driver() {}
+    virtual ~Driver() = default;
 
     Driver(
-            const string& specPath,
+            string specPath,
             BaseTestSpec<TProblemSpec>* testSpec)
-            : specPath_(specPath)
+            : specPath_(move(specPath))
             , testSpec_(testSpec) {}
 
     // TODO (fushar): In 2.0, replace this with entry point

@@ -24,9 +24,9 @@ private:
     EvaluatorHelperRegistry* helperRegistry_;
 
 public:
-    virtual ~EvaluatorRegistry() {}
+    virtual ~EvaluatorRegistry() = default;
 
-    EvaluatorRegistry(EvaluatorHelperRegistry* helperRegistry)
+    explicit EvaluatorRegistry(EvaluatorHelperRegistry* helperRegistry)
             : helperRegistry_(helperRegistry) {}
 
     virtual Evaluator* get(const string& slug, OperatingSystem* os, const map<string, string>& helperCommands) {
@@ -46,7 +46,7 @@ public:
         if (slug == "interactive") {
             return getInteractiveConfig();
         }
-        return EvaluatorConfig();
+        return {};
     }
 
 private:
@@ -79,7 +79,7 @@ private:
         if (helperCommands.count(key)) {
             return optional<string>(helperCommands.at(key));
         }
-        return optional<string>();
+        return {};
     }
 };
 

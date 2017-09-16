@@ -8,7 +8,7 @@ namespace tcframe {
 
 class LoggerEngine {
 public:
-    virtual ~LoggerEngine() {}
+    virtual ~LoggerEngine() = default;
 
     virtual void logHeading(const string& message) = 0;
     virtual void logParagraph(int level, const string& message) = 0;

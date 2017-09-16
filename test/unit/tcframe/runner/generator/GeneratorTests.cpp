@@ -46,7 +46,7 @@ protected:
             .setHasTcOutput(true)
             .build();
 
-    Generator generator = Generator(&specClient, &testCaseGenerator, &os, &logger);
+    Generator generator = {&specClient, &testCaseGenerator, &os, &logger};
 
     void SetUp() {
         ON_CALL(specClient, hasMultipleTestCases())

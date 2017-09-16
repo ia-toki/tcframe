@@ -24,7 +24,7 @@ protected:
     string communicatorCommand = "./communicator";
     EvaluationOptions options;
 
-    Communicator communicator = Communicator(&os, &verdictCreator, communicatorCommand);
+    Communicator communicator = {&os, &verdictCreator, communicatorCommand};
 
     void SetUp() {
         ON_CALL(os, execute(_)).WillByDefault(Return(ExecutionResultBuilder().setStandardError("AC\n").build()));
@@ -40,7 +40,7 @@ TEST_F(CommunicatorTests, Communication_Successful) {
 }
 
 TEST_F(CommunicatorTests, Communication_Crashed) {
-    ExecutionResult executionResult = ExecutionResultBuilder()
+    auto executionResult = ExecutionResultBuilder()
             .setExitCode(1)
             .setStandardError("crashed")
             .build();

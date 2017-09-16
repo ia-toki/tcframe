@@ -2,10 +2,12 @@
 
 #include <string>
 #include <tuple>
+#include <utility>
 
 #include "VerdictStatus.hpp"
 #include "tcframe/util.hpp"
 
+using std::move;
 using std::tie;
 
 namespace tcframe {
@@ -19,12 +21,12 @@ public:
     Verdict()
             : Verdict(VerdictStatus::ac()) {}
 
-    Verdict(VerdictStatus status)
-            : status_(status)
+    explicit Verdict(VerdictStatus status)
+            : status_(move(status))
             , points_(optional<double>()) {}
 
     Verdict(VerdictStatus status, double points)
-            : status_(status)
+            : status_(move(status))
             , points_(optional<double>(points)) {}
 
     const VerdictStatus& status() const {

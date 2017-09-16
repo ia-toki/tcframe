@@ -34,7 +34,7 @@ protected:
             .build();
     TestSuite testSuite = TestSuite({TestGroup(0, {stc}), TestGroup(-1, {tc1, tc2})});
 
-    SpecDriver driver = SpecDriver(&testCaseDriver, &seedSetter, multipleTestCasesConfig, testSuite);
+    SpecDriver driver = {&testCaseDriver, &seedSetter, multipleTestCasesConfig, testSuite};
 };
 
 int SpecDriverTests::T;

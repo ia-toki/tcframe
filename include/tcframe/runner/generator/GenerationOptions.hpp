@@ -54,11 +54,11 @@ private:
     GenerationOptions subject_;
 
 public:
-    GenerationOptionsBuilder(const GenerationOptions& from)
-            : subject_(from) {}
+    explicit GenerationOptionsBuilder(GenerationOptions from)
+            : subject_(move(from)) {}
 
-    GenerationOptionsBuilder(string slug) {
-        subject_.slug_ = slug;
+    explicit GenerationOptionsBuilder(string slug) {
+        subject_.slug_ = move(slug);
     }
 
     GenerationOptionsBuilder& setSeed(unsigned seed) {
@@ -67,12 +67,12 @@ public:
     }
 
     GenerationOptionsBuilder& setSolutionCommand(string solutionCommand) {
-        subject_.solutionCommand_ = solutionCommand;
+        subject_.solutionCommand_ = move(solutionCommand);
         return *this;
     }
 
     GenerationOptionsBuilder& setOutputDir(string outputDir) {
-        subject_.outputDir_ = outputDir;
+        subject_.outputDir_ = move(outputDir);
         return *this;
     }
 

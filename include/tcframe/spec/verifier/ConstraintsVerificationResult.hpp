@@ -12,6 +12,7 @@
 #include "tcframe/util.hpp"
 
 using std::map;
+using std::move;
 using std::set;
 using std::string;
 using std::tie;
@@ -26,12 +27,12 @@ private:
 
 public:
     ConstraintsVerificationResult(
-            const map<int, vector<string>>& unsatisfiedConstraintDescriptionsBySubtaskId,
-            const set<int>& satisfiedButNotAssignedSubtaskIds)
-            : unsatisfiedConstraintDescriptionsBySubtaskId_(unsatisfiedConstraintDescriptionsBySubtaskId)
-            , satisfiedButNotAssignedSubtaskIds_(satisfiedButNotAssignedSubtaskIds) {}
+            map<int, vector<string>> unsatisfiedConstraintDescriptionsBySubtaskId,
+            set<int> satisfiedButNotAssignedSubtaskIds)
+            : unsatisfiedConstraintDescriptionsBySubtaskId_(move(unsatisfiedConstraintDescriptionsBySubtaskId))
+            , satisfiedButNotAssignedSubtaskIds_(move(satisfiedButNotAssignedSubtaskIds)) {}
 
-    ConstraintsVerificationResult() {}
+    ConstraintsVerificationResult() = default;
 
     bool isValid() const {
         return unsatisfiedConstraintDescriptionsBySubtaskId_.empty() &&

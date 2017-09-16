@@ -3,12 +3,14 @@
 #include <map>
 #include <iostream>
 #include <string>
+#include <utility>
 
 #include "TestCaseDriver.hpp"
 #include "tcframe/spec.hpp"
 
 using std::istream;
 using std::map;
+using std::move;
 using std::ostream;
 using std::string;
 
@@ -27,17 +29,17 @@ private:
     map<string, TestCase> testCasesByName_;
 
 public:
-    virtual ~SpecDriver() {}
+    virtual ~SpecDriver() = default;
 
     SpecDriver(
             TestCaseDriver* testCaseDriver,
             SeedSetter* seedSetter,
-            const MultipleTestCasesConfig& multipleTestCasesConfig,
-            const TestSuite& testSuite)
+            MultipleTestCasesConfig multipleTestCasesConfig,
+            TestSuite testSuite)
             : testCaseDriver_(testCaseDriver)
             , seedSetter_(seedSetter)
-            , multipleTestCasesConfig_(multipleTestCasesConfig)
-            , testSuite_(testSuite) {
+            , multipleTestCasesConfig_(move(multipleTestCasesConfig))
+            , testSuite_(move(testSuite)) {
 
         for (auto& testGroup : testSuite_.testGroups()) {
             for (auto& testCase: testGroup.testCases()) {

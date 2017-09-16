@@ -51,8 +51,8 @@ public:
     }
 
     bool operator==(const GradingOptions& o) const {
-        return tie(slug_, solutionCommand_, outputDir_, timeLimit_, memoryLimit_) ==
-                tie(o.slug_, o.solutionCommand_, o.outputDir_, o.timeLimit_, o.memoryLimit_);
+        return tie(slug_, subtaskPoints_, solutionCommand_, outputDir_, timeLimit_, memoryLimit_) ==
+                tie(o.slug_, o.subtaskPoints_, o.solutionCommand_, o.outputDir_, o.timeLimit_, o.memoryLimit_);
     }
 };
 
@@ -61,25 +61,25 @@ private:
     GradingOptions subject_;
 
 public:
-    GradingOptionsBuilder(const GradingOptions& from)
-            : subject_(from) {}
+    explicit GradingOptionsBuilder(GradingOptions from)
+            : subject_(move(from)) {}
 
-    GradingOptionsBuilder(string slug) {
-        subject_.slug_ = slug;
+    explicit GradingOptionsBuilder(string slug) {
+        subject_.slug_ = move(slug);
     }
 
     GradingOptionsBuilder& setSubtaskPoints(vector<double> subtaskPoints) {
-        subject_.subtaskPoints_ = subtaskPoints;
+        subject_.subtaskPoints_ = move(subtaskPoints);
         return *this;
     }
 
     GradingOptionsBuilder& setSolutionCommand(string solutionCommand) {
-        subject_.solutionCommand_ = solutionCommand;
+        subject_.solutionCommand_ = move(solutionCommand);
         return *this;
     }
 
     GradingOptionsBuilder& setOutputDir(string outputDir) {
-        subject_.outputDir_ = outputDir;
+        subject_.outputDir_ = move(outputDir);
         return *this;
     }
 

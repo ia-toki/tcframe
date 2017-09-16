@@ -45,13 +45,13 @@ private:
     EvaluationOptions subject_;
 
 public:
-    EvaluationOptionsBuilder(const EvaluationOptions& from)
-            : subject_(from) {}
+    explicit EvaluationOptionsBuilder(EvaluationOptions from)
+            : subject_(move(from)) {}
 
-    EvaluationOptionsBuilder() {}
+    EvaluationOptionsBuilder() = default;
 
     EvaluationOptionsBuilder& setSolutionCommand(string solutionCommand) {
-        subject_.solutionCommand_ = solutionCommand;
+        subject_.solutionCommand_ = move(solutionCommand);
         return *this;
     }
 

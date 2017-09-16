@@ -74,15 +74,19 @@ TEST_F(VerdictCreatorTests, FromExecutionResult_Nothing) {
 }
 
 TEST_F(VerdictCreatorTests, FromExecutionResult_TLE) {
-    ExecutionResult executionResult = ExecutionResultBuilder()
+    auto executionResult = ExecutionResultBuilder()
             .setExitSignal(SIGXCPU)
             .build();
-    EXPECT_THAT(verdictCreator.fromExecutionResult(executionResult), Eq(Verdict(VerdictStatus::tle())));
+    EXPECT_THAT(
+            verdictCreator.fromExecutionResult(executionResult),
+            Eq(optional<Verdict>(Verdict(VerdictStatus::tle()))));
 }
 
 TEST_F(VerdictCreatorTests, FromExecutionResult_RTE) {
-    ExecutionResult executionResult = ExecutionResultBuilder().setExitCode(1).build();
-    EXPECT_THAT(verdictCreator.fromExecutionResult(executionResult), Eq(Verdict(VerdictStatus::rte())));
+    auto executionResult = ExecutionResultBuilder().setExitCode(1).build();
+    EXPECT_THAT(
+            verdictCreator.fromExecutionResult(executionResult),
+            Eq(optional<Verdict>(Verdict(VerdictStatus::rte()))));
 }
 
 }

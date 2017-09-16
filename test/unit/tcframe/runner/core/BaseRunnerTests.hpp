@@ -1,6 +1,8 @@
 #include "gmock/gmock.h"
 #include "../../mock.hpp"
 
+#include <utility>
+
 #include "../../driver/MockDriver.hpp"
 #include "../aggregator/MockAggregator.hpp"
 #include "../aggregator/MockAggregatorRegistry.hpp"
@@ -22,6 +24,8 @@ using ::testing::Return;
 using ::testing::Test;
 using ::testing::Throw;
 using ::testing::Truly;
+
+using std::move;
 
 namespace tcframe {
 
@@ -67,19 +71,17 @@ protected:
     template<typename TProblemSpec>
     Runner<TProblemSpec> createRunner(BaseTestSpec<TProblemSpec>* testSpec) {
         auto driver = new Driver<TProblemSpec>(specPath, testSpec);
-
-        return Runner<TProblemSpec>(
-                driver, loggerEngine, &os, &runnerLoggerFactory, &graderLoggerFactory,
-                &generatorFactory, &graderFactory, &evaluatorRegistry, &aggregatorRegistry);
+        return {driver, loggerEngine, &os, &runnerLoggerFactory, &graderLoggerFactory,
+                &generatorFactory, &graderFactory, &evaluatorRegistry, &aggregatorRegistry};
     }
 
     struct HelperKeyIs {
         string key_;
         string value_;
 
-        HelperKeyIs(const string& key, const string& value)
-                : key_(key)
-                , value_(value) {}
+        HelperKeyIs(string key, string value)
+                : key_(move(key))
+                , value_(move(value)) {}
 
         bool operator()(const map<string, string>& m) const {
             if (value_.empty()) {

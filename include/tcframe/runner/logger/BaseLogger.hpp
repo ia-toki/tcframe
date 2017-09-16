@@ -12,7 +12,7 @@ namespace tcframe {
 
 class BaseLogger {
 public:
-    virtual ~BaseLogger() {}
+    virtual ~BaseLogger() = default;
 
     virtual void logTestGroupIntroduction(int testGroupId) = 0;
     virtual void logTestCaseIntroduction(const string& testCaseName) = 0;

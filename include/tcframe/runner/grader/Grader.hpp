@@ -30,7 +30,7 @@ private:
     GraderLogger* logger_;
 
 public:
-    virtual ~Grader() {}
+    virtual ~Grader() = default;
 
     Grader(SpecClient* specClient, TestCaseGrader* testCaseGrader, Aggregator* aggregator, GraderLogger* logger)
             : specClient_(specClient)
@@ -53,7 +53,7 @@ public:
         map<int, Verdict> subtaskVerdictsById;
         vector<Verdict> subtaskVerdicts;
 
-        for (auto& entry : verdictsBySubtaskId) {
+        for (const auto& entry : verdictsBySubtaskId) {
             int subtaskId = entry.first;
             const vector<Verdict>& verdicts = entry.second;
 
@@ -94,7 +94,7 @@ private:
         logger_->logTestGroupIntroduction(testGroup.id());
 
         if (hasMultipleTestCases) {
-            TestCase testCase = TestCaseBuilder()
+            auto testCase = TestCaseBuilder()
                     .setName(TestGroup::createName(options.slug(), testGroup.id()))
                     .setSubtaskIds(testGroup.testCases()[0].subtaskIds())
                     .build();
@@ -124,12 +124,14 @@ private:
             aggregatedStatus = max(aggregatedStatus, verdict.status());
             aggregatedPoints += verdict.points().value();
         }
-        return Verdict(aggregatedStatus, aggregatedPoints);
+        return {aggregatedStatus, aggregatedPoints};
     }
 };
 
 class GraderFactory {
 public:
+    virtual ~GraderFactory() = default;
+
     virtual Grader* create(
             SpecClient* specClient,
             TestCaseGrader* testCaseGrader,

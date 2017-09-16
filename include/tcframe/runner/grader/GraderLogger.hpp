@@ -12,7 +12,7 @@ namespace tcframe {
 
 class GraderLogger : public virtual BaseLogger {
 public:
-    virtual ~GraderLogger() {}
+    virtual ~GraderLogger() = default;
 
     virtual void logIntroduction(const string& solutionCommand) = 0;
     virtual void logTestCaseVerdict(const Verdict& verdict) = 0;

@@ -13,7 +13,7 @@ namespace tcframe {
 
 class EvaluatorHelperRegistry {
 public:
-    virtual ~EvaluatorHelperRegistry() {}
+    virtual ~EvaluatorHelperRegistry() = default;
 
     virtual Scorer* getScorer(OperatingSystem* os, const optional<string>& scorerCommand) {
         if (scorerCommand) {

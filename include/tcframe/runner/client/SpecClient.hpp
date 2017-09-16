@@ -1,11 +1,15 @@
 #pragma once
 
+#include <istream>
+#include <ostream>
 #include <string>
 
 #include "tcframe/driver.hpp"
 #include "tcframe/runner/os.hpp"
 #include "tcframe/spec/testcase.hpp"
 
+using std::istream;
+using std::ostream;
 using std::string;
 
 namespace tcframe {
@@ -17,7 +21,7 @@ private:
     OperatingSystem* os_;
 
 public:
-    virtual ~SpecClient() {}
+    virtual ~SpecClient() = default;
 
     SpecClient(SpecDriver* specDriver, OperatingSystem* os)
             : specDriver_(specDriver)

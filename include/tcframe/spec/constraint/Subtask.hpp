@@ -1,10 +1,12 @@
 #pragma once
 
 #include <tuple>
+#include <utility>
 #include <vector>
 
 #include "Constraint.hpp"
 
+using std::move;
 using std::tie;
 using std::vector;
 
@@ -23,17 +25,17 @@ private:
     double points_;
 
 public:
-    Subtask() {}
+    Subtask() = default;
 
-    Subtask(int id, const vector<Constraint>& constraints)
+    Subtask(int id, vector<Constraint> constraints)
             : id_(id)
-            , constraints_(constraints)
+            , constraints_(move(constraints))
             , points_(0) {}
 
-    Subtask(int id, double points, const vector<Constraint>& constraints)
+    Subtask(int id, double points, vector<Constraint> constraints)
             : id_(id)
             , points_(points)
-            , constraints_(constraints) {}
+            , constraints_(move(constraints)) {}
 
     int id() const {
         return id_;

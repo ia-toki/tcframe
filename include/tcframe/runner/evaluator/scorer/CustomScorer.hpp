@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <streambuf>
 #include <string>
+#include <utility>
 
 #include "Scorer.hpp"
 #include "ScoringResult.hpp"
@@ -11,6 +12,7 @@
 #include "tcframe/runner/verdict.hpp"
 
 using std::istream;
+using std::move;
 using std::runtime_error;
 using std::string;
 
@@ -23,12 +25,12 @@ private:
     string scorerCommand_;
 
 public:
-    virtual ~CustomScorer() {}
+    virtual ~CustomScorer() = default;
 
-    CustomScorer(OperatingSystem* os, VerdictCreator* verdictCreator, const string& scorerCommand)
+    CustomScorer(OperatingSystem* os, VerdictCreator* verdictCreator, string scorerCommand)
             : os_(os)
             , verdictCreator_(verdictCreator)
-            , scorerCommand_(scorerCommand) {}
+            , scorerCommand_(move(scorerCommand)) {}
 
     ScoringResult score(const string& inputFilename, const string& outputFilename, const string& evaluationFilename) {
         string scoringCommand = scorerCommand_
@@ -52,8 +54,7 @@ public:
                 string newStandardError = executionResult.standardError()
                         + "\n"
                         + e.what();
-                executionResult = ExecutionResultBuilder()
-                        .from(executionResult)
+                executionResult = ExecutionResultBuilder(executionResult)
                         .setStandardError(newStandardError)
                         .build();
             }
@@ -62,7 +63,7 @@ public:
             verdict = Verdict(VerdictStatus::err());
         }
 
-        return ScoringResult(verdict, executionResult);
+        return {verdict, executionResult};
     }
 };
 

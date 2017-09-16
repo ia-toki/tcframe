@@ -24,7 +24,7 @@ private:
     Scorer* scorer_;
 
 public:
-    virtual ~BatchEvaluator() {}
+    virtual ~BatchEvaluator() = default;
 
     BatchEvaluator(OperatingSystem* os, VerdictCreator* verdictCreator, Scorer* scorer)
             : os_(os)
@@ -50,7 +50,7 @@ public:
             verdict = scoringResult.verdict();
         }
 
-        return EvaluationResult(verdict, executionResults);
+        return {verdict, executionResults};
     }
 
     GenerationResult generate(
@@ -58,7 +58,7 @@ public:
             const string& outputFilename,
             const EvaluationOptions& options) {
 
-        ExecutionRequestBuilder request = ExecutionRequestBuilder()
+        auto request = ExecutionRequestBuilder()
                 .setCommand(options.solutionCommand())
                 .setInputFilename(inputFilename)
                 .setOutputFilename(outputFilename);
@@ -72,7 +72,7 @@ public:
 
         ExecutionResult executionResult = os_->execute(request.build());
         optional<Verdict> verdict = verdictCreator_->fromExecutionResult(executionResult);
-        return GenerationResult(verdict, executionResult);
+        return {verdict, executionResult};
     }
 
     ScoringResult score(const string& inputFilename, const string& outputFilename) {

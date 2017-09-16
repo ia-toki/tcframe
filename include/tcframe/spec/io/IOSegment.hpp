@@ -20,7 +20,7 @@ enum class IOSegmentType {
 
 struct IOSegment {
 public:
-    virtual ~IOSegment() {}
+    virtual ~IOSegment() = default;
 
     virtual IOSegmentType type() const = 0;
 
@@ -29,7 +29,7 @@ public:
 
 class IOSegmentBuilder {
 public:
-    virtual ~IOSegmentBuilder() {}
+    virtual ~IOSegmentBuilder() = default;
 
     virtual IOSegment* build() = 0;
 };

@@ -23,11 +23,11 @@ private:
     vector<Constraint> multipleTestCasesConstraints_;
 
 public:
-    ConstraintSuite() {}
+    ConstraintSuite() = default;
 
-    ConstraintSuite(const vector<Subtask>& constraints, const vector<Constraint>& multipleTestCasesConstraints)
-            : constraints_(constraints)
-            , multipleTestCasesConstraints_(multipleTestCasesConstraints) {}
+    ConstraintSuite(vector<Subtask> constraints, vector<Constraint> multipleTestCasesConstraints)
+            : constraints_(move(constraints))
+            , multipleTestCasesConstraints_(move(multipleTestCasesConstraints)) {}
 
     const vector<Subtask>& constraints() const {
         return constraints_;
@@ -60,20 +60,14 @@ class ConstraintSuiteBuilder {
 private:
     ConstraintSuite subject_;
 
-    bool hasCurrentSubtask_;
-    int curSubtaskId_;
-    double curPoints_;
-    bool isInMultipleTestCasesConstraints_;
+    bool hasCurrentSubtask_ = false;
+    int curSubtaskId_ = Subtask::MAIN_ID;
+    double curPoints_ = 0;
+    bool isInMultipleTestCasesConstraints_ = false;
     vector<Constraint> curConstraints_;
 
 public:
-    virtual ~ConstraintSuiteBuilder() {}
-
-    ConstraintSuiteBuilder()
-            : hasCurrentSubtask_(false)
-            , curSubtaskId_(Subtask::MAIN_ID)
-            , curPoints_(0)
-            , isInMultipleTestCasesConstraints_(false) {}
+    virtual ~ConstraintSuiteBuilder() = default;
 
     ConstraintSuiteBuilder& newSubtask() {
         addCurrentSubtask();
@@ -102,9 +96,9 @@ public:
 
     ConstraintSuiteBuilder& addConstraint(function<bool()> predicate, string description) {
         if (isInMultipleTestCasesConstraints_) {
-            subject_.multipleTestCasesConstraints_.push_back(Constraint(predicate, description));
+            subject_.multipleTestCasesConstraints_.emplace_back(predicate, description);
         } else {
-            curConstraints_.push_back(Constraint(predicate, description));
+            curConstraints_.emplace_back(predicate, description);
         }
         return *this;
     }
@@ -121,13 +115,13 @@ public:
 
 private:
     void addCurrentSubtask() {
-        subject_.constraints_.push_back(Subtask(curSubtaskId_, curPoints_, curConstraints_));
+        subject_.constraints_.emplace_back(curSubtaskId_, curPoints_, curConstraints_);
     }
 
     void assignMainSubtaskPoints() {
         Subtask mainSubtask = subject_.constraints_.back();
         subject_.constraints_.pop_back();
-        subject_.constraints_.push_back(Subtask(Subtask::MAIN_ID, Subtask::MAIN_POINTS, mainSubtask.constraints()));
+        subject_.constraints_.emplace_back(Subtask::MAIN_ID, double(Subtask::MAIN_POINTS), mainSubtask.constraints());
     }
 };
 

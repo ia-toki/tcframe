@@ -3,6 +3,7 @@
 
 #include <sstream>
 #include <streambuf>
+#include <utility>
 
 #include "MockRawIOManipulator.hpp"
 #include "../spec/io/MockIOManipulator.hpp"
@@ -19,6 +20,7 @@ using ::testing::Truly;
 
 using std::istreambuf_iterator;
 using std::istringstream;
+using std::move;
 using std::ostringstream;
 
 namespace tcframe {
@@ -58,7 +60,7 @@ protected:
     TestCaseDriver driverWithMultipleTestCases = createDriver(multipleTestCasesConfig);
     TestCaseDriver driverWithMultipleTestCasesWithOutputPrefix = createDriver(multipleTestCasesConfigWithOutputPrefix);
 
-    TestCaseDriver createDriver(const MultipleTestCasesConfig& multipleTestCasesConfig) {
+    TestCaseDriver createDriver(MultipleTestCasesConfig multipleTestCasesConfig) {
         return {&rawIOManipulator, &ioManipulator, &verifier, multipleTestCasesConfig};
     }
 
@@ -72,8 +74,8 @@ protected:
     struct InputStreamContentIs {
         string content_;
 
-        explicit InputStreamContentIs(const string& content)
-                : content_(content) {}
+        explicit InputStreamContentIs(string content)
+                : content_(move(content)) {}
 
         bool operator()(istream* in) const {
             return content_ == string(istreambuf_iterator<char>(*in), istreambuf_iterator<char>());

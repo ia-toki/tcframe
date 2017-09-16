@@ -44,7 +44,7 @@ public:
     }
 
     MultipleTestCasesConfigBuilder& OutputPrefix(string outputPrefix) {
-        subject_.outputPrefix_ = optional<string>(outputPrefix);
+        subject_.outputPrefix_ = optional<string>(move(outputPrefix));
         return *this;
     }
 

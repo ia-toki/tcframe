@@ -7,6 +7,7 @@
 
 #include "tcframe/util.hpp"
 
+using std::move;
 using std::pair;
 using std::runtime_error;
 using std::string;
@@ -21,8 +22,8 @@ private:
 public:
     ~FormattedError() noexcept = default;
 
-    explicit FormattedError(const vector<pair<int, string>>& messages)
-            : messages_(messages) {}
+    explicit FormattedError(vector<pair<int, string>> messages)
+            : messages_(move(messages)) {}
 
     const vector<pair<int, string>> messages() const {
         return messages_;

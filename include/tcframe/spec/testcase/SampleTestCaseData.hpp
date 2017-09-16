@@ -2,6 +2,7 @@
 
 #include <string>
 #include <tuple>
+#include <utility>
 
 #include "TestCaseData.hpp"
 #include "tcframe/util.hpp"
@@ -17,14 +18,14 @@ private:
     optional<string> output_;
 
 public:
-    virtual ~SampleTestCaseData() {}
+    virtual ~SampleTestCaseData() = default;
 
-    SampleTestCaseData(const string& input)
-            : input_(input) {}
+    explicit SampleTestCaseData(string input)
+            : input_(move(input)) {}
 
-    SampleTestCaseData(const string& input, const string& output)
-              : input_(input)
-              , output_(optional<string>(output)) {}
+    SampleTestCaseData(string input, string output)
+              : input_(move(input))
+              , output_(optional<string>(move(output))) {}
 
     TestCaseDataType type() const {
         return TestCaseDataType::SAMPLE;

@@ -3,8 +3,10 @@
 #include <functional>
 #include <string>
 #include <tuple>
+#include <utility>
 
 using std::function;
+using std::move;
 using std::string;
 using std::tie;
 
@@ -16,9 +18,9 @@ private:
     string description_;
 
 public:
-    Constraint(const function<bool()>& predicate, const string& description)
-            : predicate_(predicate)
-            , description_(description) {}
+    Constraint(function<bool()> predicate, string description)
+            : predicate_(move(predicate))
+            , description_(move(description)) {}
 
     const function<bool()>& predicate() const {
         return predicate_;

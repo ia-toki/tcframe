@@ -23,7 +23,7 @@ private:
     GeneratorLogger* logger_;
 
 public:
-    virtual ~TestCaseGenerator() {}
+    virtual ~TestCaseGenerator() = default;
 
     TestCaseGenerator(
             SpecClient* specClient,
@@ -76,7 +76,7 @@ private:
             return;
         }
 
-        EvaluationOptions evaluationOptions = EvaluationOptionsBuilder()
+        auto evaluationOptions = EvaluationOptionsBuilder()
                 .setSolutionCommand(options.solutionCommand())
                 .build();
 

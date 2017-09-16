@@ -3,6 +3,7 @@
 #include <functional>
 #include <queue>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "tcframe/spec/io.hpp"
@@ -10,6 +11,7 @@
 #include "tcframe/util.hpp"
 
 using std::function;
+using std::move;
 using std::queue;
 using std::string;
 using std::vector;
@@ -34,8 +36,8 @@ namespace tcframe {
 struct VectorSize {
     function<int()> size;
 
-    VectorSize(const function<int()>& size)
-            : size(size) {}
+    explicit VectorSize(function<int()> size)
+            : size(move(size)) {}
 };
 
 template<typename T>
@@ -46,16 +48,16 @@ struct VectorWithSize {
 
 template<typename T>
 VectorWithSize<T> operator%(vector<T>& vektor, VectorSize size) {
-    return VectorWithSize<T>{&vektor, size};
+    return {&vektor, size};
 }
 
 struct MatrixSize {
     function<int()> rows;
     function<int()> columns;
 
-    MatrixSize(const function<int()>& rows, const function<int()>& columns)
-            : rows(rows)
-            , columns(columns) {}
+    MatrixSize(function<int()> rows, function<int()> columns)
+            : rows(move(rows))
+            , columns(move(columns)) {}
 };
 
 class VariableNamesExtractor {
@@ -63,8 +65,8 @@ private:
     queue<string> names_;
 
 public:
-    VariableNamesExtractor(const string& names) {
-        for (string name : extractVariableNames(names)) {
+    explicit VariableNamesExtractor(const string& names) {
+        for (const string& name : extractVariableNames(names)) {
             names_.push(name);
         }
     }
@@ -78,7 +80,7 @@ public:
 private:
     static vector<string> extractVariableNames(const string& s) {
         vector<string> names;
-        for (string namePossiblyWithSize : StringUtils::split(s, ',')) {
+        for (const string& namePossiblyWithSize : StringUtils::split(s, ',')) {
             vector<string> tokens = StringUtils::splitAndTrimBySpace(namePossiblyWithSize);
             names.push_back(tokens[0]);
         }
@@ -109,7 +111,7 @@ public:
     }
 
     template<typename T, typename = ScalarCompatible<T>>
-    MagicLineIOSegmentBuilder& operator,(VectorWithSize<T> var) {
+    MagicLineIOSegmentBuilder& operator,(const VectorWithSize<T>& var) {
         builder_->addVectorVariable(Vector::create(*var.vektor, extractor_.nextName()), var.size.size);
         return *this;
     }
@@ -121,11 +123,11 @@ public:
                 + " is not supported for a line segment");
     }
 
-    MagicLineIOSegmentBuilder& operator%(VectorSize) {
+    MagicLineIOSegmentBuilder& operator%(const VectorSize&) {
         throw runtime_error("Specifying size is not allowed after a line segment");
     }
 
-    MagicLineIOSegmentBuilder& operator%(MatrixSize) {
+    MagicLineIOSegmentBuilder& operator%(const MatrixSize&) {
         throw runtime_error("Specifying size is not allowed after a line segment");
     }
 };
@@ -159,7 +161,7 @@ public:
                 + " is not supported for a lines segment");
     }
 
-    MagicLinesIOSegmentBuilder& operator%(VectorSize size) {
+    MagicLinesIOSegmentBuilder& operator%(const VectorSize& size) {
         builder_->setSize(size.size);
         return *this;
     }
@@ -187,11 +189,11 @@ public:
                 + " is not supported for a raw line segment");
     }
 
-    MagicRawLineIOSegmentBuilder& operator%(VectorSize) {
+    MagicRawLineIOSegmentBuilder& operator%(const VectorSize&) {
         throw runtime_error("Specifying size is not allowed after a raw line segment");
     }
 
-    MagicRawLineIOSegmentBuilder& operator%(MatrixSize) {
+    MagicRawLineIOSegmentBuilder& operator%(const MatrixSize&) {
         throw runtime_error("Specifying size is not allowed after a raw line segment");
     }
 };
@@ -218,7 +220,7 @@ public:
                 + " is not supported for a raw lines segment");
     }
 
-    MagicRawLinesIOSegmentBuilder& operator%(VectorSize size) {
+    MagicRawLinesIOSegmentBuilder& operator%(const VectorSize& size) {
         builder_->setSize(size.size);
         return *this;
     }
@@ -247,7 +249,7 @@ public:
                 + " is not supported for a grid segment");
     }
 
-    MagicGridIOSegmentBuilder& operator%(MatrixSize size) {
+    MagicGridIOSegmentBuilder& operator%(const MatrixSize& size) {
         builder_->setSize(size.rows, size.columns);
         return *this;
     }

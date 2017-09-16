@@ -62,17 +62,17 @@ private:
 
 public:
     TestCaseBuilder& setName(string name) {
-        subject_.name_ = name;
+        subject_.name_ = move(name);
         return *this;
     }
 
     TestCaseBuilder& setDescription(string description) {
-        subject_.description_ = description;
+        subject_.description_ = optional<string>(move(description));
         return *this;
     }
 
     TestCaseBuilder& setSubtaskIds(set<int> subtaskIds) {
-        subject_.subtaskIds_ = subtaskIds;
+        subject_.subtaskIds_ = move(subtaskIds);
         return *this;
     }
 

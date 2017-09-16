@@ -20,9 +20,9 @@ protected:
     LoggerEngine* engine_;
 
 public:
-    virtual ~DefaultBaseLogger() {}
+    virtual ~DefaultBaseLogger() = default;
 
-    DefaultBaseLogger(LoggerEngine* engine)
+    explicit DefaultBaseLogger(LoggerEngine* engine)
             : engine_(engine) {}
 
     virtual void logTestGroupIntroduction(int testGroupId) {
@@ -40,7 +40,7 @@ public:
     }
 
     virtual void logExecutionResults(const map<string, ExecutionResult>& executionResults) {
-        for (auto& entry : executionResults) {
+        for (const auto& entry : executionResults) {
             const string& key = entry.first;
             const ExecutionResult& executionResult = entry.second;
 
