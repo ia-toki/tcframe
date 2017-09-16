@@ -30,6 +30,10 @@ protected:
             .addJaggedVectorVariable(Matrix::create(Z, "Z"))
             .setSize(size)
             .build();
+    LinesIOSegment* segmentWithJaggedVectorOnly = LinesIOSegmentBuilder()
+            .addJaggedVectorVariable(Matrix::create(Z, "Z"))
+            .setSize(size)
+            .build();
     LinesIOSegment* segmentWithoutSize = LinesIOSegmentBuilder()
             .addVectorVariable(Vector::create(X, "X"))
             .addVectorVariable(Vector::create(Y, "Y"))
@@ -37,6 +41,9 @@ protected:
     LinesIOSegment* segmentWithJaggedVectorWithoutSize = LinesIOSegmentBuilder()
             .addVectorVariable(Vector::create(X, "X"))
             .addVectorVariable(Vector::create(Y, "Y"))
+            .addJaggedVectorVariable(Matrix::create(Z, "Z"))
+            .build();
+    LinesIOSegment* segmentWithJaggedVectorWithoutSizeOnly = LinesIOSegmentBuilder()
             .addJaggedVectorVariable(Matrix::create(Z, "Z"))
             .build();
     
@@ -96,6 +103,13 @@ TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithJaggedVector_Successful) {
     manipulator.parse(segmentWithJaggedVector, &in);
     EXPECT_THAT(X, Eq(vector<int>{1, 3, 5}));
     EXPECT_THAT(Y, Eq(vector<int>{2, 4, 6}));
+    EXPECT_THAT(Z, Eq(vector<vector<int>>{{10}, {}, {20, 30}}));
+}
+
+TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithJaggedVector_Only_Successful) {
+    istringstream in("10\n\n20 30\n");
+
+    manipulator.parse(segmentWithJaggedVectorOnly, &in);
     EXPECT_THAT(Z, Eq(vector<vector<int>>{{10}, {}, {20, 30}}));
 }
 
@@ -172,6 +186,13 @@ TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithJaggedVector_WithoutSize_Succ
     EXPECT_THAT(Z, Eq(vector<vector<int>>{{10}, {}, {20, 30}}));
 }
 
+TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithJaggedVector_WithoutSize_Only_Successful) {
+    istringstream in("10\n\n20 30\n");
+
+    manipulator.parse(segmentWithJaggedVectorWithoutSizeOnly, &in);
+    EXPECT_THAT(Z, Eq(vector<vector<int>>{{10}, {}, {20, 30}}));
+}
+
 TEST_F(LinesIOSegmentManipulatorTests, Parsing_WithJaggedVector_WithoutSize_Successful_CheckLastVariable) {
     istringstream in("1 2 10\n3 4\n5 6 20 30\n");
 
@@ -222,6 +243,15 @@ TEST_F(LinesIOSegmentManipulatorTests, Printing_WithJaggedVector_Successful) {
 
     manipulator.print(segmentWithJaggedVector, &out);
     EXPECT_THAT(out.str(), Eq("1 2 10\n3 4\n5 6 20 30\n"));
+}
+
+TEST_F(LinesIOSegmentManipulatorTests, Printing_WithJaggedVector_Only_Successful) {
+    ostringstream out;
+
+    Z = {{10}, {}, {20, 30}};
+
+    manipulator.print(segmentWithJaggedVectorOnly, &out);
+    EXPECT_THAT(out.str(), Eq("10\n\n20 30\n"));
 }
 
 TEST_F(LinesIOSegmentManipulatorTests, Printing_WithJaggedVector_Failed_SizeMismatch) {
@@ -275,6 +305,15 @@ TEST_F(LinesIOSegmentManipulatorTests, Printing_WithJaggedVector_WithoutSize_Suc
 
     manipulator.print(segmentWithJaggedVectorWithoutSize, &out);
     EXPECT_THAT(out.str(), Eq("1 2 10\n3 4\n5 6 20 30\n"));
+}
+
+TEST_F(LinesIOSegmentManipulatorTests, Printing_WithJaggedVector_WithoutSize_Only_Successful) {
+    ostringstream out;
+
+    Z = {{10}, {}, {20, 30}};
+
+    manipulator.print(segmentWithJaggedVectorWithoutSizeOnly, &out);
+    EXPECT_THAT(out.str(), Eq("10\n\n20 30\n"));
 }
 
 TEST_F(LinesIOSegmentManipulatorTests, Printing_WithJaggedVector_WithoutSize_Failed_DifferentSizes) {
