@@ -19,17 +19,24 @@ public:
     string parse(LineIOSegment* segment, istream* in) {
         string lastVariableName;
         for (const LineIOSegmentVariable& segmentVariable : segment->variables()) {
-            if (!lastVariableName.empty()) {
-                WhitespaceManipulator::parseSpace(in, lastVariableName);
-            }
-
             Variable* variable = segmentVariable.variable();
             int size = segmentVariable.size()();
 
             if (variable->type() == VariableType::SCALAR) {
+                if (!lastVariableName.empty()) {
+                    WhitespaceManipulator::parseSpace(in, lastVariableName);
+                }
                 parseScalar((Scalar*) variable, in);
                 lastVariableName = TokenFormatter::formatVariable(variable->name());
             } else {
+                if (!lastVariableName.empty()) {
+                    if (size != NO_SIZE && size > 0) {
+                        WhitespaceManipulator::parseSpace(in, lastVariableName);
+                    }
+                    if (size == NO_SIZE && !WhitespaceManipulator::canParseNewline(in)) {
+                        WhitespaceManipulator::parseSpace(in, lastVariableName);
+                    }
+                }
                 Vector* vectorVariable = (Vector*) variable;
                 parseVector(vectorVariable, size, in);
                 lastVariableName = TokenFormatter::formatVectorElement(variable->name(), vectorVariable->size() - 1);
@@ -43,19 +50,21 @@ public:
     void print(LineIOSegment* segment, ostream* out) {
         bool first = true;
         for (const LineIOSegmentVariable& segmentVariable : segment->variables()) {
-            if (!first) {
-                *out << ' ';
-            }
-            first = false;
-
             Variable* variable = segmentVariable.variable();
             int size = segmentVariable.size()();
 
             if (variable->type() == VariableType::SCALAR) {
+                if (!first) {
+                    *out << ' ';
+                }
                 printScalar((Scalar*) variable, out);
             } else if (variable->type() == VariableType::VECTOR) {
+                if (!first && ((Vector*) variable)->size() != 0) {
+                    *out << ' ';
+                }
                 printVector((Vector*) variable, size, out);
             }
+            first = false;
         }
         *out << endl;
     }
