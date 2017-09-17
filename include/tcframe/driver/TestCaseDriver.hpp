@@ -7,8 +7,8 @@
 #include <utility>
 
 #include "RawIOManipulator.hpp"
+#include "tcframe/exception.hpp"
 #include "tcframe/spec/config.hpp"
-#include "tcframe/spec/exception.hpp"
 #include "tcframe/spec/io.hpp"
 #include "tcframe/spec/testcase.hpp"
 #include "tcframe/spec/verifier.hpp"

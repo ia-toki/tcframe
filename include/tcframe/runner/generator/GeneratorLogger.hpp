@@ -7,7 +7,6 @@
 
 #include "tcframe/runner/logger.hpp"
 #include "tcframe/spec/constraint.hpp"
-#include "tcframe/spec/exception.hpp"
 #include "tcframe/spec/verifier.hpp"
 #include "tcframe/util.hpp"
 
@@ -29,8 +28,6 @@ public:
     virtual void logMultipleTestCasesCombinationIntroduction(const string& testGroupName) = 0;
     virtual void logMultipleTestCasesCombinationSuccessfulResult() = 0;
     virtual void logMultipleTestCasesCombinationFailedResult() = 0;
-    virtual void logSimpleError(const runtime_error& e) = 0;
-    virtual void logFormattedError(const FormattedError& e) = 0;
 };
 
 }

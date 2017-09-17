@@ -36,25 +36,25 @@ TEST_F(DefaultBaseLoggerTests, TestCaseIntroduction) {
     logger.logTestCaseIntroduction("foo_1");
 }
 
-TEST_F(DefaultBaseLoggerTests, ExecutionResults) {
+
+TEST_F(DefaultBaseLoggerTests, Error_Simple) {
+    EXPECT_CALL(engine, logListItem1(2, "error"));
+    logger.logError(new runtime_error("error"));
+}
+
+TEST_F(DefaultBaseLoggerTests, Error_Formatted) {
     {
         InSequence sequence;
-        EXPECT_CALL(engine, logListItem1(2, "scorer1: diff: abc"));
-
-        EXPECT_CALL(engine, logListItem1(2, "Execution of scorer2 failed:"));
-        EXPECT_CALL(engine, logListItem2(3, "Exit signal: " + string(strsignal(SIGSEGV))));
-
-        EXPECT_CALL(engine, logListItem1(2, "Execution of solution failed:"));
-        EXPECT_CALL(engine, logListItem2(3, "Exit code: 1"));
-        EXPECT_CALL(engine, logListItem2(3, "Standard error: err"));
+        EXPECT_CALL(engine, logListItem1(2, "error 1"));
+        EXPECT_CALL(engine, logListItem2(3, "error 1a"));
+        EXPECT_CALL(engine, logListItem2(3, "error 1b"));
+        EXPECT_CALL(engine, logListItem1(2, "error 2"));
     }
-
-    map<string, ExecutionResult> executionResults = {
-            {"solution", ExecutionResultBuilder().setExitCode(1).setStandardError("err").build()},
-            {"scorer1", ExecutionResultBuilder().setExitCode(0).setStandardError("diff: abc").build()},
-            {"scorer2", ExecutionResultBuilder().setExitSignal(SIGSEGV).build()}};
-
-    logger.logExecutionResults(executionResults);
+    logger.logError(new FormattedError({
+            {0, "error 1"},
+            {1, "error 1a"},
+            {1, "error 1b"},
+            {0, "error 2"}}));
 }
 
 }

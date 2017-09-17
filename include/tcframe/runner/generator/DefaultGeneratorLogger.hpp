@@ -8,7 +8,6 @@
 #include "GeneratorLogger.hpp"
 #include "tcframe/runner/logger.hpp"
 #include "tcframe/spec/constraint.hpp"
-#include "tcframe/spec/exception.hpp"
 #include "tcframe/spec/verifier.hpp"
 #include "tcframe/util.hpp"
 
@@ -62,20 +61,6 @@ public:
     void logMultipleTestCasesCombinationFailedResult() {
         engine_->logParagraph(0, "FAILED");
         engine_->logParagraph(2, "Reasons:");
-    }
-
-    void logSimpleError(const runtime_error& e) {
-        engine_->logListItem1(2, e.what());
-    }
-
-    void logFormattedError(const FormattedError& e) {
-        for (auto p : e.messages()) {
-            if (p.first == 0) {
-                engine_->logListItem1(2, p.second);
-            } else {
-                engine_->logListItem2(3, p.second);
-            }
-        }
     }
 };
 

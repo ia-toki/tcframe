@@ -7,8 +7,8 @@
 #include <utility>
 #include <vector>
 
+#include "tcframe/exception.hpp"
 #include "tcframe/spec/constraint.hpp"
-#include "tcframe/spec/exception.hpp"
 #include "tcframe/util.hpp"
 
 using std::map;

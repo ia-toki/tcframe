@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "SeedSetter.hpp"
+#include "tcframe/exception.hpp"
 #include "tcframe/spec/config.hpp"
 #include "tcframe/spec/core.hpp"
 #include "tcframe/spec/random.hpp"

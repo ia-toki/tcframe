@@ -22,7 +22,7 @@ public:
 
     void logTestGroupIntroduction(int) {}
     void logTestCaseIntroduction(const string&) {}
-    void logExecutionResults(const map<string, ExecutionResult>&) {}
+    void logError(runtime_error*) {}
     void logIntroduction(const string&) {}
     void logTestCaseVerdict(const Verdict&) {}
 

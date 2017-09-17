@@ -48,6 +48,9 @@ set(INCLUDE
         include/tcframe/driver/SlugParser.hpp
         include/tcframe/driver/SpecDriver.hpp
         include/tcframe/driver/TestCaseDriver.hpp
+        include/tcframe/exception.hpp
+        include/tcframe/exception/FormattedError.hpp
+        include/tcframe/exception/NotImplementedException.hpp
         include/tcframe/runner.hpp
         include/tcframe/runner/aggregator.hpp
         include/tcframe/runner/aggregator/Aggregator.hpp
@@ -88,7 +91,6 @@ set(INCLUDE
         include/tcframe/runner/grader/TestCaseGrader.hpp
         include/tcframe/runner/generator.hpp
         include/tcframe/runner/generator/DefaultGeneratorLogger.hpp
-        include/tcframe/runner/generator/GenerationException.hpp
         include/tcframe/runner/generator/GenerationOptions.hpp
         include/tcframe/runner/generator/Generator.hpp
         include/tcframe/runner/generator/GeneratorLogger.hpp
@@ -123,8 +125,6 @@ set(INCLUDE
         include/tcframe/spec/core/Magic.hpp
         include/tcframe/spec/core/SeedSetter.hpp
         include/tcframe/spec/core/SpecYaml.hpp
-        include/tcframe/spec/exception.hpp
-        include/tcframe/spec/exception/FormattedError.hpp
         include/tcframe/spec/io.hpp
         include/tcframe/spec/io/GridIOSegment.hpp
         include/tcframe/spec/io/GridIOSegmentManipulator.hpp
@@ -160,7 +160,6 @@ set(INCLUDE
         include/tcframe/spec/verifier/MultipleTestCasesConstraintsVerificationResult.hpp
         include/tcframe/spec/verifier/Verifier.hpp
         include/tcframe/util.hpp
-        include/tcframe/util/NotImplementedException.hpp
         include/tcframe/util/StringUtils.hpp
         include/tcframe/util/optional.hpp
 )
@@ -173,6 +172,7 @@ set(TEST_UNIT
         test/unit/tcframe/driver/SpecDriverTests.cpp
         test/unit/tcframe/driver/SlugParserTests.cpp
         test/unit/tcframe/driver/TestCaseDriverTests.cpp
+        test/unit/tcframe/exception/FormattedErrorTests.cpp
         test/unit/tcframe/helper.hpp
         test/unit/tcframe/mock.hpp
         test/unit/tcframe/runner/aggregator/MinAggregatorTests.cpp
@@ -213,6 +213,7 @@ set(TEST_UNIT
         test/unit/tcframe/runner/logger/MockLoggerEngine.hpp
         test/unit/tcframe/runner/logger/RunnerLoggerTests.cpp
         test/unit/tcframe/runner/logger/SimpleLoggerEngineTests.cpp
+        test/unit/tcframe/runner/os/ExecutionResultTests.cpp
         test/unit/tcframe/runner/os/MockOperatingSystem.hpp
         test/unit/tcframe/runner/os/TestCasePathCreatorTests.cpp
         test/unit/tcframe/runner/verdict/MockVerdictCreator.hpp

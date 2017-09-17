@@ -4,10 +4,10 @@
 
 #include "GradingOptions.hpp"
 #include "GraderLogger.hpp"
+#include "tcframe/exception.hpp"
 #include "tcframe/runner/evaluator.hpp"
 #include "tcframe/runner/os.hpp"
 #include "tcframe/runner/verdict.hpp"
-#include "tcframe/util.hpp"
 
 using std::string;
 
@@ -33,7 +33,8 @@ public:
 
         logger_->logTestCaseVerdict(verdict);
         if (!(verdict.status() == VerdictStatus::tle())) {
-            logger_->logExecutionResults(evaluationResult.executionResults());
+            FormattedError error = ExecutionResults::asFormattedError(evaluationResult.executionResults());
+            logger_->logError(&error);
         }
 
         return verdict;

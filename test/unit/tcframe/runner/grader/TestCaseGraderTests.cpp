@@ -9,8 +9,10 @@
 using ::testing::_;
 using ::testing::Eq;
 using ::testing::InSequence;
+using ::testing::Pointee;
 using ::testing::Return;
 using ::testing::Test;
+using ::testing::WhenDynamicCastTo;
 
 namespace tcframe {
 
@@ -46,7 +48,8 @@ TEST_F(TestCaseGraderTests, Grading_AC) {
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
         EXPECT_CALL(evaluator, evaluate("dir/foo_1.in", "dir/foo_1.out", evaluationOptions));
         EXPECT_CALL(logger, logTestCaseVerdict(verdict));
-        EXPECT_CALL(logger, logExecutionResults(executionResults));
+        EXPECT_CALL(logger, logError(
+                WhenDynamicCastTo<FormattedError*>(Pointee(ExecutionResults::asFormattedError(executionResults)))));
     }
     EXPECT_THAT(grader.grade(testCase, options), Eq(verdict));
 }
@@ -61,7 +64,7 @@ TEST_F(TestCaseGraderTests, Grading_TLE) {
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
         EXPECT_CALL(evaluator, evaluate(_, _, _));
         EXPECT_CALL(logger, logTestCaseVerdict(verdict));
-        EXPECT_CALL(logger, logExecutionResults(_)).Times(0);
+        EXPECT_CALL(logger, logError(_)).Times(0);
     }
     EXPECT_THAT(grader.grade(testCase, options), Eq(verdict));
 }

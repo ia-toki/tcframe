@@ -11,9 +11,11 @@
 using ::testing::_;
 using ::testing::Eq;
 using ::testing::InSequence;
+using ::testing::Pointee;
 using ::testing::Return;
 using ::testing::Test;
 using ::testing::Throw;
+using ::testing::WhenDynamicCastTo;
 
 namespace tcframe {
 
@@ -149,7 +151,8 @@ TEST_F(GeneratorTests, Generation_MultipleTestCases_Failed_Verification) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logMultipleTestCasesCombinationFailedResult());
-        EXPECT_CALL(logger, logFormattedError(verificationResult.asFormattedError()));
+        EXPECT_CALL(logger, logError(
+                WhenDynamicCastTo<FormattedError*>(Pointee(verificationResult.asFormattedError()))));
 
         EXPECT_CALL(logger, logFailedResult());
     }

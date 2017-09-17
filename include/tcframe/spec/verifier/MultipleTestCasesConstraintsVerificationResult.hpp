@@ -6,7 +6,7 @@
 #include <utility>
 #include <vector>
 
-#include "tcframe/spec/exception.hpp"
+#include "tcframe/exception.hpp"
 
 using std::move;
 using std::pair;

@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#include "tcframe/exception.hpp"
 #include "tcframe/spec/config.hpp"
 #include "tcframe/spec/constraint.hpp"
 #include "tcframe/spec/io.hpp"

@@ -1,12 +1,15 @@
 #pragma once
 
+#include <cstring>
+#include <map>
 #include <string>
-#include <sys/signal.h>
 #include <tuple>
 #include <utility>
 
+#include "tcframe/exception.hpp"
 #include "tcframe/util.hpp"
 
+using std::map;
 using std::move;
 using std::string;
 using std::tie;
@@ -17,13 +20,12 @@ struct ExecutionResult {
     friend class ExecutionResultBuilder;
 
 private:
-    optional<int> exitCode_;
+    optional<int> exitCode_ = optional<int>(0);
     optional<int> exitSignal_;
     string standardError_;
 
 public:
-    ExecutionResult()
-            : exitCode_({0}) {}
+    ExecutionResult() = default;
 
     const optional<int>& exitCode() const {
         return exitCode_;
@@ -44,6 +46,32 @@ public:
     bool operator==(const ExecutionResult& o) const {
         return tie(exitCode_, exitSignal_, standardError_)
                == tie(o.exitCode_, o.exitSignal_, standardError_);
+    }
+};
+
+class ExecutionResults {
+public:
+    ExecutionResults() = delete;
+
+    static FormattedError asFormattedError(const map<string, ExecutionResult>& executionResults) {
+        vector<pair<int, string>> messages;
+        for (const auto& entry : executionResults) {
+            const string& key = entry.first;
+            const ExecutionResult& executionResult = entry.second;
+
+            if (!executionResult.isSuccessful()) {
+                messages.emplace_back(0, "Execution of " + key + " failed:");
+                if (executionResult.exitCode()) {
+                    messages.emplace_back(1, "Exit code: " + StringUtils::toString(executionResult.exitCode().value()));
+                    messages.emplace_back(1, "Standard error: " + executionResult.standardError());
+                } else {
+                    messages.emplace_back(1, "Exit signal: " + string(strsignal(executionResult.exitSignal().value())));
+                }
+            } else if (!executionResult.standardError().empty()) {
+                messages.emplace_back(0, key + ": " + executionResult.standardError());
+            }
+        }
+        return FormattedError(messages);
     }
 };
 

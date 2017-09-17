@@ -12,10 +12,12 @@
 using ::testing::_;
 using ::testing::Eq;
 using ::testing::InSequence;
+using ::testing::Pointee;
 using ::testing::Return;
 using ::testing::Test;
 using ::testing::Throw;
 using ::testing::Truly;
+using ::testing::WhenDynamicCastTo;
 
 using std::istringstream;
 using std::move;
@@ -73,8 +75,8 @@ protected:
         explicit SimpleErrorMessageIs(string message)
                 : message_(move(message)) {}
 
-        bool operator()(const runtime_error& e) const {
-            return message_ == e.what();
+        bool operator()(runtime_error* e) const {
+            return message_ == e->what();
         }
     };
 };
@@ -106,10 +108,12 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_Failed_Check) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>()));
-        EXPECT_CALL(logger, logSimpleError(Truly(SimpleErrorMessageIs(
-                "Sample test case output does not match with actual output produced by the solution"))));
-        EXPECT_CALL(logger, logExecutionResults(map<string, ExecutionResult>{
-                {"scorer", scoringExecutionResult}}));
+
+        FormattedError error = FormattedError::combine({
+                FormattedError(
+                        {{0, "Sample test case output does not match with actual output produced by the solution"}}),
+                ExecutionResults::asFormattedError({{"scorer", scoringExecutionResult}})});
+        EXPECT_CALL(logger, logError(WhenDynamicCastTo<FormattedError*>(Pointee(error))));
     }
     EXPECT_FALSE(generator.generate(sampleTestCase, options));
 }
@@ -121,7 +125,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_Failed_SampleOutputGeneration) 
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>()));
-        EXPECT_CALL(logger, logSimpleError(Truly(SimpleErrorMessageIs(message))));
+        EXPECT_CALL(logger, logError(Truly(SimpleErrorMessageIs(message))));
     }
     EXPECT_FALSE(generator.generate(sampleTestCase, options));
 }
@@ -130,7 +134,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_WithOutput_Failed_NoOutputNeede
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>()));
-        EXPECT_CALL(logger, logSimpleError(Truly(SimpleErrorMessageIs(
+        EXPECT_CALL(logger, logError(Truly(SimpleErrorMessageIs(
                 "Problem does not need test case outputs, but this sample test case has output"))));
     }
     EXPECT_FALSE(generator.generate(sampleTestCase, noOutputOptions));
@@ -181,7 +185,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Failed_InputGeneration) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>("N = 42")));
-        EXPECT_CALL(logger, logSimpleError(Truly(SimpleErrorMessageIs(message))));
+        EXPECT_CALL(logger, logError(Truly(SimpleErrorMessageIs(message))));
     }
     EXPECT_FALSE(generator.generate(officialTestCase, options));
 }
@@ -194,7 +198,9 @@ TEST_F(TestCaseGeneratorTests, Generation_Failed_OutputGeneration) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>("N = 42")));
-        EXPECT_CALL(logger, logExecutionResults(map<string, ExecutionResult>{{"solution", executionResult}}));
+        EXPECT_CALL(logger, logError(
+                WhenDynamicCastTo<FormattedError*>(Pointee(
+                        ExecutionResults::asFormattedError({{"solution", executionResult}})))));
     }
     EXPECT_FALSE(generator.generate(officialTestCase, options));
 }
@@ -206,7 +212,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Failed_OutputValidation) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>("N = 42")));
-        EXPECT_CALL(logger, logSimpleError(Truly(SimpleErrorMessageIs(message))));
+        EXPECT_CALL(logger, logError(Truly(SimpleErrorMessageIs(message))));
     }
     EXPECT_FALSE(generator.generate(officialTestCase, options));
 }

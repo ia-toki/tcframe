@@ -3,9 +3,9 @@
 #include <stdexcept>
 #include <string>
 
-#include "GenerationException.hpp"
 #include "GenerationOptions.hpp"
 #include "GeneratorLogger.hpp"
+#include "tcframe/exception.hpp"
 #include "tcframe/runner/client.hpp"
 #include "tcframe/runner/evaluator.hpp"
 #include "tcframe/runner/verdict.hpp"
@@ -43,17 +43,9 @@ public:
             generateInput(testCase, inputFilename);
             generateOutput(testCase, inputFilename, outputFilename, options);
             validateOutput(testCase, inputFilename, outputFilename, options);
-        } catch (GenerationException& e) {
-            logger_->logTestCaseFailedResult(testCase.description());
-            e.callback()();
-            return false;
-        } catch (FormattedError& e) {
-            logger_->logTestCaseFailedResult(testCase.description());
-            logger_->logFormattedError(e);
-            return false;
         } catch (runtime_error& e) {
             logger_->logTestCaseFailedResult(testCase.description());
-            logger_->logSimpleError(e);
+            logger_->logError(&e);
             return false;
         }
 
@@ -82,9 +74,7 @@ private:
 
         GenerationResult generationResult = evaluator_->generate(inputFilename, outputFilename, evaluationOptions);
         if (!generationResult.executionResult().isSuccessful()) {
-            throw GenerationException([=] {
-                logger_->logExecutionResults({{"solution", generationResult.executionResult()}});
-            });
+            throw ExecutionResults::asFormattedError({{"solution", generationResult.executionResult()}});
         }
     }
 
@@ -123,10 +113,10 @@ private:
 
         ScoringResult scoringResult = evaluator_->score(inputFilename, outputFilename);
         if (!(scoringResult.verdict().status() == VerdictStatus::ac())) {
-            throw GenerationException([=] {
-                logger_->logSimpleError(runtime_error(
-                        "Sample test case output does not match with actual output produced by the solution"));
-                logger_->logExecutionResults({{"scorer", scoringResult.executionResult()}});
+            throw FormattedError::combine({
+                FormattedError(
+                        {{0, "Sample test case output does not match with actual output produced by the solution"}}),
+                ExecutionResults::asFormattedError({{"scorer", scoringResult.executionResult()}})
             });
         }
     }

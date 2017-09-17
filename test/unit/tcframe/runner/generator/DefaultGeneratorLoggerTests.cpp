@@ -87,24 +87,4 @@ TEST_F(DefaultGeneratorLoggerTests, MultipleTestCasesCombinationResult_Failed) {
     logger.logMultipleTestCasesCombinationFailedResult();
 }
 
-TEST_F(DefaultGeneratorLoggerTests, SimpleError) {
-    EXPECT_CALL(engine, logListItem1(2, "error"));
-    logger.logSimpleError(runtime_error("error"));
-}
-
-TEST_F(DefaultGeneratorLoggerTests, FormattedError) {
-    {
-        InSequence sequence;
-        EXPECT_CALL(engine, logListItem1(2, "error 1"));
-        EXPECT_CALL(engine, logListItem2(3, "error 1a"));
-        EXPECT_CALL(engine, logListItem2(3, "error 1b"));
-        EXPECT_CALL(engine, logListItem1(2, "error 2"));
-    }
-    logger.logFormattedError(FormattedError({
-            {0, "error 1"},
-            {1, "error 1a"},
-            {1, "error 1b"},
-            {0, "error 2"}}));
-}
-
 }

@@ -6,10 +6,10 @@
 #include "GenerationOptions.hpp"
 #include "GeneratorLogger.hpp"
 #include "TestCaseGenerator.hpp"
-#include "tcframe/runner/os.hpp"
+#include "tcframe/exception.hpp"
 #include "tcframe/runner/client.hpp"
+#include "tcframe/runner/os.hpp"
 #include "tcframe/spec/core.hpp"
-#include "tcframe/spec/exception.hpp"
 #include "tcframe/util.hpp"
 
 using std::ostringstream;
@@ -90,17 +90,9 @@ private:
         try {
             verify(testGroup);
             combine(testGroup, options, multipleTestCasesOutputPrefix);
-        } catch (GenerationException& e) {
-            logger_->logMultipleTestCasesCombinationFailedResult();
-            e.callback()();
-            return false;
-        } catch (FormattedError& e) {
-            logger_->logMultipleTestCasesCombinationFailedResult();
-            logger_->logFormattedError(e);
-            return false;
         } catch (runtime_error& e) {
             logger_->logMultipleTestCasesCombinationFailedResult();
-            logger_->logSimpleError(e);
+            logger_->logError(&e);
             return false;
         }
 

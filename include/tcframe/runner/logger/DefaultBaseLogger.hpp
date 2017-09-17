@@ -2,10 +2,10 @@
 
 #include <map>
 #include <string>
-#include <sys/signal.h>
 
 #include "BaseLogger.hpp"
 #include "LoggerEngine.hpp"
+#include "tcframe/exception.hpp"
 #include "tcframe/runner/os.hpp"
 #include "tcframe/spec/testcase.hpp"
 #include "tcframe/util.hpp"
@@ -39,21 +39,26 @@ public:
         engine_->logHangingParagraph(1, testCaseName + ": ");
     }
 
-    virtual void logExecutionResults(const map<string, ExecutionResult>& executionResults) {
-        for (const auto& entry : executionResults) {
-            const string& key = entry.first;
-            const ExecutionResult& executionResult = entry.second;
+    virtual void logError(runtime_error* e) {
+        auto formattedE = dynamic_cast<FormattedError*>(e);
+        if (formattedE != nullptr) {
+            logFormattedError(*formattedE);
+        } else {
+            logSimpleError(*e);
+        }
+    }
 
-            if (!executionResult.isSuccessful()) {
-                engine_->logListItem1(2, "Execution of " + key + " failed:");
-                if (executionResult.exitCode()) {
-                    engine_->logListItem2(3, "Exit code: " + StringUtils::toString(executionResult.exitCode().value()));
-                    engine_->logListItem2(3, "Standard error: " + executionResult.standardError());
-                } else {
-                    engine_->logListItem2(3, "Exit signal: " + string(strsignal(executionResult.exitSignal().value())));
-                }
-            } else if (!executionResult.standardError().empty()) {
-                engine_->logListItem1(2, key + ": " + executionResult.standardError());
+private:
+    void logSimpleError(const runtime_error& e) {
+        engine_->logListItem1(2, e.what());
+    }
+
+    void logFormattedError(const FormattedError& e) {
+        for (const auto& entry : e.messages()) {
+            if (entry.first == 0) {
+                engine_->logListItem1(2, entry.second);
+            } else {
+                engine_->logListItem2(3, entry.second);
             }
         }
     }
