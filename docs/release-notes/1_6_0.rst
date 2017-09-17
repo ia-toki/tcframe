@@ -1,0 +1,18 @@
+.. _v1_6_0:
+
+1.6.0
+=====
+
+September 17, 2017
+
+Bugfixes
+--------
+
+- Fixed a bug where **tcframe** crashed when grading spec with multiple test cases mode, which has no sample test cases.
+- Fixed a bug where a ``LINE()`` with only jagged vector contained an extra leading space.
+- Fixed a bug where a ``LINES()`` with empty vectors contained extra spaces.
+
+Enhancements
+------------
+
+- Disallow specifying ``SIZE()`` after ``LINE()`` and ``RAW_LINE()`` instead of silently ignoring it.
