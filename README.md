@@ -1,8 +1,8 @@
 # tcframe 1.6.0
 
-[![GitHub Release](https://img.shields.io/github/release/tcframe/tcframe.svg)](https://github.com/tcframe/tcframe)
-[![Build Status](https://img.shields.io/travis/tcframe/tcframe/master.svg)](https://travis-ci.org/tcframe/tcframe)
-[![Coverage Status](https://img.shields.io/codecov/c/github/tcframe/tcframe/master.svg)](http://codecov.io/github/tcframe/tcframe?branch=master)
+[![GitHub Release](https://img.shields.io/github/release/ia-toki/tcframe.svg)](https://github.com/ia-toki/tcframe)
+[![Build Status](https://img.shields.io/travis/ia-toki/tcframe/master.svg)](https://travis-ci.org/ia-toki/tcframe)
+[![Coverage Status](https://img.shields.io/codecov/c/github/ia-toki/tcframe/master.svg)](http://codecov.io/github/ia-toki/tcframe?branch=master)
 [![Documentation Status](https://readthedocs.org/projects/tcframe/badge/?version=latest)](http://docs.tcframe.org/)
 
 **tcframe** is a C++ framework for generating test cases of competitive programming problems. This framework helps problem writers prepare test cases in a structured manner and ensures that the generated test cases are valid according to the specified constraints.
