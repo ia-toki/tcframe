@@ -136,7 +136,7 @@ Example high-level usage:
 
 ## Credits
 
-**tcframe** is based on a paper submitted to IOI conference in 2015: [Introducing tcframe: A Simple and Robust Test Cases Generation Framework](http://ioinformatics.org/oi/files/volume9.pdf#page=59), written by **Ashar Fuadi**.
+**tcframe** is based on a paper submitted to IOI conference in 2015: [Introducing tcframe: A Simple and Robust Test Cases Generation Framework](https://ioinformatics.org/journal/v9_2015_57_73.pdf), written by **Ashar Fuadi**.
 
 **tcframe** was mainly inspired from [testlib](https://github.com/MikeMirzayanov/testlib), written by Mike Mirzayanov et al.
 
