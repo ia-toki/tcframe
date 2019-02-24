@@ -309,4 +309,16 @@ TEST_F(LineIOSegmentManipulatorTests, Printing_WithVectorWithoutSize_Only_Empty_
     EXPECT_THAT(out.str(), Eq("\n"));
 }
 
+TEST_F(LineIOSegmentManipulatorTests, Clearing_VectorSegment_Successful) {
+    istringstream in("42 123 1 2\n");
+
+    manipulator.parse(segmentWithVector, &in);
+
+    in.seekg(0, in.beg);
+    manipulator.parse(segmentWithVector, &in);
+    EXPECT_THAT(A, Eq(42));
+    EXPECT_THAT(B, Eq(123));
+    EXPECT_THAT(C, Eq(vector<int>{1, 2}));
+}
+
 }
