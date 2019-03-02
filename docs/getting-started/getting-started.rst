@@ -48,7 +48,7 @@ Download the latest **tcframe** `here <https://github.com/ia-toki/tcrame/release
 
 Then, add the following lines to your ``~/.bashrc``. This will set the environment variable ``TCFRAME_HOME`` to our **tcframe** home directory, and make ``tcframe`` command available everywhere.
 
-::
+.. sourcecode:: sh
 
     export TCFRAME_HOME=~/tcframe
     alias tcframe=$TCFRAME_HOME/scripts/tcframe
@@ -74,9 +74,13 @@ You're good to go!
 
 .. note::
 
-    | If your ``TCFRAME_HOME`` contains space, you can escape it as follows:
-    | export TCFRAME_HOME=~/path\\ with\\ space/tcframe
-    | alias tcframe='$TCFRAME_HOME/scripts/tcframe'
+    If your ``TCFRAME_HOME`` contains space, you can escape it as follows:
+
+    .. sourcecode:: sh
+
+        export TCFRAME_HOME=~/path\ with\ space/tcframe
+        alias tcframe='$TCFRAME_HOME/scripts/tcframe'
+
 
 ----
 
