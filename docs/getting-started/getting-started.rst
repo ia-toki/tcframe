@@ -72,6 +72,12 @@ You should see the following output
 
 You're good to go!
 
+.. note::
+
+    | If your ``TCFRAME_HOME`` contains space, you can escape it as follows:
+    | export TCFRAME_HOME=~/path\\ with\\ space/tcframe
+    | alias tcframe='$TCFRAME_HOME/scripts/tcframe'
+
 ----
 
 Preparing package directory
