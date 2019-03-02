@@ -81,7 +81,6 @@ You're good to go!
         export TCFRAME_HOME=~/path\ with\ space/tcframe
         alias tcframe='$TCFRAME_HOME/scripts/tcframe'
 
-
 ----
 
 Preparing package directory
