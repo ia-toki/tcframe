@@ -25,6 +25,8 @@ For example, suppose you have written a problem package for a problem. Your frie
 
     ./runner grade --solution=./solution_alt
 
+There are other flags available for use too. For complete set of flags see :ref:`API Reference <api-ref_local-grading>`.
+
 The verdicts of each test case, each subtask (if any), as well as the overall verdict will be shown, as described below.
 
 .. _grading_verdicts:
