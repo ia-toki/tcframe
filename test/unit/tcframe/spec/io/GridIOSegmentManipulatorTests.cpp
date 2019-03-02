@@ -75,7 +75,7 @@ TEST_F(GridIOSegmentManipulatorTests, Printing_Failed_ColumnsMismatch) {
     }
 }
 
-TEST_F(GridIOSegmentManipulatorTests, Clearing_Segment_Successful) {
+TEST_F(GridIOSegmentManipulatorTests, Parsing_ClearSegment_Successful) {
     istringstream in("1 2 3\n4 5 6\n");
 
     manipulator.parse(segment, &in);

@@ -334,7 +334,7 @@ TEST_F(LinesIOSegmentManipulatorTests, Printing_WithJaggedVector_WithoutSize_Fai
     }
 }
 
-TEST_F(LinesIOSegmentManipulatorTests, Clearing_Segment_Successful) {
+TEST_F(LinesIOSegmentManipulatorTests, Parsing_ClearSegment_Successful) {
     istringstream in("1 2 10\n3 4\n5 6 20 30\n");
 
     manipulator.parse(segmentWithJaggedVector, &in);

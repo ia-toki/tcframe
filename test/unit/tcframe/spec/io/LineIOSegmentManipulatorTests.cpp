@@ -309,7 +309,7 @@ TEST_F(LineIOSegmentManipulatorTests, Printing_WithVectorWithoutSize_Only_Empty_
     EXPECT_THAT(out.str(), Eq("\n"));
 }
 
-TEST_F(LineIOSegmentManipulatorTests, Clearing_VectorSegment_Successful) {
+TEST_F(LineIOSegmentManipulatorTests, Parsing_ClearVectorSegment_Successful) {
     istringstream in("42 123 1 2\n");
 
     manipulator.parse(segmentWithVector, &in);
