@@ -75,4 +75,14 @@ TEST_F(GridIOSegmentManipulatorTests, Printing_Failed_ColumnsMismatch) {
     }
 }
 
+TEST_F(GridIOSegmentManipulatorTests, Parsing_ClearSegment_Successful) {
+    istringstream in("1 2 3\n4 5 6\n");
+
+    manipulator.parse(segment, &in);
+
+    in.seekg(0, in.beg);
+    manipulator.parse(segment, &in);
+    EXPECT_THAT(M, Eq(vector<vector<int>>{{1, 2, 3}, {4, 5, 6}}));
+}
+
 }

@@ -334,4 +334,16 @@ TEST_F(LinesIOSegmentManipulatorTests, Printing_WithJaggedVector_WithoutSize_Fai
     }
 }
 
+TEST_F(LinesIOSegmentManipulatorTests, Parsing_ClearSegment_Successful) {
+    istringstream in("1 2 10\n3 4\n5 6 20 30\n");
+
+    manipulator.parse(segmentWithJaggedVector, &in);
+
+    in.seekg(0, in.beg);
+    manipulator.parse(segmentWithJaggedVector, &in);
+    EXPECT_THAT(X, Eq(vector<int>{1, 3, 5}));
+    EXPECT_THAT(Y, Eq(vector<int>{2, 4, 6}));
+    EXPECT_THAT(Z, Eq(vector<vector<int>>{{10}, {}, {20, 30}}));
+}
+
 }

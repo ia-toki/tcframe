@@ -108,4 +108,13 @@ TEST_F(RawLinesIOSegmentManipulatorTests, Printing_WithoutSize_Successful) {
     EXPECT_THAT(out.str(), Eq("hello, world!\n  lorem  ipsum \n"));
 }
 
+TEST_F(RawLinesIOSegmentManipulatorTests, Parsing_ClearSegment_Successful) {
+    istringstream in("hello, world!\n  lorem  ipsum \n");
+
+    manipulator.parse(segment, &in);
+
+    in.seekg(0, in.beg);
+    manipulator.parse(segment, &in);
+    EXPECT_THAT(V, Eq(vector<string>{"hello, world!", "  lorem  ipsum "}));
+}
 }
