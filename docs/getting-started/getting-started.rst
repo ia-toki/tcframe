@@ -58,7 +58,7 @@ Restart your terminal session. Now, if you run
 
 ::
 
-    tcframe version
+    tcframe
 
 You should see the following output
 
