@@ -20,6 +20,7 @@ public:
         string lastVariableName;
 
         Vector* variable = segment->variable();
+        variable->clear();
         int size = segment->size()();
         for (int j = 0; j != size; j++) {
             if (size == NO_SIZE && WhitespaceManipulator::isEof(in)) {
