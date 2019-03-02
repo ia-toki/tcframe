@@ -600,6 +600,8 @@ Test cases generation
 
     The seed for random number generator ``rnd`` in the test spec. Default: ``0``.
 
+.. _api-ref_local-grading:
+
 Local grading
 *************
 
