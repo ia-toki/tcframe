@@ -16,19 +16,19 @@ class MinAggregator : public Aggregator {
 public:
     virtual ~MinAggregator() = default;
 
-    Verdict aggregate(const vector<Verdict>& verdicts, double points) {
-        VerdictStatus aggregatedStatus = VerdictStatus::ac();
+    TestCaseVerdict aggregate(const vector<TestCaseVerdict>& testCaseVerdicts, double points) {
+        Verdict aggregatedVerdict = Verdict::ac();
         double aggregatedPoints = points;
-        for (const Verdict& verdict : verdicts) {
-            aggregatedStatus = max(aggregatedStatus, verdict.status());
+        for (const TestCaseVerdict& testCaseVerdict : testCaseVerdicts) {
+            aggregatedVerdict = max(aggregatedVerdict, testCaseVerdict.verdict());
 
-            if (verdict.status() == VerdictStatus::ok()) {
-                aggregatedPoints = min(aggregatedPoints, verdict.points().value());
-            } else if (!(verdict.status() == VerdictStatus::ac())) {
+            if (testCaseVerdict.verdict() == Verdict::ok()) {
+                aggregatedPoints = min(aggregatedPoints, testCaseVerdict.points().value());
+            } else if (!(testCaseVerdict.verdict() == Verdict::ac())) {
                 aggregatedPoints = 0;
             }
         }
-        return {aggregatedStatus, aggregatedPoints};
+        return {aggregatedVerdict, aggregatedPoints};
     }
 };
 

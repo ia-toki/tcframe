@@ -13,23 +13,23 @@ protected:
 };
 
 TEST_F(SumAggregatorTests, Aggregate_FullPoints) {
-    vector<Verdict> verdicts = {
-            Verdict(VerdictStatus::ac()),
-            Verdict(VerdictStatus::ac())};
-    EXPECT_THAT(aggregator.aggregate(verdicts, 100), Eq(Verdict(VerdictStatus::ac(), 100)));
+    vector<TestCaseVerdict> verdicts = {
+            TestCaseVerdict(Verdict::ac()),
+            TestCaseVerdict(Verdict::ac())};
+    EXPECT_THAT(aggregator.aggregate(verdicts, 100), Eq(TestCaseVerdict(Verdict::ac(), 100)));
 }
 
 TEST_F(SumAggregatorTests, Aggregate_PartialPoints) {
-    vector<Verdict> verdicts = {
-            Verdict(VerdictStatus::ac()),
-            Verdict(VerdictStatus::tle()),
-            Verdict(VerdictStatus::ok(), 30),
-            Verdict(VerdictStatus::wa())};
-    EXPECT_THAT(aggregator.aggregate(verdicts, 100), Eq(Verdict(VerdictStatus::tle(), 55)));
+    vector<TestCaseVerdict> verdicts = {
+            TestCaseVerdict(Verdict::ac()),
+            TestCaseVerdict(Verdict::tle()),
+            TestCaseVerdict(Verdict::ok(), 30),
+            TestCaseVerdict(Verdict::wa())};
+    EXPECT_THAT(aggregator.aggregate(verdicts, 100), Eq(TestCaseVerdict(Verdict::tle(), 55)));
 }
 
 TEST_F(SumAggregatorTests, Aggregate_EmptyVerdicts) {
-    EXPECT_THAT(aggregator.aggregate(vector<Verdict>(), 100), Eq(Verdict(VerdictStatus::ac(), 100)));
+    EXPECT_THAT(aggregator.aggregate(vector<TestCaseVerdict>(), 100), Eq(TestCaseVerdict(Verdict::ac(), 100)));
 }
 
 }

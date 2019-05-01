@@ -11,7 +11,7 @@ public:
     MockTestCaseGrader()
             : TestCaseGrader(nullptr, nullptr) {}
 
-    MOCK_METHOD2(grade, Verdict(const TestCase&, const GradingOptions&));
+    MOCK_METHOD2(grade, TestCaseVerdict(const TestCase&, const GradingOptions&));
 };
 
 }

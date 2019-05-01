@@ -38,20 +38,20 @@ protected:
     TestCase tc2 = TestUtils::newTestCase("foo_2_1", {1, 2});
     TestCase tc3 = TestUtils::newTestCase("foo_3_1", {2});
 
-    Verdict stcAVerdict = {VerdictStatus::ac(), 1};
-    Verdict stcBVerdict = {VerdictStatus::ac(), 2};
-    Verdict tcAVerdict = {VerdictStatus::ac(), 3};
-    Verdict tcBVerdict = {VerdictStatus::ac(), 4};
-    Verdict stc1Verdict = {VerdictStatus::ac(), 5};
-    Verdict stc2Verdict = {VerdictStatus::ac(), 6};
-    Verdict tc1Verdict = {VerdictStatus::ac(), 7};
-    Verdict tc2Verdict = {VerdictStatus::ac(), 8};
-    Verdict tc3Verdict = {VerdictStatus::ac(), 9};
+    TestCaseVerdict stcAVerdict = {Verdict::ac(), 1};
+    TestCaseVerdict stcBVerdict = {Verdict::ac(), 2};
+    TestCaseVerdict tcAVerdict = {Verdict::ac(), 3};
+    TestCaseVerdict tcBVerdict = {Verdict::ac(), 4};
+    TestCaseVerdict stc1Verdict = {Verdict::ac(), 5};
+    TestCaseVerdict stc2Verdict = {Verdict::ac(), 6};
+    TestCaseVerdict tc1Verdict = {Verdict::ac(), 7};
+    TestCaseVerdict tc2Verdict = {Verdict::ac(), 8};
+    TestCaseVerdict tc3Verdict = {Verdict::ac(), 9};
 
-    Verdict mainSubtaskVerdict = {VerdictStatus::ac(), Subtask::MAIN_POINTS};
-    Verdict subtask1Verdict = {VerdictStatus::wa(), 40};
-    Verdict subtask2Verdict = {VerdictStatus::tle(), 50};
-    Verdict verdict = {VerdictStatus::tle(), 90};
+    TestCaseVerdict mainSubtaskVerdict = {Verdict::ac(), Subtask::MAIN_POINTS};
+    TestCaseVerdict subtask1Verdict = {Verdict::wa(), 40};
+    TestCaseVerdict subtask2Verdict = {Verdict::tle(), 50};
+    TestCaseVerdict verdict = {Verdict::tle(), 90};
 
     TestSuite testSuite = TestSuite({
             TestGroup(TestGroup::SAMPLE_ID, {stcA, stcB}),
@@ -106,11 +106,11 @@ TEST_F(GraderTests, Grading) {
         EXPECT_CALL(testCaseGrader, grade(tcA, options));
         EXPECT_CALL(testCaseGrader, grade(tcB, options));
 
-        EXPECT_CALL(aggregator, aggregate(vector<Verdict>{tcAVerdict, tcBVerdict}, Subtask::MAIN_POINTS))
+        EXPECT_CALL(aggregator, aggregate(vector<TestCaseVerdict>{tcAVerdict, tcBVerdict}, Subtask::MAIN_POINTS))
                 .WillOnce(Return(mainSubtaskVerdict));
 
         EXPECT_CALL(logger, logResult(
-                map<int, Verdict>{{Subtask::MAIN_ID, mainSubtaskVerdict}},
+                map<int, TestCaseVerdict>{{Subtask::MAIN_ID, mainSubtaskVerdict}},
                 mainSubtaskVerdict));
     }
     grader.grade(options);
@@ -131,11 +131,11 @@ TEST_F(GraderTests, Grading_MultipleTestCases) {
         EXPECT_CALL(testCaseGrader, grade(TestUtils::newTestCase("foo"), options))
                 .WillOnce(Return(tc1Verdict));
 
-        EXPECT_CALL(aggregator, aggregate(vector<Verdict>{tc1Verdict}, Subtask::MAIN_POINTS))
+        EXPECT_CALL(aggregator, aggregate(vector<TestCaseVerdict>{tc1Verdict}, Subtask::MAIN_POINTS))
                 .WillOnce(Return(mainSubtaskVerdict));
 
         EXPECT_CALL(logger, logResult(
-                map<int, Verdict>{{Subtask::MAIN_ID, mainSubtaskVerdict}},
+                map<int, TestCaseVerdict>{{Subtask::MAIN_ID, mainSubtaskVerdict}},
                 mainSubtaskVerdict));
     }
     grader.grade(options);
@@ -153,11 +153,11 @@ TEST_F(GraderTests, Grading_WithoutSample_MultipleTestCases) {
         EXPECT_CALL(testCaseGrader, grade(TestUtils::newTestCase("foo"), options))
                 .WillOnce(Return(tc1Verdict));
 
-        EXPECT_CALL(aggregator, aggregate(vector<Verdict>{tc1Verdict}, Subtask::MAIN_POINTS))
+        EXPECT_CALL(aggregator, aggregate(vector<TestCaseVerdict>{tc1Verdict}, Subtask::MAIN_POINTS))
                 .WillOnce(Return(mainSubtaskVerdict));
 
         EXPECT_CALL(logger, logResult(
-                map<int, Verdict>{{Subtask::MAIN_ID, mainSubtaskVerdict}},
+                map<int, TestCaseVerdict>{{Subtask::MAIN_ID, mainSubtaskVerdict}},
                 mainSubtaskVerdict));
     }
     EXPECT_CALL(logger, logTestGroupIntroduction(TestGroup::SAMPLE_ID)).Times(0);
@@ -180,14 +180,14 @@ TEST_F(GraderTests, Grading_WithSubtasks) {
         EXPECT_CALL(logger, logTestGroupIntroduction(2));
         EXPECT_CALL(testCaseGrader, grade(tc3, optionsWithSubtasks));
 
-        EXPECT_CALL(aggregator, aggregate(vector<Verdict>{stc1Verdict, tc1Verdict, tc2Verdict}, 40))
+        EXPECT_CALL(aggregator, aggregate(vector<TestCaseVerdict>{stc1Verdict, tc1Verdict, tc2Verdict}, 40))
                 .WillOnce(Return(subtask1Verdict));
         EXPECT_CALL(aggregator, aggregate(
-                vector<Verdict>{stc1Verdict, stc2Verdict, tc1Verdict, tc2Verdict, tc3Verdict}, 50))
+                vector<TestCaseVerdict>{stc1Verdict, stc2Verdict, tc1Verdict, tc2Verdict, tc3Verdict}, 50))
                 .WillOnce(Return(subtask2Verdict));
 
         EXPECT_CALL(logger, logResult(
-                map<int, Verdict>{{1, subtask1Verdict}, {2, subtask2Verdict}},
+                map<int, TestCaseVerdict>{{1, subtask1Verdict}, {2, subtask2Verdict}},
                 verdict));
     }
     grader.grade(optionsWithSubtasks);
@@ -211,13 +211,13 @@ TEST_F(GraderTests, Grading_WithSubtasks_MultipleTestCases) {
         EXPECT_CALL(testCaseGrader, grade(TestUtils::newTestCase("foo_2", {2}), optionsWithSubtasks))
                 .WillOnce(Return(tc2Verdict));
 
-        EXPECT_CALL(aggregator, aggregate(vector<Verdict>{stc1Verdict, tc1Verdict}, 40))
+        EXPECT_CALL(aggregator, aggregate(vector<TestCaseVerdict>{stc1Verdict, tc1Verdict}, 40))
                 .WillOnce(Return(subtask1Verdict));
-        EXPECT_CALL(aggregator, aggregate(vector<Verdict>{stc1Verdict, tc1Verdict, tc2Verdict}, 50))
+        EXPECT_CALL(aggregator, aggregate(vector<TestCaseVerdict>{stc1Verdict, tc1Verdict, tc2Verdict}, 50))
                 .WillOnce(Return(subtask2Verdict));
 
         EXPECT_CALL(logger, logResult(
-                map<int, Verdict>{{1, subtask1Verdict}, {2, subtask2Verdict}},
+                map<int, TestCaseVerdict>{{1, subtask1Verdict}, {2, subtask2Verdict}},
                 verdict));
     }
     grader.grade(optionsWithSubtasks);

@@ -53,7 +53,7 @@ private:
     Evaluator* getBatch(OperatingSystem* os, const map<string, string>& helperCommands) {
         Scorer* scorer = helperRegistry_->getScorer(os, getHelperCommand(helperCommands, "scorer"));
 
-        return new BatchEvaluator(os, new VerdictCreator(), scorer);
+        return new BatchEvaluator(os, new TestCaseVerdictParser(), scorer);
     }
 
     EvaluatorConfig getBatchConfig() {

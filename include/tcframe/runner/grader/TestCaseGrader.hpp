@@ -25,19 +25,19 @@ public:
             : evaluator_(evaluator)
             , logger_(logger) {}
 
-    virtual Verdict grade(const TestCase& testCase, const GradingOptions& options) {
+    virtual TestCaseVerdict grade(const TestCase& testCase, const GradingOptions& options) {
         logger_->logTestCaseIntroduction(testCase.name());
 
         EvaluationResult evaluationResult = evaluate(testCase, options);
-        Verdict verdict = evaluationResult.verdict();
+        TestCaseVerdict testCaseVerdict = evaluationResult.verdict();
 
-        logger_->logTestCaseVerdict(verdict);
-        if (!(verdict.status() == VerdictStatus::tle())) {
+        logger_->logTestCaseVerdict(testCaseVerdict);
+        if (!(testCaseVerdict.verdict() == Verdict::tle())) {
             FormattedError error = ExecutionResults::asFormattedError(evaluationResult.executionResults());
             logger_->logError(&error);
         }
 
-        return verdict;
+        return testCaseVerdict;
     }
 
 private:

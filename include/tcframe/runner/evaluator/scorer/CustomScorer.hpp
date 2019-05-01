@@ -21,15 +21,15 @@ namespace tcframe {
 class CustomScorer : public Scorer {
 private:
     OperatingSystem* os_;
-    VerdictCreator* verdictCreator_;
+    TestCaseVerdictParser* testCaseVerdictParser_;
     string scorerCommand_;
 
 public:
     virtual ~CustomScorer() = default;
 
-    CustomScorer(OperatingSystem* os, VerdictCreator* verdictCreator, string scorerCommand)
+    CustomScorer(OperatingSystem* os, TestCaseVerdictParser* testCaseVerdictParser, string scorerCommand)
             : os_(os)
-            , verdictCreator_(verdictCreator)
+            , testCaseVerdictParser_(testCaseVerdictParser)
             , scorerCommand_(move(scorerCommand)) {}
 
     ScoringResult score(const string& inputFilename, const string& outputFilename, const string& evaluationFilename) {
@@ -43,13 +43,13 @@ public:
                 .setOutputFilename(SCORING_OUT_FILENAME)
                 .build());
 
-        Verdict verdict;
+        TestCaseVerdict verdict;
         if (executionResult.isSuccessful()) {
             istream* output = os_->openForReading(SCORING_OUT_FILENAME);
             try {
-                verdict = verdictCreator_->fromStream(output);
+                verdict = testCaseVerdictParser_->parseStream(output);
             } catch (runtime_error& e) {
-                verdict = Verdict(VerdictStatus::err());
+                verdict = TestCaseVerdict(Verdict::err());
 
                 string newStandardError = executionResult.standardError()
                         + "\n"
@@ -60,7 +60,7 @@ public:
             }
             os_->closeOpenedStream(output);
         } else {
-            verdict = Verdict(VerdictStatus::err());
+            verdict = TestCaseVerdict(Verdict::err());
         }
 
         return {verdict, executionResult};

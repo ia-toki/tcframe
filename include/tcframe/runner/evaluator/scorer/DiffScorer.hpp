@@ -46,11 +46,11 @@ public:
         string diff = StringUtils::streamToString(output);
         os_->closeOpenedStream(output);
 
-        Verdict verdict;
+        TestCaseVerdict verdict;
         if (diff.empty()) {
-            verdict = Verdict(VerdictStatus::ac());
+            verdict = TestCaseVerdict(Verdict::ac());
         } else {
-            verdict = Verdict(VerdictStatus::wa());
+            verdict = TestCaseVerdict(Verdict::wa());
         }
 
         // TODO(fushar): Figure out how to directly output the diff to the standard error.

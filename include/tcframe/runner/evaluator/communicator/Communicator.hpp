@@ -22,15 +22,15 @@ private:
     static constexpr const char* COMMUNICATION_PIPE_FILENAME = "__tcframe_communication.pipe";
 
     OperatingSystem* os_;
-    VerdictCreator* verdictCreator_;
+    TestCaseVerdictParser* testCaseVerdictParser_;
     string communicatorCommand_;
 
 public:
     virtual ~Communicator() = default;
 
-    Communicator(OperatingSystem* os, VerdictCreator* verdictCreator, string communicatorCommand)
+    Communicator(OperatingSystem* os, TestCaseVerdictParser* testCaseVerdictParser, string communicatorCommand)
             : os_(os)
-            , verdictCreator_(verdictCreator)
+            , testCaseVerdictParser_(testCaseVerdictParser)
             , communicatorCommand_(move(communicatorCommand)) {}
 
     virtual CommunicationResult communicate(const string& inputFilename, const EvaluationOptions& options) {
@@ -53,18 +53,18 @@ public:
 
         ExecutionResult executionResult = ignoreSIGPIPE(os_->execute(request.build()));
 
-        Verdict verdict;
-        optional<Verdict> maybeVerdict = verdictCreator_->fromExecutionResult(executionResult);
+        TestCaseVerdict verdict;
+        optional<TestCaseVerdict> maybeVerdict = testCaseVerdictParser_->parseExecutionResult(executionResult);
 
         if (maybeVerdict) {
             verdict = maybeVerdict.value();
         } else {
             istream* output = new istringstream(executionResult.standardError());
             try {
-                verdict = verdictCreator_->fromStream(output);
+                verdict = testCaseVerdictParser_->parseStream(output);
                 executionResult = ignoreStderr(executionResult);
             } catch (runtime_error& e) {
-                verdict = Verdict(VerdictStatus::err());
+                verdict = TestCaseVerdict(Verdict::err());
                 executionResult = ExecutionResultBuilder(executionResult)
                         .setStandardError(e.what())
                         .build();

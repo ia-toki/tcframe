@@ -15,22 +15,22 @@ class SumAggregator : public Aggregator {
 public:
     virtual ~SumAggregator() = default;
 
-    Verdict aggregate(const vector<Verdict>& verdicts, double points) {
-        if (verdicts.empty()) {
-            return {VerdictStatus::ac(), points};
+    TestCaseVerdict aggregate(const vector<TestCaseVerdict>& testCaseVerdicts, double points) {
+        if (testCaseVerdicts.empty()) {
+            return {Verdict::ac(), points};
         }
 
-        VerdictStatus aggregatedStatus = VerdictStatus::ac();
+        Verdict aggregatedVerdict = Verdict::ac();
         double aggregatedPoints = 0;
-        for (const Verdict& verdict : verdicts) {
-            aggregatedStatus = max(aggregatedStatus, verdict.status());
-            if (verdict.status() == VerdictStatus::ac()) {
-                aggregatedPoints += points / verdicts.size();
-            } else if (verdict.status() == VerdictStatus::ok()) {
-                aggregatedPoints += verdict.points().value();
+        for (const TestCaseVerdict& testCaseVerdict : testCaseVerdicts) {
+            aggregatedVerdict = max(aggregatedVerdict, testCaseVerdict.verdict());
+            if (testCaseVerdict.verdict() == Verdict::ac()) {
+                aggregatedPoints += points / testCaseVerdicts.size();
+            } else if (testCaseVerdict.verdict() == Verdict::ok()) {
+                aggregatedPoints += testCaseVerdict.points().value();
             }
         }
-        return {aggregatedStatus, aggregatedPoints};
+        return {aggregatedVerdict, aggregatedPoints};
     }
 };
 

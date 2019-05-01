@@ -34,9 +34,7 @@ The verdicts of each test case, each subtask (if any), as well as the overall ve
 Verdicts
 --------
 
-A verdict consists of the verdict status and optionally verdict points.
-
-The recognized statuses, from the best to the worst, are as follows:
+The recognized verdicts, from the best to the worst, are as follows:
 
 Accepted
     The output produced by the solution is correct.
@@ -59,14 +57,16 @@ Internal Error
 Test case verdicts
 ******************
 
-The verdict of each test case will be shown. For OK statuses, the points (given by the scorer) will be also shown.
+A test case verdict consists of a verdict and optionally points.
+
+The verdict of each test case will be shown. For OK verdict, the points (given by the scorer) will be also shown.
 
 Subtask verdicts
 ****************
 
-If the problem has subtasks, the verdict of each subtask will be shown as well. The verdict of a subtask is the combination of:
+If the problem has subtasks, the verdict of each subtask will be shown as well. A subtask verdict is the combination of:
 
-- status: the worst status of test case verdicts in the subtask
+- verdict: the worst verdict of test case verdicts in the subtask
 - points:
 
   - the subtask points (assigned via ``Points()``), if all test case verdicts in the subtask are Accepted,
@@ -80,17 +80,17 @@ Finally, the overall verdict is as follows.
 
 For problem without subtasks:
 
-- status: the worst test case verdict status
-- points: the sum of test case verdict points, where:
+- verdict: the worst test case verdict
+- points: the sum of test case points, where:
 
-  - an Accepted status will be given 100 / (number of test cases) points
-  - an OK status will be given its own points
-  - any other status will be given 0 points
+  - an Accepted verdict will be given 100 / (number of test cases) points
+  - an OK verdict will be given its own points
+  - any other verdict will be given 0 points
 
 For problem with subtasks:
 
-- status: the worst subtask verdict status
-- points: the sum of subtask verdict points
+- verdict: the worst subtask verdict
+- points: the sum of subtask points
 
 Sample local grading output
 ---------------------------
@@ -172,9 +172,9 @@ The first line of the output contains the overall the verdict in the following f
 
 ::
 
-    <status code> <points>
+    <code> <points>
 
-where the status code mapping is:
+where the code mapping is:
 
 - ``AC``: Accepted
 - ``OK``: OK

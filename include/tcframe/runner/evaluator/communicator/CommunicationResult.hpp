@@ -13,15 +13,15 @@ namespace tcframe {
 
 struct CommunicationResult {
 private:
-    Verdict verdict_;
+    TestCaseVerdict verdict_;
     ExecutionResult executionResult_;
 
 public:
-    CommunicationResult(Verdict verdict, ExecutionResult executionResult)
+    CommunicationResult(TestCaseVerdict verdict, ExecutionResult executionResult)
             : verdict_(move(verdict))
             , executionResult_(move(executionResult)) {}
 
-    const Verdict& verdict() const {
+    const TestCaseVerdict& verdict() const {
         return verdict_;
     }
 

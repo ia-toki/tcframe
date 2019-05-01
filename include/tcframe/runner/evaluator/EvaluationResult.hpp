@@ -18,15 +18,15 @@ namespace tcframe {
 
 struct EvaluationResult {
 private:
-    Verdict verdict_;
+    TestCaseVerdict verdict_;
     map<string, ExecutionResult> executionResults_;
 
 public:
-    EvaluationResult(Verdict verdict, map<string, ExecutionResult> executionResults)
+    EvaluationResult(TestCaseVerdict verdict, map<string, ExecutionResult> executionResults)
             : verdict_(move(verdict))
             , executionResults_(move(executionResults)) {}
 
-    const Verdict& verdict() const {
+    const TestCaseVerdict& verdict() const {
         return verdict_;
     }
 

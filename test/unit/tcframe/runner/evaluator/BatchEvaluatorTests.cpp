@@ -4,7 +4,7 @@
 #include <sstream>
 
 #include "../os/MockOperatingSystem.hpp"
-#include "../verdict/MockVerdictCreator.hpp"
+#include "../verdict/MockTestCaseVerdictParser.hpp"
 #include "scorer/MockScorer.hpp"
 #include "tcframe/runner/evaluator/BatchEvaluator.hpp"
 
@@ -23,7 +23,7 @@ namespace tcframe {
 class BatchEvaluatorTests : public Test {
 protected:
     MOCK(OperatingSystem) os;
-    MOCK(VerdictCreator) verdictCreator;
+    MOCK(TestCaseVerdictParser) testCaseVerdictParser;
     MOCK(Scorer) scorer;
 
     EvaluationOptions options = EvaluationOptionsBuilder()
@@ -32,15 +32,15 @@ protected:
             .setMemoryLimit(128)
             .build();
 
-    BatchEvaluator evaluator = {&os, &verdictCreator, &scorer};
+    BatchEvaluator evaluator = {&os, &testCaseVerdictParser, &scorer};
 
     void SetUp() {
         ON_CALL(os, execute(_))
                 .WillByDefault(Return(ExecutionResult()));
-        ON_CALL(verdictCreator, fromExecutionResult(_))
-                .WillByDefault(Return(optional<Verdict>()));
+        ON_CALL(testCaseVerdictParser, parseExecutionResult(_))
+                .WillByDefault(Return(optional<TestCaseVerdict>()));
         ON_CALL(scorer, score(_, _, _))
-                .WillByDefault(Return(ScoringResult(Verdict(), ExecutionResult())));
+                .WillByDefault(Return(ScoringResult(TestCaseVerdict(), ExecutionResult())));
     }
 };
 
@@ -59,13 +59,13 @@ TEST_F(BatchEvaluatorTests, Evaluation_AC) {
     }
 
     EXPECT_THAT(evaluator.evaluate("dir/foo_1.in", "dir/foo_1.out", options), Eq(EvaluationResult(
-            Verdict(VerdictStatus::ac()),
+            TestCaseVerdict(Verdict::ac()),
             {{"solution", ExecutionResult()}, {"scorer", ExecutionResult()}})));
 }
 
 TEST_F(BatchEvaluatorTests, Evaluation_FromScorer) {
     ON_CALL(scorer, score(_, _, _))
-            .WillByDefault(Return(ScoringResult(Verdict(VerdictStatus::wa()), ExecutionResult())));
+            .WillByDefault(Return(ScoringResult(TestCaseVerdict(Verdict::wa()), ExecutionResult())));
     {
         InSequence sequence;
         EXPECT_CALL(os, execute(_));
@@ -73,13 +73,13 @@ TEST_F(BatchEvaluatorTests, Evaluation_FromScorer) {
     }
 
     EXPECT_THAT(evaluator.evaluate("dir/foo_1.in", "dir/foo_1.out", options), Eq(EvaluationResult(
-            Verdict(VerdictStatus::wa()),
+            TestCaseVerdict(Verdict::wa()),
             {{"solution", ExecutionResult()}, {"scorer", ExecutionResult()}})));
 }
 
 TEST_F(BatchEvaluatorTests, Evaluation_FromSolution) {
-    ON_CALL(verdictCreator, fromExecutionResult(_))
-            .WillByDefault(Return(optional<Verdict>(Verdict(VerdictStatus::rte()))));
+    ON_CALL(testCaseVerdictParser, parseExecutionResult(_))
+            .WillByDefault(Return(optional<TestCaseVerdict>(TestCaseVerdict(Verdict::rte()))));
     {
         InSequence sequence;
         EXPECT_CALL(os, execute(_));
@@ -87,7 +87,7 @@ TEST_F(BatchEvaluatorTests, Evaluation_FromSolution) {
     }
 
     EXPECT_THAT(evaluator.evaluate("dir/foo_1.in", "dir/foo_1.out", options), Eq(EvaluationResult(
-            Verdict(VerdictStatus::rte()),
+            TestCaseVerdict(Verdict::rte()),
             {{"solution", ExecutionResult()}})));
 }
 

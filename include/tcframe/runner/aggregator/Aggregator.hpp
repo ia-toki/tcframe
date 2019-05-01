@@ -12,7 +12,7 @@ class Aggregator {
 public:
     virtual ~Aggregator() = default;
 
-    virtual Verdict aggregate(const vector<Verdict>& verdicts, double points) = 0;
+    virtual TestCaseVerdict aggregate(const vector<TestCaseVerdict>& testCaseVerdicts, double points) = 0;
 };
 
 }

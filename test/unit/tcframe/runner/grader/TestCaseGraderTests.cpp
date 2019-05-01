@@ -39,7 +39,7 @@ protected:
 };
 
 TEST_F(TestCaseGraderTests, Grading_AC) {
-    Verdict verdict(VerdictStatus::ac());
+    TestCaseVerdict verdict(Verdict::ac());
     map<string, ExecutionResult> executionResults = {{"solution", ExecutionResult()}};
     ON_CALL(evaluator, evaluate(_, _, _))
             .WillByDefault(Return(EvaluationResult(verdict, executionResults)));
@@ -55,7 +55,7 @@ TEST_F(TestCaseGraderTests, Grading_AC) {
 }
 
 TEST_F(TestCaseGraderTests, Grading_TLE) {
-    Verdict verdict(VerdictStatus::tle());
+    TestCaseVerdict verdict(Verdict::tle());
     map<string, ExecutionResult> executionResults = {{"solution", ExecutionResult()}};
     ON_CALL(evaluator, evaluate(_, _, _))
             .WillByDefault(Return(EvaluationResult(verdict, executionResults)));

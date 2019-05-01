@@ -107,9 +107,9 @@ set(INCLUDE
         include/tcframe/runner/os/OperatingSystem.hpp
         include/tcframe/runner/os/TestCasePathCreator.hpp
         include/tcframe/runner/verdict.hpp
+        include/tcframe/runner/verdict/TestCaseVerdict.hpp
+        include/tcframe/runner/verdict/TestCaseVerdictParser.hpp
         include/tcframe/runner/verdict/Verdict.hpp
-        include/tcframe/runner/verdict/VerdictCreator.hpp
-        include/tcframe/runner/verdict/VerdictStatus.hpp
         include/tcframe/spec.hpp
         include/tcframe/spec/config.hpp
         include/tcframe/spec/config/GradingConfig.hpp
@@ -216,8 +216,8 @@ set(TEST_UNIT
         test/unit/tcframe/runner/os/ExecutionResultTests.cpp
         test/unit/tcframe/runner/os/MockOperatingSystem.hpp
         test/unit/tcframe/runner/os/TestCasePathCreatorTests.cpp
-        test/unit/tcframe/runner/verdict/MockVerdictCreator.hpp
-        test/unit/tcframe/runner/verdict/VerdictCreatorTests.cpp
+        test/unit/tcframe/runner/verdict/MockTestCaseVerdictParser.hpp
+        test/unit/tcframe/runner/verdict/TestCaseVerdictParserTests.cpp
         test/unit/tcframe/runner/verdict/VerdictTests.cpp
         test/unit/tcframe/spec/constraint/ConstraintSuiteTests.cpp
         test/unit/tcframe/spec/constraint/ConstraintSuiteBuilderTests.cpp

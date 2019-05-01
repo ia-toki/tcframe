@@ -15,8 +15,8 @@ public:
     virtual ~GraderLogger() = default;
 
     virtual void logIntroduction(const string& solutionCommand) = 0;
-    virtual void logTestCaseVerdict(const Verdict& verdict) = 0;
-    virtual void logResult(const map<int, Verdict>& subtaskVerdicts, const Verdict& verdict) = 0;
+    virtual void logTestCaseVerdict(const TestCaseVerdict& verdict) = 0;
+    virtual void logResult(const map<int, TestCaseVerdict>& subtaskVerdicts, const TestCaseVerdict& verdict) = 0;
 };
 
 }

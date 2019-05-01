@@ -22,11 +22,11 @@ public:
         engine_->logParagraph(0, "Local grading with solution command: '" + solutionCommand + "'...");
     }
 
-    void logTestCaseVerdict(const Verdict& verdict) {
+    void logTestCaseVerdict(const TestCaseVerdict& verdict) {
         engine_->logParagraph(0, verdict.toString());
     }
 
-    void logResult(const map<int, Verdict>& subtaskVerdicts, const Verdict& verdict) {
+    void logResult(const map<int, TestCaseVerdict>& subtaskVerdicts, const TestCaseVerdict& verdict) {
         if (subtaskVerdicts.size() > 1) {
             engine_->logHeading("SUBTASK VERDICTS");
             for (auto entry : subtaskVerdicts) {

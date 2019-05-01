@@ -16,7 +16,7 @@ class CustomScorerIntegrationTests : public Test {
 protected:
     CustomScorer scorer = {
             new OperatingSystem(),
-            new VerdictCreator(),
+            new TestCaseVerdictParser(),
             "test-integration/runner/evaluator/scorer/custom/scorer"};
 
     static void SetUpTestCase() {
@@ -32,7 +32,7 @@ TEST_F(CustomScorerIntegrationTests, Scoring) {
             "test-integration/runner/evaluator/scorer/judge.in",
             "test-integration/runner/evaluator/scorer/judge.out",
             "test-integration/runner/evaluator/scorer/custom/contestant.out");
-    EXPECT_THAT(result.verdict(), Eq(Verdict(VerdictStatus::ac())));
+    EXPECT_THAT(result.verdict(), Eq(TestCaseVerdict(Verdict::ac())));
 }
 
 }

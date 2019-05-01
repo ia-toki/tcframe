@@ -112,7 +112,7 @@ private:
         specClient_->generateSampleTestCaseOutput(testCase.name(), Evaluator::EVALUATION_OUT_FILENAME);
 
         ScoringResult scoringResult = evaluator_->score(inputFilename, outputFilename);
-        if (!(scoringResult.verdict().status() == VerdictStatus::ac())) {
+        if (!(scoringResult.verdict().verdict() == Verdict::ac())) {
             throw FormattedError::combine({
                 FormattedError(
                         {{0, "Sample test case output does not match with actual output produced by the solution"}}),

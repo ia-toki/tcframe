@@ -14,15 +14,15 @@ namespace tcframe {
 
 struct GenerationResult {
 private:
-    optional<Verdict> verdict_;
+    optional<TestCaseVerdict> verdict_;
     ExecutionResult executionResult_;
 
 public:
-    GenerationResult(optional<Verdict> verdict, ExecutionResult executionResult)
+    GenerationResult(optional<TestCaseVerdict> verdict, ExecutionResult executionResult)
             : verdict_(move(verdict))
             , executionResult_(move(executionResult)) {}
 
-    const optional<Verdict>& verdict() const {
+    const optional<TestCaseVerdict>& verdict() const {
         return verdict_;
     }
 

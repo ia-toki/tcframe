@@ -64,9 +64,9 @@ protected:
 
     void SetUp() {
         ON_CALL(evaluator, generate(_, _, _))
-                .WillByDefault(Return(GenerationResult(optional<Verdict>(), ExecutionResult())));
+                .WillByDefault(Return(GenerationResult(optional<TestCaseVerdict>(), ExecutionResult())));
         ON_CALL(evaluator, score(_, _))
-                .WillByDefault(Return(ScoringResult(Verdict(), ExecutionResult())));
+                .WillByDefault(Return(ScoringResult(TestCaseVerdict(), ExecutionResult())));
     }
 
     struct SimpleErrorMessageIs {
@@ -98,7 +98,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample) {
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Sample_Failed_Check) {
-    Verdict verdict(VerdictStatus::wa());
+    TestCaseVerdict verdict(Verdict::wa());
     auto scoringExecutionResult = ExecutionResultBuilder()
             .setExitCode(1)
             .setStandardError("diff")
@@ -191,10 +191,10 @@ TEST_F(TestCaseGeneratorTests, Generation_Failed_InputGeneration) {
 }
 
 TEST_F(TestCaseGeneratorTests, Generation_Failed_OutputGeneration) {
-    Verdict verdict(VerdictStatus::rte());
+    TestCaseVerdict verdict(Verdict::rte());
     auto executionResult = ExecutionResultBuilder().setExitCode(1).build();
     ON_CALL(evaluator, generate(_, _, _))
-            .WillByDefault(Return(GenerationResult(optional<Verdict>(verdict), executionResult)));
+            .WillByDefault(Return(GenerationResult(optional<TestCaseVerdict>(verdict), executionResult)));
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseFailedResult(optional<string>("N = 42")));

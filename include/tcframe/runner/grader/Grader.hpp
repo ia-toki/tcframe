@@ -44,26 +44,26 @@ public:
         TestSuite testSuite = specClient_->getTestSuite();
         bool hasMultipleTestCases = specClient_->hasMultipleTestCases();
 
-        map<int, vector<Verdict>> verdictsBySubtaskId;
+        map<int, vector<TestCaseVerdict>> verdictsBySubtaskId;
         for (const TestGroup& testGroup : testSuite.testGroups()) {
             gradeTestGroup(testGroup, options, hasMultipleTestCases, verdictsBySubtaskId);
         }
 
         map<int, double> subtaskPointsById = getSubtaskPoints(options);
-        map<int, Verdict> subtaskVerdictsById;
-        vector<Verdict> subtaskVerdicts;
+        map<int, TestCaseVerdict> subtaskVerdictsById;
+        vector<TestCaseVerdict> subtaskVerdicts;
 
         for (const auto& entry : verdictsBySubtaskId) {
             int subtaskId = entry.first;
-            const vector<Verdict>& verdicts = entry.second;
+            const vector<TestCaseVerdict>& verdicts = entry.second;
 
             if (subtaskPointsById.count(subtaskId)) {
-                Verdict subtaskVerdict = aggregator_->aggregate(verdicts, subtaskPointsById[subtaskId]);
+                TestCaseVerdict subtaskVerdict = aggregator_->aggregate(verdicts, subtaskPointsById[subtaskId]);
                 subtaskVerdictsById[subtaskId] = subtaskVerdict;
                 subtaskVerdicts.push_back(subtaskVerdict);
             }
         }
-        Verdict verdict = aggregate(subtaskVerdicts);
+        TestCaseVerdict verdict = aggregate(subtaskVerdicts);
 
         logger_->logResult(subtaskVerdictsById, verdict);
     }
@@ -85,7 +85,7 @@ private:
             const TestGroup& testGroup,
             const GradingOptions& options,
             bool hasMultipleTestCases,
-            map<int, vector<Verdict>>& verdictsBySubtaskId) {
+            map<int, vector<TestCaseVerdict>>& verdictsBySubtaskId) {
 
         if (hasMultipleTestCases && testGroup.testCases().empty()) {
             return;
@@ -109,22 +109,22 @@ private:
     void gradeTestCase(
             const TestCase& testCase,
             const GradingOptions& options,
-            map<int, vector<Verdict>>& verdictsBySubtaskId) {
+            map<int, vector<TestCaseVerdict>>& verdictsBySubtaskId) {
 
-        Verdict verdict = testCaseGrader_->grade(testCase, options);
+        TestCaseVerdict verdict = testCaseGrader_->grade(testCase, options);
         for (int subtaskId : testCase.subtaskIds()) {
             verdictsBySubtaskId[subtaskId].push_back(verdict);
         }
     }
 
-    Verdict aggregate(const vector<Verdict>& subtaskVerdicts) {
-        VerdictStatus aggregatedStatus = VerdictStatus::ac();
+    TestCaseVerdict aggregate(const vector<TestCaseVerdict>& subtaskVerdicts) {
+        Verdict aggregatedVerdict = Verdict::ac();
         double aggregatedPoints = 0;
-        for (const Verdict& verdict : subtaskVerdicts) {
-            aggregatedStatus = max(aggregatedStatus, verdict.status());
+        for (const TestCaseVerdict& verdict : subtaskVerdicts) {
+            aggregatedVerdict = max(aggregatedVerdict, verdict.verdict());
             aggregatedPoints += verdict.points().value();
         }
-        return {aggregatedStatus, aggregatedPoints};
+        return {aggregatedVerdict, aggregatedPoints};
     }
 };
 

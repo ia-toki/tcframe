@@ -21,7 +21,7 @@ TEST_F(DiffScorerIntegrationTests, Scoring_AC) {
             "",
             "test-integration/runner/evaluator/scorer/judge.out",
             "test-integration/runner/evaluator/scorer/diff/contestant_ac.out");
-    EXPECT_THAT(result.verdict(), Eq(Verdict(VerdictStatus::ac())));
+    EXPECT_THAT(result.verdict(), Eq(TestCaseVerdict(Verdict::ac())));
     EXPECT_THAT(result.executionResult().standardError(), IsEmpty());
 }
 
@@ -30,7 +30,7 @@ TEST_F(DiffScorerIntegrationTests, Scoring_WA) {
             "",
             "test-integration/runner/evaluator/scorer/judge.out",
             "test-integration/runner/evaluator/scorer/diff/contestant_wa.out");
-    EXPECT_THAT(result.verdict(), Eq(Verdict(VerdictStatus::wa())));
+    EXPECT_THAT(result.verdict(), Eq(TestCaseVerdict(Verdict::wa())));
 
     EXPECT_THAT(result.executionResult().standardError(), AllOf(
             StartsWith("Diff:\n"),

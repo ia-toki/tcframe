@@ -17,14 +17,14 @@ public:
 
     virtual Scorer* getScorer(OperatingSystem* os, const optional<string>& scorerCommand) {
         if (scorerCommand) {
-            return new CustomScorer(os, new VerdictCreator(), scorerCommand.value());
+            return new CustomScorer(os, new TestCaseVerdictParser(), scorerCommand.value());
         } else {
             return new DiffScorer(os);
         }
     }
 
     virtual Communicator* getCommunicator(OperatingSystem* os, const string& communicatorCommand) {
-        return new Communicator(os, new VerdictCreator(), communicatorCommand);
+        return new Communicator(os, new TestCaseVerdictParser(), communicatorCommand);
     }
 };
 

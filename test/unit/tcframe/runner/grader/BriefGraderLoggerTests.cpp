@@ -17,15 +17,15 @@ protected:
 };
 
 TEST_F(BriefGraderLoggerTests, Result) {
-    Verdict verdict(VerdictStatus::ac());
+    TestCaseVerdict verdict(Verdict::ac());
     EXPECT_CALL(engine, logParagraph(0, verdict.toBriefString()));
     logger.logResult({{Subtask::MAIN_ID, verdict}}, verdict);
 }
 
 TEST_F(BriefGraderLoggerTests, Result_WithSubtasks) {
-    Verdict verdict(VerdictStatus::wa(), 70);
-    Verdict subtask1Verdict(VerdictStatus::ac(), 70);
-    Verdict subtask2Verdict(VerdictStatus::wa(), 0);
+    TestCaseVerdict verdict(Verdict::wa(), 70);
+    TestCaseVerdict subtask1Verdict(Verdict::ac(), 70);
+    TestCaseVerdict subtask2Verdict(Verdict::wa(), 0);
     {
         InSequence sequence;
         EXPECT_CALL(engine, logParagraph(0, verdict.toBriefString()));

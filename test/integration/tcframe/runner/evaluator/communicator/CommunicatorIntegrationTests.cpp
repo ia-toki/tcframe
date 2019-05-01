@@ -15,7 +15,7 @@ class CommunicatorIntegrationTests : public Test {
 protected:
     Communicator communicator = {
             new OperatingSystem(),
-            new VerdictCreator(),
+            new TestCaseVerdictParser(),
             "test-integration/runner/evaluator/communicator/communicator"};
 
     static void SetUpTestCase() {
@@ -38,7 +38,7 @@ TEST_F(CommunicatorIntegrationTests, Communication) {
     CommunicationResult result = communicator.communicate(
             "test-integration/runner/evaluator/communicator/judge.in",
             options);
-    EXPECT_THAT(result.verdict(), Eq(Verdict(VerdictStatus::ac())));
+    EXPECT_THAT(result.verdict(), Eq(TestCaseVerdict(Verdict::ac())));
     EXPECT_THAT(result.executionResult().standardError(), IsEmpty());
 }
 

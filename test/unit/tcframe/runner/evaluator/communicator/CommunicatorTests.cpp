@@ -4,7 +4,7 @@
 #include <sstream>
 
 #include "../../os/MockOperatingSystem.hpp"
-#include "../../verdict/MockVerdictCreator.hpp"
+#include "../../verdict/MockTestCaseVerdictParser.hpp"
 #include "tcframe/runner/evaluator/communicator/Communicator.hpp"
 
 using ::testing::_;
@@ -20,23 +20,23 @@ namespace tcframe {
 class CommunicatorTests : public Test {
 protected:
     MOCK(OperatingSystem) os;
-    MOCK(VerdictCreator) verdictCreator;
+    MOCK(TestCaseVerdictParser) testCaseVerdictParser;
     string communicatorCommand = "./communicator";
     EvaluationOptions options;
 
-    Communicator communicator = {&os, &verdictCreator, communicatorCommand};
+    Communicator communicator = {&os, &testCaseVerdictParser, communicatorCommand};
 
     void SetUp() {
         ON_CALL(os, execute(_)).WillByDefault(Return(ExecutionResultBuilder().setStandardError("AC\n").build()));
         ON_CALL(os, openForReading(_)).WillByDefault(Return(new istringstream()));
-        ON_CALL(verdictCreator, fromExecutionResult(_)).WillByDefault(Return(optional<Verdict>()));
-        ON_CALL(verdictCreator, fromStream(_)).WillByDefault(Return(Verdict(VerdictStatus::ac())));
+        ON_CALL(testCaseVerdictParser, parseExecutionResult(_)).WillByDefault(Return(optional<TestCaseVerdict>()));
+        ON_CALL(testCaseVerdictParser, parseStream(_)).WillByDefault(Return(TestCaseVerdict(Verdict::ac())));
     }
 };
 
 TEST_F(CommunicatorTests, Communication_Successful) {
     EXPECT_THAT(communicator.communicate("1.in", options), Eq(
-            CommunicationResult(Verdict(VerdictStatus::ac()), ExecutionResult())));
+            CommunicationResult(TestCaseVerdict(Verdict::ac()), ExecutionResult())));
 }
 
 TEST_F(CommunicatorTests, Communication_Crashed) {
@@ -45,19 +45,19 @@ TEST_F(CommunicatorTests, Communication_Crashed) {
             .setStandardError("crashed")
             .build();
     ON_CALL(os, execute(_)).WillByDefault(Return(executionResult));
-    ON_CALL(verdictCreator, fromExecutionResult(_))
-            .WillByDefault(Return(optional<Verdict>(Verdict(VerdictStatus::rte()))));
+    ON_CALL(testCaseVerdictParser, parseExecutionResult(_))
+            .WillByDefault(Return(optional<TestCaseVerdict>(TestCaseVerdict(Verdict::rte()))));
 
     EXPECT_THAT(communicator.communicate("1.in", options), Eq(
-            CommunicationResult(Verdict(VerdictStatus::rte()), executionResult)));
+            CommunicationResult(TestCaseVerdict(Verdict::rte()), executionResult)));
 }
 
 TEST_F(CommunicatorTests, Communication_UnknownVerdict) {
     ON_CALL(os, execute(_)).WillByDefault(Return(ExecutionResultBuilder().setStandardError("err").build()));
-    ON_CALL(verdictCreator, fromStream(_)).WillByDefault(Throw(runtime_error("bogus")));
+    ON_CALL(testCaseVerdictParser, parseStream(_)).WillByDefault(Throw(runtime_error("bogus")));
 
     EXPECT_THAT(communicator.communicate("1.in", options), Eq(
-            CommunicationResult(Verdict(VerdictStatus::err()), ExecutionResultBuilder()
+            CommunicationResult(TestCaseVerdict(Verdict::err()), ExecutionResultBuilder()
                     .setStandardError("bogus").build())));
 }
 

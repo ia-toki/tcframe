@@ -20,15 +20,15 @@ namespace tcframe {
 class BatchEvaluator : public Evaluator {
 private:
     OperatingSystem* os_;
-    VerdictCreator* verdictCreator_;
+    TestCaseVerdictParser* testCaseVerdictParser_;
     Scorer* scorer_;
 
 public:
     virtual ~BatchEvaluator() = default;
 
-    BatchEvaluator(OperatingSystem* os, VerdictCreator* verdictCreator, Scorer* scorer)
+    BatchEvaluator(OperatingSystem* os, TestCaseVerdictParser* testCaseVerdictParser, Scorer* scorer)
             : os_(os)
-            , verdictCreator_(verdictCreator)
+            , testCaseVerdictParser_(testCaseVerdictParser)
             , scorer_(scorer) {}
 
     EvaluationResult evaluate(
@@ -37,7 +37,7 @@ public:
             const EvaluationOptions& options) {
 
         map<string, ExecutionResult> executionResults;
-        Verdict verdict;
+        TestCaseVerdict verdict;
 
         GenerationResult generationResult = generate(inputFilename, EVALUATION_OUT_FILENAME, options);
         executionResults["solution"] = generationResult.executionResult();
@@ -71,7 +71,7 @@ public:
         }
 
         ExecutionResult executionResult = os_->execute(request.build());
-        optional<Verdict> verdict = verdictCreator_->fromExecutionResult(executionResult);
+        optional<TestCaseVerdict> verdict = testCaseVerdictParser_->parseExecutionResult(executionResult);
         return {verdict, executionResult};
     }
 

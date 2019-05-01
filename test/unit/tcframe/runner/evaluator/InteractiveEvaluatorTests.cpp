@@ -18,7 +18,7 @@ protected:
 };
 
 TEST_F(InteractiveEvaluatorTests, Evaluation) {
-    Verdict verdict(VerdictStatus::wa());
+    TestCaseVerdict verdict(Verdict::wa());
     auto executionResult = ExecutionResultBuilder().setStandardError("WA").build();
     auto options = EvaluationOptionsBuilder().setSolutionCommand("\"python Sol.py\"").build();
 

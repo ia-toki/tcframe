@@ -13,15 +13,15 @@ namespace tcframe {
 
 struct ScoringResult {
 private:
-    Verdict verdict_;
+    TestCaseVerdict verdict_;
     ExecutionResult executionResult_;
 
 public:
-    ScoringResult(Verdict verdict, ExecutionResult executionResult)
+    ScoringResult(TestCaseVerdict verdict, ExecutionResult executionResult)
             : verdict_(move(verdict))
             , executionResult_(move(executionResult)) {}
 
-    const Verdict& verdict() const {
+    const TestCaseVerdict& verdict() const {
         return verdict_;
     }
 
