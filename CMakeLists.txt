@@ -53,10 +53,11 @@ set(INCLUDE
         include/tcframe/exception/NotImplementedException.hpp
         include/tcframe/runner.hpp
         include/tcframe/runner/aggregator.hpp
-        include/tcframe/runner/aggregator/Aggregator.hpp
         include/tcframe/runner/aggregator/AggregatorRegistry.hpp
         include/tcframe/runner/aggregator/MinAggregator.hpp
+        include/tcframe/runner/aggregator/SubtaskAggregator.hpp
         include/tcframe/runner/aggregator/SumAggregator.hpp
+        include/tcframe/runner/aggregator/TestCaseAggregator.hpp
         include/tcframe/runner/client.hpp
         include/tcframe/runner/client/SpecClient.hpp
         include/tcframe/runner/core.hpp
@@ -107,6 +108,7 @@ set(INCLUDE
         include/tcframe/runner/os/OperatingSystem.hpp
         include/tcframe/runner/os/TestCasePathCreator.hpp
         include/tcframe/runner/verdict.hpp
+        include/tcframe/runner/verdict/SubtaskVerdict.hpp
         include/tcframe/runner/verdict/TestCaseVerdict.hpp
         include/tcframe/runner/verdict/TestCaseVerdictParser.hpp
         include/tcframe/runner/verdict/Verdict.hpp
@@ -176,8 +178,10 @@ set(TEST_UNIT
         test/unit/tcframe/helper.hpp
         test/unit/tcframe/mock.hpp
         test/unit/tcframe/runner/aggregator/MinAggregatorTests.cpp
-        test/unit/tcframe/runner/aggregator/MockAggregator.hpp
         test/unit/tcframe/runner/aggregator/MockAggregatorRegistry.hpp
+        test/unit/tcframe/runner/aggregator/MockSubtaskAggregator.hpp
+        test/unit/tcframe/runner/aggregator/MockTestCaseAggregator.hpp
+        test/unit/tcframe/runner/aggregator/SubtaskAggregatorTests.cpp
         test/unit/tcframe/runner/aggregator/SumAggregatorTests.cpp
         test/unit/tcframe/runner/core/ArgsParserTests.cpp
         test/unit/tcframe/runner/core/BatchRunnerTests.cpp
@@ -217,8 +221,9 @@ set(TEST_UNIT
         test/unit/tcframe/runner/os/MockOperatingSystem.hpp
         test/unit/tcframe/runner/os/TestCasePathCreatorTests.cpp
         test/unit/tcframe/runner/verdict/MockTestCaseVerdictParser.hpp
+        test/unit/tcframe/runner/verdict/SubtaskVerdictTests.cpp
         test/unit/tcframe/runner/verdict/TestCaseVerdictParserTests.cpp
-        test/unit/tcframe/runner/verdict/VerdictTests.cpp
+        test/unit/tcframe/runner/verdict/TestCaseVerdictTests.cpp
         test/unit/tcframe/spec/constraint/ConstraintSuiteTests.cpp
         test/unit/tcframe/spec/constraint/ConstraintSuiteBuilderTests.cpp
         test/unit/tcframe/spec/core/BaseTestSpecTests.cpp

@@ -26,7 +26,7 @@ public:
         engine_->logParagraph(0, verdict.toString());
     }
 
-    void logResult(const map<int, TestCaseVerdict>& subtaskVerdicts, const TestCaseVerdict& verdict) {
+    void logResult(const map<int, SubtaskVerdict>& subtaskVerdicts, const SubtaskVerdict& verdict) {
         if (subtaskVerdicts.size() > 1) {
             engine_->logHeading("SUBTASK VERDICTS");
             for (auto entry : subtaskVerdicts) {

@@ -17,7 +17,7 @@ TEST_F(MinAggregatorTests, Aggregate_FullPoints) {
             TestCaseVerdict(Verdict::ac()),
             TestCaseVerdict(Verdict::ac())};
 
-    EXPECT_THAT(aggregator.aggregate(verdicts, 70), Eq(TestCaseVerdict(Verdict::ac(), 70)));
+    EXPECT_THAT(aggregator.aggregate(verdicts, 70), Eq(SubtaskVerdict(Verdict::ac(), 70)));
 }
 
 TEST_F(MinAggregatorTests, Aggregate_ZeroPoints) {
@@ -26,7 +26,7 @@ TEST_F(MinAggregatorTests, Aggregate_ZeroPoints) {
             TestCaseVerdict(Verdict::rte()),
             TestCaseVerdict(Verdict::wa())};
 
-    EXPECT_THAT(aggregator.aggregate(verdicts, 70), Eq(TestCaseVerdict(Verdict::rte(), 0)));
+    EXPECT_THAT(aggregator.aggregate(verdicts, 70), Eq(SubtaskVerdict(Verdict::rte(), 0)));
 }
 
 TEST_F(MinAggregatorTests, Aggregate_MinOKPoints) {
@@ -35,7 +35,7 @@ TEST_F(MinAggregatorTests, Aggregate_MinOKPoints) {
             TestCaseVerdict(Verdict::ok(), 20),
             TestCaseVerdict(Verdict::ok(), 30)};
 
-    EXPECT_THAT(aggregator.aggregate(verdicts, 70), Eq(TestCaseVerdict(Verdict::ok(), 20)));
+    EXPECT_THAT(aggregator.aggregate(verdicts, 70), Eq(SubtaskVerdict(Verdict::ok(), 20)));
 }
 
 }

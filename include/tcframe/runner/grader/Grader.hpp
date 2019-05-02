@@ -26,16 +26,23 @@ class Grader {
 private:
     SpecClient* specClient_;
     TestCaseGrader* testCaseGrader_;
-    Aggregator* aggregator_;
+    TestCaseAggregator* testCaseAggregator_;
+    SubtaskAggregator* subtaskAggregator_;
     GraderLogger* logger_;
 
 public:
     virtual ~Grader() = default;
 
-    Grader(SpecClient* specClient, TestCaseGrader* testCaseGrader, Aggregator* aggregator, GraderLogger* logger)
+    Grader(
+            SpecClient* specClient,
+            TestCaseGrader* testCaseGrader,
+            TestCaseAggregator* testCaseAggregator,
+            SubtaskAggregator* subtaskAggregator,
+            GraderLogger* logger)
             : specClient_(specClient)
             , testCaseGrader_(testCaseGrader)
-            , aggregator_(aggregator)
+            , testCaseAggregator_(testCaseAggregator)
+            , subtaskAggregator_(subtaskAggregator)
             , logger_(logger) {}
 
     virtual void grade(const GradingOptions& options) {
@@ -50,20 +57,20 @@ public:
         }
 
         map<int, double> subtaskPointsById = getSubtaskPoints(options);
-        map<int, TestCaseVerdict> subtaskVerdictsById;
-        vector<TestCaseVerdict> subtaskVerdicts;
+        map<int, SubtaskVerdict> subtaskVerdictsById;
+        vector<SubtaskVerdict> subtaskVerdicts;
 
         for (const auto& entry : verdictsBySubtaskId) {
             int subtaskId = entry.first;
             const vector<TestCaseVerdict>& verdicts = entry.second;
 
             if (subtaskPointsById.count(subtaskId)) {
-                TestCaseVerdict subtaskVerdict = aggregator_->aggregate(verdicts, subtaskPointsById[subtaskId]);
+                SubtaskVerdict subtaskVerdict = testCaseAggregator_->aggregate(verdicts, subtaskPointsById[subtaskId]);
                 subtaskVerdictsById[subtaskId] = subtaskVerdict;
                 subtaskVerdicts.push_back(subtaskVerdict);
             }
         }
-        TestCaseVerdict verdict = aggregate(subtaskVerdicts);
+        SubtaskVerdict verdict = subtaskAggregator_->aggregate(subtaskVerdicts);
 
         logger_->logResult(subtaskVerdictsById, verdict);
     }
@@ -116,16 +123,6 @@ private:
             verdictsBySubtaskId[subtaskId].push_back(verdict);
         }
     }
-
-    TestCaseVerdict aggregate(const vector<TestCaseVerdict>& subtaskVerdicts) {
-        Verdict aggregatedVerdict = Verdict::ac();
-        double aggregatedPoints = 0;
-        for (const TestCaseVerdict& verdict : subtaskVerdicts) {
-            aggregatedVerdict = max(aggregatedVerdict, verdict.verdict());
-            aggregatedPoints += verdict.points().value();
-        }
-        return {aggregatedVerdict, aggregatedPoints};
-    }
 };
 
 class GraderFactory {
@@ -135,9 +132,10 @@ public:
     virtual Grader* create(
             SpecClient* specClient,
             TestCaseGrader* testCaseGrader,
-            Aggregator* aggregator,
+            TestCaseAggregator* aggregator,
+            SubtaskAggregator* subtaskAggregator,
             GraderLogger* logger) {
-        return new Grader(specClient, testCaseGrader, aggregator, logger);
+        return new Grader(specClient, testCaseGrader, aggregator, subtaskAggregator, logger);
     }
 };
 

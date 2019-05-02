@@ -29,7 +29,7 @@ TEST_F(DefaultGraderLoggerTests, TestCaseVerdict) {
 }
 
 TEST_F(DefaultGraderLoggerTests, Result) {
-    TestCaseVerdict verdict(Verdict::ac());
+    SubtaskVerdict verdict(Verdict::ac(), 100);
     {
         InSequence sequence;
         EXPECT_CALL(engine, logHeading("VERDICT"));
@@ -39,9 +39,9 @@ TEST_F(DefaultGraderLoggerTests, Result) {
 }
 
 TEST_F(DefaultGraderLoggerTests, Result_WithSubtasks) {
-    TestCaseVerdict subtask1Verdict(Verdict::ac(), 70);
-    TestCaseVerdict subtask2Verdict(Verdict::wa(), 0);
-    TestCaseVerdict verdict(Verdict::wa(), 70);
+    SubtaskVerdict subtask1Verdict(Verdict::ac(), 70);
+    SubtaskVerdict subtask2Verdict(Verdict::wa(), 0);
+    SubtaskVerdict verdict(Verdict::wa(), 70);
     {
         InSequence sequence;
         EXPECT_CALL(engine, logHeading("SUBTASK VERDICTS"));

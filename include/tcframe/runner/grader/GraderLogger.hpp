@@ -16,7 +16,7 @@ public:
 
     virtual void logIntroduction(const string& solutionCommand) = 0;
     virtual void logTestCaseVerdict(const TestCaseVerdict& verdict) = 0;
-    virtual void logResult(const map<int, TestCaseVerdict>& subtaskVerdicts, const TestCaseVerdict& verdict) = 0;
+    virtual void logResult(const map<int, SubtaskVerdict>& subtaskVerdicts, const SubtaskVerdict& verdict) = 0;
 };
 
 }

@@ -224,7 +224,7 @@ TEST_F(RunnerTests, Run_Grading_BriefLogger) {
 }
 
 TEST_F(RunnerTests, Run_AggregatorRegistry) {
-    EXPECT_CALL(aggregatorRegistry, get(false));
+    EXPECT_CALL(aggregatorRegistry, getTestCaseAggregator(false));
     runner.run(2, new char*[3]{
             (char*) "./runner",
             (char*) "grade",
@@ -232,7 +232,7 @@ TEST_F(RunnerTests, Run_AggregatorRegistry) {
 }
 
 TEST_F(RunnerTests, Run_AggregatorRegistry_WithSubtasks) {
-    EXPECT_CALL(aggregatorRegistry, get(true));
+    EXPECT_CALL(aggregatorRegistry, getTestCaseAggregator(true));
     runnerWithSubtasks.run(2, new char*[3]{
             (char*) "./runner",
             (char*) "grade",

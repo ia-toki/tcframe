@@ -153,8 +153,9 @@ private:
         auto helperCommands = getHelperCommands(args, spec.evaluator.has_scorer);
         auto evaluator = evaluatorRegistry_->get(spec.evaluator.slug, os_, helperCommands);
         auto testCaseGrader = new TestCaseGrader(evaluator, logger);
-        auto aggregator = aggregatorRegistry_->get(!spec.subtasks.empty());
-        auto grader = graderFactory_->create(specClient, testCaseGrader, aggregator, logger);
+        auto aggregator = aggregatorRegistry_->getTestCaseAggregator(!spec.subtasks.empty());
+        auto subtaskAggregator = aggregatorRegistry_->getSubtaskAggregator();
+        auto grader = graderFactory_->create(specClient, testCaseGrader, aggregator, subtaskAggregator, logger);
 
         grader->grade(options);
         return 0;

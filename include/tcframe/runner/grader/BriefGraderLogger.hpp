@@ -26,7 +26,7 @@ public:
     void logIntroduction(const string&) {}
     void logTestCaseVerdict(const TestCaseVerdict&) {}
 
-    void logResult(const map<int, TestCaseVerdict>& subtaskVerdicts, const TestCaseVerdict& verdict) {
+    void logResult(const map<int, SubtaskVerdict>& subtaskVerdicts, const SubtaskVerdict& verdict) {
         engine_->logParagraph(0, verdict.toBriefString());
 
         if (subtaskVerdicts.size() > 1) {

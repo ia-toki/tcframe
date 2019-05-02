@@ -4,8 +4,9 @@
 #include <utility>
 
 #include "../../driver/MockDriver.hpp"
-#include "../aggregator/MockAggregator.hpp"
 #include "../aggregator/MockAggregatorRegistry.hpp"
+#include "../aggregator/MockSubtaskAggregator.hpp"
+#include "../aggregator/MockTestCaseAggregator.hpp"
 #include "../evaluator/MockEvaluator.hpp"
 #include "../evaluator/MockEvaluatorRegistry.hpp"
 #include "../generator/MockGenerator.hpp"
@@ -46,7 +47,8 @@ protected:
     MOCK(RunnerLogger) runnerLogger;
     MOCK(GraderLogger) graderLogger;
     MOCK(Evaluator) evaluator;
-    MOCK(Aggregator) aggregator;
+    MOCK(TestCaseAggregator) testCaseAggregator;
+    MOCK(SubtaskAggregator) subtaskAggregator;
     MOCK(Generator) generator;
     MOCK(Grader) grader;
 
@@ -62,9 +64,10 @@ protected:
         ON_CALL(runnerLoggerFactory, create(_)).WillByDefault(Return(&runnerLogger));
         ON_CALL(graderLoggerFactory, create(_, _)).WillByDefault(Return(&graderLogger));
         ON_CALL(generatorFactory, create(_, _, _, _)).WillByDefault(Return(&generator));
-        ON_CALL(graderFactory, create(_, _, _, _)).WillByDefault(Return(&grader));
+        ON_CALL(graderFactory, create(_, _, _, _, _)).WillByDefault(Return(&grader));
         ON_CALL(evaluatorRegistry, get(_, _, _)).WillByDefault(Return(&evaluator));
-        ON_CALL(aggregatorRegistry, get(_)).WillByDefault(Return(&aggregator));
+        ON_CALL(aggregatorRegistry, getTestCaseAggregator(_)).WillByDefault(Return(&testCaseAggregator));
+        ON_CALL(aggregatorRegistry, getSubtaskAggregator()).WillByDefault(Return(&subtaskAggregator));
         ON_CALL(os, execute(_)).WillByDefault(Return(ExecutionResult()));
     }
 

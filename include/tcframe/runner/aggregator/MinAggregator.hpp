@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <vector>
 
-#include "Aggregator.hpp"
+#include "TestCaseAggregator.hpp"
 #include "tcframe/runner/verdict.hpp"
 
 using std::max;
@@ -12,13 +12,13 @@ using std::vector;
 
 namespace tcframe {
 
-class MinAggregator : public Aggregator {
+class MinAggregator : public TestCaseAggregator {
 public:
     virtual ~MinAggregator() = default;
 
-    TestCaseVerdict aggregate(const vector<TestCaseVerdict>& testCaseVerdicts, double points) {
+    SubtaskVerdict aggregate(const vector<TestCaseVerdict>& testCaseVerdicts, double subtaskPoints) {
         Verdict aggregatedVerdict = Verdict::ac();
-        double aggregatedPoints = points;
+        double aggregatedPoints = subtaskPoints;
         for (const TestCaseVerdict& testCaseVerdict : testCaseVerdicts) {
             aggregatedVerdict = max(aggregatedVerdict, testCaseVerdict.verdict());
 
