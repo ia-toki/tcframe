@@ -7,7 +7,7 @@
 
 **tcframe** is a C++ framework for generating test cases of competitive programming problems. This framework helps problem writers prepare test cases in a structured manner and ensures that the generated test cases are valid according to the specified constraints.
 
-Consult the complete documentation at http://docs.tcframe.org/.
+Consult the complete documentation at https://tcframe.toki.id.
 
 Example high-level usage:
 
