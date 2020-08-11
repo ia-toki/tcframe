@@ -222,7 +222,7 @@ This can be achieved by implementing ``AfterTestCase()``, transforming the vecto
 
     void AfterTestCase() {
         U.clear();
-        P.clear();
+        V.clear();
         for (int i = 0; i < N; i++) {
             if (P[i] != -1) {
                 U.push_back(i);
