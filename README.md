@@ -1,7 +1,7 @@
 # tcframe 1.6.0
 
 [![GitHub Release](https://img.shields.io/github/release/ia-toki/tcframe.svg)](https://github.com/ia-toki/tcframe)
-[![Build Status](https://img.shields.io/travis/ia-toki/tcframe/master.svg)](https://travis-ci.org/ia-toki/tcframe)
+![CI Status](https://github.com/ia-toki/judgels/workflows/ci/badge.svg)
 [![Coverage Status](https://img.shields.io/codecov/c/github/ia-toki/tcframe/master.svg)](http://codecov.io/github/ia-toki/tcframe?branch=master)
 [![Documentation Status](https://readthedocs.org/projects/tcframe/badge/?version=latest)](http://docs.tcframe.org/)
 
