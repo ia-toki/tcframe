@@ -1,4 +1,5 @@
 .idea
+build
 docs/env
 docs/_build
 cmake-build-debug
