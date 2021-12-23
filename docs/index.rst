@@ -1,10 +1,6 @@
 tcframe Documentation
 =====================
 
-.. note::
-
-    **tcframe** 1.x has been released! Check out :ref:`1.0.0 release notes <v1_0_0>` for migration guide from 0.x.
-
 Welcome to the official documentation of **tcframe**, a competitive programming test cases generator framework! This documentation is organized into several sections:
 
 :ref:`Introduction <introduction>`
