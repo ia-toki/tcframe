@@ -4,7 +4,7 @@ int N;
 char buf[100];
 
 int main() {
-    gets(buf);
+    fgets(buf, 100, stdin);
 
     scanf("%d", &N);
     if (N == 1) {

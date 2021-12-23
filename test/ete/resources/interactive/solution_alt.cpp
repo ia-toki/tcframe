@@ -14,6 +14,8 @@ int main() {
             while(true);
         } else if (response == "TOO_LARGE") {
             hi = mid-1;
+        } else {
+            break;
         }
     }
 }
