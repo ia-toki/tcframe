@@ -118,7 +118,7 @@ Example high-level usage:
 **tcframe** requires:
 
 - Linux/macOS. Windows is not supported.
-- GCC ≥ 4.8. **tcframe** relies heavily on C++11 features.
+- GCC which supports C++17.
 
 ## Motivations
 

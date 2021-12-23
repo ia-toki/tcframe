@@ -120,7 +120,7 @@ Requirements
 **tcframe** requires:
 
 - Linux/OS X. Windows is not supported.
-- GCC ≥ 4.8. **tcframe** relies heavily on C++11 features.
+- GCC which supports C++17.
 
 ----
 
