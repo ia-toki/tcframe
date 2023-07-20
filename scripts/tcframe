@@ -72,8 +72,15 @@ run() {
 grade_solution() {
     solution=$1
     if [ -f "$solution" ]; then
-        echo_colored "grading ${solution}" 34 bold
-        "$RUNNER_EXEC" grade --solution="$solution"
+        echo_colored "grading ${solution}... please wait" 34 bold
+        result=$("$RUNNER_EXEC" grade --solution="$solution")
+        if echo "$result" | grep -q "\[ SUBTASK VERDICTS \]"; then
+            # Print from "[ SUBTASK VERDICTS ]" to the end
+            echo "$result" | sed -n '/\[ SUBTASK VERDICTS \]/,$p'
+        else
+            # Print from "[ VERDICT ]" to the end
+            echo "$result" | sed -n '/\[ VERDICT \]/,$p'
+        fi
     else
         echo_colored "error: solution '$solution' does not exist" 31 bold
     fi
