@@ -70,24 +70,30 @@ run() {
 }
 
 grade_solution() {
+    RUNNER_EXEC="$PWD/runner"
     solution=$1
+    verbose=$2
+    echo_colored "grading ${solution}" 33
     if [ -f "$solution" ]; then
-        echo_colored "grading ${solution}... please wait" 34 bold
-        result=$("$RUNNER_EXEC" grade --solution="$solution")
-        if echo "$result" | grep -q "\[ SUBTASK VERDICTS \]"; then
-            # Print from "[ SUBTASK VERDICTS ]" to the end
-            echo "$result" | sed -n '/\[ SUBTASK VERDICTS \]/,$p'
+        if [ "$verbose" = "verbose" ]; then
+            "$RUNNER_EXEC" grade --solution="$solution"
         else
-            # Print from "[ VERDICT ]" to the end
-            echo "$result" | sed -n '/\[ VERDICT \]/,$p'
+            result=$("$RUNNER_EXEC" grade --solution="$solution")
+            if echo "$result" | grep -q "\[ SUBTASK VERDICTS \]"; then
+                # Print from "[ SUBTASK VERDICTS ]" to the end
+                echo "$result" | sed -n '/\[ SUBTASK VERDICTS \]/,$p'
+            else
+                # Print from "[ VERDICT ]" to the end
+                echo "$result" | sed -n '/\[ VERDICT \]/,$p'
+            fi
         fi
     else
-        echo_colored "error: solution '$solution' does not exist" 31 bold
+        echo_colored "error: solution '$solution' does not exist" 31
     fi
 }
 
-
 grade() {
+
     RUNNER_EXEC="$PWD/runner"
 
     if [ ! -f "$RUNNER_EXEC" ]; then
@@ -95,24 +101,40 @@ grade() {
         exit 1
     fi
 
-    case "$1" in
-    --batch)
-        for solution in solutions/*.cpp; do
-            solution_exec=${solution%.cpp}
-            echo_colored "found ${solution_exec}" 32 bold
-            grade_solution "$solution_exec"
-        done
-        ;;
-    --solution=*)
-        solution=${1#*=}
-        grade_solution "$solution"
-        ;;
-    *)
-        echo_colored "error: unknown option $1" 31
-        exit 1
-        ;;
-esac
+    verbose=""
+    solution=""
+    batch=false
 
+    for arg in "$@"; do
+        case "$arg" in
+            --verbose)
+                verbose="verbose"
+                ;;
+            --batch)
+                batch=true
+                ;;
+            --solution=*)
+                solution=${arg#*=}
+                ;;
+            *)
+                echo_colored "error: unknown option $arg" 31
+                exit 1
+                ;;
+        esac
+    done
+
+    if [ "$batch" = true ]; then
+        for solution_file in solutions/*.cpp; do
+            solution_exec=${solution_file%.cpp}
+            echo_colored "found ${solution_exec}" 32 bold
+            grade_solution "$solution_exec" "$verbose"
+        done
+    elif [ -n "$solution" ]; then
+        grade_solution "$solution" "$verbose"
+    else
+        echo_colored "error: neither --batch nor --solution specified" 31
+        exit 1
+    fi
 }
 
 version() {
