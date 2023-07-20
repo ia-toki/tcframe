@@ -5,12 +5,26 @@ TCFRAME_PREFIX="tcframe"
 echo_colored() {
     local message=$1
     local color=$2
+    local is_bold=$3
 
-    if [ -z "$color" ]; then
-        echo -e "\033[1m${TCFRAME_PREFIX}\033[0m: ${message}"
-    else
-        echo -e "\033[1m${TCFRAME_PREFIX}\033[0m: \033[${color}m${message}\033[0m"
+    local color_start=""
+    local color_end=""
+    local bold_start=""
+    local bold_end=""
+    local tcframe_start="\033[1m"
+    local tcframe_end="\033[0m"
+
+    if [ -n "$color" ]; then
+        color_start="\033[${color}m"
+        color_end="\033[0m"
     fi
+
+    if [ "$is_bold" == "bold" ]; then
+        bold_start="\033[1m"
+        bold_end="\033[0m"
+    fi
+
+    echo -e "${tcframe_start}${TCFRAME_PREFIX}${tcframe_end}:${bold_start}${color_start} ${message}${color_end}${bold_end}"
 }
 
 
@@ -21,6 +35,8 @@ print_usage() {
     echo "  build         Compile spec file into runner program"
     echo "  version       Print tcframe version"
     echo "  run           Run the runner program (build first if necessary)"
+    echo "  grade --batch           Grade all compiled solutions in solutions/ directory"
+    echo "  grade --solution=<path> Grade specific solutions e.g: --solution=./solutions/subtask-1"
 }
 
 build() {
@@ -53,8 +69,47 @@ run() {
     fi
 }
 
+grade_solution() {
+    solution=$1
+    if [ -f "$solution" ]; then
+        echo_colored "grading ${solution}" 34 bold
+        "$RUNNER_EXEC" grade --solution="$solution"
+    else
+        echo_colored "error: solution '$solution' does not exist" 31 bold
+    fi
+}
+
+
+grade() {
+    RUNNER_EXEC="$PWD/runner"
+
+    if [ ! -f "$RUNNER_EXEC" ]; then
+        echo_colored "grade error: runner does not exist" 31
+        exit 1
+    fi
+
+    case "$1" in
+    --batch)
+        for solution in solutions/*.cpp; do
+            solution_exec=${solution%.cpp}
+            echo_colored "found ${solution_exec}" 32 bold
+            grade_solution "$solution_exec"
+        done
+        ;;
+    --solution=*)
+        solution=${1#*=}
+        grade_solution "$solution"
+        ;;
+    *)
+        echo_colored "error: unknown option $1" 31
+        exit 1
+        ;;
+esac
+
+}
+
 version() {
-    echo_colored "version 1.7.0"
+    echo_colored "version 1.7.0" "" bold
 }
 
 if [ -z "$TCFRAME_HOME" ]; then
@@ -75,6 +130,9 @@ elif [ $1 = "version" ]; then
     version
 elif [ $1 = "run" ]; then
     run
+elif [ $1 = "grade" ]; then
+    shift
+    grade $@
 else
     print_usage
     exit 1
