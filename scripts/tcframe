@@ -27,16 +27,16 @@ echo_colored() {
     echo -e "${tcframe_start}${TCFRAME_PREFIX}${tcframe_end}:${bold_start}${color_start} ${message}${color_end}${bold_end}"
 }
 
-
 print_usage() {
     echo_colored "usage: <command>"
     echo
-    echo "Available commands:"
-    echo "  build         Compile spec file into runner program"
-    echo "  version       Print tcframe version"
-    echo "  run           Run the runner program (build first if necessary)"
-    echo "  grade --batch           Grade all compiled solutions in solutions/ directory"
-    echo "  grade --solution=<path> Grade specific solutions e.g: --solution=./solutions/subtask-1"
+    echo_colored "Available commands:" 33
+    echo_colored "  build         Compile spec file into runner program" 36
+    echo_colored "  version       Print tcframe version" 36
+    echo_colored "  run           Run the runner program (build first if necessary)" 36
+    echo_colored "  grade --batch           Grade all compiled solutions in ./solutions/ directory" 36
+    echo_colored "  grade --solution=<path> Grade specific solutions e.g: --solution=./solutions/subtask-1" 36
+    echo_colored "  grade --verbose          Grade with verbose output" 36
 }
 
 build() {
