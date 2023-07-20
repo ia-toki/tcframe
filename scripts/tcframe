@@ -1,11 +1,26 @@
 #!/usr/bin/env bash
 
+TCFRAME_PREFIX="tcframe"
+
+echo_colored() {
+    local message=$1
+    local color=$2
+
+    if [ -z "$color" ]; then
+        echo -e "\033[1m${TCFRAME_PREFIX}\033[0m: ${message}"
+    else
+        echo -e "\033[1m${TCFRAME_PREFIX}\033[0m: \033[${color}m${message}\033[0m"
+    fi
+}
+
+
 print_usage() {
-    echo "usage: tcframe <command>"
+    echo_colored "usage: <command>"
     echo
     echo "Available commands:"
     echo "  build         Compile spec file into runner program"
     echo "  version       Print tcframe version"
+    echo "  run           Run the runner program (build first if necessary)"
 }
 
 build() {
@@ -13,19 +28,37 @@ build() {
     RUNNER_EXEC="$PWD/runner"
 
     if [ ! -f "$SPEC_FILE" ]; then
-        echo "tcframe: build error: spec file '$SPEC_FILE' does not exist"
+        echo_colored "build error: spec file '$SPEC_FILE' does not exist" 31
         exit 1
     fi
 
     g++ -std=c++17 -D__TCFRAME_SPEC_FILE__="\"$SPEC_FILE\"" -I "$TCFRAME_HOME/include" $TCFRAME_CXX_FLAGS -o "$RUNNER_EXEC" "$TCFRAME_HOME/src/tcframe/runner.cpp"
+    echo_colored "Build OK" 32
+}
+
+run() {
+    RUNNER_EXEC="$PWD/runner"
+
+    if [ ! -f "$RUNNER_EXEC" ]; then
+        echo_colored "runner not found, building..." 33
+        build
+    fi
+
+    if [ -f "$RUNNER_EXEC" ]; then
+        echo_colored "running '$RUNNER_EXEC'" 32
+        "$RUNNER_EXEC"
+    else
+        echo_colored "run error: unable to execute '$RUNNER_EXEC'" 31
+        exit 1
+    fi
 }
 
 version() {
-    echo "tcframe 1.6.0"
+    echo_colored "version 1.7.0"
 }
 
 if [ -z "$TCFRAME_HOME" ]; then
-    echo "tcframe: error: env variable TCFRAME_HOME not set"
+    echo_colored "error: env variable TCFRAME_HOME not set" 31
     exit 1
 fi
 
@@ -40,6 +73,8 @@ if [ $1 = "build" ]; then
     build
 elif [ $1 = "version" ]; then
     version
+elif [ $1 = "run" ]; then
+    run
 else
     print_usage
     exit 1
