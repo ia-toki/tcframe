@@ -74,6 +74,9 @@ grade_solution() {
     solution=$1
     verbose=$2
     echo_colored "grading ${solution}" 33
+    if [ ! -n "$solution" ]; then
+       solution="./solution"
+    fi
     if [ -f "$solution" ]; then
         if [ "$verbose" = "verbose" ]; then
             "$RUNNER_EXEC" grade --solution="$solution"
@@ -132,8 +135,7 @@ grade() {
     elif [ -n "$solution" ]; then
         grade_solution "$solution" "$verbose"
     else
-        echo_colored "error: neither --batch nor --solution specified" 31
-        exit 1
+        grade_solution "" "$verbose"
     fi
 }
 
