@@ -54,6 +54,11 @@ def extract_memory_limit(spec_content):
     memory_limit = re.search(r'MemoryLimit\((\d+)\);', spec_content)
     return int(memory_limit.group(1)) if memory_limit else 0
 
+def extract_interactive(spec_content):
+    is_interactive = re.search(r'InteractiveEvaluator', spec_content)
+    return True if is_interactive else False
+
+
 def generate_subtask_dict(spec_file_path):
     spec_content = read_spec_file(spec_file_path)
     points = extract_points(spec_content)
@@ -65,7 +70,7 @@ def generate_subtask_dict(spec_file_path):
         "samples": [None]*max(samples.keys()),
         "test_groups": [None]*max(test_groups.keys()),
         "points": [0]*max(points.keys()),
-        "interactive": False
+        "interactive": extract_interactive(spec_content)
     }
 
     for i, test_group in enumerate(test_groups, start=1):
