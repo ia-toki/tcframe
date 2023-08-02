@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+ulimit -v 4194304;
+ulimit -s 4194304;
 TCFRAME_PREFIX="tcframe"
 
 echo_colored() {
