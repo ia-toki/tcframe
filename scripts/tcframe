@@ -153,7 +153,7 @@ config() {
 compile_solutions() {
     for solution_file in ./solutions/*.cpp; do
         solution_exec=${solution_file%.cpp}
-        g++ -std=c++17 -Wall -Wunused -Wshadow $solution_file -o $solution_exec
+        g++-13 -std=c++17 -Wall -Wunused -Wshadow $solution_file -o $solution_exec
         if [ $? -eq 0 ]; then
             echo_colored "Compile successful for $solution_file" 32 bold
         else
