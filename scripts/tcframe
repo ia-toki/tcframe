@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-ulimit -v 4194304;
-ulimit -s 4194304;
 TCFRAME_PREFIX="tcframe"
 
 echo_colored() {
@@ -54,7 +52,7 @@ build() {
         exit 1
     fi
 
-    g++ -std=c++17 -D__TCFRAME_SPEC_FILE__="\"$SPEC_FILE\"" -I "$TCFRAME_HOME/include" $TCFRAME_CXX_FLAGS -o "$RUNNER_EXEC" "$TCFRAME_HOME/src/tcframe/runner.cpp"
+    g++-13 -std=c++17 -D__TCFRAME_SPEC_FILE__="\"$SPEC_FILE\"" -I "$TCFRAME_HOME/include" $TCFRAME_CXX_FLAGS -o "$RUNNER_EXEC" "$TCFRAME_HOME/src/tcframe/runner.cpp"
     echo_colored "Build OK" 32
 }
 
@@ -160,7 +158,7 @@ config() {
 compile_solutions() {
     for solution_file in ./solutions/*.cpp; do
         solution_exec=${solution_file%.cpp}
-        g++ -std=c++17 -Wall -Wunused -Wshadow $solution_file -o $solution_exec
+        g++-13 -std=c++17 -Wall -Wunused -Wshadow $solution_file -o $solution_exec
         if [ $? -eq 0 ]; then
             echo_colored "Compile successful for $solution_file" 32 bold
         else
