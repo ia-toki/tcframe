@@ -77,7 +77,7 @@ public:
 private:
     map<int, double> getSubtaskPoints(const GradingOptions& options) {
         map<int, double> subtaskPointsByIds;
-        for (int id = 1; id <= options.subtaskPoints().size(); id++) {
+        for (unsigned id = 1; id <= options.subtaskPoints().size(); id++) {
             subtaskPointsByIds[id] = options.subtaskPoints()[id - 1];
         }
         if (subtaskPointsByIds.empty()) {
