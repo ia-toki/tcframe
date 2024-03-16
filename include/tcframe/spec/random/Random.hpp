@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <random>
 
-using std::mt19937;
+using std::mt19937_64;
 using std::random_shuffle;
 using std::uniform_real_distribution;
 using std::uniform_int_distribution;
@@ -48,8 +48,12 @@ public:
         random_shuffle(first, last, [this](unsigned int idx) { return nextInt(idx); });
     }
 
+    mt19937_64 *getEngine() {
+        return &engine;
+    }
+
 private:
-    mt19937 engine;
+    mt19937_64 engine;
 };
 
 }

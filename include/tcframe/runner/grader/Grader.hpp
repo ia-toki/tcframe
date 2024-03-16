@@ -4,7 +4,6 @@
 #include <map>
 #include <string>
 #include <vector>
-
 #include "GradingOptions.hpp"
 #include "GraderLogger.hpp"
 #include "TestCaseGrader.hpp"
@@ -78,7 +77,7 @@ public:
 private:
     map<int, double> getSubtaskPoints(const GradingOptions& options) {
         map<int, double> subtaskPointsByIds;
-        for (int id = 1; id <= options.subtaskPoints().size(); id++) {
+        for (unsigned id = 1; id <= options.subtaskPoints().size(); id++) {
             subtaskPointsByIds[id] = options.subtaskPoints()[id - 1];
         }
         if (subtaskPointsByIds.empty()) {
@@ -107,21 +106,29 @@ private:
                     .build();
             gradeTestCase(testCase, options, verdictsBySubtaskId);
         } else {
+            bool skipping = 0;
             for (const TestCase& testCase : testGroup.testCases()) {
-                gradeTestCase(testCase, options, verdictsBySubtaskId);
+                TestCaseVerdict verdict = gradeTestCase(testCase, options, verdictsBySubtaskId, skipping);
+                if(verdict.verdict().code() != "OK" && verdict.verdict().code() != "AC") {
+                    // comment this code if you dont want to skip
+                    skipping = 1;
+                }
             }
         }
     }
 
-    void gradeTestCase(
+    TestCaseVerdict gradeTestCase(
             const TestCase& testCase,
             const GradingOptions& options,
-            map<int, vector<TestCaseVerdict>>& verdictsBySubtaskId) {
-
-        TestCaseVerdict verdict = testCaseGrader_->grade(testCase, options);
+            map<int, vector<TestCaseVerdict>>& verdictsBySubtaskId,
+            bool skipTestCase = 0) {
+        TestCaseVerdict verdict;
+        if(skipTestCase) verdict = TestCaseVerdict(Verdict::skip());
+        else verdict = testCaseGrader_->grade(testCase, options);
         for (int subtaskId : testCase.subtaskIds()) {
             verdictsBySubtaskId[subtaskId].push_back(verdict);
         }
+        return verdict;
     }
 };
 

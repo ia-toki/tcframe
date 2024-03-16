@@ -1,11 +1,48 @@
 #!/usr/bin/env bash
 
+ulimit -v 4194304;
+ulimit -s 4194304;
+TCFRAME_PREFIX="tcframe"
+
+echo_colored() {
+    local message=$1
+    local color=$2
+    local is_bold=$3
+
+    local color_start=""
+    local color_end=""
+    local bold_start=""
+    local bold_end=""
+    local tcframe_start="\033[1m"
+    local tcframe_end="\033[0m"
+
+    if [ -n "$color" ]; then
+        color_start="\033[${color}m"
+        color_end="\033[0m"
+    fi
+
+    if [ "$is_bold" == "bold" ]; then
+        bold_start="\033[1m"
+        bold_end="\033[0m"
+    fi
+
+    echo -e "${tcframe_start}${TCFRAME_PREFIX}${tcframe_end}:${bold_start}${color_start} ${message}${color_end}${bold_end}"
+}
+
 print_usage() {
-    echo "usage: tcframe <command>"
+    echo_colored "usage: <command>"
     echo
-    echo "Available commands:"
-    echo "  build         Compile spec file into runner program"
-    echo "  version       Print tcframe version"
+    echo_colored "Available commands:" 33
+    echo_colored "  build         Compile spec file into runner program" 36
+    echo_colored "  version       Print tcframe version" 36
+    echo_colored "  run           Run the runner program (build first if necessary)" 36
+    echo_colored "  config        Generate config" 36
+    echo_colored "  sols          Compile all solutions in ./solutions/" 36
+    echo_colored "  brun          Build and run" 36
+    echo_colored "  grade --batch           Grade all compiled solutions in ./solutions/ directory" 36
+    echo_colored "  grade --solution=<path> Grade specific solutions e.g: --solution=./solutions/subtask-1" 36
+    echo_colored "  grade --verbose          Grade with verbose output" 36
+    echo_colored "  clean                    Clean shitty files generated mid out" 36
 }
 
 build() {
@@ -13,19 +50,128 @@ build() {
     RUNNER_EXEC="$PWD/runner"
 
     if [ ! -f "$SPEC_FILE" ]; then
-        echo "tcframe: build error: spec file '$SPEC_FILE' does not exist"
+        echo_colored "build error: spec file '$SPEC_FILE' does not exist" 31
         exit 1
     fi
 
-    g++ -std=c++17 -D__TCFRAME_SPEC_FILE__="\"$SPEC_FILE\"" -I "$TCFRAME_HOME/include" $TCFRAME_CXX_FLAGS -o "$RUNNER_EXEC" "$TCFRAME_HOME/src/tcframe/runner.cpp"
+    g++ -std=c++17 -Wunused -Wall -Wshadow -Wreturn-type -O3 -D__TCFRAME_SPEC_FILE__="\"$SPEC_FILE\"" -I "$TCFRAME_HOME/include" $TCFRAME_CXX_FLAGS -o "$RUNNER_EXEC" "$TCFRAME_HOME/src/tcframe/runner.cpp"
+    echo_colored "Build OK" 32
+}
+
+run() {
+    RUNNER_EXEC="$PWD/runner"
+
+    if [ ! -f "$RUNNER_EXEC" ]; then
+        echo_colored "runner not found, building..." 33
+        build
+    fi
+
+    if [ -f "$RUNNER_EXEC" ]; then
+        echo_colored "running '$RUNNER_EXEC'" 32
+        "$RUNNER_EXEC"
+    else
+        echo_colored "run error: unable to execute '$RUNNER_EXEC'" 31
+        exit 1
+    fi
+}
+
+grade_solution() {
+    RUNNER_EXEC="$PWD/runner"
+    solution=$1
+    verbose=$2
+    echo_colored "grading ${solution}" 33
+    if [ ! -n "$solution" ]; then
+       solution="./solution"
+    fi
+    if [ -f "$solution" ]; then
+        if [ "$verbose" = "verbose" ]; then
+            "$RUNNER_EXEC" grade --solution="$solution"
+        else
+            result=$("$RUNNER_EXEC" grade --solution="$solution")
+            if echo "$result" | grep -q "\[ SUBTASK VERDICTS \]"; then
+                # Print from "[ SUBTASK VERDICTS ]" to the end
+                echo "$result" | sed -n '/\[ SUBTASK VERDICTS \]/,$p'
+            else
+                # Print from "[ VERDICT ]" to the end
+                echo "$result" | sed -n '/\[ VERDICT \]/,$p'
+            fi
+        fi
+    else
+        echo_colored "error: solution '$solution' does not exist" 31
+    fi
+}
+
+grade() {
+
+    RUNNER_EXEC="$PWD/runner"
+
+    if [ ! -f "$RUNNER_EXEC" ]; then
+        echo_colored "grade error: runner does not exist" 31
+        exit 1
+    fi
+
+    verbose=""
+    solution=""
+    batch=false
+
+    for arg in "$@"; do
+        case "$arg" in
+            --verbose)
+                verbose="verbose"
+                ;;
+            --batch)
+                batch=true
+                ;;
+            --solution=*)
+                solution=${arg#*=}
+                ;;
+            *)
+                echo_colored "error: unknown option $arg" 31
+                exit 1
+                ;;
+        esac
+    done
+
+    if [ "$batch" = true ]; then
+        for solution_file in solutions/*.cpp; do
+            solution_exec=${solution_file%.cpp}
+            echo_colored "found ${solution_exec}" 32 bold
+            grade_solution "$solution_exec" "$verbose"
+        done
+    elif [ -n "$solution" ]; then
+        grade_solution "$solution" "$verbose"
+    else
+        grade_solution "" "$verbose"
+    fi
 }
 
 version() {
-    echo "tcframe 1.6.0"
+    echo_colored "version 1.7.0" "" bold
 }
 
+clean() {
+    rm -rf "__tcframe**.out"
+}
+
+config() {
+    python3 $TCFRAME_HOME/scripts/genConfig.py
+}
+
+compile_solutions() {
+    for solution_file in ./solutions/*.cpp; do
+        solution_exec=${solution_file%.cpp}
+        g++ -std=c++17 -Wall -Wunused -Wshadow $solution_file -o $solution_exec
+        if [ $? -eq 0 ]; then
+            echo_colored "Compile successful for $solution_file" 32 bold
+        else
+            echo_colored "Compile failed for $solution_file" 31 bold
+        fi
+    done
+}
+
+
 if [ -z "$TCFRAME_HOME" ]; then
-    echo "tcframe: error: env variable TCFRAME_HOME not set"
+    echo_colored "error: env variable TCFRAME_HOME not set" 31
     exit 1
 fi
 
@@ -40,6 +186,20 @@ if [ $1 = "build" ]; then
     build
 elif [ $1 = "version" ]; then
     version
+elif [ $1 = "run" ]; then
+    run
+elif [ $1 = "brun" ]; then
+    build
+    run
+elif [ $1 = "config" ]; then
+    config
+elif [ $1 = "grade" ]; then
+    shift
+    grade $@
+elif [ $1 = "sols" ]; then
+    compile_solutions
+elif [ $1 = "clean" ]; then
+    clean
 else
     print_usage
     exit 1

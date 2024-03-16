@@ -100,7 +100,8 @@ public:
 
 private:
     static void runCommand(const string& command) {
-        system(command.c_str());
+        int val = system(command.c_str());
+        std::cerr << "[tcframe] exit code: " << val << "\n";
     }
 };
 

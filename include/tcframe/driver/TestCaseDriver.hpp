@@ -38,8 +38,8 @@ public:
             IOManipulator* ioManipulator,
             Verifier* verifier,
             MultipleTestCasesConfig multipleTestCasesConfig)
-            : ioManipulator_(ioManipulator)
-            , rawIOManipulator_(rawIOManipulator)
+            : rawIOManipulator_(rawIOManipulator)
+            , ioManipulator_(ioManipulator)
             , verifier_(verifier)
             , multipleTestCasesConfig_(move(multipleTestCasesConfig)) {}
 

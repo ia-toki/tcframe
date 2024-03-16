@@ -47,6 +47,10 @@ public:
         return {"ERR", "Internal Error", 99};
     }
 
+    static Verdict skip() {
+        return {"SKIP", "Skipped", -1};
+    }
+
     const string& code() const {
         return code_;
     }

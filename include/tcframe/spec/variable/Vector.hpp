@@ -111,7 +111,6 @@ public:
             , var_(&var) {}
 
     void parseAndAddElementFrom(istream* in) {
-        int index = size();
         string element;
         Variable::parseRawLine(in, element);
         var_->push_back(element);
