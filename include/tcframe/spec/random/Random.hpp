@@ -4,7 +4,6 @@
 #include <random>
 
 using std::mt19937;
-using std::random_shuffle;
 using std::uniform_real_distribution;
 using std::uniform_int_distribution;
 
@@ -45,7 +44,7 @@ public:
 
     template<typename RandomAccessIterator>
     void shuffle(RandomAccessIterator first, RandomAccessIterator last) {
-        random_shuffle(first, last, [this](unsigned int idx) { return nextInt(idx); });
+        std::shuffle(first, last, engine);
     }
 
 private:
