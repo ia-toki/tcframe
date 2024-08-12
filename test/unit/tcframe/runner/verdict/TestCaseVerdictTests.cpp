@@ -9,7 +9,7 @@ namespace tcframe {
 
 class TestCaseVerdictTests : public Test {};
 
-TEST_F(TestCaseVerdictTests, ToString_WithoutPoints) {
+TEST_F(TestCaseVerdictTests, ToString) {
     TestCaseVerdict verdict(Verdict::wa());
     EXPECT_THAT(verdict.toString(), Eq(verdict.verdict().name()));
 }
@@ -25,7 +25,14 @@ TEST_F(TestCaseVerdictTests, ToString_WithPoints) {
     EXPECT_THAT(verdict4.toString(), Eq(verdict4.verdict().name() + " [30.12]"));
 }
 
-TEST_F(TestCaseVerdictTests, ToBriefString_WithoutPoints) {
+TEST_F(TestCaseVerdictTests, ToString_WithPercentage) {
+    TestCaseVerdict verdict1(Verdict::ok(), optional<double>(), optional<double>(25));
+    EXPECT_THAT(verdict1.toString(), Eq(verdict1.verdict().name() + " [25%]"));
+    TestCaseVerdict verdict2(Verdict::ok(), optional<double>(), optional<double>(25.5));
+    EXPECT_THAT(verdict2.toString(), Eq(verdict2.verdict().name() + " [25.5%]"));
+}
+
+TEST_F(TestCaseVerdictTests, ToBriefString) {
     TestCaseVerdict verdict(Verdict::wa());
     EXPECT_THAT(verdict.toBriefString(), Eq(verdict.verdict().code()));
 }
@@ -33,6 +40,11 @@ TEST_F(TestCaseVerdictTests, ToBriefString_WithoutPoints) {
 TEST_F(TestCaseVerdictTests, ToBriefString_WithPoints) {
     TestCaseVerdict verdict(Verdict::ok(), 30);
     EXPECT_THAT(verdict.toBriefString(), Eq(verdict.verdict().code() + " 30"));
+}
+
+TEST_F(TestCaseVerdictTests, ToBriefString_WithPercentage) {
+    TestCaseVerdict verdict(Verdict::ok(), optional<double>(), optional<double>(25));
+    EXPECT_THAT(verdict.toBriefString(), Eq(verdict.verdict().code() + " 25%"));
 }
 
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <istream>
+#include <iostream>
 #include <stdexcept>
 #include <string>
 #include <sys/signal.h>
@@ -35,12 +36,21 @@ public:
             if (!getline(*in, secondLine)) {
                 throw runtime_error("Expected: <points> on the second line");
             }
-            string pointsString = StringUtils::split(secondLine, ' ')[0];
-            optional<double> points = StringUtils::toNumber<double>(pointsString);
-            if (points) {
+            string result = StringUtils::split(secondLine, ' ')[0];
+
+            if (!result.empty() && result.back() == '%') {
+                optional<double> percentage = StringUtils::toNumber<double>(result.substr(0, result.size() - 1));
+                if (!percentage) {
+                    throw runtime_error("Unknown percentage format: " + result);
+                }
+                return {Verdict::ok(), optional<double>(), percentage};
+            } else {
+                optional<double> points = StringUtils::toNumber<double>(result);
+                if (!points) {
+                    throw runtime_error("Unknown points format: " + result);
+                }
                 return {Verdict::ok(), points.value()};
             }
-            throw runtime_error("Unknown points format: " + pointsString);
         }
 
         throw runtime_error("Unknown verdict: " + verdictCode);
