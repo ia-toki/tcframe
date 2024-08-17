@@ -16,6 +16,7 @@ struct TestCaseVerdict {
 private:
     Verdict verdict_;
     optional<double> points_;
+    optional<double> percentage_;
 
 public:
     TestCaseVerdict()
@@ -29,6 +30,11 @@ public:
             : verdict_(move(status))
             , points_(optional<double>(points)) {}
 
+    TestCaseVerdict(Verdict status, optional<double> points, optional<double> percentage)
+            : verdict_(move(status))
+            , points_(move(points))
+            , percentage_(move(percentage)) {}
+
     const Verdict& verdict() const {
         return verdict_;
     }
@@ -37,8 +43,12 @@ public:
         return points_;
     }
 
+    const optional<double>& percentage() const {
+        return percentage_;
+    }
+
     bool operator==(const TestCaseVerdict& o) const {
-        return tie(verdict_, points_) == tie(o.verdict_, o.points_);
+        return tie(verdict_, points_, percentage_) == tie(o.verdict_, o.points_, percentage_);
     }
 
     string toBriefString() const {
@@ -59,17 +69,27 @@ public:
 
 private:
     string pointsToString() const {
-        if (!points_) {
-            return "";
+        if (points_) {
+            string points = StringUtils::toString(points_.value(), 2);
+            while (points.back() == '0') {
+                points.pop_back();
+            }
+            if (points.back() == '.') {
+                points.pop_back();
+            }
+            return points;
         }
-        string points = StringUtils::toString(points_.value(), 2);
-        while (points.back() == '0') {
-            points.pop_back();
+        if (percentage_) {
+            string points = StringUtils::toString(percentage_.value(), 2);
+            while (points.back() == '0') {
+                points.pop_back();
+            }
+            if (points.back() == '.') {
+                points.pop_back();
+            }
+            return points + "%";
         }
-        if (points.back() == '.') {
-            points.pop_back();
-        }
-        return points;
+        return "";
     }
 };
 

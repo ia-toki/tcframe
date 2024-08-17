@@ -25,12 +25,20 @@ TEST_F(TestCaseVerdictParserTests, ParseStream_WA) {
     EXPECT_THAT(parser.parseStream(new istringstream("WA\n")), Eq(TestCaseVerdict(Verdict::wa())));
 }
 
-TEST_F(TestCaseVerdictParserTests, ParseStream_OK) {
+TEST_F(TestCaseVerdictParserTests, ParseStream_OK_Points) {
     EXPECT_THAT(parser.parseStream(new istringstream("OK\n70\n")), Eq(TestCaseVerdict(Verdict::ok(), 70)));
 }
 
-TEST_F(TestCaseVerdictParserTests, ParseStream_OK_WithFeedback) {
+TEST_F(TestCaseVerdictParserTests, ParseStream_OK_Points_WithFeedback) {
     EXPECT_THAT(parser.parseStream(new istringstream("OK\n70 text\n")), Eq(TestCaseVerdict(Verdict::ok(), 70)));
+}
+
+TEST_F(TestCaseVerdictParserTests, ParseStream_OK_Percentage) {
+    EXPECT_THAT(parser.parseStream(new istringstream("OK\n25%\n")), Eq(TestCaseVerdict(Verdict::ok(), optional<double>(), optional<double>(25))));
+}
+
+TEST_F(TestCaseVerdictParserTests, ParseStream_OK_Percentage_WithFeedback) {
+    EXPECT_THAT(parser.parseStream(new istringstream("OK\n25% text\n")), Eq(TestCaseVerdict(Verdict::ok(), optional<double>(), optional<double>(25))));
 }
 
 TEST_F(TestCaseVerdictParserTests, ParseStream_OK_Failed_EmptySecondLine) {

@@ -38,4 +38,13 @@ TEST_F(MinAggregatorTests, Aggregate_MinOKPoints) {
     EXPECT_THAT(aggregator.aggregate(verdicts, 70), Eq(SubtaskVerdict(Verdict::ok(), 20)));
 }
 
+TEST_F(MinAggregatorTests, Aggregate_MinOKPercentage) {
+    vector<TestCaseVerdict> verdicts = {
+            TestCaseVerdict(Verdict::ac()),
+            TestCaseVerdict(Verdict::ok(), optional<double>(), optional<double>(25)),
+            TestCaseVerdict(Verdict::ok(), optional<double>(), optional<double>(50))};
+
+    EXPECT_THAT(aggregator.aggregate(verdicts, 70), Eq(SubtaskVerdict(Verdict::ok(), 17.5)));
+}
+
 }

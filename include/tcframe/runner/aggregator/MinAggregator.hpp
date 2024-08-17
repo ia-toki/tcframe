@@ -23,7 +23,13 @@ public:
             aggregatedVerdict = max(aggregatedVerdict, testCaseVerdict.verdict());
 
             if (testCaseVerdict.verdict() == Verdict::ok()) {
-                aggregatedPoints = min(aggregatedPoints, testCaseVerdict.points().value());
+                double points = 0.0;
+                if (testCaseVerdict.percentage()) {
+                    points = testCaseVerdict.percentage().value() * subtaskPoints / 100.0;
+                } else if (testCaseVerdict.points()) {
+                    points = testCaseVerdict.points().value();
+                }
+                aggregatedPoints = min(aggregatedPoints, points);
             } else if (!(testCaseVerdict.verdict() == Verdict::ac())) {
                 aggregatedPoints = 0;
             }
