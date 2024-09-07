@@ -20,14 +20,21 @@ public:
             return {Verdict::ac(), subtaskPoints};
         }
 
+        double testCaseFullPoints = subtaskPoints / testCaseVerdicts.size();
+
         Verdict aggregatedVerdict = Verdict::ac();
         double aggregatedPoints = 0;
         for (const TestCaseVerdict& testCaseVerdict : testCaseVerdicts) {
             aggregatedVerdict = max(aggregatedVerdict, testCaseVerdict.verdict());
+
             if (testCaseVerdict.verdict() == Verdict::ac()) {
-                aggregatedPoints += subtaskPoints / testCaseVerdicts.size();
+                aggregatedPoints += testCaseFullPoints;
             } else if (testCaseVerdict.verdict() == Verdict::ok()) {
-                aggregatedPoints += testCaseVerdict.points().value();
+                if (testCaseVerdict.points()) {
+                    aggregatedPoints += testCaseVerdict.points().value();
+                } else if (testCaseVerdict.percentage()) {
+                    aggregatedPoints += testCaseVerdict.percentage().value() * testCaseFullPoints / 100.0;
+                }
             }
         }
         return {aggregatedVerdict, aggregatedPoints};
