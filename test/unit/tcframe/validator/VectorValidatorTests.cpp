@@ -17,4 +17,12 @@ TEST_F(VectorValidatorTests, eachElementIsBetween) {
     EXPECT_TRUE(eachElementIsBetween(vector<int>{2, 3, 1, 5, 4}, 0, 6));
 }
 
+TEST_F(VectorValidatorTests, elementsAreNonDescending) {
+    EXPECT_FALSE(elementsAreNonDescending(vector<int>{1, 2, 3, 5, 3}));
+    EXPECT_FALSE(elementsAreNonDescending(vector<int>{2, 1, 1, 2, 5}));
+    EXPECT_TRUE(elementsAreNonDescending(vector<int>()));
+    EXPECT_TRUE(elementsAreNonDescending(vector<int>{1, 2, 3, 4, 5}));
+    EXPECT_TRUE(elementsAreNonDescending(vector<int>{1, 1, 2, 3, 3, 7}));
+}
+
 }
