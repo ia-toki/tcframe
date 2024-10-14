@@ -14,4 +14,14 @@ bool eachElementIsBetween(const vector<T>& v, T minVal, T maxVal) {
     return true;
 }
 
+template<typename T>
+bool elementsAreNonDescending(const vector<T>& v) {
+    for (std::size_t i = 1; i < v.size(); ++i) {
+        if (v[i - 1] > v[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
 }
