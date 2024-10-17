@@ -260,8 +260,8 @@ set(TEST_UNIT
         test/unit/tcframe/util/OptionalTests.cpp
         test/unit/tcframe/util/StringUtilsTests.cpp
         test/unit/tcframe/util/TestUtils.hpp
-        test/unit/tcframe/validator/VectorValidatorTests.cpp
         test/unit/tcframe/validator/NumberValidatorTests.cpp
+        test/unit/tcframe/validator/VectorValidatorTests.cpp
 )
 
 add_executable(test_unit ${INCLUDE} ${TEST_UNIT})
