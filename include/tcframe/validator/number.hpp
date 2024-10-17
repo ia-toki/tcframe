@@ -1,7 +1,6 @@
 namespace tcframe {
 
-template<typename T>
-bool isBetween(T N, T mn, T mx) {
+bool isBetween(long long N, long long mn, long long mx) {
     return N >= mn && N <= mx;
 }
 
