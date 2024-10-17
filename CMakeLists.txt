@@ -164,8 +164,8 @@ set(INCLUDE
         include/tcframe/util.hpp
         include/tcframe/util/StringUtils.hpp
         include/tcframe/util/optional.hpp
-        include/tcframe/validator/vector.hpp
         include/tcframe/validator/number.hpp
+        include/tcframe/validator/vector.hpp
 )
 
 set(TEST_UNIT
