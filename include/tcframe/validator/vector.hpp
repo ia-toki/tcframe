@@ -54,14 +54,11 @@ bool elementsAreAscending(const vector<T> &v) {
     return true;
 }
 
-template<typename T, typename Compare>
-bool elementsAreOrdered(const vector<T> &v, Compare comp) {
-    for (std::size_t i = 1; i < v.size(); ++i) {
-        if(!comp(v[i - 1], v[i])) {
-            return false;
-        }
-    }
-    return true;
+template<typename T>
+bool elementsAreUnique(vector<T> v) {
+    sort(v.begin(), v.end());
+    std::size_t ns = unique(v.begin(), v.end()) - v.begin();
+    return ns == v.size();
 }
 
 }

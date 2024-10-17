@@ -49,4 +49,12 @@ TEST_F(VectorValidatorTests, elementsAreAscending) {
     EXPECT_TRUE(elementsAreAscending(vector<int>{1, 2, 3, 4, 5}));
 }
 
+TEST_F(VectorValidatorTests, elementsAreUnique) {
+    EXPECT_FALSE(elementsAreUnique(vector<int>{5, 1, 3, 4, 2, 1}));
+    EXPECT_FALSE(elementsAreUnique(vector<char>{'a', 'c', 'f', 'f', 'd'}));
+    EXPECT_TRUE(elementsAreUnique(vector<int>()));
+    EXPECT_TRUE(elementsAreUnique(vector<int>{5, 2, 4, 1, 9}));
+    EXPECT_TRUE(elementsAreUnique(vector<char>{'a', 'x', 'd', 'g', 'h'}));
+}
+
 }
