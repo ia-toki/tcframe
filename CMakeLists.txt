@@ -164,7 +164,7 @@ set(INCLUDE
         include/tcframe/util.hpp
         include/tcframe/util/StringUtils.hpp
         include/tcframe/util/optional.hpp
-        include/tcframe/validator/number.hpp
+        include/tcframe/validator/core.hpp
         include/tcframe/validator/vector.hpp
 )
 
@@ -260,7 +260,7 @@ set(TEST_UNIT
         test/unit/tcframe/util/OptionalTests.cpp
         test/unit/tcframe/util/StringUtilsTests.cpp
         test/unit/tcframe/util/TestUtils.hpp
-        test/unit/tcframe/validator/NumberValidatorTests.cpp
+        test/unit/tcframe/validator/CoreValidatorTests.cpp
         test/unit/tcframe/validator/VectorValidatorTests.cpp
 )
 

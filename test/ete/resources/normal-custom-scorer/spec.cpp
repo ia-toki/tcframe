@@ -21,8 +21,8 @@ protected:
     }
 
     void Constraints() {
-        CONS(1 <= A && A <= 10);
-        CONS(1 <= B && B <= 10);
+        CONS(valueOf(A).isBetween(1, 10));
+        CONS(valueOf(B).isBetween(1, 10));
     }
 };
 
