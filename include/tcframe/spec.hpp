@@ -7,4 +7,4 @@
 #include "tcframe/spec/testcase.hpp"
 #include "tcframe/spec/variable.hpp"
 #include "tcframe/spec/verifier.hpp"
-
+#include "tcframe/validator/core.hpp"

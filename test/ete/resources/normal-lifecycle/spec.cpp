@@ -31,7 +31,7 @@ protected:
     }
 
     void Constraints() {
-        CONS(1 <= N && N <= 10);
+        CONS(valueOf(N).isBetween(1, 10));
     }
 };
 

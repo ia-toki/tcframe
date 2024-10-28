@@ -26,12 +26,12 @@ protected:
     }
 
     void MultipleTestCasesConstraints() {
-        CONS(1 <= T && T <= 5);
+        CONS(valueOf(T).isBetween(1, 5));
     }
 
     void Constraints() {
-        CONS(1 <= A && A <= 100);
-        CONS(1 <= B && B <= 100);
+        CONS(valueOf(A).isBetween(1, 100));
+        CONS(valueOf(B).isBetween(1, 100));
     }
 };
 
