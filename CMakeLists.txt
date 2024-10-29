@@ -165,7 +165,6 @@ set(INCLUDE
         include/tcframe/util/StringUtils.hpp
         include/tcframe/util/optional.hpp
         include/tcframe/validator/core.hpp
-        include/tcframe/validator/vector.hpp
 )
 
 set(TEST_UNIT
@@ -261,7 +260,6 @@ set(TEST_UNIT
         test/unit/tcframe/util/StringUtilsTests.cpp
         test/unit/tcframe/util/TestUtils.hpp
         test/unit/tcframe/validator/CoreValidatorTests.cpp
-        test/unit/tcframe/validator/VectorValidatorTests.cpp
 )
 
 add_executable(test_unit ${INCLUDE} ${TEST_UNIT})
