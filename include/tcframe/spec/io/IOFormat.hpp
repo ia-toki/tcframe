@@ -49,7 +49,7 @@ private:
         if (a.size() != b.size()) {
             return false;
         }
-        for (int i = 0; i < a.size(); i++) {
+        for (unsigned i = 0; i < a.size(); i++) {
             if (!a[i]->equals(b[i])) {
                 return false;
             }
@@ -61,7 +61,7 @@ private:
         if (a.size() != b.size()) {
             return false;
         }
-        for (int i = 0; i < a.size(); i++) {
+        for (unsigned i = 0; i < a.size(); i++) {
             if (!equals(a[i], b[i])) {
                 return false;
             }

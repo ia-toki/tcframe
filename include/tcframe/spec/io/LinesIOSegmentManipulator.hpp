@@ -65,7 +65,7 @@ public:
 
         int size = getSize(segment);
         for (int j = 0; j < size; j++) {
-            for (int i = 0; i < segment->variables().size(); i++) {
+            for (unsigned i = 0; i < segment->variables().size(); i++) {
                 Variable *variable = segment->variables()[i];
                 if (variable->type() == VariableType::VECTOR) {
                     if (i > 0) {

@@ -36,8 +36,8 @@ namespace tcframe {
 struct VectorSize {
     function<int()> size;
 
-    explicit VectorSize(function<int()> size)
-            : size(move(size)) {}
+    explicit VectorSize(function<int()> _size)
+            : size(move(_size)) {}
 };
 
 template<typename T>
@@ -55,9 +55,9 @@ struct MatrixSize {
     function<int()> rows;
     function<int()> columns;
 
-    MatrixSize(function<int()> rows, function<int()> columns)
-            : rows(move(rows))
-            , columns(move(columns)) {}
+    MatrixSize(function<int()> _rows, function<int()> _columns)
+            : rows(move(_rows))
+            , columns(move(_columns)) {}
 };
 
 class VariableNamesExtractor {

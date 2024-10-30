@@ -34,8 +34,8 @@ public:
 
     Subtask(int id, double points, vector<Constraint> constraints)
             : id_(id)
-            , points_(points)
-            , constraints_(move(constraints)) {}
+	    , constraints_(move(constraints))
+            , points_(points) {}
 
     int id() const {
         return id_;

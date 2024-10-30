@@ -46,7 +46,7 @@ public:
         if (variables_.size() != o.variables_.size()) {
             return false;
         }
-        for (int i = 0; i < variables_.size(); i++) {
+        for (unsigned i = 0; i < variables_.size(); i++) {
             if (!variables_[i]->equals(o.variables_[i])) {
                 return false;
             }
