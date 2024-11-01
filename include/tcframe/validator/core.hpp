@@ -1,9 +1,13 @@
+#pragma once
 
+#include <string>
 #include <type_traits>
+#include <vector>
 
 using std::enable_if_t;
 using std::is_arithmetic_v;
 using std::size_t;
+using std::string;
 using std::vector;
 
 namespace tcframe {
@@ -25,7 +29,7 @@ public:
 };
 
 template<typename T, typename = ScalarType<T>>
-ScalarValidator<T> valueOf(T val) {
+inline ScalarValidator<T> valueOf(T val) {
     return ScalarValidator(val);
 }
 
@@ -48,12 +52,7 @@ public:
 };
 
 template<typename T, typename = ScalarType<T>>
-VectorElementValidator<T> eachElementOf(const vector<T>& val) {
-    return VectorElementValidator(val);
-}
-
-template<typename T, typename = ScalarType<T>>
-VectorElementValidator<T> eachElementOf(vector<T>&& val) {
+inline VectorElementValidator<T> eachElementOf(const vector<T>& val) {
     return VectorElementValidator(val);
 }
 
@@ -110,8 +109,29 @@ public:
 };
 
 template<typename T, typename = ScalarType<T>>
-VectorElementsValidator<T> elementsOf(const vector<T>& val) {
+inline VectorElementsValidator<T> elementsOf(const vector<T>& val) {
     return VectorElementsValidator(val);
+}
+
+struct StringElementValidator {
+private:
+    const string& val;
+
+public:
+    explicit StringElementValidator(const string& _val) : val(_val) {}
+
+    bool isBetween(char minVal, char maxVal) {
+        for (char v : val) {
+            if (!valueOf(v).isBetween(minVal, maxVal)) {
+                return false;
+            }
+        }
+        return true;
+    }
+};
+
+inline StringElementValidator eachCharacterOf(const string& val) {
+    return StringElementValidator(val);
 }
 
 }

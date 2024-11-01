@@ -66,4 +66,11 @@ TEST_F(CoreValidatorTests, elementsOf_areUnique) {
     EXPECT_TRUE(elementsOf(vector<char>{'a', 'x', 'd', 'g', 'h'}).areUnique());
 }
 
+TEST_F(CoreValidatorTests, eachCharacterOf_isBetween) {
+    EXPECT_FALSE(eachCharacterOf("BCDEF").isBetween('B', 'E'));
+    EXPECT_FALSE(eachCharacterOf("BCDEF").isBetween('C', 'F'));
+    EXPECT_TRUE(eachCharacterOf("BCDEF").isBetween('B', 'F'));
+    EXPECT_TRUE(eachCharacterOf("BCDEF").isBetween('A', 'G'));
+}
+
 }
