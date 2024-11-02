@@ -24,6 +24,18 @@ TEST_F(CoreValidatorTests, eachElementOf_isBetween) {
     EXPECT_FALSE(eachElementOf(vector<int>{2, 3, 1, 5, 4}).isBetween(2, 4));
     EXPECT_TRUE(eachElementOf(vector<int>{2, 3, 1, 5, 4}).isBetween(1, 5));
     EXPECT_TRUE(eachElementOf(vector<int>{2, 3, 1, 5, 4}).isBetween(0, 6));
+
+    EXPECT_TRUE(eachElementOf(vector<int>{}).isBetween(0, 6));
+
+    EXPECT_FALSE(eachElementOf(vector<vector<int>>{
+        vector<int>{1, 2},
+        vector<int>{3, 4}}).isBetween(2, 4));
+    EXPECT_FALSE(eachElementOf(vector<vector<int>>{
+        vector<int>{1, 2},
+        vector<int>{3, 4}}).isBetween(1, 3));
+    EXPECT_TRUE(eachElementOf(vector<vector<int>>{
+        vector<int>{1, 2},
+        vector<int>{3, 4}}).isBetween(1, 4));
 }
 
 TEST_F(CoreValidatorTests, elementsOf_areAscending) {
