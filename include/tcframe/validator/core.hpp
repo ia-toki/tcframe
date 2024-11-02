@@ -134,4 +134,27 @@ inline StringElementValidator eachCharacterOf(const string& val) {
     return StringElementValidator(val);
 }
 
+template<typename T, typename = ScalarType<T>>
+struct MatrixElementValidator {
+private:
+    const vector<vector<T>>& val;
+
+public:
+    explicit MatrixElementValidator(const vector<vector<T>>& _val) : val(_val) {}
+
+    bool isBetween(T minVal, T maxVal) {
+        for (const vector<T>& v : val) {
+            if (!eachElementOf(v).isBetween(minVal, maxVal)) {
+                return false;
+            }
+        }
+        return true;
+    }
+};
+
+template<typename T, typename = ScalarType<T>>
+inline MatrixElementValidator<T> eachElementOf(const vector<vector<T>>& val) {
+    return MatrixElementValidator(val);
+}
+
 }
