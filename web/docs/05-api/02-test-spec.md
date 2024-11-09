@@ -1,3 +1,7 @@
+---
+toc_max_heading_level: 4
+---
+
 # Test spec
 
 `TestSpec` must inherit `tcframe::BaseTestSpec<ProblemSpec>`:
