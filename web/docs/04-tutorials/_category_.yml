@@ -1,0 +1,5 @@
+label: Tutorials
+link: 
+  type: generated-index
+  slug: /tutorials
+  description: Here, you can find case studies and best practices on how to write your spec files. It is expected that you have already read the getting started guide before reading through the tutorials.

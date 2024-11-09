@@ -8,6 +8,7 @@ on:
 
 jobs:
   test:
+    if: github.ref == 'refs/heads/master' && github.repository_owner == 'ia-toki'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -28,3 +29,35 @@ jobs:
 
       - name: Upload code coverage report
         run: bash <(curl -s https://codecov.io/bash)
+
+  deploy-web:
+    if: github.ref == 'refs/heads/master' && github.repository_owner == 'ia-toki'
+    runs-on: ubuntu-latest
+    env:
+      HOST: ${{ secrets.HOST }}
+      KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 50
+
+      - name: Set up node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Build
+        run: |
+          cd web
+          yarn install
+          yarn build
+
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.PRIVATE_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+
+      - name: Rsync
+        run: rsync -avzh web/build/ root@${HOST}:/var/www/html/tcframe --delete
