@@ -72,6 +72,12 @@ const config = {
             label: 'Docs',
           },
           {
+            type: 'docSidebar',
+            sidebarId: 'apiSidebar',
+            position: 'left',
+            label: 'API',
+          },
+          {
             href: 'https://github.com/ia-toki/tcframe',
             label: 'GitHub',
             position: 'right',

@@ -15,6 +15,7 @@
   --ifm-color-primary-lightest: #3cad6e;
   --ifm-code-font-size: 14px;
   --ifm-link-color: #3b73b9;
+  --ifm-navbar-link-hover-color: #3b73b9;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
 }
 
@@ -62,4 +63,9 @@ li > p:has(strong) {
   + p {
     margin-top: 6px !important;
   }
+}
+
+.navbar__link--active {
+  background-color: var(--ifm-menu-color-background-active);
+  border-radius: .25rem;
 }
