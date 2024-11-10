@@ -52,7 +52,7 @@ The recognized verdicts, from the best to the worst, are as follows:
 
 - **Internal Error**
   
-  Custom [scorer](./styles#scorer) / [communicator](styles#communicater) (if any) crashed or did not give a valid verdict.
+  Custom [scorer](./styles#scorer) / [communicator](styles#communicator) (if any) crashed or did not give a valid verdict.
 
 ### Test case verdicts
 
