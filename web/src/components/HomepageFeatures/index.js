@@ -1,30 +1,54 @@
 import clsx from 'clsx';
+import CodeBlock from '@theme/CodeBlock';
 import Heading from '@theme/Heading';
 import styles from './styles.module.css';
 
+const ioFormats =
+`void InputFormat() {
+    LINE(N);
+    LINES(A) % SIZE(N);
+}
+
+void OutputFormat() {
+    LINE(answer);
+}
+`
+
+const constraints =
+`void Constraints() {
+    CONS(1 <= N && N <= 1000);
+    CONS(eachElementBetween(A, 1, 1000000));
+}`
+
+const testCases =
+`void TestCases() {
+    CASE(N = 1, A = {10});
+    CASE(N = 100, randomArray());
+}`
+
 const FeatureList = [
   {
-    title: 'Various problem types',
+    title: 'Define input/output formats',
     description: (
-      <>
-        Supports batch and interactive problems, as well as ICPC- and IOI-style problems.
-      </>
+      <CodeBlock language="cpp">
+        {ioFormats}
+      </CodeBlock>
     ),
   },
   {
-    title: 'I/O format validation',
+    title: 'Define constraints',
     description: (
-      <>
-        Input/output formats can be validated declaratively.
-      </>
+      <CodeBlock language="cpp">
+        {constraints}
+      </CodeBlock>
     ),
   },
   {
-    title: 'Local grading',
+    title: 'Define test cases',
     description: (
-      <>
-        Solutions can be tested locally against generated test cases.
-      </>
+      <CodeBlock language="cpp">
+        {testCases}
+      </CodeBlock>
     ),
   },
 ];
@@ -32,7 +56,7 @@ const FeatureList = [
 function Feature({Svg, title, description}) {
   return (
     <div className={clsx('col col--4')}>
-      <div className="text--center padding-horiz--md">
+      <div className="padding-horiz--md">
         <Heading as="h3">{title}</Heading>
         <p>{description}</p>
       </div>
