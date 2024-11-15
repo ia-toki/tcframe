@@ -1,11 +1,17 @@
-# tcframe 1.6.0
+<div align="center">
+  <img src="https://raw.githubusercontent.com/ia-toki/tcframe/master/web/static/img/logo.png" height="65" />
 
-[![GitHub Release](https://img.shields.io/github/release/ia-toki/tcframe.svg)](https://github.com/ia-toki/tcframe)
-![CI Status](https://github.com/ia-toki/tcframe/workflows/ci/badge.svg)
-[![Coverage Status](https://img.shields.io/codecov/c/github/ia-toki/tcframe/master.svg)](http://codecov.io/github/ia-toki/tcframe?branch=master)
-[![Documentation Status](https://readthedocs.org/projects/tcframe/badge/?version=latest)](http://docs.tcframe.org/)
+  <h1>TCFrame</h1>
 
-**tcframe** is a C++ framework for generating test cases of competitive programming problems. This framework helps problem writers prepare test cases in a structured manner and ensures that the generated test cases are valid according to the specified constraints.
+  A test case generation framework for competitive programming problems.
+ 
+  <img alt="CI" src="https://github.com/ia-toki/tcframe/workflows/ci/badge.svg"/>
+  <a href="https://github.com/ia-toki/tcframe/blob/master/LICENSE.txt"><img alt="License" src="https://img.shields.io/github/license/ia-toki/tcframe.svg"/></a>
+</div>
+
+<br>
+
+TCFrame is a C++ framework for generating test cases of competitive programming problems. This framework helps problem writers prepare test cases in a structured manner and ensures that the generated test cases are valid according to the specified constraints.
 
 Consult the complete documentation at https://tcframe.toki.id.
 
@@ -105,7 +111,7 @@ Example high-level usage:
 
 ## Features
 
-**tcframe** supports:
+TCFrame supports:
 
 - Batch and interactive problems.
 - ICPC-style problems and IOI-style problems with subtasks and points.
@@ -115,7 +121,7 @@ Example high-level usage:
 
 ## Requirements
 
-**tcframe** requires:
+TCFrame requires:
 
 - Linux/macOS. Windows is not supported.
 - GCC which supports C++17.
@@ -136,10 +142,10 @@ Example high-level usage:
 
 ## Credits
 
-**tcframe** is based on a paper submitted to IOI conference in 2015: [Introducing tcframe: A Simple and Robust Test Cases Generation Framework](https://ioinformatics.org/journal/v9_2015_57_73.pdf), written by **Ashar Fuadi**.
+TCFrame is based on a paper submitted to IOI conference in 2015: [Introducing tcframe: A Simple and Robust Test Cases Generation Framework](https://ioinformatics.org/journal/v9_2015_57_73.pdf), written by **Ashar Fuadi**.
 
-**tcframe** was mainly inspired from [testlib](https://github.com/MikeMirzayanov/testlib), written by Mike Mirzayanov et al.
+TCFrame was mainly inspired from [testlib](https://github.com/MikeMirzayanov/testlib), written by Mike Mirzayanov et al.
 
 ## License
 
-**tcframe** is released under MIT license.
+TCFrame is released under MIT license.
