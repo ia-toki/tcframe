@@ -9,7 +9,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'TCFrame',
-  tagline: 'A test generation framework for competitive programming problems.',
+  tagline: 'A test case generation framework for competitive programming problems.',
   favicon: 'img/logo.png',
 
   // Set the production url of your site here
