@@ -45,47 +45,9 @@ This starter guide will just demonstrate the basic features of TCFrame. For more
 
 :::
 
-## Installation
+## Installing TCFrame
 
-Firstly, we must get TCFrame on our system. It consists of C++ header files and a few helper scripts.
-
-Download the latest TCFrame [here](https://github.com/ia-toki/tcrame/releases/download/v1.6.0/tcframe_1.6.0.zip>). Extract the zip file somewhere on your system; for example, `~/tcframe`. We will call this directory "TCFrame home". Confirm that you extracted it correctly by verifying that the directory `include` exists directly inside TCFrame home.
-
-Then, add the following lines to your `~/.bashrc`. This will set the environment variable `TCFRAME_HOME` to our TCFrame home directory, and make `tcframe` command available everywhere.
-
-```sh
-export TCFRAME_HOME=~/tcframe
-alias tcframe=$TCFRAME_HOME/scripts/tcframe
-```
-
-Restart your terminal session. Now, if you run
-
-```
-tcframe
-```
-
-You should see the following output
-
-```
-usage: tcframe <command>
-
-Available commands:
-  build         Compile spec file into runner program
-  version       Print tcframe version
-```
-
-You're good to go!
-
-:::info[Note]
-
-If your `TCFRAME_HOME` contains space, you can escape it as follows:
-
-```sh
-export TCFRAME_HOME=~/path\ with\ space/tcframe
-alias tcframe='$TCFRAME_HOME/scripts/tcframe'
-```
-
-:::
+See the [Installation documentation](./installation).
 
 ## Preparing package directory
 

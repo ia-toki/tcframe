@@ -15,6 +15,7 @@
 const sidebars = {
   docsSidebar: [
     'introduction',
+    'installation',
     'getting-started',
     {
       type: 'category',

@@ -18,6 +18,11 @@ function HomepageHeader() {
         <div className={styles.buttons}>
           <Link
             className="button button--secondary button--lg"
+            to="/docs/installation">
+            Get TCFrame
+          </Link>
+          <Link
+            className="button button--secondary button--lg"
             to="/docs">
             Read the docs
           </Link>
