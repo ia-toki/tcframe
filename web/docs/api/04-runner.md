@@ -2,6 +2,8 @@
 
 A runner is the compiled version of a spec file, and is capable of two things:
 
+---
+
 ## Test case generation
 
 ```
@@ -24,6 +26,7 @@ A runner is the compiled version of a spec file, and is capable of two things:
 
     The seed for random number generator `rnd` in the test spec. Default: `0`.
 
+---
 
 ## Local grading
 
