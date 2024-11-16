@@ -12,6 +12,8 @@ class ProblemSpec : public BaseProblemSpec {};
 
 Except for private helper functions, every member of `ProblemSpec` listed below must be `protected`.
 
+---
+
 ## Input/output variables
 
 Defined as instance member variables of `ProblemSpec`, which will be referenced in other methods of `ProblemSpec` and `TestSpec`.
@@ -30,9 +32,7 @@ Variables of built-in integral types (`int`, `long long`, `char`, etc.), built-i
 
 `std::vector<std::vector<T>>`, where `T` is a scalar type as defined above. 2D arrays (`T[][]`) are not supported.
 
----
-
-Example:
+**Example**
 
 ```cpp
 class ProblemSpec : public BaseProblemSpec {
@@ -43,6 +43,8 @@ protected:
 };
 ```
 
+---
+
 ## Input/output formats
 
 ### `InputFormat()`
@@ -52,6 +54,8 @@ virtual void InputFormat() = 0;
 ```
 
 Defines the input format. It is mandatory.
+
+---
 
 ### `OutputFormat()`, `OutputFormatX()`
 
@@ -66,6 +70,8 @@ virtual void OutputFormat5() {}
 
 Defines the possible output format(s). If there is only one output format, only `OutputFormat()` can be specified, otherwise multiple `OutputFormatX()` should be specified.
 
+---
+
 ### Definitions
 
 The following macros are exposed to define input/output formats:
@@ -78,10 +84,7 @@ The following macros are exposed to define input/output formats:
 
 Defines an empty line.
 
-Usage:
-
-- `EMPTY_LINE();`
-
+---
 
 #### `RAW_LINE()`
 
@@ -89,27 +92,43 @@ Usage:
 #define RAW_LINE(var)  /* see below */
 ```
 
-Defines a line of raw string.
+Defines a line of raw string (which may contain whitespaces). The variable must be a `std::string`.
 
-Usage:
+**Example**
 
-- `RAW_LINE(<var>);`
-
-The variable must be of `std::string` type.
-
-Example:
+<table>
+<thead>
+<tr>
+<th>Usage</th>
+<th>Variable</th>
+<th>Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
 
 ```cpp
 void InputFormat() {
     RAW_LINE(S);
 }
 ```
+</td>
+<td>
 
-With **S** = "Hello, world!", the above format will produce:
+**S** = "Hello, world!"
+</td>
+<td>
 
 ```
 Hello, world!
 ```
+</td>
+</tr>
+</tbody>
+</table>
+
+---
 
 #### `RAW_LINES()`
 
@@ -124,9 +143,22 @@ Usage:
 - `RAW_LINES(<var>);`
 - `RAW_LINES(<var>) % SIZE(<number of elements>);`
 
-The variable must be of `std::vector<std::string>` type. If the size is not given, then this must be the last segment in the I/O format.
+The variable must be a vector of `std::string`. If the size is not given, then this must be the last segment in the I/O format.
 
-Example:
+**Example**
+
+<table>
+<thead>
+<tr>
+<th>Usage</th>
+<th>Variables</th>
+<th>Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
 
 ```cpp
 void InputFormat() {
@@ -134,8 +166,18 @@ void InputFormat() {
     RAW_LINES(Y);
 }
 ```
+</td>
+<td>
 
-With **X** = \{"Hello, world!", "Happy new year."}, **Y** = \{"lorem", "ipsum", "dolor sit amet"}, the above format will produce:
+- **X** = \{
+  - "Hello, world!",
+  - "Happy new year."}
+- **Y** = \{
+  - "lorem",
+  - "ipsum",
+  - "dolor sit amet"}
+</td>
+<td>
 
 ```
 Hello, world!
@@ -144,6 +186,12 @@ lorem
 ipsum
 dolor sit amet
 ```
+</td>
+</tr>
+</tbody>
+</table>
+
+---
 
 #### `LINE()`
 
@@ -163,7 +211,19 @@ where each **arg** is one of:
 - `<vector variable name> % SIZE(<number of elements>)`. The number of elements can be a constant or a scalar variable.
 - `<vector variable name>`. Here, the number of elements is unspecified. This kind of element must occur last in a line segment, if any. Elements will be considered until new line is found.
 
-Example:
+**Example**
+
+<table>
+<thead>
+<tr>
+<th>Usage</th>
+<th>Variables</th>
+<th>Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
 
 ```cpp
 void InputFormat() {
@@ -172,14 +232,28 @@ void InputFormat() {
     LINE(M, C % SIZE(M));
 }
 ```
+</td>
+<td>
 
-With **N** = 2, **A** = \{1, 2, 3}, **B** = \{100, 200, 300, 400}, **M** = 2, **C** = \{7, 8}, the above format will produce:
+- **N** = 2
+- **A** = \{1, 2, 3}
+- **B** = \{100, 200, 300, 400}
+- **M** = 2
+- **C** = \{7, 8}
+</td>
+<td>
 
 ```
 2
 1 2 3 100 200 300 400
 2 7 8
 ```
+</td>
+</tr>
+</tbody>
+</table>
+
+---
 
 #### `LINES()`
 
@@ -198,7 +272,21 @@ where each variable is a vector or matrix.
 
 If the size is not given, this must be the last segment in the I/O format.
 
-Example:
+If a matrix variable is given, it must occur as the last argument, and the number of rows must match with the number of elements of the other vector variables (if any). It is not required that each row of the matrix consists of the same number of columns.
+
+**Examples**
+
+<table>
+<thead>
+<tr>
+<th>Usage</th>
+<th>Variables</th>
+<th>Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
 
 ```cpp
 void InputFormat() {
@@ -207,8 +295,17 @@ void InputFormat() {
     LINES(Z);
 }
 ```
+</td>
+<td>
 
-With **V** = \{1, 2}, **X** = \{100, 110, 120}, **Y** = \{200, 210, 220} **N** = 3, **Z** = \{1, 2, 3, 4} the above format will produce:
+- **V** = \{1, 2}
+- **X** = \{100, 110, 120}
+- **Y** = \{200, 210, 220}
+- **N** = 3
+- **Z** = \{1, 2, 3, 4}
+
+</td>
+<td>
 
 ```
 1
@@ -221,23 +318,35 @@ With **V** = \{1, 2}, **X** = \{100, 110, 120}, **Y** = \{200, 210, 220} **N** =
 3
 4
 ```
+</td>
+</tr>
 
-If a matrix variable is given, it must occur as the last argument, and the number of rows must match with the number of elements of the other vector variables (if any). It is not required that each row of the matrix consists of the same number of columns.
-
-Example:
+<tr style={{backgroundColor: "inherit"}}>
+<td>
 
 ```cpp
 void InputFormat() {
     LINES(op, data) % SIZE(2);
 }
 ```
+</td>
+<td>
 
-With **op** = \{"UPDATE", "QUERY"}, **data** = \{{3, 5}, {7}}, the above format will produce:
+- **op** = \{"UPDATE", "QUERY"}
+- **data** = \{ \{3, 5}, \{7} }
+</td>
+<td>
 
 ```
 UPDATE 3 5
 QUERY 7
 ```
+</td>
+</tr>
+</tbody>
+</table>
+
+---
 
 #### `GRID()`
 
@@ -251,9 +360,19 @@ Usage:
 
 - `GRID(<var>) % SIZE(<number of rows>, <number of columns>);`
 
-where the variable is a matrix.
+**Example**
 
-Example:
+<table>
+<thead>
+<tr>
+<th>Usage</th>
+<th>Variables</th>
+<th>Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
 
 ```cpp
 void InputFormat() {
@@ -261,8 +380,15 @@ void InputFormat() {
     GRID(H) % SIZE(R, C);
 }
 ```
+</td>
+<td>
 
-With **G** = \{\{'a', 'b'}, \{'c', 'd'}}, **H** = \{\{1, 2, 3}, \{4, 5, 6}}, **R** = 2, **C** = 3, the above format will produce:
+- **R** = 2
+- **C** = 3
+- **G** = \{ \{'a', 'b'}, \{'c', 'd'} }
+- **H** = \{ \{1, 2, 3}, \{4, 5, 6} }
+</td>
+<td>
 
 ```
 ab
@@ -270,6 +396,12 @@ cd
 1 2 3
 4 5 6
 ```
+</td>
+</tr>
+</tbody>
+</table>
+
+---
 
 ### `BeforeOutputFormat()`
 
@@ -279,6 +411,7 @@ virtual void BeforeOutputFormat() {}
 
 Executed right before the produced output is validated against the output format(s). See [BeforeOutputFormat()](../topic-guides/io-formats#beforeoutputformat) for more details.
 
+---
 
 ## Problem style config
 
@@ -289,6 +422,8 @@ virtual void StyleConfig() {}
 ```
 
 Defines the options to enable for problem styles. The following methods are exposed:
+
+---
 
 #### `BatchEvaluator()`
 
@@ -324,9 +459,7 @@ Declares that the problem does not need test case output files.
 
 See [Problem styles](../topic-guides/styles) for more details.
 
----
-
-Example:
+**Example**
 
 ```cpp
 void StyleConfig() {
@@ -334,6 +467,8 @@ void StyleConfig() {
     NoOutput();
 }
 ```
+
+---
 
 ## Constraints and subtasks
 
@@ -345,6 +480,8 @@ virtual void MultipleTestCasesConstraints() {}
 
 Defines the constraints to be imposed to the multiple test cases counter.
 
+---
+
 ### `Constraints()`
 
 ```cpp
@@ -352,6 +489,8 @@ virtual void Constraints() {}
 ```
 
 Defines the constraints to be imposed to the [input/output variables](#inputoutput-variables).
+
+---
 
 ### `SubtaskX()`
 
@@ -363,6 +502,8 @@ virtual void Subtask25() {}
 ```
 
 Defines the constraints to be imposed to the input/output variables for each subtask (up to 25).
+
+---
 
 ### Definitions
 
@@ -382,9 +523,7 @@ void Points(double points);
 
 Sets the points assigned to a subtask. If not specified, the default is 0. Only available in `SubtaskX()`s.
 
----
-
-Examples:
+**Examples**
 
 ```cpp
 void MultipleTestCasesConstraints() {
@@ -407,6 +546,8 @@ void Subtask1() {
     CONS(graphDoesNotHaveCycles());
 }
 ```
+
+---
 
 ## Multiple test cases config
 
@@ -434,9 +575,7 @@ void OutputPrefix(std::string prefix);
 
 Sets the prefix to be prepended to the output of each test case. It can include ``%d``, which will be replaced by the actual test case number (1-based).
 
----
-
-Example:
+**Example**
 
 ``` cpp
 void MultipleTestCasesConfig() {
@@ -444,6 +583,8 @@ void MultipleTestCasesConfig() {
     OutputPrefix("Case #%d: ");
 }
 ```
+
+---
 
 ## Grading config
 
@@ -454,6 +595,8 @@ virtual void GradingConfig() {}
 ```
 
 Defines the config for [local grading](../topic-guides/grading). The following methods are exposed:
+
+---
 
 #### `TimeLimit()`
 

@@ -12,6 +12,8 @@ class TestSpec : public BaseTestSpec<ProblemSpec> {};
 
 Except for private helper functions, every member of `TestSpec` listed below must be `protected`.
 
+---
+
 ## Sample test cases
 
 ### `SampleTestCaseX()`
@@ -24,6 +26,8 @@ virtual void SampleTestCase25() {}
 ```
 
 Defines the sample test cases (up to 25). The following methods are exposed:
+
+---
 
 #### `Subtasks()`
 ```cpp
@@ -48,9 +52,7 @@ void Output(std::vector<std::string> lines);
 
 Defines the input as exact literal string, given as list of lines. It is optional; if not specified, the solution will be run against the sample input to produce the corresponding sample output.
 
----
-
-Example:
+**Example**
 
 ```cpp
 void SampleTestCase1() {
@@ -74,6 +76,8 @@ virtual void TestCases() {}
 
 Defines the test cases.
 
+---
+
 ### `TestGroupX()`
 ```cpp
 virtual void TestGroup1() {}
@@ -83,6 +87,8 @@ virtual void TestGroup25() {}
 ```
 
 Defines the test cases on each test group (up to 25).
+
+---
 
 ### Definitions
 
@@ -101,7 +107,7 @@ Each **statement** should be one of:
 - assignment to an input variables
 - private method call that assigns values to one or more input variables
 
-Example:
+**Example**
 
 ```cpp
 void TestCases() {
@@ -110,6 +116,8 @@ void TestCases() {
     CASE(randomEqualNandM(), randomArray());
 }
 ```
+
+---
 
 ## Test case lifecycle
 

@@ -8,6 +8,8 @@ toc_max_heading_level: 4
 
 `BaseTestSpec` exposes a random number generator object `rnd` that can be utilized to define test cases. The following methods are available on it:
 
+---
+
 ### `nextInt(minNum, maxNum)`
 
 ```cpp
