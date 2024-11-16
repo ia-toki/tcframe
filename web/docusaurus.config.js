@@ -40,7 +40,7 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/ia-toki/tcframe/blob/master/',
+            'https://github.com/ia-toki/tcframe/blob/master/web/',
         },
         blog: false,
         theme: {
