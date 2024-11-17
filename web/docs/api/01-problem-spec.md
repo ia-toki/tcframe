@@ -413,63 +413,6 @@ Executed right before the produced output is validated against the output format
 
 ---
 
-## Problem style config
-
-### `StyleConfig()`
-
-```cpp
-virtual void StyleConfig() {}
-```
-
-Defines the options to enable for problem styles. The following methods are exposed:
-
----
-
-#### `BatchEvaluator()`
-
-```cpp
-void BatchEvaluator();
-```
-
-Declares that the problem uses batch evaluator.
-
-#### `InteractiveEvaluator()`
-
-```cpp
-void InteractiveEvaluator();
-```
-
-Declares that the problem uses interactive evaluator.
-
-#### `CustomScorer()`
-
-```cpp
-void CustomScorer();
-```
-
-Declares that the problem needs a custom scorer.
-
-#### `NoOutput()`
-
-```cpp
-void NoOutput();
-```
-
-Declares that the problem does not need test case output files.
-
-See [Problem styles](../topic-guides/styles) for more details.
-
-**Example**
-
-```cpp
-void StyleConfig() {
-    CustomScorer();
-    NoOutput();
-}
-```
-
----
-
 ## Constraints and subtasks
 
 ### `MultipleTestCasesConstraints()`
@@ -581,6 +524,54 @@ Sets the prefix to be prepended to the output of each test case. It can include 
 void MultipleTestCasesConfig() {
     Counter(T);
     OutputPrefix("Case #%d: ");
+}
+```
+
+---
+
+## Problem style config
+
+### `StyleConfig()`
+
+```cpp
+virtual void StyleConfig() {}
+```
+
+Defines the options to enable for [problem styles](../topic-guides/styles). The following methods are exposed:
+
+---
+
+#### `NoOutput()`
+
+```cpp
+void NoOutput();
+```
+
+Declares that the problem does not need test case output files.
+
+#### `CustomScorer()`
+
+```cpp
+void CustomScorer();
+```
+
+Declares that the problem needs a custom scorer.
+
+#### `InteractiveEvaluator()`
+
+```cpp
+void InteractiveEvaluator();
+```
+
+Declares that the problem uses interactive evaluator.
+
+
+**Example**
+
+```cpp
+void StyleConfig() {
+    CustomScorer();
+    NoOutput();
 }
 ```
 

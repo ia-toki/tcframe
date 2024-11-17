@@ -1,6 +1,6 @@
 # Local grading
 
-TCFrame allows you to grade solutions locally, on your machine.
+TCFrame allows you to "grade" solutions locally, on your machine.
 
 Before grading a solution, you must have already generated the test cases:
 
@@ -8,7 +8,7 @@ Before grading a solution, you must have already generated the test cases:
 ./runner
 ```
 
-Then, you can "grade" a solution, by executing:
+Then, to grade a solution, run:
 
 ```
 ./runner grade [--solution=<solution-command>]
@@ -24,71 +24,87 @@ For example, suppose you have written a problem package for a problem. Your frie
 
 There are other flags available for use too. For complete set of flags see the [API reference for local grading](../api/runner#local-grading).
 
-The verdicts of each test case, each subtask (if any), as well as the overall verdict will be shown, as described below.
+## Grading config
+
+The problem spec can specify the time and memory limits of the problem inside the `GradingConfig()` method as follows:
+
+```cpp
+void GradingConfig() {
+    // options
+}
+```
+
+The available options that can be called are:
+
+- `TimeLimit(int timeLimitInSeconds)`
+- `MemoryLimit(int memoryLimitInMegabytes)`
+
+For example:
+
+```cpp
+void GradingConfig() {
+    TimeLimit(2);
+    MemoryLimit(256);
+}
+```
+
+:::warning
+
+For now, the above time and memory limit information is only useful for local grading. The generated test cases do not contain any metadata containing this information.
+
+:::
+
+You can also set the time and memory limits inline during local grading, using the `--time-limit` and `--memory-limit` options:
+
+```
+./runner grade --time-limit=2 --memory-limit=256
+```
+
+This will override what is set in `GradingConfig()`.
+
+## Helper programs
+
+If [helper programs](../api/helper) are present, they must be compiled prior to the local grading.
+
+### Scorer
+
+The scorer must be compiled and the execution command should be passed to the runner program as the `--scorer` option. For example:
+
+```
+./runner grade --solution=./solution_alt --scorer=./my_custom_scorer
+```
+
+The default scorer command is `./scorer` if not specified.
+
+### Communicator
+
+The communicator must be compiled and the execution command should be passed to the runner program as the `--communicator` option. For example:
+
+```
+./runner grade --solution=./solution_alt --communicator=./my_communicator
+```
+
+The default communicator command is `./communicator` if not specified.
 
 ## Verdicts
 
-The recognized verdicts, from the best to the worst, are as follows:
+The local grading execution will output the verdict of each test case, each subtask (if any), as well as the overall verdict.
 
-- **Accepted**
-  
-  The output produced by the solution is correct.
+Test case verdicts, from the best to the worst, are as follows:
 
-- **OK**
-  
-  The output produced by the solution is partially correct.
+|Verdict|Meaning|
+|-|-|
+|`Accepted`|The output produced by the solution is correct.<br/>Scorer/communicator (if present) gives `AC` verdict.|
+|`OK [<points>]`|The output produced by the solution is partially correct.<br/>Scorer/communicator (if present) gives `OK` verdict.|
+|`Runtime Error`|The solution crashed or used memory above the limit, if specified.|
+|`Time Limit Exceeded`|The solution did not stop within the time limit, if specified.|
+|`Internal Error`|Custom scorer / communicator (if any) crashed or did not give a valid verdict.|
 
-- **Wrong Answer**
-  
-  The output produced by the solution is incorrect. By default, the diff will be shown, truncated to the first 10 lines.
+A subtask's verdict is simply the worst verdict out of all its test cases. If all test cases are `Accepted`, its points will be the one given by the `Points()` call in the `SubtaskX()` method; otherwise, the points will be 0.
 
-- **Runtime Error**
-  
-  The solution crashed or used memory above the limit, if specified.
+The overall verdict is the worst verdict out of all test cases.
 
-- **Time Limit Exceeded**
-  
-  The solution did not stop within the time limit, if specified.
-
-- **Internal Error**
-  
-  Custom [scorer](./styles#scorer) / [communicator](styles#communicator) (if any) crashed or did not give a valid verdict.
-
-### Test case verdicts
-
-A test case verdict consists of a verdict and optionally points.
-
-The verdict of each test case will be shown. For OK verdict, the points (given by the scorer) will be also shown.
-
-### Subtask verdicts
-
-If the problem has subtasks, the verdict of each subtask will be shown as well. A subtask verdict is the combination of:
-
-- verdict: the worst verdict of test case verdicts in the subtask
-- points:
-
-  - the subtask points (assigned via `Points()`), if all test case verdicts in the subtask are Accepted,
-  - the minimum points of OK verdicts in the subtask, if at least one test case verdict is OK and the rest are Accepted, or
-  - 0, otherwise.
-
-### Overall verdict
-
-Finally, the overall verdict is as follows.
-
-For problem without subtasks:
-
-- verdict: the worst test case verdict
-- points: the sum of test case points, where:
-  - an Accepted verdict will be given 100 / (number of test cases) points
-  - an OK verdict will be given its own points
-  - any other verdict will be given 0 points
-
-For problem with subtasks:
-
-- verdict: the worst subtask verdict
-- points: the sum of subtask points
-
-## Sample local grading output
+## Example local grading output
 
 Here is a sample output of a local grading for problems without subtasks.
 
@@ -195,6 +211,8 @@ WA 0
 RTE 0
 ```
 
-## Notes
+:::warning
 
 Internally, TCFrame uses `ulimit` to limit the time and memory used when running the solution. Unfortunately, there is no easy way to restrict memory limit on OS X, so the memory limit will be always ignored when using this feature on OS X.
+
+:::
