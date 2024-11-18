@@ -122,7 +122,7 @@ A scorer and communicator should output the verdict of a test case in the follow
 
 |Verdict|Meaning|
 |-|-|
-|`AC`|The solution receives full points.|
-|`WA`|The solution receives zero points.|
-|`OK X`|The solution receives partial points, which is `X`.<br/>`X` can be a floating point.<br/>E.g.: `OK 71`|
-|`OK P%`|The solution receives partial points, which is `P`% of the full points.<br/>E.g.:`OK 50%`|
+|<pre>AC</pre>|The solution receives full points.|
+|<pre>WA</pre>|The solution receives zero points.|
+|<pre>OK<br/>X</pre>|The solution receives partial points, which is `X`.<br/>`X` can be a floating point.<br/>E.g.:<br/><pre>OK<br/>71</pre>|
+|<pre>OK<br/>P%</pre>|The solution receives partial points, which is `P`% of the full points.<br/>E.g.:<br/><pre>OK<br/>50%</pre>|
