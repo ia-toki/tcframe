@@ -38,6 +38,21 @@ TEST_F(CoreValidatorTests, eachElementOf_isBetween) {
         vector<int>{3, 4}}).isBetween(1, 4));
 }
 
+TEST_F(CoreValidatorTests, eachElementOf_satisfies) {
+    EXPECT_FALSE(eachElementOf(vector<int>{3, 8, 5, 7, 9}).satisfies([](int a) { return a > 3; }));
+    EXPECT_FALSE(eachElementOf(vector<int>{3, 8, 5, 7, 9}).satisfies([](int a) { return (a % 2) == 0; }));
+    EXPECT_FALSE(eachElementOf(vector<int>{3, 8, 5, 7, 9}).satisfies([](int a) { return a <= 8; }));
+    EXPECT_TRUE(eachElementOf(vector<int>{3, 8, 5, 7, 9}).satisfies([](int a) { return a > 0; }));
+    
+    EXPECT_TRUE(eachElementOf(vector<int>{}).satisfies([](int a) { return false; }));
+
+    EXPECT_FALSE(eachElementOf(vector<vector<int>>{vector<int>{3, 8, 5}, vector<int>{7, 9}}).satisfies([](int a) { return a > 3; }));
+    EXPECT_FALSE(eachElementOf(vector<vector<int>>{vector<int>{}, vector<int>{3, 8, 5, 7, 9}}).satisfies([](int a) { return (a % 2) == 0; }));
+    EXPECT_TRUE(eachElementOf(vector<vector<int>>{vector<int>{3, 8, 5, 7}, vector<int>{9}}).satisfies([](int a) { return a > 0; }));
+
+    EXPECT_TRUE(eachElementOf(vector<vector<int>>{}).satisfies([](int a) { return false; }));
+}
+
 TEST_F(CoreValidatorTests, elementsOf_areAscending) {
     EXPECT_FALSE(elementsOf(vector<int>{1, 2, 3, 5, 3}).areAscending());
     EXPECT_FALSE(elementsOf(vector<int>{2, 1, 1, 2, 5}).areAscending());
