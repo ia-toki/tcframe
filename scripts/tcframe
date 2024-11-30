@@ -21,7 +21,40 @@ build() {
 }
 
 version() {
-    echo "tcframe 1.7.0"
+    # Check if git is installed
+    if ! command -v git &>/dev/null; then
+        echo "Error: git is not installed or not in the PATH."
+        exit 1
+    fi
+
+    # Get the most recent tag and strip the 'v' prefix
+    TAG=$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//')
+
+    # Get the number of commits ahead of the tag and the short commit hash
+    COMMITS_AHEAD=$(git rev-list v${TAG}..HEAD --count 2>/dev/null)
+
+    # Ensure COMMITS_AHEAD is initialized (default to 0 if empty)
+    COMMITS_AHEAD=${COMMITS_AHEAD:-0}
+
+    # Get the short commit hash
+    COMMIT_HASH=$(git rev-parse --short HEAD 2>/dev/null)
+
+    # Check if the working directory is dirty
+    if [ -n "$(git status --porcelain 2>/dev/null)" ]; then
+        DIRTY_SUFFIX="-dirty"
+    else
+        DIRTY_SUFFIX=""
+    fi
+
+    # Construct the version string
+    if [ "$COMMITS_AHEAD" -gt 0 ]; then
+        VERSION="${TAG}-${COMMITS_AHEAD}-g${COMMIT_HASH}${DIRTY_SUFFIX}"
+    else
+        VERSION="${TAG}${DIRTY_SUFFIX}"
+    fi
+
+    # Output the version
+    echo "${VERSION}"
 }
 
 if [ -z "$TCFRAME_HOME" ]; then
