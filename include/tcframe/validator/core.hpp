@@ -53,8 +53,8 @@ public:
     }
     
     bool satisfies(function<bool(T)> predicate) {
-        for(T v: val) {
-            if(!predicate(v)) {
+        for (T v : val) {
+            if (!predicate(v)) {
                 return false;
             }
         }
@@ -163,8 +163,8 @@ public:
     }
 
     bool satisfies(function<bool(T)> predicate) {
-        for(const vector<T>& v : val) {
-            if(!eachElementOf(v).satisfies(predicate)) {
+        for (const vector<T>& v : val) {
+            if (!eachElementOf(v).satisfies(predicate)) {
                 return false;
             }
         }
