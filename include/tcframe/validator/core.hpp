@@ -1,10 +1,12 @@
 #pragma once
 
+#include <functional>
 #include <string>
 #include <type_traits>
 #include <vector>
 
 using std::enable_if_t;
+using std::function;
 using std::is_arithmetic_v;
 using std::size_t;
 using std::string;
@@ -44,6 +46,15 @@ public:
     bool isBetween(T minVal, T maxVal) {
         for (T v : val) {
             if (!valueOf(v).isBetween(minVal, maxVal)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    bool satisfies(function<bool(T)> predicate) {
+        for (T v : val) {
+            if (!predicate(v)) {
                 return false;
             }
         }
@@ -145,6 +156,15 @@ public:
     bool isBetween(T minVal, T maxVal) {
         for (const vector<T>& v : val) {
             if (!eachElementOf(v).isBetween(minVal, maxVal)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool satisfies(function<bool(T)> predicate) {
+        for (const vector<T>& v : val) {
+            if (!eachElementOf(v).satisfies(predicate)) {
                 return false;
             }
         }
