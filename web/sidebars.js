@@ -56,6 +56,7 @@ const sidebars = {
       type: 'category',
       label: 'Release Notes',
       items: [
+        'release-notes/1_8_0',
         'release-notes/1_7_0',
         'release-notes/1_6_0',
         'release-notes/1_5_0',
