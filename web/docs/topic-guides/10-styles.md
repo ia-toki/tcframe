@@ -16,7 +16,7 @@ If called, indicates that the problem does not need the test case output files. 
 
 ## `CustomScorer()`
 
-If called, indicates that the solution's output will be checked with a custom [scorer](../api/helper#scorer) (a.k.a. "checker") program.
+If called, indicates that the solution's output will be checked with a custom [scorer](../api/helpers#scorer) (a.k.a. "checker") program.
 
 Usually, the scorer does not need any test case output, so in most cases the `NoOutput()` option is also called.
 
@@ -45,7 +45,7 @@ Scorer will also be used during [local grading](./grading).
 
 ## `InteractiveEvaluator()`
 
-If called, indicates that the solution will communicate with a [communicator](../api/helper#communicator) (a.k.a "interactor") program.
+If called, indicates that the solution will communicate with a [communicator](../api/helpers#communicator) (a.k.a "interactor") program.
 
 This option always requires the `NoOutput()` option to be called.
 
