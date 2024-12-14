@@ -24,7 +24,11 @@ void Constraints() {
 }
 ```
 
-The constraint definition can be pulled directly from the constraints section in the actual problem description. For example: "1 ≤ **A** ≤ 1,000" can be specified by `CONS(1 <= A && A <= 1000)`. "1 ≤ **A**, **B** ≤ 1,000" translates into two specifications: `CONS(1 <= A && A <= 1000)` and `CONS(1 <= B && B <= 1000)`. "1 ≤ **A** ≤ **B** ≤ 1,000" translates into `CONS(1 <= A && A <= B && B <= 1000)`.
+The constraint definition can be pulled directly from the constraints section in the actual problem description. For example:
+
+- "1 ≤ **A** ≤ 1,000" can be specified by `CONS(1 <= A && A <= 1000)`.
+- "1 ≤ **A**, **B** ≤ 1,000" translates into two specifications: `CONS(1 <= A && A <= 1000)` and `CONS(1 <= B && B <= 1000)`.
+- "1 ≤ **A** ≤ **B** ≤ 1,000" translates into `CONS(1 <= A && A <= B && B <= 1000)`.
 
 How about more complex predicates, such as "1 ≤ **A**[i] ≤ 1,000"? You can write a private method for this purpose. For example, it can be translated into `CONS(eachElementBetween(A, 1, 1000))` and a private method as follows:
 
@@ -41,6 +45,9 @@ bool eachElementBetween(const vector<int>& X, int lo, int hi) {
 
 This also applies to even more complex predicates, such as "It is guaranteed that the given graph is a tree". This can be translated to `CONS(graphIsTree())` and define the appropriate private boolean method.
 
-## Notes
+## Using built-in validators
 
-It is tedious to write `eachElementBetween()` predicate over and over again as it is very common in problems. We are working on providing such helper methods as core part of TCFrame in the next versions.
+To simplify constraint specifications, TCFrame provides built-in [validators](../api/validators). For example:
+
+- `CONS(1 <= A && A <= 1000)` can be rewritten as `CONS(valueOf(A).isBetween(1, 1000))`
+- `CONS(eachElementBetween(A, 1, 1000))` and the `eachElementBetween()` function can be rewritten as `CONS(eachElementOf(A).isBetween(1, 1000))`.

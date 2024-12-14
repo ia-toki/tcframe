@@ -38,14 +38,14 @@ inline ScalarValidator<T> valueOf(T val) {
 template<typename T, typename = ScalarType<T>>
 struct VectorElementValidator {
 private:
-    const vector<T>& val;
+    const vector<T>& vec;
 
 public:
-    explicit VectorElementValidator(const vector<T>& _val) : val(_val) {}
+    explicit VectorElementValidator(const vector<T>& _vec) : vec(_vec) {}
 
     bool isBetween(T minVal, T maxVal) {
-        for (T v : val) {
-            if (!valueOf(v).isBetween(minVal, maxVal)) {
+        for (T e : vec) {
+            if (!valueOf(e).isBetween(minVal, maxVal)) {
                 return false;
             }
         }
@@ -53,8 +53,8 @@ public:
     }
     
     bool satisfies(function<bool(T)> predicate) {
-        for (T v : val) {
-            if (!predicate(v)) {
+        for (T e : vec) {
+            if (!predicate(e)) {
                 return false;
             }
         }
@@ -63,21 +63,21 @@ public:
 };
 
 template<typename T, typename = ScalarType<T>>
-inline VectorElementValidator<T> eachElementOf(const vector<T>& val) {
-    return VectorElementValidator(val);
+inline VectorElementValidator<T> eachElementOf(const vector<T>& vec) {
+    return VectorElementValidator(vec);
 }
 
 template<typename T, typename = ScalarType<T>>
 struct VectorElementsValidator {
 private:
-    const vector<T>& val;
+    const vector<T>& vec;
 
 public:
-    explicit VectorElementsValidator(const vector<T>& _val) : val(_val) {}
+    explicit VectorElementsValidator(const vector<T>& _vec) : vec(_vec) {}
 
     bool areAscending() {
-        for (size_t i = 1; i < val.size(); ++i) {
-            if (val[i - 1] >= val[i]) {
+        for (size_t i = 1; i < vec.size(); ++i) {
+            if (vec[i - 1] >= vec[i]) {
                 return false;
             }
         }
@@ -85,8 +85,8 @@ public:
     }
 
     bool areDescending() {
-        for (size_t i = 1; i < val.size(); ++i) {
-            if (val[i - 1] <= val[i]) {
+        for (size_t i = 1; i < vec.size(); ++i) {
+            if (vec[i - 1] <= vec[i]) {
                 return false;
             }
         }
@@ -94,8 +94,8 @@ public:
     }
 
     bool areNonAscending() {
-        for (size_t i = 1; i < val.size(); ++i) {
-            if (val[i - 1] < val[i]) {
+        for (size_t i = 1; i < vec.size(); ++i) {
+            if (vec[i - 1] < vec[i]) {
                 return false;
             }
         }
@@ -103,8 +103,8 @@ public:
     }
 
     bool areNonDescending() {
-        for (size_t i = 1; i < val.size(); ++i) {
-            if (val[i - 1] > val[i]) {
+        for (size_t i = 1; i < vec.size(); ++i) {
+            if (vec[i - 1] > vec[i]) {
                 return false;
             }
         }
@@ -112,7 +112,7 @@ public:
     }
 
     bool areUnique() {
-        vector<T> v = val;
+        vector<T> v = vec;
         sort(v.begin(), v.end());
         size_t ns = unique(v.begin(), v.end()) - v.begin();
         return ns == v.size();
@@ -120,20 +120,20 @@ public:
 };
 
 template<typename T, typename = ScalarType<T>>
-inline VectorElementsValidator<T> elementsOf(const vector<T>& val) {
-    return VectorElementsValidator(val);
+inline VectorElementsValidator<T> elementsOf(const vector<T>& vec) {
+    return VectorElementsValidator(vec);
 }
 
 struct StringElementValidator {
 private:
-    const string& val;
+    const string& str;
 
 public:
-    explicit StringElementValidator(const string& _val) : val(_val) {}
+    explicit StringElementValidator(const string& _str) : str(_str) {}
 
     bool isBetween(char minVal, char maxVal) {
-        for (char v : val) {
-            if (!valueOf(v).isBetween(minVal, maxVal)) {
+        for (char c : str) {
+            if (!valueOf(c).isBetween(minVal, maxVal)) {
                 return false;
             }
         }
@@ -141,20 +141,20 @@ public:
     }
 };
 
-inline StringElementValidator eachCharacterOf(const string& val) {
-    return StringElementValidator(val);
+inline StringElementValidator eachCharacterOf(const string& str) {
+    return StringElementValidator(str);
 }
 
 template<typename T, typename = ScalarType<T>>
 struct MatrixElementValidator {
 private:
-    const vector<vector<T>>& val;
+    const vector<vector<T>>& mat;
 
 public:
-    explicit MatrixElementValidator(const vector<vector<T>>& _val) : val(_val) {}
+    explicit MatrixElementValidator(const vector<vector<T>>& _mat) : mat(_mat) {}
 
     bool isBetween(T minVal, T maxVal) {
-        for (const vector<T>& v : val) {
+        for (const vector<T>& v : mat) {
             if (!eachElementOf(v).isBetween(minVal, maxVal)) {
                 return false;
             }
@@ -163,7 +163,7 @@ public:
     }
 
     bool satisfies(function<bool(T)> predicate) {
-        for (const vector<T>& v : val) {
+        for (const vector<T>& v : mat) {
             if (!eachElementOf(v).satisfies(predicate)) {
                 return false;
             }
@@ -173,8 +173,8 @@ public:
 };
 
 template<typename T, typename = ScalarType<T>>
-inline MatrixElementValidator<T> eachElementOf(const vector<vector<T>>& val) {
-    return MatrixElementValidator(val);
+inline MatrixElementValidator<T> eachElementOf(const vector<vector<T>>& mat) {
+    return MatrixElementValidator(mat);
 }
 
 }

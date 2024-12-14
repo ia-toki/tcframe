@@ -16,8 +16,8 @@ void OutputFormat() {
 
 const constraints =
 `void Constraints() {
-    CONS(1 <= N && N <= 1000);
-    CONS(eachElementBetween(A, 1, 1000000));
+    CONS(valueOf(N).isBetween(1, 1000);
+    CONS(eachElementOf(A).isBetween(1, 10));
 }`
 
 const testCases =

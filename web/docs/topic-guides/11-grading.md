@@ -64,7 +64,7 @@ This will override what is set in `GradingConfig()`.
 
 ## Helper programs
 
-If [helper programs](../api/helper) are present, they must be compiled prior to the local grading.
+If [helper programs](../api/helpers) are present, they must be compiled prior to the local grading.
 
 ### Scorer
 
