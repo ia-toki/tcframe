@@ -1,0 +1,5 @@
+label: Generators
+link: 
+  type: generated-index
+  slug: /api/generators
+  description: TCFrame provides several generators, which can be used to generate the I/O variables in test spec.

@@ -164,7 +164,7 @@ void randomArray() {
 }
 ```
 
-For more details, consult the [API reference for random number generator](../api/rnd).
+For more details, consult the [API reference for random number generator](../api/generators/rnd).
 
 ## Test case lifecycle
 
