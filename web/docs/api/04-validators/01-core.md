@@ -26,7 +26,7 @@ ScalarValidator<T> valueOf(T val);
 
 This validator contains the following function:
 
-#### `.isBetween()`
+#### `.isBetween(minVal, maxVal)`
 
 ```cpp
 bool ScalarValidator<T>::isBetween(T minVal, T maxVal);
@@ -49,7 +49,7 @@ VectorElementValidator<T> eachElementOf(const std::vector<T>& vec);
 
 This validator contains the following functions:
 
-#### `.isBetween()`
+#### `.isBetween(minVal, maxVal)`
 
 ```cpp
 bool VectorElementValidator<T>::isBetween(T minVal, T maxVal);
@@ -57,13 +57,13 @@ bool VectorElementValidator<T>::isBetween(T minVal, T maxVal);
 
 Returns whether each element of `vec` is between `minVal` and `maxVal`, inclusive.
 
-#### `.satisfies()`
+#### `.satisfies(pred)`
 
 ```cpp
-bool VectorElementValidator<T>::satisfies(std::function<bool(T)> predicate);
+bool VectorElementValidator<T>::satisfies(std::function<bool(T)> pred);
 ```
 
-Returns whether `predicate(e)` returns true for each `e` element of `vec`.
+Returns whether `pred(e)` returns true for each `e` element of `vec`.
 
 ---
 
@@ -80,7 +80,7 @@ MatrixElementValidator<T> eachElementOf(const std::vector<std::vector<T>>& mat);
 
 This validator contains the following functions:
 
-#### `.isBetween()`
+#### `.isBetween(minVal, maxVal)`
 
 ```cpp
 bool MatrixElementValidator<T>::isBetween(T minVal, T maxVal);
@@ -88,13 +88,13 @@ bool MatrixElementValidator<T>::isBetween(T minVal, T maxVal);
 
 Returns whether each element of `mat` is between `minVal` and `maxVal`, inclusive.
 
-#### `.satisfies()`
+#### `.satisfies(pred)`
 
 ```cpp
-bool MatrixElementValidator<T>::satisfies(std::function<bool(T)> predicate);
+bool MatrixElementValidator<T>::satisfies(std::function<bool(T)> pred);
 ```
 
-Returns whether `predicate(e)` returns true for each `e` element of `mat`.
+Returns whether `pred(e)` returns true for each `e` element of `mat`.
 
 ---
 
@@ -110,7 +110,7 @@ StringElementValidator eachCharacterOf(const std::string& str);
 
 This validator contains the following functions:
 
-#### `.isBetween()`
+#### `.isBetween(minVal, maxVal)`
 
 ```cpp
 bool StringElementValidator::isBetween(char minVal, char maxVal);
