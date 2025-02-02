@@ -134,4 +134,4 @@ TCFrame was mainly inspired from [testlib](https://github.com/MikeMirzayanov/tes
 
 TCFrame is released under MIT license.
 
-Source code can be found on https://github.com/ia-toki/tcrame.
+Source code can be found on https://github.com/ia-toki/tcframe.
