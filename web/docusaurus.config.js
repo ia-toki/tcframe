@@ -86,7 +86,7 @@ const config = {
       },
       footer: {
         style: 'dark',
-        copyright: `Copyright © ${new Date().getFullYear()} Ikatan Alumni TOKI.`,
+        copyright: `Copyright © Ikatan Alumni TOKI. Built with Docusaurus.`,
       },
       prism: {
         theme: prismThemes.github,
