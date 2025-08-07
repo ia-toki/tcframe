@@ -27,6 +27,12 @@ version() {
         exit 1
     fi
 
+    # Change to tcframe directory to ensure git command work correctly
+    cd "$TCFRAME_HOME" || {
+        echo "Error: Cannot access TCFRAME_HOME directory: $TCFRAME_HOME"
+        exit 1
+    }
+
     # Get the most recent tag and strip the 'v' prefix
     TAG=$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//')
 
