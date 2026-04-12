@@ -12,7 +12,7 @@ public:
     MockDriver()
             : Driver<TProblemSpec>("", nullptr) {}
 
-    MOCK_METHOD0_T(buildSpec, pair<SpecYaml, SpecDriver*>());
+    MOCK_METHOD1_T(buildSpec, pair<SpecYaml, SpecDriver*>(const Args& args));
 };
 
 }

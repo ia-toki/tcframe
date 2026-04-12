@@ -70,7 +70,7 @@ public:
 
         try {
             Args args = parseArgs(argc, argv);
-            pair<SpecYaml, SpecDriver*> spec = buildSpec(runnerLogger);
+            pair<SpecYaml, SpecDriver*> spec = buildSpec(runnerLogger, args);
             auto specClient = new SpecClient(spec.second, os_);
 
             int result;
@@ -96,9 +96,9 @@ private:
         }
     }
 
-    pair<SpecYaml, SpecDriver*> buildSpec(RunnerLogger* runnerLogger) {
+    pair<SpecYaml, SpecDriver*> buildSpec(RunnerLogger* runnerLogger, const Args& args) {
         try {
-            return driver_->buildSpec();
+            return driver_->buildSpec(args);
         } catch (runtime_error& e) {
             runnerLogger->logSpecificationFailure({e.what()});
             throw;

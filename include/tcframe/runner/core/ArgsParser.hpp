@@ -30,6 +30,7 @@ public:
                 { "seed",            required_argument, nullptr, 'h'},
                 { "solution",        required_argument, nullptr, 'i'},
                 { "time-limit",      required_argument, nullptr, 'j'},
+                { "strict",          no_argument,       nullptr, 'k'},
                 { 0, 0, 0, 0 }};
 
         Args args;
@@ -75,6 +76,9 @@ public:
                     break;
                 case 'j':
                     args.timeLimit_ = StringUtils::toNumber<int>(optarg);
+                    break;
+                case 'k':
+                    args.strict_ = true;
                     break;
                 case ':':
                     throw runtime_error("tcframe: option " + string(argv[optind - 1]) + " requires an argument");

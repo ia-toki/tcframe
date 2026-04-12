@@ -7,6 +7,7 @@
 #include "SlugParser.hpp"
 #include "SpecDriver.hpp"
 #include "TestCaseDriver.hpp"
+#include "tcframe/runner/core/Args.hpp"
 #include "tcframe/spec.hpp"
 
 using std::endl;
@@ -34,7 +35,7 @@ public:
             , testSpec_(testSpec) {}
 
     // TODO (fushar): In 2.0, replace this with entry point
-    virtual pair<SpecYaml, SpecDriver*> buildSpec() {
+    virtual pair<SpecYaml, SpecDriver*> buildSpec(const Args& args) {
         SpecYaml spec;
         spec.slug = SlugParser::parse(specPath_);
 
@@ -72,7 +73,8 @@ public:
                 new RawIOManipulator(),
                 new IOManipulator(ioFormat),
                 new Verifier(constraintSuite),
-                multipleTestCasesConfig);
+                multipleTestCasesConfig,
+                args);
 
         TestSuite testSuite = testSpec_->buildTestSuite(spec.slug, constraintSuite.getDefinedSubtaskIds());
         SeedSetter* seedSetter = testSpec_->buildSeedSetter();
