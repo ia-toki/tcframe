@@ -64,8 +64,8 @@ public:
         return multipleTestCasesConfig_.outputPrefix();
     }
 
-    virtual void generateTestCaseInput(const string& testCaseName, ostream* out) {
-        testCaseDriver_->generateInput(testCasesByName_[testCaseName], out);
+    virtual void generateTestCaseInput(const string& testCaseName, ostream* out, bool allowUnsatisfiedSubtasks) {
+        testCaseDriver_->generateInput(testCasesByName_[testCaseName], out, allowUnsatisfiedSubtasks);
     }
 
     virtual void generateSampleTestCaseOutput(const string& testCaseName, ostream* out) {
