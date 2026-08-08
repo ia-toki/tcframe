@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <cstdlib>
 
 int A, B;
 
@@ -10,7 +11,7 @@ int main() {
     } else if (B == 5) {
         printf("%d\n", A + B + 1);
     } else if (B == 4) {
-        return 1 / (B - 4);
+        abort();
     } else {
         while (true);
     }
