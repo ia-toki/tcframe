@@ -30,6 +30,7 @@ private:
     optional<string> solution_;
     optional<int> timeLimit_;
     optional<string> output_;
+    bool strict_ = false;
 
 public:
     Command command() const {
@@ -74,6 +75,29 @@ public:
 
     const optional<int>& timeLimit() const {
         return timeLimit_;
+    }
+
+    bool strict() const {
+        return strict_;
+    }
+
+    void useStrict() {
+        strict_ = true;
+    }
+
+    bool operator==(const Args& o) const {
+        return command_ == o.command_
+            && brief_ == o.brief_
+            && communicator_ == o.communicator_
+            && memoryLimit_ == o.memoryLimit_
+            && noMemoryLimit_ == o.noMemoryLimit_
+            && noTimeLimit_ == o.noTimeLimit_
+            && scorer_ == o.scorer_
+            && seed_ == o.seed_
+            && solution_ == o.solution_
+            && timeLimit_ == o.timeLimit_
+            && output_ == o.output_
+            && strict_ == o.strict_;
     }
 };
 
