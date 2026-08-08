@@ -43,9 +43,9 @@ public:
             , verifier_(verifier)
             , multipleTestCasesConfig_(move(multipleTestCasesConfig)) {}
 
-    virtual void generateInput(const TestCase& testCase, ostream* out) {
+    virtual void generateInput(const TestCase& testCase, ostream* out, bool allowUnsatisfiedSubtasks) {
         applyInput(testCase);
-        verifyInput(testCase);
+        verifyInput(testCase, allowUnsatisfiedSubtasks);
         writeInput(testCase, out);
     }
 
@@ -79,9 +79,9 @@ private:
         }
     }
 
-    void verifyInput(const TestCase& testCase) {
+    void verifyInput(const TestCase& testCase, bool allowUnsatisfiedSubtasks) {
         ConstraintsVerificationResult result = verifier_->verifyConstraints(testCase.subtaskIds());
-        if (!result.isValid()) {
+        if (!result.isValid(allowUnsatisfiedSubtasks)) {
             throw result.asFormattedError();
         }
     }

@@ -20,6 +20,7 @@ public:
 private:
     Command command_;
 
+    bool allowUnsatisfiedSubtasks_ = false;
     bool brief_ = false;
     optional<string> communicator_;
     optional<int> memoryLimit_;
@@ -34,6 +35,10 @@ private:
 public:
     Command command() const {
         return command_;
+    }
+
+    bool allowUnsatisfiedSubtasks() const {
+        return allowUnsatisfiedSubtasks_;
     }
 
     bool brief() const {

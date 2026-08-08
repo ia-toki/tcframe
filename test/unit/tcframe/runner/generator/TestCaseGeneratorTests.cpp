@@ -87,7 +87,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_sample_1"));
-        EXPECT_CALL(specClient, generateTestCaseInput("foo_sample_1", "dir/foo_sample_1.in"));
+        EXPECT_CALL(specClient, generateTestCaseInput("foo_sample_1", "dir/foo_sample_1.in", false));
         EXPECT_CALL(evaluator, generate("dir/foo_sample_1.in", "dir/foo_sample_1.out", evaluationOptions));
         EXPECT_CALL(specClient, generateSampleTestCaseOutput("foo_sample_1", Evaluator::EVALUATION_OUT_FILENAME));
         EXPECT_CALL(evaluator, score("dir/foo_sample_1.in", "dir/foo_sample_1.out"));
@@ -144,7 +144,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Sample_WithoutOutput) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_sample_1"));
-        EXPECT_CALL(specClient, generateTestCaseInput("foo_sample_1", "dir/foo_sample_1.in"));
+        EXPECT_CALL(specClient, generateTestCaseInput("foo_sample_1", "dir/foo_sample_1.in", false));
         EXPECT_CALL(evaluator, generate("dir/foo_sample_1.in", "dir/foo_sample_1.out", evaluationOptions));
         EXPECT_CALL(specClient, validateTestCaseOutput("dir/foo_sample_1.out"));
         EXPECT_CALL(logger, logTestCaseSuccessfulResult());
@@ -158,7 +158,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Official) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
-        EXPECT_CALL(specClient, generateTestCaseInput("foo_1", "dir/foo_1.in"));
+        EXPECT_CALL(specClient, generateTestCaseInput("foo_1", "dir/foo_1.in", false));
         EXPECT_CALL(evaluator, generate("dir/foo_1.in", "dir/foo_1.out", evaluationOptions));
         EXPECT_CALL(specClient, validateTestCaseOutput("dir/foo_1.out"));
         EXPECT_CALL(logger, logTestCaseSuccessfulResult());
@@ -166,11 +166,20 @@ TEST_F(TestCaseGeneratorTests, Generation_Official) {
     EXPECT_TRUE(generator.generate(officialTestCase, options));
 }
 
+TEST_F(TestCaseGeneratorTests, Generation_Official_AllowUnsatisfiedSubtasks) {
+    GenerationOptions allowUnsatisfiedSubtasksOptions = GenerationOptionsBuilder(options)
+            .setAllowUnsatisfiedSubtasks(true)
+            .build();
+
+    EXPECT_CALL(specClient, generateTestCaseInput("foo_1", "dir/foo_1.in", true));
+    EXPECT_TRUE(generator.generate(officialTestCase, allowUnsatisfiedSubtasksOptions));
+}
+
 TEST_F(TestCaseGeneratorTests, Generation_Official_NoOutput) {
     {
         InSequence sequence;
         EXPECT_CALL(logger, logTestCaseIntroduction("foo_1"));
-        EXPECT_CALL(specClient, generateTestCaseInput("foo_1", "dir/foo_1.in"));
+        EXPECT_CALL(specClient, generateTestCaseInput("foo_1", "dir/foo_1.in", false));
         EXPECT_CALL(logger, logTestCaseSuccessfulResult());
     }
     EXPECT_CALL(evaluator, evaluate(_, _, _)).Times(0);
@@ -180,7 +189,7 @@ TEST_F(TestCaseGeneratorTests, Generation_Official_NoOutput) {
 
 TEST_F(TestCaseGeneratorTests, Generation_Failed_InputGeneration) {
     string message = "input error";
-    ON_CALL(specClient, generateTestCaseInput(_, _))
+    ON_CALL(specClient, generateTestCaseInput(_, _, _))
             .WillByDefault(Throw(runtime_error(message)));
     {
         InSequence sequence;

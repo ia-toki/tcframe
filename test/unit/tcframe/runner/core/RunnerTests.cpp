@@ -116,6 +116,21 @@ TEST_F(RunnerTests, Run_Generation_UseArgsOptions) {
             nullptr});
 }
 
+TEST_F(RunnerTests, Run_Generation_UseArgsOptions_AllowUnsatisfiedSubtasks) {
+    EXPECT_CALL(generator, generate(GenerationOptionsBuilder("slug")
+            .setSeed(RunnerDefaults::SEED)
+            .setSolutionCommand(RunnerDefaults::SOLUTION_COMMAND)
+            .setOutputDir(RunnerDefaults::OUTPUT_DIR)
+            .setHasTcOutput(StyleConfig::DEFAULT_HAS_TC_OUTPUT)
+            .setAllowUnsatisfiedSubtasks(true)
+            .build()));
+
+    runner.run(2, new char*[3]{
+            (char*) "./runner",
+            (char*) "--allow-unsatisfied-subtasks",
+            nullptr});
+}
+
 TEST_F(RunnerTests, Run_Grading) {
     EXPECT_CALL(grader, grade(_));
 

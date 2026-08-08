@@ -40,7 +40,7 @@ public:
         string outputFilename = TestCasePathCreator::createOutputPath(testCase.name(), options.outputDir());
 
         try {
-            generateInput(testCase, inputFilename);
+            generateInput(testCase, inputFilename, options);
             generateOutput(testCase, inputFilename, outputFilename, options);
             validateOutput(testCase, inputFilename, outputFilename, options);
         } catch (runtime_error& e) {
@@ -54,8 +54,8 @@ public:
     }
 
 private:
-    void generateInput(const TestCase& testCase, const string& inputFilename) {
-        specClient_->generateTestCaseInput(testCase.name(), inputFilename);
+    void generateInput(const TestCase& testCase, const string& inputFilename, const GenerationOptions& options) {
+        specClient_->generateTestCaseInput(testCase.name(), inputFilename, options.allowUnsatisfiedSubtasks());
     }
 
     void generateOutput(

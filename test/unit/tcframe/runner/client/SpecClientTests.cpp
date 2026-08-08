@@ -65,10 +65,20 @@ TEST_F(SpecClientTests, GenerateTestCaseInput) {
     {
         InSequence sequence;
         EXPECT_CALL(os, openForWriting("foo_1.out"));
-        EXPECT_CALL(specDriver, generateTestCaseInput("foo_1", out));
+        EXPECT_CALL(specDriver, generateTestCaseInput("foo_1", out, false));
         EXPECT_CALL(os, closeOpenedStream(out));
     }
-    client.generateTestCaseInput("foo_1", "foo_1.out");
+    client.generateTestCaseInput("foo_1", "foo_1.out", false);
+}
+
+TEST_F(SpecClientTests, GenerateTestCaseInput_AllowUnsatisfiedSubtasks) {
+    {
+        InSequence sequence;
+        EXPECT_CALL(os, openForWriting("foo_1.out"));
+        EXPECT_CALL(specDriver, generateTestCaseInput("foo_1", out, true));
+        EXPECT_CALL(os, closeOpenedStream(out));
+    }
+    client.generateTestCaseInput("foo_1", "foo_1.out", true);
 }
 
 TEST_F(SpecClientTests, GenerateSampleTestCaseOutput) {

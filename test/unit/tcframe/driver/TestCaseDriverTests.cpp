@@ -93,7 +93,7 @@ TEST_F(TestCaseDriverTests, GenerateInput_Sample) {
         EXPECT_CALL(verifier, verifyConstraints(set<int>{1, 2}));
         EXPECT_CALL(rawIOManipulator, print(out, "42\n"));
     }
-    driver.generateInput(sampleTestCase, out);
+    driver.generateInput(sampleTestCase, out, false);
 }
 
 TEST_F(TestCaseDriverTests, GenerateInput_Official) {
@@ -103,7 +103,7 @@ TEST_F(TestCaseDriverTests, GenerateInput_Official) {
         EXPECT_CALL(ioManipulator, printInput(out));
     }
     N = 0;
-    driver.generateInput(officialTestCase, out);
+    driver.generateInput(officialTestCase, out, false);
     EXPECT_THAT(N, Eq(42));
 }
 
@@ -112,11 +112,30 @@ TEST_F(TestCaseDriverTests, GenerateInput_Failed_Verification) {
     ON_CALL(verifier, verifyConstraints(_))
             .WillByDefault(Return(failedResult));
     try {
-        driver.generateInput(officialTestCase, out);
+        driver.generateInput(officialTestCase, out, false);
         FAIL();
     } catch (FormattedError& e) {
         EXPECT_THAT(e, Eq(failedResult.asFormattedError()));
     }
+}
+
+TEST_F(TestCaseDriverTests, GenerateInput_Failed_Verification_AllowUnsatisfiedSubtasks) {
+    ConstraintsVerificationResult failedResult({{2, {"1 <= N && N <= 10"}}}, {1});
+    ON_CALL(verifier, verifyConstraints(_))
+            .WillByDefault(Return(failedResult));
+    try {
+        driver.generateInput(officialTestCase, out, true);
+        FAIL();
+    } catch (FormattedError& e) {
+        EXPECT_THAT(e, Eq(failedResult.asFormattedError()));
+    }
+}
+
+TEST_F(TestCaseDriverTests, GenerateInput_SatisfiedButNotAssignedSubtasks_AllowUnsatisfiedSubtasks) {
+    ON_CALL(verifier, verifyConstraints(_))
+            .WillByDefault(Return(ConstraintsVerificationResult({}, {1})));
+    EXPECT_CALL(ioManipulator, printInput(out));
+    driver.generateInput(officialTestCase, out, true);
 }
 
 TEST_F(TestCaseDriverTests, GenerateSampleOutput) {
@@ -142,7 +161,7 @@ TEST_F(TestCaseDriverTests, GenerateInput_MultipleTestCases_Sample) {
         EXPECT_CALL(rawIOManipulator, printLine(out, "1"));
         EXPECT_CALL(rawIOManipulator, print(out, "42\n"));
     }
-    driverWithMultipleTestCases.generateInput(sampleTestCase, out);
+    driverWithMultipleTestCases.generateInput(sampleTestCase, out, false);
 }
 
 TEST_F(TestCaseDriverTests, GenerateInput_MultipleTestCases_Official) {
@@ -153,7 +172,7 @@ TEST_F(TestCaseDriverTests, GenerateInput_MultipleTestCases_Official) {
         EXPECT_CALL(ioManipulator, printInput(out));
     }
     N = 0;
-    driverWithMultipleTestCases.generateInput(officialTestCase, out);
+    driverWithMultipleTestCases.generateInput(officialTestCase, out, false);
     EXPECT_THAT(N, Eq(42));
 }
 
