@@ -65,7 +65,7 @@ public:
     void printTo(ostream* out) {
         for (int row = 0; row < var_->size(); row++) {
             printRowTo(row, out);
-            *out << endl;
+            *out << '\n';
         }
     }
 

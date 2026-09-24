@@ -66,7 +66,7 @@ public:
             }
             first = false;
         }
-        *out << endl;
+        *out << '\n';
     }
 
 private:

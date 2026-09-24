@@ -24,7 +24,7 @@ public:
 
     void print(RawLineIOSegment* segment, ostream* out) {
         segment->variable()->printTo(out);
-        *out << endl;
+        *out << '\n';
     }
 };
 
