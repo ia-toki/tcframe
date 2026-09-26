@@ -34,9 +34,9 @@ public:
 
     ConstraintsVerificationResult() = default;
 
-    bool isValid() const {
+    bool isValid(bool strict) const {
         return unsatisfiedConstraintDescriptionsBySubtaskId_.empty() &&
-               satisfiedButNotAssignedSubtaskIds_.empty();
+               (!strict || satisfiedButNotAssignedSubtaskIds_.empty());
     }
 
     const map<int, vector<string>>& unsatisfiedConstraintDescriptionsBySubtaskId() const {

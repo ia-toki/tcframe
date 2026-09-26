@@ -56,7 +56,7 @@ TEST_F(RunnerTests, Run_Specification_Failed) {
     EXPECT_CALL(runnerLogger, logSpecificationFailure(vector<string>{"An error"}));
 
     MOCK(Driver<ProblemSpec>) driver;
-    ON_CALL(driver, buildSpec())
+    ON_CALL(driver, buildSpec(_))
             .WillByDefault(Throw(runtime_error("An error")));
 
     Runner<ProblemSpec> badRunner(

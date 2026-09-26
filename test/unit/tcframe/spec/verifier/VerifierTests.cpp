@@ -64,7 +64,7 @@ bool VerifierTests::b5;
 TEST_F(VerifierTests, Verification_Valid_AllConstraintsValid) {
     ConstraintsVerificationResult result = verifier.verifyConstraints({Subtask::MAIN_ID});
 
-    EXPECT_TRUE(result.isValid());
+    EXPECT_TRUE(result.isValid(true));
     EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), IsEmpty());
     EXPECT_THAT(result.unsatisfiedConstraintDescriptionsBySubtaskId(), IsEmpty());
 }
@@ -73,7 +73,7 @@ TEST_F(VerifierTests, Verification_Invalid_SomeConstraintsInvalid) {
     b2 = false;
     ConstraintsVerificationResult result = verifier.verifyConstraints({Subtask::MAIN_ID});
 
-    EXPECT_FALSE(result.isValid());
+    EXPECT_FALSE(result.isValid(true));
     EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), IsEmpty());
     EXPECT_THAT(result.unsatisfiedConstraintDescriptionsBySubtaskId(), ElementsAre(
             Pair(Subtask::MAIN_ID, ElementsAre("1 <= B && B <= 10"))));
@@ -82,7 +82,7 @@ TEST_F(VerifierTests, Verification_Invalid_SomeConstraintsInvalid) {
 TEST_F(VerifierTests, Verification_WithSubtasks_Valid_AllConstraintsValid) {
     ConstraintsVerificationResult result = verifierWithSubtasks.verifyConstraints({1, 2, 3});
 
-    EXPECT_TRUE(result.isValid());
+    EXPECT_TRUE(result.isValid(true));
     EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), IsEmpty());
     EXPECT_THAT(result.unsatisfiedConstraintDescriptionsBySubtaskId(), IsEmpty());
 }
@@ -91,7 +91,7 @@ TEST_F(VerifierTests, Verification_WithSubtasks_Valid_AllAssignedSubtasksValid) 
     b4 = false;
     ConstraintsVerificationResult result = verifierWithSubtasks.verifyConstraints({1, 3});
 
-    EXPECT_TRUE(result.isValid());
+    EXPECT_TRUE(result.isValid(true));
     EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), IsEmpty());
     EXPECT_THAT(result.unsatisfiedConstraintDescriptionsBySubtaskId(), IsEmpty());
 }
@@ -100,7 +100,7 @@ TEST_F(VerifierTests, Verification_WithSubtasks_Invalid_SomeConstraintsInvalid) 
     b4 = false;
     ConstraintsVerificationResult result = verifierWithSubtasks.verifyConstraints({2, 3});
 
-    EXPECT_FALSE(result.isValid());
+    EXPECT_FALSE(result.isValid(true));
     EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), ElementsAre(1));
     EXPECT_THAT(result.unsatisfiedConstraintDescriptionsBySubtaskId(), ElementsAre(
             Pair(2, ElementsAre("1 <= D && D <= 10"))));
@@ -109,7 +109,7 @@ TEST_F(VerifierTests, Verification_WithSubtasks_Invalid_SomeConstraintsInvalid) 
 TEST_F(VerifierTests, Verification_WithConstraintsAndSubtasks_Valid_AllConstraintsValid) {
     ConstraintsVerificationResult result = verifierWithConstraintsAndSubtasks.verifyConstraints({1, 2});
 
-    EXPECT_TRUE(result.isValid());
+    EXPECT_TRUE(result.isValid(true));
     EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), IsEmpty());
     EXPECT_THAT(result.unsatisfiedConstraintDescriptionsBySubtaskId(), IsEmpty());
 }
@@ -118,7 +118,7 @@ TEST_F(VerifierTests, Verification_WithConstraintsAndSubtasks_Valid_AllAssignedS
     b1 = false;
     ConstraintsVerificationResult result = verifierWithConstraintsAndSubtasks.verifyConstraints({2});
 
-    EXPECT_TRUE(result.isValid());
+    EXPECT_TRUE(result.isValid(true));
     EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), IsEmpty());
     EXPECT_THAT(result.unsatisfiedConstraintDescriptionsBySubtaskId(), IsEmpty());
 }
@@ -127,7 +127,7 @@ TEST_F(VerifierTests, Verification_WithConstraintsAndSubtasks_Invalid_SomeConstr
     b4 = false;
     ConstraintsVerificationResult result = verifierWithConstraintsAndSubtasks.verifyConstraints({2});
 
-    EXPECT_FALSE(result.isValid());
+    EXPECT_FALSE(result.isValid(true));
     EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), ElementsAre(1));
     EXPECT_THAT(result.unsatisfiedConstraintDescriptionsBySubtaskId(), ElementsAre(
             Pair(2, ElementsAre("1 <= D && D <= 10"))));
@@ -137,7 +137,7 @@ TEST_F(VerifierTests, Verification_WithConstraintsAndSubtasks_Invalid_GlobalCons
     b0 = false;
     ConstraintsVerificationResult result = verifierWithConstraintsAndSubtasks.verifyConstraints({1, 2});
 
-    EXPECT_FALSE(result.isValid());
+    EXPECT_FALSE(result.isValid(true));
     EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), IsEmpty());
     EXPECT_THAT(result.unsatisfiedConstraintDescriptionsBySubtaskId(), ElementsAre(
             Pair(Subtask::MAIN_ID, ElementsAre("1 <= X && X <= 10"))));

@@ -8,6 +8,7 @@
 
 #include "RawIOManipulator.hpp"
 #include "tcframe/exception.hpp"
+#include "tcframe/runner/core/Args.hpp"
 #include "tcframe/spec/config.hpp"
 #include "tcframe/spec/io.hpp"
 #include "tcframe/spec/testcase.hpp"
@@ -29,6 +30,7 @@ private:
     IOManipulator* ioManipulator_;
     Verifier* verifier_;
     MultipleTestCasesConfig multipleTestCasesConfig_;
+    const Args& args_;
 
 public:
     virtual ~TestCaseDriver() = default;
@@ -37,11 +39,13 @@ public:
             RawIOManipulator* rawIOManipulator,
             IOManipulator* ioManipulator,
             Verifier* verifier,
-            MultipleTestCasesConfig multipleTestCasesConfig)
+            MultipleTestCasesConfig multipleTestCasesConfig,
+            const Args& args)
             : ioManipulator_(ioManipulator)
             , rawIOManipulator_(rawIOManipulator)
             , verifier_(verifier)
-            , multipleTestCasesConfig_(move(multipleTestCasesConfig)) {}
+            , multipleTestCasesConfig_(move(multipleTestCasesConfig))
+            , args_(args) {}
 
     virtual void generateInput(const TestCase& testCase, ostream* out) {
         applyInput(testCase);
@@ -81,7 +85,7 @@ private:
 
     void verifyInput(const TestCase& testCase) {
         ConstraintsVerificationResult result = verifier_->verifyConstraints(testCase.subtaskIds());
-        if (!result.isValid()) {
+        if (!result.isValid(args_.strict())) {
             throw result.asFormattedError();
         }
     }

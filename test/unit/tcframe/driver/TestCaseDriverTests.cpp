@@ -9,6 +9,7 @@
 #include "../spec/io/MockIOManipulator.hpp"
 #include "../spec/verifier/MockVerifier.hpp"
 #include "tcframe/driver/TestCaseDriver.hpp"
+#include "tcframe/runner/core/Args.hpp"
 
 using ::testing::_;
 using ::testing::Eq;
@@ -34,6 +35,7 @@ protected:
     MOCK(RawIOManipulator) rawIOManipulator;
     MOCK(IOManipulator) ioManipulator;
     MOCK(Verifier) verifier;
+    Args args;
 
     TestCase sampleTestCase = TestCaseBuilder()
             .setName("foo_sample_1")
@@ -61,10 +63,11 @@ protected:
     TestCaseDriver driverWithMultipleTestCasesWithOutputPrefix = createDriver(multipleTestCasesConfigWithOutputPrefix);
 
     TestCaseDriver createDriver(MultipleTestCasesConfig multipleTestCasesConfig) {
-        return {&rawIOManipulator, &ioManipulator, &verifier, multipleTestCasesConfig};
+        return {&rawIOManipulator, &ioManipulator, &verifier, multipleTestCasesConfig, args};
     }
 
     void SetUp() {
+        args.useStrict();
         ON_CALL(verifier, verifyConstraints(_))
                 .WillByDefault(Return(ConstraintsVerificationResult()));
         ON_CALL(verifier, verifyMultipleTestCasesConstraints())
