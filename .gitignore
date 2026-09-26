@@ -4,3 +4,11 @@ build
 docs/env
 docs/_build
 cmake-build-debug
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+googletest/
+test_unit
+test_integration
+test_ete
