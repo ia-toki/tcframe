@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Mapping, Optional
 
-from tcframe_cli.build import DEFAULT_BUILD_DIR, BuildError, resolve_helper
+from tcframe_cli.build import DEFAULT_BUILD_DIR, BuildError, default_scorer, resolve_helper
 from tcframe_cli.compiler import CompileError, absolute_command, compile_program
 from tcframe_cli.grading import SolutionResult, Verdict, grade_solutions
 from tcframe_cli.languages import Language, available_languages
@@ -99,7 +99,7 @@ def run_tests(
     except BuildError as exc:
         raise CheckError(str(exc))
 
-    scorer_abs = resolve_helper(package_dir, build_dir, scorer, 'scorer', env)
+    scorer_abs = resolve_helper(package_dir, build_dir, scorer or default_scorer(package_dir), 'scorer', env)
     communicator_abs = resolve_helper(package_dir, build_dir, communicator, 'communicator', env)
     results = grade_solutions(solutions, build_dir, languages, scorer_abs, communicator_abs,
                               package_dir=package_dir, env=env)

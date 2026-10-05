@@ -25,6 +25,22 @@ TEST_F(GenerationEteTests, Normal) {
     ));
 }
 
+TEST_F(GenerationEteTests, FloatToleranceAppliesToSamples) {
+    // The sample "1.5" differs from the solution's "1.500000" only in precision, so
+    // generation must accept it when the float scorer is declared (regression: the
+    // generation path ignored the scorer's additional_args).
+    ASSERT_THAT(execStatus("cd test-ete/float-sample && ../scripts/generate.sh"), Eq(0));
+
+    EXPECT_THAT(ls("test-ete/float-sample/build/tc"), UnorderedElementsAre(
+           "float-sample_sample_1.in",
+           "float-sample_sample_1.out",
+           "float-sample_1_1.in",
+           "float-sample_1_1.out",
+           "float-sample_1_2.in",
+           "float-sample_1_2.out"
+    ));
+}
+
 TEST_F(GenerationEteTests, Normal_NoOutput) {
     ASSERT_THAT(execStatus("cd test-ete/normal-no-output && ../scripts/generate-without-solution.sh"), Eq(0));
 

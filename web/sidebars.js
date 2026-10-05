@@ -62,6 +62,76 @@ const sidebars = {
       items: [
         'v2/commands',
         'v2/package-format',
+        {
+          type: 'category',
+          label: 'Writing Specs',
+          link: {
+            type: 'generated-index',
+            slug: '/docs/v2/writing-specs',
+            description: 'What the spec program controls in TCFrame 2.0: how solutions are run, and how subtasks are scored.',
+          },
+          items: [
+            'v2/writing-specs/style-config',
+            'v2/writing-specs/subtask-aggregators',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Solutions',
+          link: {
+            type: 'generated-index',
+            slug: '/docs/v2/solutions',
+            description: 'How to lay out the solutions folder, how solutions are compiled, and how multi-file solutions work.',
+          },
+          items: [
+            'v2/solutions/layout',
+            'v2/solutions/compiling',
+            'v2/solutions/multi-file',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Grading',
+          link: {
+            type: 'generated-index',
+            slug: '/docs/v2/grading',
+            description: 'Grading one solution, scorers, float tolerance, interactive problems, and output-only problems.',
+          },
+          items: [
+            'v2/grading/grade-command',
+            'v2/grading/scorers',
+            'v2/grading/float-tolerance',
+            'v2/grading/interactive',
+            'v2/grading/output-only',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Distribution',
+          link: {
+            type: 'generated-index',
+            slug: '/docs/v2/distribution',
+            description: 'The files a judge consumes: spec.yml and the validator.',
+          },
+          items: [
+            'v2/distribution/spec-yml',
+            'v2/distribution/validator',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Extending',
+          link: {
+            type: 'generated-index',
+            slug: '/docs/v2/extending',
+            description: 'Adding languages and understanding the default registry.',
+          },
+          items: [
+            'v2/extending/languages',
+            'v2/extending/registry',
+          ],
+        },
+        'v2/troubleshooting',
       ],
     },
     {

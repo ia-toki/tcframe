@@ -5,7 +5,8 @@ from pathlib import Path
 
 import pytest
 
-from tcframe_cli.build import BuildError, resolve_helper
+from tcframe_cli.build import BuildError, default_scorer, resolve_helper
+from tcframe_cli.checker import FAIL, PASS, run_tests
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 needs_gxx = pytest.mark.skipif(shutil.which('g++') is None, reason='g++ not available')
@@ -49,3 +50,65 @@ def test_compile_failure_is_a_build_error(tmp_path):
 
     with pytest.raises(BuildError, match='scorer failed to compile'):
         resolve_helper(tmp_path, tmp_path / 'build', 'scorer.cpp', 'scorer', ENV)
+
+
+# A lenient scorer: accepts every output, so a wrong solution only passes with it.
+SCORER_ALWAYS_AC = '#include <cstdio>\nint main() { puts("AC"); return 0; }\n'
+WRONG = '#include <cstdio>\nint main(){ int a, b; scanf("%d %d", &a, &b); printf("%d\\n", a - b); }\n'
+SUM = '#include <cstdio>\nint main(){ int a, b; scanf("%d %d", &a, &b); printf("%d\\n", a + b); }\n'
+LANG = """\
+name: C++17 (GCC)
+family: cpp
+extensions: [cc, cpp]
+build: {gxx} -std=c++17 -o $BASE_FILENAME $FILENAME
+run: ./$BASE_FILENAME
+"""
+
+
+def _write(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text)
+
+
+def scorer_problem(tmp_path: Path, custom_scorer: bool) -> Path:
+    pkg = tmp_path / 'aplusb'
+    pkg.mkdir()
+    spec = (REPO_ROOT / 'templates' / 'batch.cpp').read_text()
+    if custom_scorer:
+        spec = spec.replace('    void GradingConfig() {',
+                            '    void StyleConfig() {\n        CustomScorer();\n    }\n\n    void GradingConfig() {', 1)
+    _write(pkg / 'spec.cpp', spec)
+    _write(pkg / 'languages' / 'cpp17.yml', LANG.format(gxx=shutil.which('g++') or 'g++'))
+    _write(pkg / 'solutions' / 'ref' / 'ref.cpp', SUM)
+    _write(pkg / 'solutions' / 'wa' / 'wrong.cpp', WRONG)
+    _write(pkg / 'scorer.cpp', SCORER_ALWAYS_AC)
+    return pkg
+
+
+def test_default_scorer_looks_for_source_then_executable(tmp_path):
+    assert default_scorer(tmp_path) is None
+    (tmp_path / 'scorer').write_text('x')
+    assert default_scorer(tmp_path) == './scorer'
+    (tmp_path / 'scorer.cpp').write_text('x')
+    assert default_scorer(tmp_path) == './scorer.cpp'
+
+
+@needs_gxx
+def test_package_scorer_is_used_when_custom_scorer_declared(tmp_path):
+    pkg = scorer_problem(tmp_path, custom_scorer=True)
+
+    checks = run_tests(pkg, env=ENV, home=tmp_path / 'nohome')
+    by_label = {c.result.solution.label: c for c in checks}
+
+    assert by_label['wa/wrong.cpp'].status == FAIL
+    assert by_label['wa/wrong.cpp'].detail == 'got AC 100, expected WA'
+
+
+@needs_gxx
+def test_package_scorer_is_unused_without_custom_scorer(tmp_path):
+    pkg = scorer_problem(tmp_path, custom_scorer=False)
+
+    checks = run_tests(pkg, env=ENV, home=tmp_path / 'nohome')
+    by_label = {c.result.solution.label: c for c in checks}
+
+    assert by_label['wa/wrong.cpp'].status == PASS

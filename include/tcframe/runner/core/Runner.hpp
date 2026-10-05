@@ -194,7 +194,7 @@ private:
         GenerationOptions options = optionsBuilder.build();
 
         auto helperCommands = getHelperCommands(args, spec.evaluator.has_scorer);
-        auto evaluator = evaluatorRegistry_->get(spec.evaluator.slug, os_, helperCommands);
+        auto evaluator = evaluatorRegistry_->get(spec.evaluator.slug, os_, helperCommands, getScorerArgs(spec));
         auto logger = new DefaultGeneratorLogger(loggerEngine_);
         auto testCaseGenerator = new TestCaseGenerator(specClient, evaluator, logger);
         auto generator = generatorFactory_->create(specClient, testCaseGenerator, os_, logger);
@@ -238,8 +238,7 @@ private:
         bool json = args.format().value_or("text") == "json";
         auto logger = graderLoggerFactory_->create(loggerEngine_, args.brief(), json);
         auto helperCommands = getHelperCommands(args, spec.evaluator.has_scorer);
-        string scorerArgs = spec.helpers.count("scorer") ? spec.helpers.at("scorer").additional_args : "";
-        auto evaluator = evaluatorRegistry_->get(spec.evaluator.slug, os_, helperCommands, scorerArgs);
+        auto evaluator = evaluatorRegistry_->get(spec.evaluator.slug, os_, helperCommands, getScorerArgs(spec));
         auto testCaseGrader = new TestCaseGrader(evaluator, logger);
         auto aggregators = createTestCaseAggregators(spec);
         auto subtaskAggregator = aggregatorRegistry_->getSubtaskAggregator();
@@ -274,6 +273,12 @@ private:
 
     void cleanUp() {
         os_->execute(ExecutionRequestBuilder().setCommand("rm __tcframe_*").build());
+    }
+
+    // Scorer options from spec.yml (e.g. float tolerance). Shared by generation and grading,
+    // so samples are checked with the same scorer as the official grading.
+    static string getScorerArgs(const SpecYaml& spec) {
+        return spec.helpers.count("scorer") ? spec.helpers.at("scorer").additional_args : "";
     }
 
     static map<string, string> getHelperCommands(const Args& args, bool hasScorer) {

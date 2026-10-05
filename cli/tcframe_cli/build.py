@@ -103,6 +103,17 @@ def anchor_program(package_dir: Path, command: str) -> str:
 
 
 HELPER_BUILD_DIR = 'helpers'
+# Scorer programs looked for in the package when --scorer is not given (RFC: a scorer in
+# the package is used). Whether it is used at all still depends on CustomScorer() in the spec.
+DEFAULT_SCORER_CANDIDATES = ('scorer.cpp', 'scorer')
+
+
+def default_scorer(package_dir: Path) -> Optional[str]:
+    """The package's own scorer command (`./scorer.cpp` or `./scorer`), or None."""
+    for name in DEFAULT_SCORER_CANDIDATES:
+        if (package_dir / name).exists():
+            return f'./{name}'
+    return None
 
 
 def resolve_helper(
@@ -234,7 +245,7 @@ def build_package(
         if problem is not None:
             raise BuildError(f'reference solution unavailable: {problem}')
 
-    scorer = resolve_helper(package_dir, build_dir, scorer, 'scorer', env)
+    scorer = resolve_helper(package_dir, build_dir, scorer or default_scorer(package_dir), 'scorer', env)
     communicator = resolve_helper(package_dir, build_dir, communicator, 'communicator', env)
 
     generate(binary, package_dir, build_dir / TC_DIR, solution_arg, scorer, communicator, extra_args)

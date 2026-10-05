@@ -7,7 +7,7 @@ import subprocess
 from pathlib import Path
 from typing import Mapping, Optional, Sequence
 
-from tcframe_cli.build import DEFAULT_BUILD_DIR, DEFAULT_SOLUTION, SPEC_BINARY, SPEC_YML, TC_DIR, BuildError, anchor_program, resolve_helper, solution_path_for
+from tcframe_cli.build import DEFAULT_BUILD_DIR, DEFAULT_SOLUTION, SPEC_BINARY, SPEC_YML, TC_DIR, BuildError, anchor_program, default_scorer, resolve_helper, solution_path_for
 from tcframe_cli.languages import available_languages
 from tcframe_cli.multifile import MultifileError, is_multifile, multifile_args
 from tcframe_cli.process import check_command
@@ -91,7 +91,7 @@ def grade_package(
 
     argv = grade_command(
         binary, build_dir / TC_DIR, solution_arg,
-        scorer=resolve_helper(package_dir, build_dir, scorer, 'scorer', env),
+        scorer=resolve_helper(package_dir, build_dir, scorer or default_scorer(package_dir), 'scorer', env),
         communicator=resolve_helper(package_dir, build_dir, communicator, 'communicator', env),
         brief=brief, time_limit=time_limit, no_time_limit=no_time_limit,
         memory_limit=memory_limit, no_memory_limit=no_memory_limit,
