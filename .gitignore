@@ -6,3 +6,5 @@ docs/_build
 cmake-build-debug
 CLAUDE.md
 docs/superpowers
+SPEC.md
+.claude
