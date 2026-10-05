@@ -1,0 +1,5 @@
+name: Pascal (FPC)
+family: pascal
+extensions: [pas]
+build: fpc -O2 -o$BASE_FILENAME $FILENAME
+run: ./$BASE_FILENAME

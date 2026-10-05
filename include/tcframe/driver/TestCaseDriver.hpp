@@ -2,6 +2,7 @@
 
 #include <istream>
 #include <ostream>
+#include <set>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -19,6 +20,7 @@ using std::istream;
 using std::move;
 using std::ostream;
 using std::runtime_error;
+using std::set;
 using std::string;
 
 namespace tcframe {
@@ -56,6 +58,22 @@ public:
 
     virtual void validateOutput(istream* in) {
         applyOutput(in);
+    }
+
+    // Validator (SPEC.md T7.1): parses one test case and returns the ids of the subtasks it satisfies.
+    // Throws if the input does not parse or does not satisfy the main constraints.
+    virtual set<int> validateInput(istream* in) {
+        if (multipleTestCasesConfig_.counter()) {
+            throw runtime_error("tcframe: validator does not support multiple test cases yet");
+        }
+
+        ioManipulator_->parseInput(in);
+
+        ConstraintsVerificationResult result = verifier_->verifyMainConstraints();
+        if (!result.isValid()) {
+            throw result.asFormattedError();
+        }
+        return verifier_->getSatisfiedSubtaskIds();
     }
 
     virtual void validateMultipleTestCasesInput(int testCaseCount) {

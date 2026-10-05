@@ -62,11 +62,11 @@ protected:
 
     void SetUp() {
         ON_CALL(runnerLoggerFactory, create(_)).WillByDefault(Return(&runnerLogger));
-        ON_CALL(graderLoggerFactory, create(_, _)).WillByDefault(Return(&graderLogger));
+        ON_CALL(graderLoggerFactory, create(_, _, _)).WillByDefault(Return(&graderLogger));
         ON_CALL(generatorFactory, create(_, _, _, _)).WillByDefault(Return(&generator));
         ON_CALL(graderFactory, create(_, _, _, _, _)).WillByDefault(Return(&grader));
-        ON_CALL(evaluatorRegistry, get(_, _, _)).WillByDefault(Return(&evaluator));
-        ON_CALL(aggregatorRegistry, getTestCaseAggregator(_)).WillByDefault(Return(&testCaseAggregator));
+        ON_CALL(evaluatorRegistry, get(_, _, _, _)).WillByDefault(Return(&evaluator));
+        ON_CALL(aggregatorRegistry, getTestCaseAggregator(_, _, _)).WillByDefault(Return(&testCaseAggregator));
         ON_CALL(aggregatorRegistry, getSubtaskAggregator()).WillByDefault(Return(&subtaskAggregator));
         ON_CALL(os, execute(_)).WillByDefault(Return(ExecutionResult()));
     }

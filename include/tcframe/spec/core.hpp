@@ -5,3 +5,4 @@
 #include "tcframe/spec/core/Magic.hpp"
 #include "tcframe/spec/core/SeedSetter.hpp"
 #include "tcframe/spec/core/SpecYaml.hpp"
+#include "tcframe/spec/core/SpecYamlEmitter.hpp"

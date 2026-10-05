@@ -1,0 +1,40 @@
+#!/bin/sh
+# Min aggregator (IOI-style subtask scoring).
+#   argv:   $1 = subtask points
+#   stdin:  N, then N test case verdicts ("AC", "WA", "OK <points>", ...)
+#   stdout: AC | OK <points> | WA | RTE | TLE | ERR
+# Verdict: the worst test case verdict. Points: full subtask points, lowered to
+# the smallest OK score; any verdict other than AC or OK zeroes them.
+awk -v full="$1" '
+function rank(c) {
+    if (c == "AC") return 0
+    if (c == "OK") return 1
+    if (c == "WA") return 2
+    if (c == "RTE") return 3
+    if (c == "TLE") return 4
+    return 99
+}
+function name(r) {
+    if (r == 0) return "AC"
+    if (r == 1) return "OK"
+    if (r == 2) return "WA"
+    if (r == 3) return "RTE"
+    if (r == 4) return "TLE"
+    return "ERR"
+}
+BEGIN { pts = full + 0; worst = 0 }
+NR == 1 || NF == 0 { next }
+{
+    r = rank($1)
+    if (r > worst) worst = r
+    if ($1 == "OK") {
+        if ($2 + 0 < pts) pts = $2 + 0
+    } else if ($1 != "AC") {
+        pts = 0
+    }
+}
+END {
+    if (worst == 0) print "AC"
+    else if (worst == 1) printf "OK %g\n", pts
+    else print name(worst)
+}'

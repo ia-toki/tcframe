@@ -1,5 +1,6 @@
 #pragma once
 
+#include <fstream>
 #include <iostream>
 #include <utility>
 
@@ -12,12 +13,19 @@
 #include "tcframe/runner/grader.hpp"
 #include "tcframe/runner/logger.hpp"
 #include "tcframe/runner/os.hpp"
+#include "SolutionArgs.hpp"
+#include "SpecOverrides.hpp"
 #include "tcframe/spec.hpp"
 #include "tcframe/util.hpp"
 
+using std::cerr;
+using std::cin;
 using std::cout;
 using std::endl;
+using std::ofstream;
 using std::pair;
+using std::set;
+using std::string;
 
 namespace tcframe {
 
@@ -27,6 +35,8 @@ struct RunnerDefaults {
     static constexpr const char* SOLUTION_COMMAND = "./solution";
     static constexpr const char* SCORER_COMMAND = "./scorer";
     static constexpr const char* COMMUNICATOR_COMMAND = "./communicator";
+    static constexpr const char* MANAGER_DIR = "./manager";
+    static constexpr const char* SPEC_FILE = "spec.yml";
 };
 
 template<typename TProblemSpec>
@@ -71,6 +81,13 @@ public:
         try {
             Args args = parseArgs(argc, argv);
             pair<SpecYaml, SpecDriver*> spec = buildSpec(runnerLogger);
+            if (args.command() == Args::Command::SPEC) {
+                return emitSpec(args, spec.first);
+            }
+            if (args.command() == Args::Command::VALIDATE) {
+                return validate(spec.second);
+            }
+
             auto specClient = new SpecClient(spec.second, os_);
 
             int result;
@@ -105,17 +122,73 @@ private:
         }
     }
 
+    int emitSpec(const Args& args, SpecYaml spec) {
+        try {
+            SpecOverrides::apply(args, spec);
+        } catch (runtime_error& e) {
+            cout << e.what() << endl;
+            return 1;
+        }
+
+        string path = args.specFile().value_or(string(RunnerDefaults::SPEC_FILE));
+        ofstream out(path);
+        if (!out) {
+            cout << "tcframe: cannot write spec file '" << path << "'" << endl;
+            return 1;
+        }
+
+        SpecYamlEmitter::emit(out, spec);
+        return out.good() ? 0 : 1;
+    }
+
+    // Validator contract (SPEC.md T7.1): reads one test case from stdin. Stdout gets the number of
+    // valid subtasks, then one subtask number per line. Invalid input goes to stderr with exit 1.
+    // Exit 2 means the spec cannot be validated (multiple test cases, SPEC.md T7.3).
+    int validate(SpecDriver* specDriver) {
+        if (specDriver->hasMultipleTestCases()) {
+            cerr << "tcframe: validator does not support multiple test cases" << endl;
+            return 2;
+        }
+
+        set<int> subtaskIds;
+        try {
+            subtaskIds = specDriver->validateTestCaseInput(&cin);
+        } catch (FormattedError& e) {
+            for (const auto& message : e.messages()) {
+                cerr << string(message.first * 2, ' ') << message.second << endl;
+            }
+            return 1;
+        } catch (runtime_error& e) {
+            cerr << e.what() << endl;
+            return 1;
+        }
+
+        cout << subtaskIds.size() << endl;
+        for (int subtaskId : subtaskIds) {
+            cout << subtaskId << endl;
+        }
+        return 0;
+    }
+
     int generate(const Args& args, const SpecYaml& spec, SpecClient* specClient) {
+        SolutionMap solutions;
+        try {
+            solutions = buildSolutions(args, spec);
+        } catch (runtime_error& e) {
+            cout << e.what() << endl;
+            return 1;
+        }
+
         auto optionsBuilder = GenerationOptionsBuilder(spec.slug)
                 .setSeed(args.seed().value_or(unsigned(RunnerDefaults::SEED)))
-                .setSolutionCommand(args.solution().value_or(string(RunnerDefaults::SOLUTION_COMMAND)))
+                .setSolutions(solutions)
                 .setOutputDir(args.output().value_or(string(RunnerDefaults::OUTPUT_DIR)));
 
         EvaluatorConfig evaluatorConfig = evaluatorRegistry_->getConfig(spec.evaluator.slug);
         if (evaluatorConfig.testCaseOutputType() == TestCaseOutputType::NOT_REQUIRED) {
             optionsBuilder.setHasTcOutput(false);
         } else {
-            optionsBuilder.setHasTcOutput(spec.evaluator.has_tc_output);
+            optionsBuilder.setHasTcOutput(spec.evaluator.tc_output_present);
         }
 
         GenerationOptions options = optionsBuilder.build();
@@ -126,12 +199,25 @@ private:
         auto testCaseGenerator = new TestCaseGenerator(specClient, evaluator, logger);
         auto generator = generatorFactory_->create(specClient, testCaseGenerator, os_, logger);
 
-        return generator->generate(options) ? 0 : 1;
+        try {
+            return generator->generate(options) ? 0 : 1;
+        } catch (runtime_error& e) {
+            cout << e.what() << endl;
+            return 1;
+        }
     }
 
     int grade(const Args& args, const SpecYaml& spec, SpecClient* specClient) {
+        SolutionMap solutions;
+        try {
+            solutions = buildSolutions(args, spec);
+        } catch (runtime_error& e) {
+            cout << e.what() << endl;
+            return 1;
+        }
+
         auto optionsBuilder = GradingOptionsBuilder(spec.slug)
-                .setSolutionCommand(args.solution().value_or(string(RunnerDefaults::SOLUTION_COMMAND)))
+                .setSolutions(solutions)
                 .setOutputDir(args.output().value_or(string(RunnerDefaults::OUTPUT_DIR)));
 
         if (!args.noTimeLimit()) {
@@ -149,16 +235,41 @@ private:
 
         GradingOptions options = optionsBuilder.build();
 
-        auto logger = graderLoggerFactory_->create(loggerEngine_, args.brief());
+        bool json = args.format().value_or("text") == "json";
+        auto logger = graderLoggerFactory_->create(loggerEngine_, args.brief(), json);
         auto helperCommands = getHelperCommands(args, spec.evaluator.has_scorer);
-        auto evaluator = evaluatorRegistry_->get(spec.evaluator.slug, os_, helperCommands);
+        string scorerArgs = spec.helpers.count("scorer") ? spec.helpers.at("scorer").additional_args : "";
+        auto evaluator = evaluatorRegistry_->get(spec.evaluator.slug, os_, helperCommands, scorerArgs);
         auto testCaseGrader = new TestCaseGrader(evaluator, logger);
-        auto aggregator = aggregatorRegistry_->getTestCaseAggregator(!spec.subtasks.empty());
+        auto aggregators = createTestCaseAggregators(spec);
         auto subtaskAggregator = aggregatorRegistry_->getSubtaskAggregator();
-        auto grader = graderFactory_->create(specClient, testCaseGrader, aggregator, subtaskAggregator, logger);
+        auto grader = graderFactory_->create(specClient, testCaseGrader, aggregators, subtaskAggregator, logger);
 
-        grader->grade(options);
+        try {
+            grader->grade(options);
+        } catch (runtime_error& e) {
+            cout << e.what() << endl;
+            return 1;
+        }
         return 0;
+    }
+
+    SolutionMap buildSolutions(const Args& args, const SpecYaml& spec) {
+        return SolutionArgs::build(args, RunnerDefaults::SOLUTION_COMMAND, spec.evaluator.solution_keys);
+    }
+
+    // One test case aggregator per subtask id (1-based, as in Grader), or a single one for the main group.
+    map<int, TestCaseAggregator*> createTestCaseAggregators(const SpecYaml& spec) {
+        map<int, TestCaseAggregator*> aggregatorsById;
+        if (spec.subtasks.empty()) {
+            aggregatorsById[Subtask::MAIN_ID] = aggregatorRegistry_->getTestCaseAggregator("", "", false);
+            return aggregatorsById;
+        }
+        for (size_t i = 0; i < spec.subtasks.size(); i++) {
+            const AggregatorYaml& aggregator = spec.subtasks[i].aggregator;
+            aggregatorsById[i + 1] = aggregatorRegistry_->getTestCaseAggregator(aggregator.slug, aggregator.args, true);
+        }
+        return aggregatorsById;
     }
 
     void cleanUp() {
@@ -171,6 +282,13 @@ private:
             helperCommands["scorer"] = args.scorer().value_or(string(RunnerDefaults::SCORER_COMMAND));
         }
         helperCommands["communicator"] = args.communicator().value_or(string(RunnerDefaults::COMMUNICATOR_COMMAND));
+        helperCommands["manager"] = args.manager().value_or(string(RunnerDefaults::MANAGER_DIR));
+        // Not helper programs: the evaluator directory (custom build_/run_ scripts, SPEC.md T6.3)
+        // and the solution language family, passed through the same map.
+        if (args.evaluatorDir()) {
+            helperCommands["evaluator"] = args.evaluatorDir().value();
+        }
+        helperCommands["solution-family"] = args.solutionFamily().value_or("cpp");
         return helperCommands;
     };
 };

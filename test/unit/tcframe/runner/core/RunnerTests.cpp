@@ -205,7 +205,7 @@ TEST_F(RunnerTests, Run_Grading_WithSubtasks) {
 }
 
 TEST_F(RunnerTests, Run_Grading_DefaultLogger) {
-    EXPECT_CALL(graderLoggerFactory, create(_, false));
+    EXPECT_CALL(graderLoggerFactory, create(_, false, false));
 
     runner.run(2, new char*[3]{
             (char*) "./runner",
@@ -214,7 +214,7 @@ TEST_F(RunnerTests, Run_Grading_DefaultLogger) {
 }
 
 TEST_F(RunnerTests, Run_Grading_BriefLogger) {
-    EXPECT_CALL(graderLoggerFactory, create(_, true));
+    EXPECT_CALL(graderLoggerFactory, create(_, true, false));
 
     runner.run(3, new char*[4]{
             (char*) "./runner",
@@ -223,8 +223,18 @@ TEST_F(RunnerTests, Run_Grading_BriefLogger) {
             nullptr});
 }
 
+TEST_F(RunnerTests, Run_Grading_JsonLogger) {
+    EXPECT_CALL(graderLoggerFactory, create(_, false, true));
+
+    runner.run(3, new char*[4]{
+            (char*) "./runner",
+            (char*) "grade",
+            (char*) "--format=json",
+            nullptr});
+}
+
 TEST_F(RunnerTests, Run_AggregatorRegistry) {
-    EXPECT_CALL(aggregatorRegistry, getTestCaseAggregator(false));
+    EXPECT_CALL(aggregatorRegistry, getTestCaseAggregator("", "", false));
     runner.run(2, new char*[3]{
             (char*) "./runner",
             (char*) "grade",
@@ -232,7 +242,7 @@ TEST_F(RunnerTests, Run_AggregatorRegistry) {
 }
 
 TEST_F(RunnerTests, Run_AggregatorRegistry_WithSubtasks) {
-    EXPECT_CALL(aggregatorRegistry, getTestCaseAggregator(true));
+    EXPECT_CALL(aggregatorRegistry, getTestCaseAggregator("", "", true)).Times(2);
     runnerWithSubtasks.run(2, new char*[3]{
             (char*) "./runner",
             (char*) "grade",

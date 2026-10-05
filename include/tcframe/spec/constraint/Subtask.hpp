@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <tuple>
 #include <utility>
 #include <vector>
@@ -7,10 +8,21 @@
 #include "Constraint.hpp"
 
 using std::move;
+using std::string;
 using std::tie;
 using std::vector;
 
 namespace tcframe {
+
+// Aggregator declared for a subtask (RFC "Aggregation styles"). Empty slug = not declared.
+struct AggregatorDeclaration {
+    string slug;
+    string args;
+
+    bool operator==(const AggregatorDeclaration& o) const {
+        return tie(slug, args) == tie(o.slug, o.args);
+    }
+};
 
 struct Subtask {
     enum {
@@ -23,6 +35,7 @@ private:
     int id_;
     vector<Constraint> constraints_;
     double points_;
+    AggregatorDeclaration aggregator_;
 
 public:
     Subtask() = default;
@@ -37,6 +50,16 @@ public:
             , points_(points)
             , constraints_(move(constraints)) {}
 
+    Subtask(int id, double points, AggregatorDeclaration aggregator, vector<Constraint> constraints)
+            : id_(id)
+            , points_(points)
+            , constraints_(move(constraints))
+            , aggregator_(move(aggregator)) {}
+
+    const AggregatorDeclaration& aggregator() const {
+        return aggregator_;
+    }
+
     int id() const {
         return id_;
     }
@@ -50,7 +73,7 @@ public:
     }
 
     bool operator==(const Subtask& o) const {
-        return tie(id_, points_, constraints_) == tie(o.id_, o.points_, o.constraints_);
+        return tie(id_, points_, aggregator_, constraints_) == tie(o.id_, o.points_, o.aggregator_, o.constraints_);
     }
 };
 

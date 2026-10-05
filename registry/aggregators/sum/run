@@ -1,0 +1,39 @@
+#!/bin/sh
+# Sum aggregator (points split evenly across test cases).
+#   argv:   $1 = subtask points
+#   stdin:  N, then N test case verdicts ("AC", "WA", "OK <points>", ...)
+#   stdout: AC | OK <points> | <VERDICT> <points>  (VERDICT = WA, RTE, TLE or ERR)
+# Each AC earns points/N, each OK earns its own points, others earn nothing.
+# Verdict: the worst test case verdict. Points are kept for any verdict, as in 1.x
+# SumAggregator, so a non-AC/OK subtask still reports its summed points.
+awk -v full="$1" '
+function rank(c) {
+    if (c == "AC") return 0
+    if (c == "OK") return 1
+    if (c == "WA") return 2
+    if (c == "RTE") return 3
+    if (c == "TLE") return 4
+    return 99
+}
+function name(r) {
+    if (r == 0) return "AC"
+    if (r == 1) return "OK"
+    if (r == 2) return "WA"
+    if (r == 3) return "RTE"
+    if (r == 4) return "TLE"
+    return "ERR"
+}
+BEGIN { pts = 0; worst = 0; each = 0 }
+NR == 1 { if ($1 + 0 > 0) each = full / ($1 + 0); next }
+NF == 0 { next }
+{
+    r = rank($1)
+    if (r > worst) worst = r
+    if ($1 == "AC") pts += each
+    else if ($1 == "OK") pts += $2 + 0
+}
+END {
+    if (worst == 0) print "AC"
+    else if (worst == 1) printf "OK %g\n", pts
+    else printf "%s %g\n", name(worst), pts
+}'

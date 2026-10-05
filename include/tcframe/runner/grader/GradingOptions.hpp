@@ -4,6 +4,7 @@
 #include <utility>
 #include <vector>
 
+#include "tcframe/runner/evaluator/SolutionMap.hpp"
 #include "tcframe/spec/core.hpp"
 #include "tcframe/util.hpp"
 
@@ -20,7 +21,7 @@ struct GradingOptions {
 private:
     string slug_;
     vector<double> subtaskPoints_;
-    string solutionCommand_;
+    SolutionMap solutions_;
     string outputDir_;
     optional<int> timeLimit_;
     optional<int> memoryLimit_;
@@ -34,8 +35,12 @@ public:
         return subtaskPoints_;
     }
 
-    const string& solutionCommand() const {
-        return solutionCommand_;
+    const SolutionMap& solutions() const {
+        return solutions_;
+    }
+
+    string solutionCommand() const {
+        return solutions_.defaultCommand();
     }
 
     const string& outputDir() const {
@@ -51,8 +56,8 @@ public:
     }
 
     bool operator==(const GradingOptions& o) const {
-        return tie(slug_, subtaskPoints_, solutionCommand_, outputDir_, timeLimit_, memoryLimit_) ==
-                tie(o.slug_, o.subtaskPoints_, o.solutionCommand_, o.outputDir_, o.timeLimit_, o.memoryLimit_);
+        return tie(slug_, subtaskPoints_, solutions_, outputDir_, timeLimit_, memoryLimit_) ==
+                tie(o.slug_, o.subtaskPoints_, o.solutions_, o.outputDir_, o.timeLimit_, o.memoryLimit_);
     }
 };
 
@@ -73,8 +78,13 @@ public:
         return *this;
     }
 
-    GradingOptionsBuilder& setSolutionCommand(string solutionCommand) {
-        subject_.solutionCommand_ = move(solutionCommand);
+    GradingOptionsBuilder& setSolutions(SolutionMap solutions) {
+        subject_.solutions_ = move(solutions);
+        return *this;
+    }
+
+    GradingOptionsBuilder& setSolutionCommand(const string& solutionCommand) {
+        subject_.solutions_.set(SolutionMap::DEFAULT_KEY, solutionCommand);
         return *this;
     }
 

@@ -18,7 +18,7 @@ using std::string;
 namespace tcframe {
 
 class BatchEvaluator : public Evaluator {
-private:
+protected:
     OperatingSystem* os_;
     TestCaseVerdictParser* testCaseVerdictParser_;
     Scorer* scorer_;

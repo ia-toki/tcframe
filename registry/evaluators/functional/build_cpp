@@ -1,0 +1,19 @@
+#!/bin/sh
+# Builds a functional solution in C++17. Usage: build_cpp <solution-file>... <manager-dir>
+# The manager dir is the last argument (helper args come after the solution files).
+# Output: ./__tcframe_functional
+set -e
+
+# Move the first argument to the end n times: [f1..fn M] becomes [M f1..fn].
+n=$(( $# - 1 ))
+i=0
+while [ "$i" -lt "$n" ]; do
+  first=$1
+  shift
+  set -- "$@" "$first"
+  i=$(( i + 1 ))
+done
+manager=$1
+shift
+
+g++ -std=c++17 -O2 -I "$manager/cpp" -o __tcframe_functional "$manager/cpp/grader.cpp" "$@"

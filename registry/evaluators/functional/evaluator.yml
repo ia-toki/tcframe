@@ -1,0 +1,5 @@
+custom_solution_keys: true
+tc_output: optional
+helpers:
+- { slug: scorer, type: program, optional: true }
+- { slug: manager, type: files, optional: false }

@@ -58,12 +58,15 @@ set(INCLUDE
         include/tcframe/runner/aggregator/SubtaskAggregator.hpp
         include/tcframe/runner/aggregator/SumAggregator.hpp
         include/tcframe/runner/aggregator/TestCaseAggregator.hpp
+        include/tcframe/runner/aggregator/ThresholdAggregator.hpp
         include/tcframe/runner/client.hpp
         include/tcframe/runner/client/SpecClient.hpp
         include/tcframe/runner/core.hpp
         include/tcframe/runner/core/Args.hpp
         include/tcframe/runner/core/ArgsParser.hpp
         include/tcframe/runner/core/Runner.hpp
+        include/tcframe/runner/core/SolutionArgs.hpp
+        include/tcframe/runner/core/SpecOverrides.hpp
         include/tcframe/runner/evaluator.hpp
         include/tcframe/runner/evaluator/BatchEvaluator.hpp
         include/tcframe/runner/evaluator/EvaluationOptions.hpp
@@ -72,7 +75,11 @@ set(INCLUDE
         include/tcframe/runner/evaluator/EvaluatorConfig.hpp
         include/tcframe/runner/evaluator/EvaluatorHelperRegistry.hpp
         include/tcframe/runner/evaluator/EvaluatorRegistry.hpp
+        include/tcframe/runner/evaluator/EvaluatorScripts.hpp
+    include/tcframe/runner/evaluator/FunctionalEvaluator.hpp
         include/tcframe/runner/evaluator/InteractiveEvaluator.hpp
+        include/tcframe/runner/evaluator/OutputOnlyEvaluator.hpp
+        include/tcframe/runner/evaluator/SolutionMap.hpp
         include/tcframe/runner/evaluator/GenerationResult.hpp
         include/tcframe/runner/evaluator/communicator.hpp
         include/tcframe/runner/evaluator/communicator/CommunicationResult.hpp
@@ -80,6 +87,7 @@ set(INCLUDE
         include/tcframe/runner/evaluator/scorer.hpp
         include/tcframe/runner/evaluator/scorer/CustomScorer.hpp
         include/tcframe/runner/evaluator/scorer/DiffScorer.hpp
+        include/tcframe/runner/evaluator/scorer/FloatToleranceScorer.hpp
         include/tcframe/runner/evaluator/scorer/Scorer.hpp
         include/tcframe/runner/evaluator/scorer/ScoringResult.hpp
         include/tcframe/runner/grader.hpp
@@ -88,6 +96,7 @@ set(INCLUDE
         include/tcframe/runner/grader/Grader.hpp
         include/tcframe/runner/grader/GraderLogger.hpp
         include/tcframe/runner/grader/GraderLoggerFactory.hpp
+include/tcframe/runner/grader/JsonGraderLogger.hpp
         include/tcframe/runner/grader/GradingOptions.hpp
         include/tcframe/runner/grader/TestCaseGrader.hpp
         include/tcframe/runner/generator.hpp
@@ -127,6 +136,7 @@ set(INCLUDE
         include/tcframe/spec/core/Magic.hpp
         include/tcframe/spec/core/SeedSetter.hpp
         include/tcframe/spec/core/SpecYaml.hpp
+        include/tcframe/spec/core/SpecYamlEmitter.hpp
         include/tcframe/spec/io.hpp
         include/tcframe/spec/io/GridIOSegment.hpp
         include/tcframe/spec/io/GridIOSegmentManipulator.hpp
@@ -179,25 +189,36 @@ set(TEST_UNIT
         test/unit/tcframe/helper.hpp
         test/unit/tcframe/mock.hpp
         test/unit/tcframe/runner/aggregator/MinAggregatorTests.cpp
+        test/unit/tcframe/runner/aggregator/AggregatorRegistryTests.cpp
         test/unit/tcframe/runner/aggregator/MockAggregatorRegistry.hpp
         test/unit/tcframe/runner/aggregator/MockSubtaskAggregator.hpp
         test/unit/tcframe/runner/aggregator/MockTestCaseAggregator.hpp
         test/unit/tcframe/runner/aggregator/SubtaskAggregatorTests.cpp
         test/unit/tcframe/runner/aggregator/SumAggregatorTests.cpp
+        test/unit/tcframe/runner/aggregator/ThresholdAggregatorTests.cpp
         test/unit/tcframe/runner/core/ArgsParserTests.cpp
         test/unit/tcframe/runner/core/BatchRunnerTests.cpp
         test/unit/tcframe/runner/core/BaseRunnerTests.hpp
         test/unit/tcframe/runner/core/InteractiveRunnerTests.cpp
         test/unit/tcframe/runner/core/RunnerTests.cpp
+        test/unit/tcframe/runner/core/SolutionArgsTests.cpp
+        test/unit/tcframe/runner/core/SpecOverridesTests.cpp
         test/unit/tcframe/runner/client/MockSpecClient.hpp
         test/unit/tcframe/runner/client/SpecClientTests.cpp
         test/unit/tcframe/runner/evaluator/BatchEvaluatorTests.cpp
+        test/unit/tcframe/runner/evaluator/EvaluatorHelperRegistryTests.cpp
         test/unit/tcframe/runner/evaluator/InteractiveEvaluatorTests.cpp
+        test/unit/tcframe/runner/evaluator/OutputOnlyEvaluatorTests.cpp
+        test/unit/tcframe/runner/evaluator/SolutionMapTests.cpp
+        test/unit/tcframe/runner/evaluator/EvaluatorRegistryTests.cpp
+        test/unit/tcframe/runner/evaluator/EvaluatorScriptsTests.cpp
+    test/unit/tcframe/runner/evaluator/FunctionalEvaluatorTests.cpp
         test/unit/tcframe/runner/evaluator/MockEvaluator.hpp
         test/unit/tcframe/runner/evaluator/MockEvaluatorRegistry.hpp
         test/unit/tcframe/runner/evaluator/communicator/CommunicatorTests.cpp
         test/unit/tcframe/runner/evaluator/communicator/MockCommunicator.hpp
         test/unit/tcframe/runner/evaluator/scorer/CustomScorerTests.cpp
+        test/unit/tcframe/runner/evaluator/scorer/FloatToleranceScorerTests.cpp
         test/unit/tcframe/runner/evaluator/scorer/MockScorer.hpp
         test/unit/tcframe/runner/generator/DefaultGeneratorLoggerTests.cpp
         test/unit/tcframe/runner/generator/GeneratorTests.cpp
@@ -207,6 +228,7 @@ set(TEST_UNIT
         test/unit/tcframe/runner/generator/TestCaseGeneratorTests.cpp
         test/unit/tcframe/runner/grader/BriefGraderLoggerTests.cpp
         test/unit/tcframe/runner/grader/DefaultGraderLoggerTests.cpp
+        test/unit/tcframe/runner/grader/JsonGraderLoggerTests.cpp
         test/unit/tcframe/runner/grader/GraderTests.cpp
         test/unit/tcframe/runner/grader/MockGrader.hpp
         test/unit/tcframe/runner/grader/MockGraderLogger.hpp
@@ -227,9 +249,12 @@ set(TEST_UNIT
         test/unit/tcframe/runner/verdict/TestCaseVerdictTests.cpp
         test/unit/tcframe/spec/constraint/ConstraintSuiteTests.cpp
         test/unit/tcframe/spec/constraint/ConstraintSuiteBuilderTests.cpp
+        test/unit/tcframe/spec/config/StyleConfigBuilderTests.cpp
         test/unit/tcframe/spec/core/BaseTestSpecTests.cpp
         test/unit/tcframe/spec/core/BaseProblemSpecTests.cpp
         test/unit/tcframe/spec/core/MagicTests.cpp
+        test/unit/tcframe/spec/core/SpecYamlTests.cpp
+        test/unit/tcframe/spec/core/SpecYamlEmitterTests.cpp
         test/unit/tcframe/spec/core/MockSeedSetter.hpp
         test/unit/tcframe/spec/io/GridIOSegmentBuilderTests.cpp
         test/unit/tcframe/spec/io/GridIOSegmentManipulatorTests.cpp
@@ -275,6 +300,7 @@ set(TEST_INTEGRATION
         test/integration/tcframe/runner/evaluator/communicator/CommunicatorIntegrationTests.cpp
         test/integration/tcframe/runner/evaluator/scorer/CustomScorerIntegrationTests.cpp
         test/integration/tcframe/runner/evaluator/scorer/DiffScorerIntegrationTests.cpp
+        test/integration/tcframe/runner/evaluator/scorer/FloatToleranceScorerIntegrationTests.cpp
         test/integration/tcframe/runner/os/OperatingSystemIntegrationTests.cpp
 )
 
@@ -296,7 +322,10 @@ add_custom_command(
 set(TEST_ETE
         test/ete/tcframe/BaseEteTests.cpp
         test/ete/tcframe/GenerationEteTests.cpp
+        test/ete/tcframe/FunctionalEteTests.cpp
         test/ete/tcframe/GradingEteTests.cpp
+        test/ete/tcframe/SpecEmitEteTests.cpp
+        test/ete/tcframe/ValidatorEteTests.cpp
 )
 
 add_executable(test_ete ${TEST_ETE})
@@ -314,5 +343,7 @@ add_custom_command(
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/include $<TARGET_FILE_DIR:test_ete>/tcframe/include
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src $<TARGET_FILE_DIR:test_ete>/tcframe/src
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/scripts $<TARGET_FILE_DIR:test_ete>/tcframe/scripts
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/cli $<TARGET_FILE_DIR:test_ete>/tcframe/cli
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/registry $<TARGET_FILE_DIR:test_ete>/tcframe/registry
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/test/ete/resources $<TARGET_FILE_DIR:test_ete>/test-ete
 )

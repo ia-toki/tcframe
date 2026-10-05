@@ -1,0 +1,33 @@
+#!/bin/sh
+# Threshold aggregator (IOI 2010 Hotter Colder style): the subtask scores in
+# full only if no test case exceeds the threshold.
+#   argv:   $1 = subtask points (applied by the caller), $2 = threshold t
+#   stdin:  N, then N test case verdicts ("AC", "OK <threshold>", "WA", ...)
+#   stdout: AC (full points) | WA | RTE | TLE | ERR
+# A test case "OK x" passes when x <= t; x > t, or "OK" without a value, counts as WA. AC passes.
+# Verdict: AC when every test case passes, else the worst failing verdict.
+awk -v thr="$2" '
+function rank(c) {
+    if (c == "AC") return 0
+    if (c == "OK") return 1
+    if (c == "WA") return 2
+    if (c == "RTE") return 3
+    if (c == "TLE") return 4
+    return 99
+}
+function name(r) {
+    if (r == 0) return "AC"
+    if (r == 2) return "WA"
+    if (r == 3) return "RTE"
+    if (r == 4) return "TLE"
+    return "ERR"
+}
+BEGIN { t = thr + 0; worst = 0 }
+NR == 1 || NF == 0 { next }
+{
+    if ($1 == "AC") next
+    if ($1 == "OK" && NF >= 2 && $2 + 0 <= t) next
+    r = ($1 == "OK") ? 2 : rank($1)
+    if (r > worst) worst = r
+}
+END { print name(worst) }'

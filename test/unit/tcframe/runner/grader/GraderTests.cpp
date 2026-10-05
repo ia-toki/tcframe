@@ -76,7 +76,10 @@ protected:
             .setSubtaskPoints({40, 50})
             .build();
 
-    Grader grader = {&specClient, &testCaseGrader, &testCaseAggregator, &subtaskAggregator, &logger};
+    Grader grader = {&specClient, &testCaseGrader, {
+            {Subtask::MAIN_ID, &testCaseAggregator},
+            {1, &testCaseAggregator},
+            {2, &testCaseAggregator}}, &subtaskAggregator, &logger};
 
     void SetUp() {
         ON_CALL(specClient, hasMultipleTestCases())

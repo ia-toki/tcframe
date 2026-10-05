@@ -4,6 +4,7 @@
 #include <tuple>
 #include <utility>
 
+#include "SolutionMap.hpp"
 #include "tcframe/spec/core.hpp"
 #include "tcframe/util.hpp"
 
@@ -17,13 +18,17 @@ struct EvaluationOptions {
     friend class EvaluationOptionsBuilder;
 
 private:
-    string solutionCommand_;
+    SolutionMap solutions_;
     optional<int> timeLimit_;
     optional<int> memoryLimit_;
 
 public:
-    const string& solutionCommand() const {
-        return solutionCommand_;
+    const SolutionMap& solutions() const {
+        return solutions_;
+    }
+
+    string solutionCommand() const {
+        return solutions_.defaultCommand();
     }
 
     const optional<int>& timeLimit() const {
@@ -35,8 +40,8 @@ public:
     }
 
     bool operator==(const EvaluationOptions& o) const {
-        return tie(solutionCommand_, timeLimit_, memoryLimit_) ==
-               tie(o.solutionCommand_, o.timeLimit_, o.memoryLimit_);
+        return tie(solutions_, timeLimit_, memoryLimit_) ==
+               tie(o.solutions_, o.timeLimit_, o.memoryLimit_);
     }
 };
 
@@ -50,8 +55,13 @@ public:
 
     EvaluationOptionsBuilder() = default;
 
-    EvaluationOptionsBuilder& setSolutionCommand(string solutionCommand) {
-        subject_.solutionCommand_ = move(solutionCommand);
+    EvaluationOptionsBuilder& setSolutions(SolutionMap solutions) {
+        subject_.solutions_ = move(solutions);
+        return *this;
+    }
+
+    EvaluationOptionsBuilder& setSolutionCommand(const string& solutionCommand) {
+        subject_.solutions_.set(SolutionMap::DEFAULT_KEY, solutionCommand);
         return *this;
     }
 

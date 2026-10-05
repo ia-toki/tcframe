@@ -69,7 +69,7 @@ private:
         }
 
         auto evaluationOptions = EvaluationOptionsBuilder()
-                .setSolutionCommand(options.solutionCommand())
+                .setSolutions(options.solutions())
                 .build();
 
         GenerationResult generationResult = evaluator_->generate(inputFilename, outputFilename, evaluationOptions);

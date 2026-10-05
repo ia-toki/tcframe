@@ -58,4 +58,48 @@ TEST_F(GradingEteTests, Interactive) {
             HasSubstr("interactive_3: Time Limit Exceeded")));
 }
 
+TEST_F(GradingEteTests, FloatTolerance) {
+    ASSERT_THAT(execStatus("cd test-ete/float-tolerance && g++ -o solution solution.cpp && TCFRAME_HOME=$(cd ../../tcframe && pwd) ../../tcframe/scripts/tcframe build --solution=./solution"), Eq(0));
+
+    string result = exec("cd test-ete/float-tolerance && ../scripts/grade.sh");
+    EXPECT_THAT(result, AllOf(
+            HasSubstr("float-tolerance_1_1: Accepted"),
+            HasSubstr("float-tolerance_2_2: Accepted"),
+            HasSubstr("Subtask 1: Accepted [40]"),
+            HasSubstr("Subtask 2: Accepted [60]")));
+}
+
+TEST_F(GradingEteTests, FloatTolerance_OutsideTolerance) {
+    ASSERT_THAT(execStatus("cd test-ete/float-tolerance && g++ -o solution solution.cpp && TCFRAME_HOME=$(cd ../../tcframe && pwd) ../../tcframe/scripts/tcframe build --solution=./solution"), Eq(0));
+
+    string result = exec("cd test-ete/float-tolerance && ../scripts/grade-rounded.sh");
+    EXPECT_THAT(result, AllOf(
+            HasSubstr("float-tolerance_1_1: Wrong Answer"),
+            HasSubstr("Subtask 1: Wrong Answer [0]"),
+            HasSubstr("Subtask 2: Wrong Answer [0]")));
+}
+
+TEST_F(GradingEteTests, OutputOnly) {
+    ASSERT_THAT(execStatus("cd test-ete/output-only && g++ -o solution solution.cpp && TCFRAME_HOME=$(cd ../../tcframe && pwd) ../../tcframe/scripts/tcframe build --solution=./solution"), Eq(0));
+    EXPECT_THAT(readFile("test-ete/output-only/build/spec.yml"), HasSubstr("  slug: output_only"));
+
+    string result = exec("cd test-ete/output-only && ../scripts/grade-output-only.sh");
+    EXPECT_THAT(result, AllOf(
+            HasSubstr("output-only_1: Accepted"),
+            HasSubstr("output-only_2: Accepted"),
+            HasSubstr("output-only_3: Accepted"),
+            HasSubstr("Accepted [100]")));
+}
+
+TEST_F(GradingEteTests, OutputOnly_WrongAndMissing) {
+    ASSERT_THAT(execStatus("cd test-ete/output-only && g++ -o solution solution.cpp && TCFRAME_HOME=$(cd ../../tcframe && pwd) ../../tcframe/scripts/tcframe build --solution=./solution"), Eq(0));
+
+    string result = exec("cd test-ete/output-only && ../scripts/grade-output-only-wrong.sh");
+    EXPECT_THAT(result, AllOf(
+            HasSubstr("output-only_1: Wrong Answer"),
+            HasSubstr("output-only_2: Wrong Answer"),
+            HasSubstr("Submitted output not found"),
+            HasSubstr("output-only_3: Accepted"),
+            HasSubstr("Wrong Answer [33.33]")));
+}
 }

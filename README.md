@@ -15,8 +15,6 @@ TCFrame is a C++ framework for generating test cases of competitive programming 
 
 Consult the complete documentation at https://tcframe.toki.id.
 
-> **New:** A Python abstraction layer for tcframe is now available (initial version) — see [`tcframe-python/`](tcframe-python/).
-
 Example high-level usage:
 
 1. Specify input/output variables.
@@ -110,6 +108,46 @@ Example high-level usage:
        * Does not satisfy constraints, on:
          - 1 <= A && A <= 1000
    ```
+
+## tcframe 2.0 (v2)
+
+tcframe 2.0 keeps the C++ `spec.cpp` format and adds a Python CLI (`scripts/tcframe`, source in `cli/`). The CLI compiles the spec, the solutions, and any helpers automatically, checks solutions against their expected verdicts, and packages the problem for online judges. Requirements: Python >= 3.10 and GCC with C++17.
+
+Set up once (same as 1.x, see [Installation](https://tcframe.toki.id/installation)):
+
+```sh
+export TCFRAME_HOME=~/tcframe   # this checkout
+alias tcframe=$TCFRAME_HOME/scripts/tcframe
+```
+
+Workflow, inside an empty problem directory:
+
+```sh
+tcframe new --template=batch                          # writes ./spec.cpp
+mkdir -p solutions/ref                                # put the reference solution here
+tcframe make --solution=solutions/ref/solution.cpp    # build/spec.yml + build/tc/
+tcframe test                                          # grade solutions/ against expected verdicts
+tcframe package --solution=solutions/ref/solution.cpp # build/<slug>-source.zip, build/<slug>.zip
+```
+
+Source package layout:
+
+```
+mypkg/
+  spec.cpp
+  metadata.yml            optional, passed through to judges
+  solutions/
+    ref/solution.cpp      exactly one reference solution (required)
+    ac/ wa/ tle/ rte/     expected verdict for every file inside
+    ok-75/                expected partial verdict with score 75
+    failed/               expected WA, TLE, or RTE
+  scorer.cpp | scorer/    optional custom scorer
+  languages/*.yml         optional language definitions
+```
+
+`tcframe test` exits non-zero when any solution does not match its directory. The distribution package (`build/<slug>.zip`) contains `spec.yml`, `tc/`, and a `validator` program.
+
+Available templates for `tcframe new`: `batch`, `batch-subtasks`, `interactive`, `interactive-subtasks`. Examples of complete v2 packages are in [`examples/`](examples/).
 
 ## Features
 

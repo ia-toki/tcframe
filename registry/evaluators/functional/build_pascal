@@ -1,0 +1,31 @@
+#!/bin/sh
+# Builds a functional solution in Pascal (FPC). Usage: build_pascal <solution-file>... <manager-dir>
+# Each solution file is a unit whose name is its file name; the grader is manager/pascal/grader.pas.
+# Output: ./__tcframe_functional
+set -e
+
+# Move the first argument to the end n times: [f1..fn M] becomes [M f1..fn].
+n=$(( $# - 1 ))
+i=0
+while [ "$i" -lt "$n" ]; do
+  first=$1
+  shift
+  set -- "$@" "$first"
+  i=$(( i + 1 ))
+done
+manager=$1
+shift
+
+units=""
+for file do
+  dir="-Fu$(dirname "$file")"
+  case " $units " in
+    *" $dir "*) ;;
+    *) units="$units $dir" ;;
+  esac
+done
+
+# A relative -o name is resolved next to the grader source by fpc, so pass the absolute path.
+mkdir -p __tcframe_units
+# -B rebuilds every unit: a cached .ppu from another solution with the same unit name must not be reused.
+fpc -B -O2 -FU__tcframe_units -o"$PWD/__tcframe_functional" $units "$manager/pascal/grader.pas"

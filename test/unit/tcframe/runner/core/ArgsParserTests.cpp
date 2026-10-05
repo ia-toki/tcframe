@@ -87,4 +87,112 @@ TEST_F(ArgsParserTests, Parsing_InvalidOption) {
     }
 }
 
+TEST_F(ArgsParserTests, Parsing_SpecCommand) {
+    char* argv[] = {
+            (char*) "./runner",
+            (char*) "spec",
+            (char*) "--spec-file=out/spec.yml",
+            nullptr};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
+
+    Args args = ArgsParser::parse(argc, argv);
+    EXPECT_THAT(args.command(), Eq(Args::Command::SPEC));
+    EXPECT_THAT(args.specFile(), Eq(optional<string>("out/spec.yml")));
+}
+
+TEST_F(ArgsParserTests, Parsing_Format_Json) {
+    char* argv[] = {
+            (char*) "./runner",
+            (char*) "grade",
+            (char*) "--format=json",
+            nullptr};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
+
+    Args args = ArgsParser::parse(argc, argv);
+    EXPECT_THAT(args.format(), Eq(optional<string>("json")));
+}
+
+TEST_F(ArgsParserTests, Parsing_Format_DefaultIsUnset) {
+    char* argv[] = {
+            (char*) "./runner",
+            (char*) "grade",
+            nullptr};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
+
+    Args args = ArgsParser::parse(argc, argv);
+    EXPECT_THAT(args.format(), Eq(optional<string>()));
+}
+
+TEST_F(ArgsParserTests, Parsing_Format_UnknownValueIsError) {
+    char* argv[] = {
+            (char*) "./runner",
+            (char*) "grade",
+            (char*) "--format=xml",
+            nullptr};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
+
+    EXPECT_THROW(ArgsParser::parse(argc, argv), runtime_error);
+}
+
+TEST_F(ArgsParserTests, Parsing_SolutionFile_Repeatable) {
+    char* argv[] = {
+            (char*) "./runner",
+            (char*) "grade",
+            (char*) "--solution-file=encoder=enc.cpp",
+            (char*) "--solution-file=decoder=dec.cpp",
+            nullptr};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
+
+    Args args = ArgsParser::parse(argc, argv);
+    EXPECT_THAT(args.solutionFiles(), Eq(vector<string>{"encoder=enc.cpp", "decoder=dec.cpp"}));
+    EXPECT_THAT(args.solution(), Eq(optional<string>()));
+}
+
+TEST_F(ArgsParserTests, Parsing_EvaluatorDirAndSolutionFamily) {
+    char* argv[] = {
+            (char*) "./runner",
+            (char*) "--evaluator-dir=registry/evaluators/functional",
+            (char*) "--solution-family=pascal",
+            nullptr};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
+
+    Args args = ArgsParser::parse(argc, argv);
+    EXPECT_THAT(args.evaluatorDir(), Eq(optional<string>("registry/evaluators/functional")));
+    EXPECT_THAT(args.solutionFamily(), Eq(optional<string>("pascal")));
+}
+
+TEST_F(ArgsParserTests, Parsing_EvaluatorDirAndSolutionFamily_DefaultsUnset) {
+    char* argv[] = {
+            (char*) "./runner",
+            nullptr};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
+
+    Args args = ArgsParser::parse(argc, argv);
+    EXPECT_THAT(args.evaluatorDir(), Eq(optional<string>()));
+    EXPECT_THAT(args.solutionFamily(), Eq(optional<string>()));
+}
+
+TEST_F(ArgsParserTests, Parsing_SpecCommand_DefaultSpecFileIsUnset) {
+    char* argv[] = {
+            (char*) "./runner",
+            (char*) "spec",
+            nullptr};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
+
+    Args args = ArgsParser::parse(argc, argv);
+    EXPECT_THAT(args.command(), Eq(Args::Command::SPEC));
+    EXPECT_THAT(args.specFile(), Eq(optional<string>()));
+}
+
+TEST_F(ArgsParserTests, Parsing_ValidateCommand) {
+    char* argv[] = {
+            (char*) "./runner",
+            (char*) "validate",
+            nullptr};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
+
+    Args args = ArgsParser::parse(argc, argv);
+    EXPECT_THAT(args.command(), Eq(Args::Command::VALIDATE));
+}
+
 }

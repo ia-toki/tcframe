@@ -1,6 +1,8 @@
 #pragma once
 
+#include <cmath>
 #include <ostream>
+#include <sstream>
 #include <string>
 #include <utility>
 
@@ -13,6 +15,7 @@ using std::endl;
 using std::make_pair;
 using std::move;
 using std::ostream;
+using std::ostringstream;
 using std::pair;
 using std::string;
 
@@ -33,7 +36,7 @@ public:
             : specPath_(move(specPath))
             , testSpec_(testSpec) {}
 
-    // TODO (fushar): In 2.0, replace this with entry point
+    // 2.0 entry point: the runner's `spec` command calls this, then emits spec.yml
     virtual pair<SpecYaml, SpecDriver*> buildSpec() {
         SpecYaml spec;
         spec.slug = SlugParser::parse(specPath_);
@@ -44,6 +47,8 @@ public:
                 if (subtask.id() != Subtask::MAIN_ID) {
                     SubtaskYaml subtaskYaml;
                     subtaskYaml.points = subtask.points();
+                    subtaskYaml.aggregator.slug = subtask.aggregator().slug;
+                    subtaskYaml.aggregator.args = subtask.aggregator().args;
                     spec.subtasks.push_back(subtaskYaml);
                 }
             }
@@ -57,9 +62,19 @@ public:
             case EvaluationStyle::INTERACTIVE:
                 spec.evaluator.slug = "interactive";
                 break;
+            case EvaluationStyle::OUTPUT_ONLY:
+                spec.evaluator.slug = "output_only";
+                break;
+            case EvaluationStyle::FUNCTIONAL:
+                spec.evaluator.slug = "functional";
+                spec.evaluator.solution_keys = styleConfig.solutionKeys();
+                break;
         }
-        spec.evaluator.has_tc_output = styleConfig.hasTcOutput();
+        spec.evaluator.tc_output_present = styleConfig.hasTcOutput();
         spec.evaluator.has_scorer = styleConfig.hasScorer();
+        if (styleConfig.floatTolerance()) {
+            spec.helpers["scorer"].additional_args = floatToleranceArgs(styleConfig.floatTolerance().value());
+        }
 
         GradingConfig gradingConfig = testSpec_->TProblemSpec::buildGradingConfig();
         spec.limits.time_s = gradingConfig.timeLimit() ;
@@ -80,6 +95,25 @@ public:
         auto specDriver = new SpecDriver(testCaseDriver, seedSetter, multipleTestCasesConfig, testSuite);
 
         return make_pair(spec, specDriver);
+    }
+
+private:
+    // Same format the registry compare scorer takes (registry/helpers/scorer/compare/run).
+    static string floatToleranceArgs(const FloatTolerance& tolerance) {
+        ostringstream eps;
+        eps << pow(10.0, -tolerance.k);
+
+        ostringstream args;
+        if (tolerance.mode != FloatToleranceMode::RELATIVE) {
+            args << "float_absolute_tolerance " << eps.str();
+        }
+        if (tolerance.mode == FloatToleranceMode::BOTH) {
+            args << " ";
+        }
+        if (tolerance.mode != FloatToleranceMode::ABSOLUTE) {
+            args << "float_relative_tolerance " << eps.str();
+        }
+        return args.str();
     }
 };
 

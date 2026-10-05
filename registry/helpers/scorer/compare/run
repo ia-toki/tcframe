@@ -1,0 +1,95 @@
+#!/bin/sh
+# Default scorer ("compare"): compares contestant output with the expected output.
+#   argv:   [ignore_whitespace] [float_absolute_tolerance EPS] [float_relative_tolerance EPS]
+#           $1 = test case input, $2 = expected output, $3 = contestant output
+#           (options come first; the last three arguments are always the positional ones)
+#   stdout: AC | WA
+#   stderr: on WA, the first 10 lines of the diff, for the contestant to see
+#
+# Without float tolerance: exact line diff; ignore_whitespace uses `diff -w`.
+# With float tolerance: output is tokenized (layout ignored) and tokens that are
+# numbers on both sides may differ within the tolerance; other tokens must match.
+# Both tolerances given: a pair passes if either one holds (as FloatToleranceScorer).
+ignore_ws=
+abs_eps=
+rel_eps=
+while [ $# -gt 3 ]; do
+    case "$1" in
+        ignore_whitespace) ignore_ws=1; shift ;;
+        float_absolute_tolerance) abs_eps="$2"; shift 2 ;;
+        float_relative_tolerance) rel_eps="$2"; shift 2 ;;
+        *) echo "compare: unknown option: $1" >&2; exit 2 ;;
+    esac
+done
+if [ $# -ne 3 ]; then
+    echo "usage: run [options] input expected contestant" >&2
+    exit 2
+fi
+
+if [ -n "$abs_eps" ] || [ -n "$rel_eps" ]; then
+    useabs=0
+    userel=0
+    [ -n "$abs_eps" ] && useabs=1
+    [ -n "$rel_eps" ] && userel=1
+    awk -v useabs="$useabs" -v userel="$userel" \
+        -v abs_eps="${abs_eps:-0}" -v rel_eps="${rel_eps:-0}" '
+function isnum(s) {
+    return s ~ /^[+-]?([0-9]+[.]?[0-9]*|[.][0-9]+)([eE][+-]?[0-9]+)?$/
+}
+function same(a, b,   x, y, d, m, ax, ay) {
+    if ((a "") == (b "")) return 1
+    if (!isnum(a) || !isnum(b)) return 0
+    x = a + 0; y = b + 0
+    d = x - y; if (d < 0) d = -d
+    ax = x < 0 ? -x : x
+    ay = y < 0 ? -y : y
+    m = ax > ay ? ax : ay
+    if (useabs && d <= abs_eps) return 1
+    if (userel && d <= rel_eps * m) return 1
+    return 0
+}
+function read(file, arr,   line, n, t, k, i) {
+    n = 0
+    while ((getline line < file) > 0) {
+        k = split(line, t)
+        for (i = 1; i <= k; i++) arr[++n] = t[i]
+    }
+    close(file)
+    return n
+}
+BEGIN {
+    q = sprintf("%c", 39)
+    n1 = read(ARGV[1], e)
+    n2 = read(ARGV[2], r)
+    if (n1 != n2) {
+        print "WA"
+        print "Token count: expected " n1 ", received " n2 | "cat 1>&2"
+        exit
+    }
+    for (i = 1; i <= n1; i++) {
+        if (!same(e[i], r[i])) {
+            print "WA"
+            print "Token " i ": expected " q e[i] q ", received " q r[i] q | "cat 1>&2"
+            exit
+        }
+    }
+    print "AC"
+}' "$2" "$3"
+    exit 0
+fi
+
+diff_opts=
+if [ -n "$ignore_ws" ]; then
+    diff_opts="-w"
+fi
+
+if diff $diff_opts --brief "$2" "$3" > /dev/null 2>&1; then
+    echo AC
+else
+    echo WA
+    echo 'Diff:' >&2
+    diff $diff_opts --unchanged-line-format=' %.2dn    %L' \
+         --old-line-format='(expected) [line %.2dn]    %L' \
+         --new-line-format='(received) [line %.2dn]    %L' \
+         "$2" "$3" | head -n 10 >&2
+fi

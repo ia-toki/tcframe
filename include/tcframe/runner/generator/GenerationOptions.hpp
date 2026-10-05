@@ -4,6 +4,7 @@
 #include <tuple>
 #include <utility>
 
+#include "tcframe/runner/evaluator/SolutionMap.hpp"
 #include "tcframe/spec/core.hpp"
 
 using std::move;
@@ -18,7 +19,7 @@ struct GenerationOptions {
 private:
     string slug_;
     unsigned seed_;
-    string solutionCommand_;
+    SolutionMap solutions_;
     string outputDir_;
     bool hasTcOutput_;
 
@@ -31,8 +32,12 @@ public:
         return seed_;
     }
 
-    const string& solutionCommand() const {
-        return solutionCommand_;
+    const SolutionMap& solutions() const {
+        return solutions_;
+    }
+
+    string solutionCommand() const {
+        return solutions_.defaultCommand();
     }
 
     const string& outputDir() const {
@@ -44,8 +49,8 @@ public:
     }
 
     bool operator==(const GenerationOptions& o) const {
-        return tie(slug_, seed_, solutionCommand_, outputDir_, hasTcOutput_) ==
-                tie(o.slug_, o.seed_, o.solutionCommand_, o.outputDir_, o.hasTcOutput_);
+        return tie(slug_, seed_, solutions_, outputDir_, hasTcOutput_) ==
+                tie(o.slug_, o.seed_, o.solutions_, o.outputDir_, o.hasTcOutput_);
     }
 };
 
@@ -66,8 +71,13 @@ public:
         return *this;
     }
 
-    GenerationOptionsBuilder& setSolutionCommand(string solutionCommand) {
-        subject_.solutionCommand_ = move(solutionCommand);
+    GenerationOptionsBuilder& setSolutions(SolutionMap solutions) {
+        subject_.solutions_ = move(solutions);
+        return *this;
+    }
+
+    GenerationOptionsBuilder& setSolutionCommand(const string& solutionCommand) {
+        subject_.solutions_.set(SolutionMap::DEFAULT_KEY, solutionCommand);
         return *this;
     }
 

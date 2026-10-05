@@ -100,4 +100,29 @@ TEST_F(CoreValidatorTests, eachCharacterOf_isBetween) {
     EXPECT_TRUE(eachCharacterOf("BCDEF").isBetween('A', 'G'));
 }
 
+TEST_F(CoreValidatorTests, valueOf_comparisons) {
+    EXPECT_TRUE(valueOf(5).equals(5));
+    EXPECT_FALSE(valueOf(5).equals(4));
+    EXPECT_TRUE(valueOf(5).isLessThan(6));
+    EXPECT_FALSE(valueOf(5).isLessThan(5));
+    EXPECT_TRUE(valueOf(5).isAtMost(5));
+    EXPECT_FALSE(valueOf(5).isAtMost(4));
+    EXPECT_TRUE(valueOf(5).isGreaterThan(4));
+    EXPECT_FALSE(valueOf(5).isGreaterThan(5));
+    EXPECT_TRUE(valueOf(5).isAtLeast(5));
+    EXPECT_FALSE(valueOf(5).isAtLeast(6));
+}
+
+TEST_F(CoreValidatorTests, eachElementOf_comparisons) {
+    EXPECT_TRUE(eachElementOf(vector<int>{2, 3, 1}).isLessThan(4));
+    EXPECT_FALSE(eachElementOf(vector<int>{2, 3, 1}).isLessThan(3));
+    EXPECT_TRUE(eachElementOf(vector<int>{2, 3, 1}).isAtMost(3));
+    EXPECT_FALSE(eachElementOf(vector<int>{2, 3, 1}).isAtMost(2));
+    EXPECT_TRUE(eachElementOf(vector<int>{2, 3, 1}).isGreaterThan(0));
+    EXPECT_FALSE(eachElementOf(vector<int>{2, 3, 1}).isGreaterThan(1));
+    EXPECT_TRUE(eachElementOf(vector<int>{2, 3, 1}).isAtLeast(1));
+    EXPECT_FALSE(eachElementOf(vector<int>{2, 3, 1}).isAtLeast(2));
+    EXPECT_TRUE(eachElementOf(vector<int>{}).isAtLeast(100));
+}
+
 }

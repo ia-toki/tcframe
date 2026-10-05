@@ -45,7 +45,7 @@ private:
         string inputFilename = TestCasePathCreator::createInputPath(testCase.name(), options.outputDir());
         string outputFilename = TestCasePathCreator::createOutputPath(testCase.name(), options.outputDir());
         auto evaluationOptions = EvaluationOptionsBuilder()
-                .setSolutionCommand(options.solutionCommand())
+                .setSolutions(options.solutions())
                 .setTimeLimit(options.timeLimit())
                 .setMemoryLimit(options.memoryLimit())
                 .build();

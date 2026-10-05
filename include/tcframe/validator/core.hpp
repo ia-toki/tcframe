@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <functional>
 #include <string>
 #include <type_traits>
@@ -28,6 +29,26 @@ public:
     bool isBetween(T minVal, T maxVal) {
         return minVal <= val && val <= maxVal;
     }
+
+    bool equals(T expected) {
+        return val == expected;
+    }
+
+    bool isLessThan(T bound) {
+        return val < bound;
+    }
+
+    bool isAtMost(T bound) {
+        return val <= bound;
+    }
+
+    bool isGreaterThan(T bound) {
+        return val > bound;
+    }
+
+    bool isAtLeast(T bound) {
+        return val >= bound;
+    }
 };
 
 template<typename T, typename = ScalarType<T>>
@@ -50,6 +71,22 @@ public:
             }
         }
         return true;
+    }
+
+    bool isLessThan(T bound) {
+        return satisfies([&](T e) { return valueOf(e).isLessThan(bound); });
+    }
+
+    bool isAtMost(T bound) {
+        return satisfies([&](T e) { return valueOf(e).isAtMost(bound); });
+    }
+
+    bool isGreaterThan(T bound) {
+        return satisfies([&](T e) { return valueOf(e).isGreaterThan(bound); });
+    }
+
+    bool isAtLeast(T bound) {
+        return satisfies([&](T e) { return valueOf(e).isAtLeast(bound); });
     }
     
     bool satisfies(function<bool(T)> predicate) {

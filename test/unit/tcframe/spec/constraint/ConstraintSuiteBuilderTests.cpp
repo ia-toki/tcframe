@@ -122,3 +122,50 @@ TEST_F(ConstraintSuiteBuilderTests, Building_GlobalConstraintsAndSubtasks) {
 }
 
 }
+
+namespace tcframe {
+
+TEST_F(ConstraintSuiteBuilderTests, Building_SubtaskAggregators) {
+    ConstraintSuite constraintSuite = builder
+            .newSubtask()
+            .Points(25)
+            .ThresholdAggregator(18)
+            .addConstraint([]{return true;}, "1 <= A && A <= 10")
+            .newSubtask()
+            .Points(75)
+            .MinAggregator()
+            .addConstraint([]{return true;}, "1 <= B && B <= 10")
+            .newSubtask()
+            .Points(10)
+            .SumAggregator()
+            .addConstraint([]{return true;}, "1 <= C && C <= 10")
+            .build();
+    ConstraintSuite expected({
+            Subtask(Subtask::MAIN_ID, {}),
+            Subtask(1, 25, AggregatorDeclaration{"threshold", "18"}, {
+                    Constraint([]{return true;}, "1 <= A && A <= 10")}),
+            Subtask(2, 75, AggregatorDeclaration{"min", ""}, {
+                    Constraint([]{return true;}, "1 <= B && B <= 10")}),
+            Subtask(3, 10, AggregatorDeclaration{"sum", ""}, {
+                    Constraint([]{return true;}, "1 <= C && C <= 10")})}, {});
+
+    EXPECT_THAT(constraintSuite, Eq(expected));
+}
+
+TEST_F(ConstraintSuiteBuilderTests, Building_SubtaskAggregatorIsNotCarriedOver) {
+    ConstraintSuite constraintSuite = builder
+            .newSubtask()
+            .Points(25)
+            .ThresholdAggregator(2.5)
+            .addConstraint([]{return true;}, "1 <= A && A <= 10")
+            .newSubtask()
+            .Points(75)
+            .addConstraint([]{return true;}, "1 <= B && B <= 10")
+            .build();
+
+    // constraints()[0] is the placeholder main subtask; subtasks 1 and 2 follow.
+    EXPECT_THAT(constraintSuite.constraints()[1].aggregator(), Eq(AggregatorDeclaration{"threshold", "2.5"}));
+    EXPECT_THAT(constraintSuite.constraints()[2].aggregator(), Eq(AggregatorDeclaration()));
+}
+
+}

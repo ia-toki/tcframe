@@ -12,6 +12,8 @@ public:
             : Verifier(ConstraintSuite()) {}
 
     MOCK_METHOD1(verifyConstraints, ConstraintsVerificationResult(const set<int>&));
+    MOCK_METHOD0(verifyMainConstraints, ConstraintsVerificationResult());
+    MOCK_METHOD0(getSatisfiedSubtaskIds, set<int>());
     MOCK_METHOD0(verifyMultipleTestCasesConstraints, MultipleTestCasesConstraintsVerificationResult());
 };
 

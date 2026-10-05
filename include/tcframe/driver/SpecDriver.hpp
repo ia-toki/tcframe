@@ -2,6 +2,7 @@
 
 #include <map>
 #include <iostream>
+#include <set>
 #include <string>
 #include <utility>
 
@@ -12,6 +13,7 @@ using std::istream;
 using std::map;
 using std::move;
 using std::ostream;
+using std::set;
 using std::string;
 
 namespace tcframe {
@@ -74,6 +76,10 @@ public:
 
     virtual void validateTestCaseOutput(istream* in) {
         testCaseDriver_->validateOutput(in);
+    }
+
+    virtual set<int> validateTestCaseInput(istream* in) {
+        return testCaseDriver_->validateInput(in);
     }
 
     virtual void validateMultipleTestCasesInput(int testCaseCount) {

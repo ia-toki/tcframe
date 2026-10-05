@@ -30,12 +30,31 @@ public:
                 { "seed",            required_argument, nullptr, 'h'},
                 { "solution",        required_argument, nullptr, 'i'},
                 { "time-limit",      required_argument, nullptr, 'j'},
+                { "spec-file",       required_argument, nullptr, 'k'},
+                { "solution-keys",   required_argument, nullptr, 'l'},
+                { "helper",          required_argument, nullptr, 'm'},
+                { "helper-args",     required_argument, nullptr, 'n'},
+                { "aggregator",      required_argument, nullptr, 'o'},
+                { "aggregator-args", required_argument, nullptr, 'p'},
+                { "format",          required_argument, nullptr, 'q'},
+                { "solution-file",   required_argument, nullptr, 'r'},
+                { "manager",         required_argument, nullptr, 's'},
+                { "evaluator-dir",   required_argument, nullptr, 't'},
+                { "solution-family", required_argument, nullptr, 'u'},
                 { 0, 0, 0, 0 }};
 
         Args args;
         args.command_ = Args::Command::GENERATE;
         if (argc >= 2 && strcmp(argv[1], "grade") == 0) {
             args.command_ = Args::Command::GRADE;
+            argc--;
+            argv++;
+        } else if (argc >= 2 && strcmp(argv[1], "spec") == 0) {
+            args.command_ = Args::Command::SPEC;
+            argc--;
+            argv++;
+        } else if (argc >= 2 && strcmp(argv[1], "validate") == 0) {
+            args.command_ = Args::Command::VALIDATE;
             argc--;
             argv++;
         }
@@ -75,6 +94,42 @@ public:
                     break;
                 case 'j':
                     args.timeLimit_ = StringUtils::toNumber<int>(optarg);
+                    break;
+                case 'k':
+                    args.specFile_ = optional<string>(optarg);
+                    break;
+                case 'l':
+                    args.solutionKeys_ = optional<string>(optarg);
+                    break;
+                case 'm':
+                    args.helpers_.push_back(optarg);
+                    break;
+                case 'n':
+                    args.helperArgs_.push_back(optarg);
+                    break;
+                case 'o':
+                    args.aggregators_.push_back(optarg);
+                    break;
+                case 'p':
+                    args.aggregatorArgs_.push_back(optarg);
+                    break;
+                case 'r':
+                    args.solutionFiles_.push_back(optarg);
+                    break;
+                case 's':
+                    args.manager_ = optional<string>(optarg);
+                    break;
+                case 't':
+                    args.evaluatorDir_ = optional<string>(optarg);
+                    break;
+                case 'u':
+                    args.solutionFamily_ = optional<string>(optarg);
+                    break;
+                case 'q':
+                    if (strcmp(optarg, "text") != 0 && strcmp(optarg, "json") != 0) {
+                        throw runtime_error("tcframe: unknown --format " + string(optarg) + "; expected text or json");
+                    }
+                    args.format_ = optional<string>(optarg);
                     break;
                 case ':':
                     throw runtime_error("tcframe: option " + string(argv[optind - 1]) + " requires an argument");

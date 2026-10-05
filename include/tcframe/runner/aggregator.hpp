@@ -4,4 +4,5 @@
 #include "tcframe/runner/aggregator/MinAggregator.hpp"
 #include "tcframe/runner/aggregator/SubtaskAggregator.hpp"
 #include "tcframe/runner/aggregator/SumAggregator.hpp"
+#include "tcframe/runner/aggregator/ThresholdAggregator.hpp"
 #include "tcframe/runner/aggregator/TestCaseAggregator.hpp"

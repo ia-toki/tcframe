@@ -161,4 +161,37 @@ TEST_F(VerifierTests, Verification_MultipleTestCases_Invalid_SomeConstraintsInva
             "1 <= T && T <= 10"));
 }
 
+TEST_F(VerifierTests, MainConstraints_Valid) {
+    ConstraintsVerificationResult result = verifierWithConstraintsAndSubtasks.verifyMainConstraints();
+
+    EXPECT_TRUE(result.isValid());
+}
+
+TEST_F(VerifierTests, MainConstraints_Invalid) {
+    b0 = false;
+    ConstraintsVerificationResult result = verifierWithConstraintsAndSubtasks.verifyMainConstraints();
+
+    EXPECT_FALSE(result.isValid());
+    EXPECT_THAT(result.unsatisfiedConstraintDescriptionsBySubtaskId(), ElementsAre(
+            Pair(Subtask::MAIN_ID, ElementsAre("1 <= X && X <= 10"))));
+}
+
+TEST_F(VerifierTests, SatisfiedSubtaskIds_AllValid) {
+    EXPECT_THAT(verifierWithSubtasks.getSatisfiedSubtaskIds(), ElementsAre(1, 2, 3));
+}
+
+TEST_F(VerifierTests, SatisfiedSubtaskIds_SomeInvalid) {
+    b3 = false;
+    EXPECT_THAT(verifierWithSubtasks.getSatisfiedSubtaskIds(), ElementsAre(1, 3));
+}
+
+TEST_F(VerifierTests, SatisfiedSubtaskIds_IgnoresMainConstraints) {
+    b0 = false;
+    EXPECT_THAT(verifierWithConstraintsAndSubtasks.getSatisfiedSubtaskIds(), ElementsAre(1, 2));
+}
+
+TEST_F(VerifierTests, SatisfiedSubtaskIds_NoSubtasks) {
+    EXPECT_THAT(verifier.getSatisfiedSubtaskIds(), IsEmpty());
+}
+
 }

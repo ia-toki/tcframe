@@ -67,6 +67,10 @@ protected:
     void SetUp() {
         ON_CALL(verifier, verifyConstraints(_))
                 .WillByDefault(Return(ConstraintsVerificationResult()));
+        ON_CALL(verifier, verifyMainConstraints())
+                .WillByDefault(Return(ConstraintsVerificationResult()));
+        ON_CALL(verifier, getSatisfiedSubtaskIds())
+                .WillByDefault(Return(set<int>()));
         ON_CALL(verifier, verifyMultipleTestCasesConstraints())
                 .WillByDefault(Return(MultipleTestCasesConstraintsVerificationResult()));
     }
@@ -214,6 +218,31 @@ TEST_F(TestCaseDriverTests, ValidateMultipleTestCasesInput_Failed) {
     } catch (FormattedError& e) {
         EXPECT_THAT(e, Eq(failedResult.asFormattedError()));
     }
+}
+
+TEST_F(TestCaseDriverTests, ValidateInput_ReturnsSatisfiedSubtaskIds) {
+    {
+        InSequence sequence;
+        EXPECT_CALL(ioManipulator, parseInput(Truly(InputStreamContentIs("42\n"))));
+        EXPECT_CALL(verifier, verifyMainConstraints());
+        EXPECT_CALL(verifier, getSatisfiedSubtaskIds()).WillOnce(Return(set<int>{1, 3}));
+    }
+    istringstream in("42\n");
+    EXPECT_THAT(driver.validateInput(&in), Eq(set<int>{1, 3}));
+}
+
+TEST_F(TestCaseDriverTests, ValidateInput_Failed_MainConstraints) {
+    ON_CALL(verifier, verifyMainConstraints())
+            .WillByDefault(Return(ConstraintsVerificationResult({{Subtask::MAIN_ID, {"1 <= N && N <= 10"}}}, {})));
+    EXPECT_CALL(verifier, getSatisfiedSubtaskIds()).Times(0);
+
+    istringstream in("42\n");
+    EXPECT_THROW(driver.validateInput(&in), FormattedError);
+}
+
+TEST_F(TestCaseDriverTests, ValidateInput_Failed_MultipleTestCasesNotSupported) {
+    istringstream in("1\n42\n");
+    EXPECT_THROW(driverWithMultipleTestCases.validateInput(&in), runtime_error);
 }
 
 }

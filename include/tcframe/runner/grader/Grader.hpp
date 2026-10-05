@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "GradingOptions.hpp"
@@ -17,6 +18,7 @@
 
 using std::map;
 using std::max;
+using std::move;
 using std::string;
 using std::vector;
 
@@ -26,7 +28,7 @@ class Grader {
 private:
     SpecClient* specClient_;
     TestCaseGrader* testCaseGrader_;
-    TestCaseAggregator* testCaseAggregator_;
+    map<int, TestCaseAggregator*> testCaseAggregatorsById_;
     SubtaskAggregator* subtaskAggregator_;
     GraderLogger* logger_;
 
@@ -36,12 +38,12 @@ public:
     Grader(
             SpecClient* specClient,
             TestCaseGrader* testCaseGrader,
-            TestCaseAggregator* testCaseAggregator,
+            map<int, TestCaseAggregator*> testCaseAggregatorsById,
             SubtaskAggregator* subtaskAggregator,
             GraderLogger* logger)
             : specClient_(specClient)
             , testCaseGrader_(testCaseGrader)
-            , testCaseAggregator_(testCaseAggregator)
+            , testCaseAggregatorsById_(move(testCaseAggregatorsById))
             , subtaskAggregator_(subtaskAggregator)
             , logger_(logger) {}
 
@@ -65,7 +67,7 @@ public:
             const vector<TestCaseVerdict>& verdicts = entry.second;
 
             if (subtaskPointsById.count(subtaskId)) {
-                SubtaskVerdict subtaskVerdict = testCaseAggregator_->aggregate(verdicts, subtaskPointsById[subtaskId]);
+                SubtaskVerdict subtaskVerdict = testCaseAggregatorsById_.at(subtaskId)->aggregate(verdicts, subtaskPointsById[subtaskId]);
                 subtaskVerdictsById[subtaskId] = subtaskVerdict;
                 subtaskVerdicts.push_back(subtaskVerdict);
             }
@@ -132,10 +134,10 @@ public:
     virtual Grader* create(
             SpecClient* specClient,
             TestCaseGrader* testCaseGrader,
-            TestCaseAggregator* aggregator,
+            map<int, TestCaseAggregator*> aggregatorsById,
             SubtaskAggregator* subtaskAggregator,
             GraderLogger* logger) {
-        return new Grader(specClient, testCaseGrader, aggregator, subtaskAggregator, logger);
+        return new Grader(specClient, testCaseGrader, aggregatorsById, subtaskAggregator, logger);
     }
 };
 

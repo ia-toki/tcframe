@@ -1,0 +1,4 @@
+custom_solution_keys: false
+tc_output: not_required
+helpers:
+- { slug: communicator, type: program, optional: false }

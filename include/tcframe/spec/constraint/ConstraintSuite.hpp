@@ -1,6 +1,7 @@
 #pragma once
 
 #include <set>
+#include <sstream>
 #include <tuple>
 #include <utility>
 #include <vector>
@@ -9,6 +10,7 @@
 #include "Subtask.hpp"
 
 using std::move;
+using std::ostringstream;
 using std::set;
 using std::tie;
 using std::vector;
@@ -63,6 +65,7 @@ private:
     bool hasCurrentSubtask_ = false;
     int curSubtaskId_ = Subtask::MAIN_ID;
     double curPoints_ = 0;
+    AggregatorDeclaration curAggregator_;
     bool isInMultipleTestCasesConstraints_ = false;
     vector<Constraint> curConstraints_;
 
@@ -80,12 +83,30 @@ public:
         curSubtaskId_++;
         curConstraints_.clear();
         curPoints_ = 0;
+        curAggregator_ = AggregatorDeclaration();
 
         return *this;
     }
 
     ConstraintSuiteBuilder& Points(double points) {
         curPoints_ = points;
+        return *this;
+    }
+
+    ConstraintSuiteBuilder& MinAggregator() {
+        curAggregator_ = {"min", ""};
+        return *this;
+    }
+
+    ConstraintSuiteBuilder& SumAggregator() {
+        curAggregator_ = {"sum", ""};
+        return *this;
+    }
+
+    ConstraintSuiteBuilder& ThresholdAggregator(double threshold) {
+        ostringstream args;
+        args << threshold;
+        curAggregator_ = {"threshold", args.str()};
         return *this;
     }
 
@@ -115,13 +136,14 @@ public:
 
 private:
     void addCurrentSubtask() {
-        subject_.constraints_.emplace_back(curSubtaskId_, curPoints_, curConstraints_);
+        subject_.constraints_.emplace_back(curSubtaskId_, curPoints_, curAggregator_, curConstraints_);
     }
 
     void assignMainSubtaskPoints() {
         Subtask mainSubtask = subject_.constraints_.back();
         subject_.constraints_.pop_back();
-        subject_.constraints_.emplace_back(Subtask::MAIN_ID, double(Subtask::MAIN_POINTS), mainSubtask.constraints());
+        subject_.constraints_.emplace_back(
+                Subtask::MAIN_ID, double(Subtask::MAIN_POINTS), mainSubtask.aggregator(), mainSubtask.constraints());
     }
 };
 

@@ -6,4 +6,5 @@
 #include "tcframe/runner/grader/GraderLogger.hpp"
 #include "tcframe/runner/grader/GraderLoggerFactory.hpp"
 #include "tcframe/runner/grader/GradingOptions.hpp"
+#include "tcframe/runner/grader/JsonGraderLogger.hpp"
 #include "tcframe/runner/grader/TestCaseGrader.hpp"

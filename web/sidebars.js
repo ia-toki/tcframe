@@ -54,6 +54,18 @@ const sidebars = {
     },
     {
       type: 'category',
+      label: 'TCFrame 2.0',
+      link: {
+        type: 'doc',
+        id: 'v2/overview',
+      },
+      items: [
+        'v2/commands',
+        'v2/package-format',
+      ],
+    },
+    {
+      type: 'category',
       label: 'Release Notes',
       items: [
         'release-notes/1_8_0',

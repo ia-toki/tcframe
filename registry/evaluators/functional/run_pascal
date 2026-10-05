@@ -1,0 +1,4 @@
+#!/bin/sh
+# Runs a built functional solution. Usage: run_pascal <input-file> <manager-dir>
+# The program's stdout is the solution output, which the scorer then compares.
+exec ./__tcframe_functional < "$1"

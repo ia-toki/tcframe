@@ -8,7 +8,7 @@ namespace tcframe {
 
 class MockGraderLoggerFactory : public GraderLoggerFactory {
 public:
-    MOCK_METHOD2(create, GraderLogger*(LoggerEngine*, bool));
+    MOCK_METHOD3(create, GraderLogger*(LoggerEngine*, bool, bool));
 };
 
 }

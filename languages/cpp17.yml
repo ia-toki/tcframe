@@ -1,0 +1,5 @@
+name: C++17 (GCC)
+family: cpp
+extensions: [cc, cpp, c++]
+build: g++ -std=c++17 -O2 -o $BASE_FILENAME $FILENAME
+run: ./$BASE_FILENAME
