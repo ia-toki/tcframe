@@ -21,6 +21,7 @@ private:
     string solutionCommand_;
     string outputDir_;
     bool hasTcOutput_;
+    bool allowUnsatisfiedSubtasks_ = false;
 
 public:
     const string& slug() const {
@@ -43,9 +44,14 @@ public:
         return hasTcOutput_;
     }
 
+    bool allowUnsatisfiedSubtasks() const {
+        return allowUnsatisfiedSubtasks_;
+    }
+
     bool operator==(const GenerationOptions& o) const {
-        return tie(slug_, seed_, solutionCommand_, outputDir_, hasTcOutput_) ==
-                tie(o.slug_, o.seed_, o.solutionCommand_, o.outputDir_, o.hasTcOutput_);
+        return tie(slug_, seed_, solutionCommand_, outputDir_, hasTcOutput_, allowUnsatisfiedSubtasks_) ==
+                tie(o.slug_, o.seed_, o.solutionCommand_, o.outputDir_, o.hasTcOutput_,
+                        o.allowUnsatisfiedSubtasks_);
     }
 };
 
@@ -78,6 +84,11 @@ public:
 
     GenerationOptionsBuilder& setHasTcOutput(bool hasTcOutput) {
         subject_.hasTcOutput_ = hasTcOutput;
+        return *this;
+    }
+
+    GenerationOptionsBuilder& setAllowUnsatisfiedSubtasks(bool allowUnsatisfiedSubtasks) {
+        subject_.allowUnsatisfiedSubtasks_ = allowUnsatisfiedSubtasks;
         return *this;
     }
 

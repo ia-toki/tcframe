@@ -11,7 +11,7 @@ public:
     MockTestCaseDriver()
             : TestCaseDriver(nullptr, nullptr, nullptr, MultipleTestCasesConfig()) {}
 
-    MOCK_METHOD2(generateInput, void(const TestCase&, ostream*));
+    MOCK_METHOD3(generateInput, void(const TestCase&, ostream*, bool));
     MOCK_METHOD2(generateSampleOutput, void(const TestCase&, ostream*));
     MOCK_METHOD1(validateOutput, void(istream*));
     MOCK_METHOD1(validateMultipleTestCasesInput, void(int));

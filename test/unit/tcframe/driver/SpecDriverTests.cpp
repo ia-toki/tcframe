@@ -58,8 +58,14 @@ TEST_F(SpecDriverTests, GetMultipleTestCasesOutputPrefix) {
 
 TEST_F(SpecDriverTests, GenerateTestCaseInput) {
     ostringstream out;
-    EXPECT_CALL(testCaseDriver, generateInput(tc2, &out));
-    driver.generateTestCaseInput("foo_2", &out);
+    EXPECT_CALL(testCaseDriver, generateInput(tc2, &out, false));
+    driver.generateTestCaseInput("foo_2", &out, false);
+}
+
+TEST_F(SpecDriverTests, GenerateTestCaseInput_AllowUnsatisfiedSubtasks) {
+    ostringstream out;
+    EXPECT_CALL(testCaseDriver, generateInput(tc2, &out, true));
+    driver.generateTestCaseInput("foo_2", &out, true);
 }
 
 TEST_F(SpecDriverTests, GenerateSampleTestCaseOutput) {

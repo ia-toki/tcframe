@@ -109,7 +109,8 @@ private:
         auto optionsBuilder = GenerationOptionsBuilder(spec.slug)
                 .setSeed(args.seed().value_or(unsigned(RunnerDefaults::SEED)))
                 .setSolutionCommand(args.solution().value_or(string(RunnerDefaults::SOLUTION_COMMAND)))
-                .setOutputDir(args.output().value_or(string(RunnerDefaults::OUTPUT_DIR)));
+                .setOutputDir(args.output().value_or(string(RunnerDefaults::OUTPUT_DIR)))
+                .setAllowUnsatisfiedSubtasks(args.allowUnsatisfiedSubtasks());
 
         EvaluatorConfig evaluatorConfig = evaluatorRegistry_->getConfig(spec.evaluator.slug);
         if (evaluatorConfig.testCaseOutputType() == TestCaseOutputType::NOT_REQUIRED) {

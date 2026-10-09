@@ -15,7 +15,7 @@ public:
     MOCK_METHOD1(setSeed, void(unsigned));
     MOCK_METHOD0(hasMultipleTestCases, bool());
     MOCK_METHOD0(getMultipleTestCasesOutputPrefix, optional<string>());
-    MOCK_METHOD2(generateTestCaseInput, void(const string&, ostream*));
+    MOCK_METHOD3(generateTestCaseInput, void(const string&, ostream*, bool));
     MOCK_METHOD2(generateSampleTestCaseOutput, void(const string&, ostream*));
     MOCK_METHOD1(validateTestCaseOutput, void(istream*));
     MOCK_METHOD1(validateMultipleTestCasesInput, void(int));

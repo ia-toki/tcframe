@@ -3,6 +3,7 @@
 #include "BaseEteTests.cpp"
 
 using ::testing::Eq;
+using ::testing::Ne;
 using ::testing::Test;
 using ::testing::UnorderedElementsAre;
 
@@ -109,6 +110,25 @@ TEST_F(GenerationEteTests, Subtasks) {
             "subtasks_1_2.out",
             "subtasks_2_1.in",
             "subtasks_2_1.out"
+    ));
+}
+
+TEST_F(GenerationEteTests, Subtasks_UnsatisfiedSubtasks) {
+    ASSERT_THAT(execStatus("cd test-ete/subtasks-allow-unsatisfied && ../scripts/generate.sh"), Ne(0));
+}
+
+TEST_F(GenerationEteTests, Subtasks_UnsatisfiedSubtasks_Allowed) {
+    ASSERT_THAT(execStatus(
+            "cd test-ete/subtasks-allow-unsatisfied && ../scripts/generate-with-allow-unsatisfied-subtasks.sh"),
+            Eq(0));
+
+    EXPECT_THAT(ls("test-ete/subtasks-allow-unsatisfied/tc"), UnorderedElementsAre(
+            "subtasks-allow-unsatisfied_sample_1.in",
+            "subtasks-allow-unsatisfied_sample_1.out",
+            "subtasks-allow-unsatisfied_1_1.in",
+            "subtasks-allow-unsatisfied_1_1.out",
+            "subtasks-allow-unsatisfied_2_1.in",
+            "subtasks-allow-unsatisfied_2_1.out"
     ));
 }
 

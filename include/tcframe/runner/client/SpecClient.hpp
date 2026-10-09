@@ -43,9 +43,13 @@ public:
         return specDriver_->getMultipleTestCasesOutputPrefix();
     }
 
-    virtual void generateTestCaseInput(const string& testCaseName, const string& filename) {
+    virtual void generateTestCaseInput(
+            const string& testCaseName,
+            const string& filename,
+            bool allowUnsatisfiedSubtasks) {
+
         ostream* out = os_->openForWriting(filename);
-        specDriver_->generateTestCaseInput(testCaseName, out);
+        specDriver_->generateTestCaseInput(testCaseName, out, allowUnsatisfiedSubtasks);
         os_->closeOpenedStream(out);
     }
 

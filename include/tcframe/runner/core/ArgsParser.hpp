@@ -20,16 +20,17 @@ public:
 
     static Args parse(int argc, char* argv[]) {
         option longopts[] = {
-                { "brief",           no_argument,       nullptr, 'a'},
-                { "communicator",    required_argument, nullptr, 'b'},
-                { "memory-limit",    required_argument, nullptr, 'c'},
-                { "no-memory-limit", no_argument      , nullptr, 'd'},
-                { "no-time-limit",   no_argument      , nullptr, 'e'},
-                { "output",          required_argument, nullptr, 'f'},
-                { "scorer",          required_argument, nullptr, 'g'},
-                { "seed",            required_argument, nullptr, 'h'},
-                { "solution",        required_argument, nullptr, 'i'},
-                { "time-limit",      required_argument, nullptr, 'j'},
+                { "allow-unsatisfied-subtasks", no_argument      , nullptr, 'a'},
+                { "brief",                      no_argument      , nullptr, 'b'},
+                { "communicator",               required_argument, nullptr, 'c'},
+                { "memory-limit",               required_argument, nullptr, 'd'},
+                { "no-memory-limit",            no_argument      , nullptr, 'e'},
+                { "no-time-limit",              no_argument      , nullptr, 'f'},
+                { "output",                     required_argument, nullptr, 'g'},
+                { "scorer",                     required_argument, nullptr, 'h'},
+                { "seed",                       required_argument, nullptr, 'i'},
+                { "solution",                   required_argument, nullptr, 'j'},
+                { "time-limit",                 required_argument, nullptr, 'k'},
                 { 0, 0, 0, 0 }};
 
         Args args;
@@ -47,33 +48,36 @@ public:
         while ((c = getopt_long_only(argc, argv, ":", longopts, nullptr)) != -1) {
             switch (c) {
                 case 'a':
-                    args.brief_ = true;
+                    args.allowUnsatisfiedSubtasks_ = true;
                     break;
                 case 'b':
-                    args.communicator_ = optional<string>(optarg);
+                    args.brief_ = true;
                     break;
                 case 'c':
-                    args.memoryLimit_ = StringUtils::toNumber<int>(optarg);
+                    args.communicator_ = optional<string>(optarg);
                     break;
                 case 'd':
-                    args.noMemoryLimit_ = true;
+                    args.memoryLimit_ = StringUtils::toNumber<int>(optarg);
                     break;
                 case 'e':
-                    args.noTimeLimit_ = true;
+                    args.noMemoryLimit_ = true;
                     break;
                 case 'f':
-                    args.output_ = optional<string>(optarg);
+                    args.noTimeLimit_ = true;
                     break;
                 case 'g':
-                    args.scorer_ = optional<string>(optarg);
+                    args.output_ = optional<string>(optarg);
                     break;
                 case 'h':
-                    args.seed_ = StringUtils::toNumber<unsigned>(optarg);
+                    args.scorer_ = optional<string>(optarg);
                     break;
                 case 'i':
-                    args.solution_ = optional<string>(optarg);
+                    args.seed_ = StringUtils::toNumber<unsigned>(optarg);
                     break;
                 case 'j':
+                    args.solution_ = optional<string>(optarg);
+                    break;
+                case 'k':
                     args.timeLimit_ = StringUtils::toNumber<int>(optarg);
                     break;
                 case ':':

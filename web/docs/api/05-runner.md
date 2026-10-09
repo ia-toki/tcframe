@@ -26,6 +26,10 @@ A runner is the compiled version of a spec file, and is capable of two things:
 
     The seed for random number generator `rnd` in the test spec. Default: `0`.
 
+- `--allow-unsatisfied-subtasks`
+
+    Does not fail the generation when a test case satisfies the constraints of a subtask it is not assigned to. See [test groups](../topic-guides/test-groups).
+
 ---
 
 ## Local grading

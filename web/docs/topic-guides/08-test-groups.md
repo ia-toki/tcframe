@@ -4,6 +4,12 @@ A **test group** is a set of test cases that are assigned/included to the same s
 
 For the whole test cases to be strong, a test case should be assigned in multiple subtasks if possible. In other words, several subtasks may share some test cases. In TCFrame, a test case **must** be assigned to a subtask if (and only if) it satisfies the constraints of that subtask.
 
+:::info
+
+If you don't want the generation to fail when a test case satisfies the constraints of a subtask it is not assigned to, pass the [`--allow-unsatisfied-subtasks`](../api/runner) option to the runner program. This is useful when, for example, you want to simply assign each test group to exactly one subtask, even when a subtask is a subset of another.
+
+:::
+
 ## Designing test groups
 
 In this example, we will use this subtasking scheme:

@@ -106,6 +106,23 @@ TEST_F(VerifierTests, Verification_WithSubtasks_Invalid_SomeConstraintsInvalid) 
             Pair(2, ElementsAre("1 <= D && D <= 10"))));
 }
 
+TEST_F(VerifierTests, Verification_WithSubtasks_Valid_SomeSubtasksSatisfiedButNotAssigned_Allowed) {
+    b4 = false;
+    ConstraintsVerificationResult result = verifierWithSubtasks.verifyConstraints({3});
+
+    EXPECT_FALSE(result.isValid());
+    EXPECT_TRUE(result.isValid(true));
+    EXPECT_THAT(result.satisfiedButNotAssignedSubtaskIds(), ElementsAre(1));
+    EXPECT_THAT(result.unsatisfiedConstraintDescriptionsBySubtaskId(), IsEmpty());
+}
+
+TEST_F(VerifierTests, Verification_WithSubtasks_Invalid_SomeConstraintsInvalid_SatisfiedButNotAssignedSubtasksAllowed) {
+    b4 = false;
+    ConstraintsVerificationResult result = verifierWithSubtasks.verifyConstraints({2, 3});
+
+    EXPECT_FALSE(result.isValid(true));
+}
+
 TEST_F(VerifierTests, Verification_WithConstraintsAndSubtasks_Valid_AllConstraintsValid) {
     ConstraintsVerificationResult result = verifierWithConstraintsAndSubtasks.verifyConstraints({1, 2});
 
